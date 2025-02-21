@@ -7,11 +7,11 @@
     "preview": "vite preview --host"
   },
   "dependencies": {
-    "@mantine/carousel": "^7.16.3",
-    "@mantine/code-highlight": "^7.16.3",
-    "@mantine/core": "7.16.3",
-    "@mantine/hooks": "7.16.3",
-    "@mantine/spotlight": "^7.16.3",
+    "@mantine/carousel": "7.17.0",
+    "@mantine/code-highlight": "7.17.0",
+    "@mantine/core": "7.17.0",
+    "@mantine/hooks": "7.17.0",
+    "@mantine/spotlight": "7.17.0",
     "@tabler/icons-react": "^3.30.0",
     "embla-carousel-react": "^7.1.0",
     "react": "^18.0.0",

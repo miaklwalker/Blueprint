@@ -13,7 +13,8 @@ import {
     TextInput,
     Title, useMantineTheme
 } from "@mantine/core";
-import {useBlueprintStore} from "../../../modules/hooks.js";
+import {useBlueprintStore} from "../../../modules/store.js";
+
 
 
 

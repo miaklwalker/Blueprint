@@ -1,10 +1,11 @@
-import {useBlueprintStore} from "../../../modules/hooks.js";
+
 import {AppShell, Box, Button, Container, Group, Modal, SimpleGrid, Switch, Text, TextInput} from "@mantine/core";
 import {options} from "../../../modules/const.js";
 import {SeedDisplay} from "../../seedDisplay/index.jsx";
 import {useCallback, useMemo} from "react";
 import {useDebouncedValue} from "@mantine/hooks";
 import {analyzeSeed} from "../../../modules/utils.js";
+import {useBlueprintStore} from "../../../modules/store.js";
 
 export function AnalyzeSeedInput() {
     const setSeedIsOpen = useBlueprintStore(state => state.setSeedIsOpen)

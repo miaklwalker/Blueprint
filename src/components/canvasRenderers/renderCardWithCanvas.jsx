@@ -1,4 +1,4 @@
-import {useEffect, useRef} from "react";
+import {useCallback, useEffect, useMemo, useRef} from "react";
 import {
     determineItemType, getModifierColor,
     maskToCanvas,
@@ -6,12 +6,19 @@ import {
     parseStandardCardName,
     renderStandardCard
 } from "../../modules/utils.js";
-import {Anchor, Badge, Box, Center, Flex, Group, HoverCard, Paper, Stack, Text} from "@mantine/core";
+import {Anchor, Badge, Box, Button, Center, Flex, Group, HoverCard, Indicator, Paper, Stack, Text} from "@mantine/core";
+import {useBlueprintStore} from "../../modules/store.js";
 
-export function RenderCardWithCanvas({width, height, value, selected, searched}) {
+
+export function RenderCardWithCanvas({width, height, value, meta, searched}) {
     const renderCanvas = useRef(null);
     const {cardName, itemModifiers, itemStickers, itemSeals, baseCardName} = parseCardItem(value);
     const itemType = determineItemType(cardName);
+    const buyCard = useBlueprintStore(state => state.buyCard);
+    const removeCard = useBlueprintStore(state => state.removeCard)
+    const isOwned = useBlueprintStore(state => state.owned);
+    const buys = useBlueprintStore(state => state.buys);
+    const owned = useMemo(() => isOwned({...meta, cardName}, buys), [meta, cardName, isOwned, buys])
 
 
     useEffect(() => {
@@ -27,22 +34,31 @@ export function RenderCardWithCanvas({width, height, value, selected, searched})
             canvas.height = height;
         }
     }, [value])
+
+    const handleBuy = useCallback(() => {
+        !owned ?
+            buyCard({...meta, cardName}) :
+            removeCard({...meta, cardName});
+    }, [meta, cardName, owned]);
+
     return (
         <Paper>
             <HoverCard position={'top'}>
                 <HoverCard.Target>
-                    <Center>
-                        <canvas
-                            style={
-                                {
-                                    width: width,
-                                    height: height,
-                                    boxShadow: searched ? '0px 0px 8px 8px rgba(255, 255, 255, .65)' : ''
+                    <Indicator color={'green'} disabled={!owned}>
+                        <Center>
+                            <canvas
+                                style={
+                                    {
+                                        width: width,
+                                        height: height,
+                                        boxShadow: searched ? '0px 0px 8px 8px rgba(255, 255, 255, .65)' : ''
+                                    }
                                 }
-                            }
-                            ref={renderCanvas}
-                        />
-                    </Center>
+                                ref={renderCanvas}
+                            />
+                        </Center>
+                    </Indicator>
                 </HoverCard.Target>
                 <HoverCard.Dropdown>
                     <Box p={'.5rem'}>
@@ -53,7 +69,7 @@ export function RenderCardWithCanvas({width, height, value, selected, searched})
                                 itemModifiers.map((modifier, index) => {
                                     let color = getModifierColor(modifier)
                                     return (
-                                        <Badge autoContrast autoCapitalize color={color} key={index}>{modifier}</Badge>
+                                        <Badge autoContrast color={color} key={index}>{modifier}</Badge>
                                     )
                                 })
                             }
@@ -62,7 +78,7 @@ export function RenderCardWithCanvas({width, height, value, selected, searched})
                                 itemStickers.map((sticker, index) => {
                                     let color = getModifierColor(sticker)
                                     return (
-                                        <Badge autoContrast autoCapitalize color={color} key={index}>{sticker}</Badge>
+                                        <Badge autoContrast color={color} key={index}>{sticker}</Badge>
                                     )
                                 })
                             }
@@ -71,13 +87,18 @@ export function RenderCardWithCanvas({width, height, value, selected, searched})
                                 itemSeals.map((seal, index) => {
                                     let color = getModifierColor(seal)
                                     return (
-                                        <Badge autoContrast autoCapitalize color={color} key={index}>{seal}</Badge>
+                                        <Badge autoContrast color={color} key={index}>{seal}</Badge>
                                     )
                                 })
                             }
                         </Group>
-                        <Anchor href={`https://balatrogame.fandom.com/wiki/${cardName}`} target={'_blank'}> Balatro
-                            Fandom Link </Anchor>
+                        <Stack>
+                            <Anchor href={`https://balatrogame.fandom.com/wiki/${baseCardName}`} target={'_blank'}>
+                                Balatro Fandom Link
+                            </Anchor>
+                            <Button onClick={handleBuy} color={owned ? 'red' : 'blue'}> {!owned ? "Buy Card" : "Undo"} </Button>
+                        </Stack>
+
                     </Box>
                 </HoverCard.Dropdown>
             </HoverCard>

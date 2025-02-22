@@ -1,7 +1,8 @@
 import {useViewportSize} from "@mantine/hooks";
 import {AppShell, ScrollArea} from "@mantine/core";
 import {CodeHighlight} from "@mantine/code-highlight";
-import {useBlueprintStore} from "../../../modules/hooks.js";
+import {useBlueprintStore} from "../../../modules/store.js";
+
 
 export function Output() {
     const results = useBlueprintStore(state => state.results)

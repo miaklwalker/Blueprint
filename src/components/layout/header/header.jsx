@@ -1,10 +1,10 @@
 import {useViewportSize} from "@mantine/hooks";
 import {useMemo} from "react";
-import {buildShareableUrl} from "../../../modules/store.js";
+import {buildShareableUrl, useBlueprintStore} from "../../../modules/store.js";
 import {AppShell, Burger, Button, Center, Container, CopyButton, Group, Title} from "@mantine/core";
 
 import {SearchSeedInput} from "../../searchSeedInput/searchSeedInput.jsx";
-import {useBlueprintStore} from "../../../modules/hooks.js";
+
 
 export function Header() {
     const {width} = useViewportSize();

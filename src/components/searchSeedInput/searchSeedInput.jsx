@@ -3,7 +3,8 @@ import {extractShopQueues} from "../../modules/utils.js";
 import {openSpotlight, Spotlight} from "@mantine/spotlight";
 import {ActionIcon, Group, TextInput} from "@mantine/core";
 import {IconSearch} from "@tabler/icons-react";
-import {useBlueprintStore} from "../../modules/hooks.js";
+import {useBlueprintStore} from "../../modules/store.js";
+
 
 
 class SearchResult {

@@ -1,5 +1,4 @@
 import {useEffect, useMemo, useState} from "react";
-import {useBlueprintStore} from "../../modules/hooks.js";
 import {Carousel} from "@mantine/carousel";
 import {
     Box,
@@ -20,10 +19,16 @@ import {useViewportSize} from "@mantine/hooks";
 import {RenderCardWithCanvas} from "../canvasRenderers/renderCardWithCanvas.jsx";
 import {RenderWithCanvas} from "../canvasRenderers/renderWithCanvas.jsx";
 import {SearchSeedInput} from "../searchSeedInput/searchSeedInput.jsx";
+import {useBlueprintStore} from "../../modules/store.js";
+
+
+
 
 export function Queue({cards, width = 71, height = 95, scale = 1}) {
     const [embla, setEmbla] = useState(null);
     const selectedResult = useBlueprintStore(state => state.selectedSearchResult);
+    const selectedBlind = useBlueprintStore(state => state.selectedBlind);
+    const selectedAnte = useBlueprintStore(state => state.selectedAnte);
 
     useEffect(() => {
         if (embla && selectedResult) {
@@ -38,6 +43,7 @@ export function Queue({cards, width = 71, height = 95, scale = 1}) {
         <Carousel.Slide key={tag} pt={'1rem'}>
             <RenderCardWithCanvas
                 searched={selectedResult?.location === 'queue' && selectedResult?.index === index}
+                meta={{ selectedBlind, selectedAnte, location:'queue'}}
                 value={tag}
                 width={slideWidth}
                 height={slideHeight}

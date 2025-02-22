@@ -10,7 +10,6 @@ const persistentStorage = {
         if (getUrlSearch()) {
             const searchParams = new URLSearchParams(getUrlSearch())
             return  searchParams.get(key)
-            // return JSON.parse(storedValue)
         } else {
             // Otherwise, we should load from localstorage or alternative storage
             return JSON.parse(sessionStorage.getItem(key))
@@ -64,7 +63,7 @@ const makeBlueprintStore = (set, get) => ({
     deck: 'Red Deck',
     cardsPerAnte: 50,
     stake: 'White Stake',
-    version: '1.0.1f',
+    version: '10106',
     ante: 8,
     selectedOptions: Array(61).fill(true),
     selectedSearchResult: null,
@@ -86,7 +85,7 @@ const makeBlueprintStore = (set, get) => ({
         deck: 'Red Deck',
         cardsPerAnte: 50,
         stake: 'White Stake',
-        version: '1.0.1f',
+        version: '10106',
         ante: 8,
         selectedOptions: Array(61).fill(true),
         selectedSearchResult: null,
@@ -157,18 +156,7 @@ export const createBlueprintStore = createStore(
             makeBlueprintStore,
             {
                 name: 'blueprint-store',
-                storage: createJSONStorage(() => persistentStorage),
-                partialize: (state) => ({
-                    seed: state.seed,
-                    deck: state.deck,
-                    cardsPerAnte: state.stake,
-                    stake: state.version,
-                    version: state.version,
-                    ante: state.ante,
-                    globalSearch: state.globalSearch,
-                    selectedAnte: state.selectedAnte,
-                    selectedBlind: state.selectedBlind
-                })
+                storage: createJSONStorage(() => sessionStorage),
             }
         )
     )

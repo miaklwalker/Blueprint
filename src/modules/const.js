@@ -25,7 +25,8 @@ export const stickerMap = {
     "Perishable": { x: 0, y: 2 },
     "Rental": { x: 1, y: 2 }
 };
-export const options = ["Negative Tag",
+export const options = [
+    "Negative Tag",
     "Foil Tag",
     "Holographic Tag",
     "Polychrome Tag",
@@ -85,5 +86,6 @@ export const options = ["Negative Tag",
     "Illusion",
     "Petroglyph",
     "Retcon",
-    "Palette"]
+    "Palette"
+]
 export const blinds = ['Small Blind', 'Big Blind', 'Boss Blind']

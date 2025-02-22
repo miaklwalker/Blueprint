@@ -555,27 +555,41 @@ export function extractShopQueues(text) {
 export function parseCardItem(item) {
     const modifiers = ['Foil', 'Holographic', 'Polychrome', 'Negative'];
     const stickers = ['Perishable', 'Rental', 'Eternal'];
-    let cardName = item.replace(/^\d+\)/, '').trim();
+    const seals = ['Purple Seal', 'Red Seal', 'Blue Seal', 'Gold Seal'];
+
+    let standardCardName = item.replace(/^\d+\)/, '').trim();
+    let baseCardName = item.replace(/^\d+\)/, '').trim()
     let itemModifiers = [];
     let itemStickers = [];
+    let itemSeals = [];
 
     modifiers.forEach(mod => {
         const regex = new RegExp(`\\b${mod}\\b`, 'i');
-        if (regex.test(cardName)) {
+        if (regex.test(standardCardName)) {
             itemModifiers.push(mod);
-            cardName = cardName.replace(regex, '').trim();
+            standardCardName = standardCardName.replace(regex, '').trim();
+            baseCardName = baseCardName.replace(regex, '').trim();
         }
     });
 
     stickers.forEach(stick => {
         const regex = new RegExp(`\\b${stick}\\b`, 'i');
-        if (regex.test(cardName)) {
+        if (regex.test(standardCardName)) {
             itemStickers.push(stick);
-            cardName = cardName.replace(regex, '').trim();
+            standardCardName = standardCardName.replace(regex, '').trim();
+            baseCardName = baseCardName.replace(regex, '').trim();
         }
     });
 
-    return { cardName, itemModifiers, itemStickers };
+    seals.forEach(seal => {
+        const regex = new RegExp(`\\b${seal}\\b`, 'i');
+        if (regex.test(standardCardName)) {
+            itemStickers.push(seal);
+            baseCardName = baseCardName.replace(regex, '').trim();
+        }
+    });
+
+    return { cardName: standardCardName, baseCardName, itemModifiers, itemStickers, itemSeals };
 }
 
 export function determineItemType(itemName) {

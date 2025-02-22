@@ -1,5 +1,6 @@
 import {createJSONStorage, devtools, persist} from "zustand/middleware";
 import {createStore} from "zustand";
+import {options} from "./const.js";
 
 
 const getUrlSearch = () => {
@@ -65,7 +66,18 @@ const makeBlueprintStore = (set, get) => ({
     stake: 'White Stake',
     version: '10106',
     ante: 8,
+
     selectedOptions: Array(61).fill(true),
+    setSelectedOptions: (newOptions) => {
+        return set({
+            selectedOptions: options.map( option => newOptions.includes(option))
+        })
+    },
+    selectOptionsModalOpen: false,
+    openSelectOptionModal: () => set({ selectOptionsModalOpen: true }),
+    closeSelectOptionModal: () => set({ selectOptionsModalOpen: false}),
+
+
     selectedSearchResult: null,
     searchResults: [],
     setSearchResults: (results) => set({searchResults: results}),
@@ -152,12 +164,12 @@ const makeBlueprintStore = (set, get) => ({
 
 export const createBlueprintStore = createStore(
     devtools(
-        persist(
+        // persist(
             makeBlueprintStore,
-            {
-                name: 'blueprint-store',
-                storage: createJSONStorage(() => sessionStorage),
-            }
-        )
+            // {
+            //     name: 'blueprint-store',
+            //     storage: createJSONStorage(() => sessionStorage),
+            // }
+        // )
     )
 )

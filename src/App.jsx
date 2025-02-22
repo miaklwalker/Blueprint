@@ -159,7 +159,7 @@ function Settings() {
             <Divider mb={'lg'}/>
             <SimpleGrid cols={1} px={'1rem'}>
                 <TextInput
-                    label={'seed'}
+                    label={'Seed'}
                     value={seed}
                     onChange={(e) => setSeed(e.currentTarget.value)}
                 />
@@ -766,12 +766,23 @@ function BluePrint() {
                 breakpoint: 'sm',
                 collapsed: {desktop: !settingsOpened, mobile: settingsOpened},
             }}
+            footer={{
+
+            }}
             padding="md"
         >
             <Header/>
             <Settings/>
             <UI/>
             <Output/>
+            <AppShell.Footer>
+                <Text ta={'center'} fz={'xs'}>
+                    Made with Mantine, Vite, Zustand, Immolate.
+                </Text>
+                <Text ta={'center'} fz={'xs'}>
+                    Made by Michael Walker 2025
+                </Text>
+            </AppShell.Footer>
         </AppShell>
     )
 }

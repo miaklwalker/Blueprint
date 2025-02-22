@@ -386,6 +386,9 @@ export function searchAndHighlight() {
 }
 
 export function analyzeSeed(state) {
+
+    if(!state.seed) return ''
+    if(state.seed.trim().length <= 1) return '';
     let output = ''
     const cardsPerAnte = state.cardsPerAnte.split(',').map(Number);
     const inst = new Immolate.Instance(state.seed);

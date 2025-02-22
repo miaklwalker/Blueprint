@@ -9,8 +9,8 @@ const persistentStorage = {
     getItem: (key) => {
         if (getUrlSearch()) {
             const searchParams = new URLSearchParams(getUrlSearch())
-            const storedValue = searchParams.get(key)
-            return JSON.parse(storedValue)
+            return  searchParams.get(key)
+            // return JSON.parse(storedValue)
         } else {
             // Otherwise, we should load from localstorage or alternative storage
             return JSON.parse(sessionStorage.getItem(key))
@@ -22,7 +22,7 @@ const persistentStorage = {
             searchParams.set(key, JSON.stringify(newValue))
             window.history.replaceState(null, '', `?${searchParams.toString()}`)
         }
-        localStorage.setItem(key, JSON.stringify(newValue))
+        sessionStorage.setItem(key, JSON.stringify(newValue))
     },
     removeItem: (key) => {
         const searchParams = new URLSearchParams(getUrlSearch())
@@ -47,9 +47,8 @@ const buildURLSuffix = (params, version = 0) => {
         },
         version: version,
     }
-
     // The URL param key should match the name of the store, as specified as in storageOptions above
-    searchParams.set('blueprintStore', JSON.stringify(zustandStoreParams))
+    searchParams.set('blueprint-store', JSON.stringify(zustandStoreParams))
     return searchParams.toString()
 }
 
@@ -75,7 +74,7 @@ const makeBlueprintStore = (set, get) => ({
     globalSearch: '',
     setGlobalSearchString: (value) => set({globalSearch: value}),
 
-    setSeed: (value) => set({seed: value}),
+    setSeed: (value) => set({seed: value.toUpperCase()}),
     setDeck: (value) => set({deck: value}),
     setCardsPerAnte: (value) => set({cardsPerAnte: value}),
     setStake: (value) => set({stake: value}),
@@ -158,7 +157,18 @@ export const createBlueprintStore = createStore(
             makeBlueprintStore,
             {
                 name: 'blueprint-store',
-                storage: createJSONStorage(() => persistentStorage)
+                storage: createJSONStorage(() => persistentStorage),
+                partialize: (state) => ({
+                    seed: state.seed,
+                    deck: state.deck,
+                    cardsPerAnte: state.stake,
+                    stake: state.version,
+                    version: state.version,
+                    ante: state.ante,
+                    globalSearch: state.globalSearch,
+                    selectedAnte: state.selectedAnte,
+                    selectedBlind: state.selectedBlind
+                })
             }
         )
     )

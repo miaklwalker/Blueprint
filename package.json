@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev" : "vite dev --host",
+    "dev": "vite dev --host",
     "build": "tsc && vite build",
     "preview": "vite preview --host"
   },
@@ -17,6 +17,7 @@
     "embla-carousel-react": "^7.1.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
+    "react-error-boundary": "^5.0.0",
     "zustand": "^5.0.3"
   },
   "devDependencies": {

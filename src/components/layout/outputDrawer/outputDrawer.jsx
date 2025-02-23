@@ -1,5 +1,5 @@
 import {useViewportSize} from "@mantine/hooks";
-import {Accordion, AppShell, ScrollArea, Timeline, Text, Paper, Badge} from "@mantine/core";
+import {Accordion, AppShell, ScrollArea, Timeline, Text, Paper, Badge, Stack, Group, Button} from "@mantine/core";
 import {CodeHighlight} from "@mantine/code-highlight";
 import {useBlueprintStore} from "../../../modules/store.js";
 import {useMemo} from "react";
@@ -12,13 +12,15 @@ export function Output() {
     const asideSizes = {base: 180, md: 280, lg: 520}
     const maxRuns = useBlueprintStore(state => state.ante)
     const buys = useBlueprintStore(state => state.buys);
+    const removeBuys = useBlueprintStore(state => state.removeCard)
     const sells = useBlueprintStore(state => state.sells);
-    console.log(buys)
-    const transactionHistory = useMemo(()=>{
+
+    const transactionHistory = useMemo(() => {
         let mappedBuys = Object
             .values(buys)
             .map(buy => ({
                     ...buy,
+                    original: buy,
                     ante: Number(buy.ante?.split('ANTE ')[1]),
                     blind: blinds.indexOf(buy.blind),
                     cardName: buy.cardName,
@@ -27,7 +29,8 @@ export function Output() {
         let mappedSells = Object
             .values(sells)
             .map(sell => ({
-                ...sell,
+                    ...sell,
+                    original: sell,
                     ante: Number(sell.ante?.split('ANTE ')[1]),
                     blind: blinds.indexOf(sell.blind),
                     cardName: sell.cardName,
@@ -63,8 +66,8 @@ export function Output() {
             }
         }
         return purchaseHistory
-    },[maxRuns, buys, sells]);
-    console.log(transactionHistory)
+    }, [maxRuns, buys, sells]);
+
 
     return (
         <AppShell.Aside>
@@ -95,7 +98,8 @@ export function Output() {
                                 h={'60vh'}
                                 w={asideSizes}
                             >
-                                <Timeline color={'blue'} active={transactionHistory?.length ?? 0} bulletSize={24} lineWidth={2}>
+                                <Timeline color={'blue'} active={transactionHistory?.length ?? 0} bulletSize={24}
+                                          lineWidth={2}>
                                     {
                                         transactionHistory &&
                                         transactionHistory.map((transaction, i) => {
@@ -105,10 +109,19 @@ export function Output() {
                                                     key={i} bullet={<IconCurrencyDollar/>}
                                                     title={`Ante: ${transaction.ante} Blind: ${transaction.blind}`}
                                                 >
-                                                    <Text c="dimmed" size="sm">
-                                                        {transaction.cardName}
-                                                    </Text>
-                                                    <Badge size="xs" mt={4}>{ transaction.type.toUpperCase() } </Badge>
+                                                    <Group justify={'space-between'}>
+                                                        <Stack>
+                                                            <Text c="dimmed" size="sm">
+                                                                {transaction.cardName}
+                                                            </Text>
+                                                            <Badge size="xs"
+                                                                   mt={4}>{transaction.type.toUpperCase()} </Badge>
+                                                        </Stack>
+                                                        <Button color={'red'}
+                                                                onClick={() => removeBuys({...transaction, selectedAnte: transaction.original.ante,selectedBlind:transaction.original.blind })}> Undo </Button>
+                                                    </Group>
+
+
                                                 </Timeline.Item>
                                             )
                                         })

@@ -184,6 +184,8 @@ const shoppingListSlice = (set, get) => ({
         return set({buys: {...get().buys, [key]: value}}, undefined, 'shoppingList::buy')
     },
     removeCard: (purchase) => {
+        console.log(purchase
+        )
         const {selectedAnte, selectedBlind, cardName, location} = purchase
         let key = `${selectedAnte}-${selectedBlind}-${cardName}-${location}`;
         let current = get().buys;

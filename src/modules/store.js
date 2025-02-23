@@ -334,10 +334,9 @@ const makeBlueprintStore = (set, get) => ({
                 .values(buys)
                 .map(buy => ({
                         ...buy,
-                        ante: Number(buy.ante.split('ANTE ')[1]),
+                        ante: Number(buy.ante?.split('ANTE ')[1]),
                         blind: blinds.indexOf(buy.blind),
                         cardName: buy.cardName,
-
                     })
                 )
                 .filter((buy) => {

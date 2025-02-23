@@ -13,12 +13,13 @@ export function Output() {
     const maxRuns = useBlueprintStore(state => state.ante)
     const buys = useBlueprintStore(state => state.buys);
     const sells = useBlueprintStore(state => state.sells);
-
+    console.log(buys)
     const transactionHistory = useMemo(()=>{
         let mappedBuys = Object
             .values(buys)
             .map(buy => ({
-                    ante: Number(buy.ante.split('ANTE ')[1]),
+                    ...buy,
+                    ante: Number(buy.ante?.split('ANTE ')[1]),
                     blind: blinds.indexOf(buy.blind),
                     cardName: buy.cardName,
                 })
@@ -26,7 +27,8 @@ export function Output() {
         let mappedSells = Object
             .values(sells)
             .map(sell => ({
-                    ante: Number(sell.ante.split('ANTE ')[1]),
+                ...sell,
+                    ante: Number(sell.ante?.split('ANTE ')[1]),
                     blind: blinds.indexOf(sell.blind),
                     cardName: sell.cardName,
                 })
@@ -35,7 +37,6 @@ export function Output() {
         let ante = 1;
         let blind = 0
         let purchaseHistory = []
-        console.log(mappedBuys)
         while ((mappedBuys.length + mappedSells.length)) {
             if (ante >= maxRuns) {
                 console.log("maxRuns")

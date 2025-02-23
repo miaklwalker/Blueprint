@@ -40,12 +40,12 @@ export function Queue({cards, width = 71, height = 95, scale = 1}) {
     }, [embla, selectedResult])
     let slideWidth = width * scale;
     let slideHeight = height * scale;
-    let results = cards.map((tag, index) => (
-        <Carousel.Slide key={tag} pt={'1rem'}>
+    let results = cards.map((card, index) => (
+        <Carousel.Slide key={card} pt={'1rem'}>
             <RenderCardWithCanvas
                 searched={selectedResult?.location === 'queue' && selectedResult?.index === index}
                 meta={{ selectedBlind, selectedAnte, location:'queue'}}
-                value={tag}
+                value={card}
                 width={slideWidth}
                 height={slideHeight}
             />
@@ -104,7 +104,19 @@ export function Packs({value, width = 71, height = 95, scale = 1}) {
                 <SimpleGrid cols={{base: count + 1, lg: 6}}>
                     {
                         contents.split(',').map((item, index) => (
-                            <RenderCardWithCanvas key={index} value={item} width={width} height={height} scale={scale}/>
+                            <RenderCardWithCanvas
+                                meta={{
+                                    selectedAnte:tab,
+                                    selectedBlind:selectedBlind,
+                                    location:"pack",
+                                    type:'card',
+                                }}
+                                key={index}
+                                value={item}
+                                width={width}
+                                height={height}
+                                scale={scale}
+                            />
                         ))
                     }
                 </SimpleGrid>

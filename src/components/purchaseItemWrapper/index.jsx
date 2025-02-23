@@ -16,7 +16,7 @@ export function PurchaseItemWrapper({ showWikiLink,wikiLink, children, position=
         !owned ?
             buyCard({...meta}) :
             removeCard({...meta});
-    }, [meta]);
+    }, [meta, owned]);
     return (
         <HoverCard openDelay={300} position={position}>
             <HoverCard.Target>

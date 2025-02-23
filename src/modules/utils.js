@@ -385,7 +385,7 @@ export function searchAndHighlight() {
     });
 }
 
-export function analyzeSeed(state) {
+function analyzeSeed(state) {
 
     if(!state.seed) return ''
     if(state.seed.trim().length <= 1) return '';
@@ -413,6 +413,7 @@ export function analyzeSeed(state) {
     inst.setStake(state.stake);
     inst.setDeck(state.deck);
     var ghostDeck = (state.deck == "Ghost Deck");
+    console.log(Immolate)
     for (let a = 1; a <= state.ante; a++) {
         inst.initUnlocks(a, false);
         output += "==ANTE " + a + "==\n"
@@ -518,8 +519,7 @@ export function analyzeSeed(state) {
         }
 
         output += "\n";
-    };
-
+    }
     inst.delete();
     return output
 }

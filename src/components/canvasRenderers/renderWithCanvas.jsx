@@ -1,5 +1,5 @@
 import {useEffect, useRef} from "react";
-import {Box} from "@mantine/core";
+import {Box, Center} from "@mantine/core";
 
 export function RenderWithCanvas({renderFn, width, height, value}) {
     const renderCanvas = useRef(null);
@@ -11,8 +11,8 @@ export function RenderWithCanvas({renderFn, width, height, value}) {
         }
     }, [value])
     return (
-        <Box>
+        <Center>
             <canvas ref={renderCanvas}/>
-        </Box>
+        </Center>
     )
 }

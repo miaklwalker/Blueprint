@@ -1,8 +1,7 @@
 import {useCallback, useEffect, useMemo} from "react";
 import {useDebouncedValue} from "@mantine/hooks";
-import {analyzeSeed} from "../../../modules/utils.js";
 import {
-    AppShell,
+    AppShell, Autocomplete,
     Box, Button,
     Divider,
     NativeSelect,
@@ -19,10 +18,10 @@ import {useBlueprintStore} from "../../../modules/store.js";
 
 
 
-
-
 export function Settings() {
-    const theme = useMantineTheme()
+    const theme = useMantineTheme();
+    const analyzeSeed = useBlueprintStore(state => state.analyzeSeed);
+
     const seedIsOpen = useBlueprintStore(state => state.seedIsOpen);
     const seed = useBlueprintStore(state => state.seed)
     const deck = useBlueprintStore(state => state.deck)
@@ -30,7 +29,9 @@ export function Settings() {
     const selectedOptions = useBlueprintStore(state => state.selectedOptions);
     const stake = useBlueprintStore(state => state.stake)
     const version = useBlueprintStore(state => state.version)
-    const ante = useBlueprintStore(state => state.ante)
+    const ante = useBlueprintStore(state => state.ante);
+
+
 
     const reset = useBlueprintStore(state => state.reset)
     const openSelectOptionModal = useBlueprintStore(state => state.openSelectOptionModal)
@@ -41,43 +42,47 @@ export function Settings() {
     const setCardsPerAnte = useBlueprintStore(state => state.setCardsPerAnte)
     const setStake = useBlueprintStore(state => state.setStake)
     const setVersion = useBlueprintStore(state => state.setVersion)
-    const setAnte = useBlueprintStore(state => state.setAnte)
-    const setResults = useBlueprintStore(state => state.setResults);
+    const setAnte = useBlueprintStore(state => state.setAnte);
+
+
 
     const cardsPerAnteString = useBlueprintStore(state => state.getCardsPerAnteString)
 
-    const analyzeState = useMemo(() => ({
-        seed,
-        deck,
-        cardsPerAnte: cardsPerAnteString(),
-        stake,
-        version,
-        ante,
-        selectedOptions
-    }), [seed, deck, cardsPerAnteString, stake, version, ante, selectedOptions, cardsPerAnte]);
-    const [debounced] = useDebouncedValue(analyzeState, 500);
+    const anteTab = useBlueprintStore(state => state.selectedAnte);
+    const blindTab = useBlueprintStore(state => state.selectedBlind);
 
     useEffect(() => {
         if (!seedIsOpen) return;
-        const output = analyzeSeed(debounced)
-        setResults(output)
-    }, [debounced]);
+        console.log(`Moved to: ${anteTab}::${blindTab}`)
+        analyzeSeed()
+    }, [anteTab, blindTab]);
+
     const handleAnalyzeClick = useCallback(() => {
-        const output = analyzeSeed(debounced)
+        analyzeSeed()
         closeSettings();
         setSeedIsOpen(true)
-        setResults(output)
-    }, [debounced]);
+    }, []);
 
     return (
         <AppShell.Navbar>
             <Title my={'sm'} px={'1rem'} order={4}> Settings </Title>
             <Divider mb={'lg'}/>
             <SimpleGrid cols={1} px={'1rem'}>
-                <TextInput
+                <Autocomplete
                     label={'Seed'}
                     value={seed}
-                    onChange={(e) => setSeed(e.currentTarget.value)}
+                    onChange={(e) => setSeed(e)}
+                    data={[
+                        {
+                            group: 'Popular Seeds',
+                            items: [
+                                '7LB2WVPK',
+                                'PHQ8P93R',
+                                '8Q47WV6K',
+                                'CRNWYUXA'
+                            ]
+                        }
+                    ]}
                 />
                 <NumberInput
                     label={'Max Ante'}
@@ -149,9 +154,10 @@ export function Settings() {
                     <option value="10014">1.0.0n</option>
                 </NativeSelect>
                 <Divider my={'md'}/>
-                <Button color={theme.colors.blue[9]} onClick={()=> openSelectOptionModal()} > Modify Unlocks </Button>
+                <Button color={theme.colors.blue[9]} onClick={() => openSelectOptionModal()}> Modify Unlocks </Button>
                 <Button color={theme.colors.red[9]} variant={'filled'} onClick={() => reset()}> Reset </Button>
-                <Button color={theme.colors.green[9]} variant={'filled'} onClick={handleAnalyzeClick}> Analyze Seed </Button>
+                <Button color={theme.colors.green[9]} variant={'filled'} onClick={handleAnalyzeClick}> Analyze
+                    Seed </Button>
             </SimpleGrid>
         </AppShell.Navbar>
     )

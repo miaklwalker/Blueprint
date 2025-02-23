@@ -1,7 +1,7 @@
 import {useEffect, useMemo, useState} from "react";
 import {Carousel} from "@mantine/carousel";
 import {
-    Box,
+    Box, Center,
     Fieldset,
     Flex,
     Grid,
@@ -20,6 +20,7 @@ import {RenderCardWithCanvas} from "../canvasRenderers/renderCardWithCanvas.jsx"
 import {RenderWithCanvas} from "../canvasRenderers/renderWithCanvas.jsx";
 import {SearchSeedInput} from "../searchSeedInput/searchSeedInput.jsx";
 import {useBlueprintStore} from "../../modules/store.js";
+import {PurchaseItemWrapper} from "../purchaseItemWrapper/index.jsx";
 
 
 
@@ -155,19 +156,34 @@ export function AntePanel({ante}) {
                     </Grid.Col>
                     <Grid.Col order={{base: 4, lg: 4}} span={{base: 12}}>
                         <Group justify={'flex-start'} align={'flex-start'}>
-                            <Tooltip label={ante.voucher}>
+
                                 <Flex w={'fit-content'} direction={'column'} justify={'flex-start'}>
                                     <Title order={4} ta={'left'} mb={'.25rem'}> Voucher </Title>
-                                    <RenderWithCanvas
-                                        name={'Voucher'}
-                                        value={ante.voucher}
-                                        renderFn={renderVoucher}
-                                        width={71}
-                                        height={95}
-                                    />
+                                    <PurchaseItemWrapper
+                                        showWikiLink
+                                        wikiLink={'https://balatrogame.fandom.com/wiki/Vouchers'}
+                                        meta={{
+                                            selectedAnte:tab,
+                                            selectedBlind:selectedBlind,
+                                            location:"shop",
+                                            type:'voucher',
+                                            cardName:ante.voucher
+                                        }}
+
+                                    >
+                                    <Center>
+                                        <RenderWithCanvas
+                                            name={'Voucher'}
+                                            value={ante.voucher}
+                                            renderFn={renderVoucher}
+                                            width={71}
+                                            height={95}
+                                        />
+                                    </Center>
+                                    </PurchaseItemWrapper>
+
                                     <Text fz={'xs'} ta={'center'} c={'dimmed'}>{ante.voucher}</Text>
                                 </Flex>
-                            </Tooltip>
                             <Flex direction={'column'} align={'center'} justify={'flex-start'}>
                                 <Title order={4} mb={'.25rem'}> Tags </Title>
                                 <Stack justify={'center'}>

@@ -1,26 +1,124 @@
 import {useViewportSize} from "@mantine/hooks";
-import {AppShell, ScrollArea} from "@mantine/core";
+import {Accordion, AppShell, ScrollArea, Timeline, Text, Paper, Badge} from "@mantine/core";
 import {CodeHighlight} from "@mantine/code-highlight";
 import {useBlueprintStore} from "../../../modules/store.js";
+import {useMemo} from "react";
+import {IconCurrency, IconCurrencyDollar} from "@tabler/icons-react";
+import {blinds} from "../../../modules/const.js";
 
 
 export function Output() {
     const results = useBlueprintStore(state => state.results)
-    const asideSizes = {base: 200, md: 300, lg: 550}
+    const asideSizes = {base: 180, md: 280, lg: 520}
+    const maxRuns = useBlueprintStore(state => state.ante)
+    const buys = useBlueprintStore(state => state.buys);
+    const sells = useBlueprintStore(state => state.sells);
+
+    const transactionHistory = useMemo(()=>{
+        let mappedBuys = Object
+            .values(buys)
+            .map(buy => ({
+                    ante: Number(buy.ante.split('ANTE ')[1]),
+                    blind: blinds.indexOf(buy.blind),
+                    cardName: buy.cardName,
+                })
+            )
+        let mappedSells = Object
+            .values(sells)
+            .map(sell => ({
+                    ante: Number(sell.ante.split('ANTE ')[1]),
+                    blind: blinds.indexOf(sell.blind),
+                    cardName: sell.cardName,
+                })
+            )
+
+        let ante = 1;
+        let blind = 0
+        let purchaseHistory = []
+        console.log(mappedBuys)
+        while ((mappedBuys.length + mappedSells.length)) {
+            if (ante >= maxRuns) {
+                console.log("maxRuns")
+                break
+            }
+            for (let buy of mappedBuys) {
+                if (buy.ante === ante && buy.blind === blind) {
+                    buy.type = 'buy'
+                    purchaseHistory.push(buy)
+                }
+            }
+            for (let sell of mappedSells) {
+                if (sell.ante === ante && sell.blind === blind) {
+                    sell.type = 'sell'
+                    purchaseHistory.push(sell)
+                }
+            }
+
+            if (blind !== 0 && blind % 2 === 0) {
+                ante++
+                blind = 0
+            } else {
+                blind++;
+            }
+        }
+        return purchaseHistory
+    },[maxRuns, buys, sells]);
+    console.log(transactionHistory)
+
     return (
         <AppShell.Aside>
-            <ScrollArea
-                w={'100%'}
-                h={'100%'}
-                type="scroll"
-            >
-                <CodeHighlight
-                    w={{base: '100%', lg: asideSizes.lg}}
-                    maw={'100%'}
-                    code={results || ''}
-                    language={'plaintext'}
-                />
-            </ScrollArea>
+            <Accordion variant="separated" defaultValue="Shopping List">
+                <Accordion.Item value={'Seed Output'}>
+                    <Accordion.Control> Generated Seed Output </Accordion.Control>
+                    <Accordion.Panel>
+                        <ScrollArea
+                            type="scroll"
+                            h={'50vh'}
+                            w={asideSizes}
+                        >
+                            <CodeHighlight
+                                w={{base: '100%', lg: asideSizes.lg}}
+                                maw={'100%'}
+                                code={results || ''}
+                                language={'plaintext'}
+                            />
+                        </ScrollArea>
+                    </Accordion.Panel>
+                </Accordion.Item>
+                <Accordion.Item value={'Shopping List'}>
+                    <Accordion.Control> Shopping List </Accordion.Control>
+                    <Accordion.Panel pt={'md'}>
+                        <Paper>
+                            <ScrollArea
+                                type="auto"
+                                h={'60vh'}
+                                w={asideSizes}
+                            >
+                                <Timeline color={'blue'} active={transactionHistory?.length ?? 0} bulletSize={24} lineWidth={2}>
+                                    {
+                                        transactionHistory &&
+                                        transactionHistory.map((transaction, i) => {
+                                            return (
+                                                <Timeline.Item
+                                                    color={transaction.type === 'buy' ? 'green' : 'red'}
+                                                    key={i} bullet={<IconCurrencyDollar/>}
+                                                    title={`Ante: ${transaction.ante} Blind: ${transaction.blind}`}
+                                                >
+                                                    <Text c="dimmed" size="sm">
+                                                        {transaction.cardName}
+                                                    </Text>
+                                                    <Badge size="xs" mt={4}>{ transaction.type.toUpperCase() } </Badge>
+                                                </Timeline.Item>
+                                            )
+                                        })
+                                    }
+                                </Timeline>
+                            </ScrollArea>
+                        </Paper>
+                    </Accordion.Panel>
+                </Accordion.Item>
+            </Accordion>
+
         </AppShell.Aside>
     )
 }

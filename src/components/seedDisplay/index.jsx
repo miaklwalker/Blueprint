@@ -23,8 +23,6 @@ import {useBlueprintStore} from "../../modules/store.js";
 import {PurchaseItemWrapper} from "../purchaseItemWrapper/index.jsx";
 
 
-
-
 export function Queue({cards, width = 71, height = 95, scale = 1}) {
     const [embla, setEmbla] = useState(null);
     const selectedResult = useBlueprintStore(state => state.selectedSearchResult);
@@ -44,7 +42,7 @@ export function Queue({cards, width = 71, height = 95, scale = 1}) {
         <Carousel.Slide key={card} pt={'1rem'}>
             <RenderCardWithCanvas
                 searched={selectedResult?.location === 'queue' && selectedResult?.index === index}
-                meta={{ selectedBlind, selectedAnte, location:'queue'}}
+                meta={{selectedBlind, selectedAnte, location: 'queue'}}
                 value={card}
                 width={slideWidth}
                 height={slideHeight}
@@ -106,10 +104,10 @@ export function Packs({value, width = 71, height = 95, scale = 1}) {
                         contents.split(',').map((item, index) => (
                             <RenderCardWithCanvas
                                 meta={{
-                                    selectedAnte:tab,
-                                    selectedBlind:selectedBlind,
-                                    location:"pack",
-                                    type:'card',
+                                    selectedAnte: tab,
+                                    selectedBlind: selectedBlind,
+                                    location: "pack",
+                                    type: 'card',
                                 }}
                                 key={index}
                                 value={item}
@@ -169,20 +167,20 @@ export function AntePanel({ante}) {
                     <Grid.Col order={{base: 4, lg: 4}} span={{base: 12}}>
                         <Group justify={'flex-start'} align={'flex-start'}>
 
-                                <Flex w={'fit-content'} direction={'column'} justify={'flex-start'}>
-                                    <Title order={4} ta={'left'} mb={'.25rem'}> Voucher </Title>
-                                    <PurchaseItemWrapper
-                                        showWikiLink
-                                        wikiLink={'https://balatrogame.fandom.com/wiki/Vouchers'}
-                                        meta={{
-                                            selectedAnte:tab,
-                                            selectedBlind:selectedBlind,
-                                            location:"shop",
-                                            type:'voucher',
-                                            cardName:ante.voucher
-                                        }}
+                            <Flex w={'fit-content'} direction={'column'} justify={'flex-start'}>
+                                <Title order={4} ta={'left'} mb={'.25rem'}> Voucher </Title>
+                                <PurchaseItemWrapper
+                                    showWikiLink
+                                    wikiLink={'https://balatrogame.fandom.com/wiki/Vouchers'}
+                                    meta={{
+                                        selectedAnte: tab,
+                                        selectedBlind: selectedBlind,
+                                        location: "shop",
+                                        type: 'voucher',
+                                        cardName: ante.voucher
+                                    }}
 
-                                    >
+                                >
                                     <Center>
                                         <RenderWithCanvas
                                             name={'Voucher'}
@@ -192,10 +190,10 @@ export function AntePanel({ante}) {
                                             height={95}
                                         />
                                     </Center>
-                                    </PurchaseItemWrapper>
+                                </PurchaseItemWrapper>
 
-                                    <Text fz={'xs'} ta={'center'} c={'dimmed'}>{ante.voucher}</Text>
-                                </Flex>
+                                <Text fz={'xs'} ta={'center'} c={'dimmed'}>{ante.voucher}</Text>
+                            </Flex>
                             <Flex direction={'column'} align={'center'} justify={'flex-start'}>
                                 <Title order={4} mb={'.25rem'}> Tags </Title>
                                 <Stack justify={'center'}>
@@ -271,21 +269,23 @@ export function SeedDisplay() {
                 onChange={(e) => setTab(e)}
                 keepMounted={false}
             >
-                <Tabs.List style={{display: width > 767 ? 'revert' : 'none'}} mr={'2rem'}>
-                    <ScrollArea mah={'60vh'}>
-                        {
-                            seedDetails.map((seed) => {
-                                let title = seed.title.replaceAll('=', '')
-                                return (
-                                    <Tabs.Tab value={title} key={title}>
-                                        {title}
-                                    </Tabs.Tab>
-                                )
-                            })
-                        }
+                <Box mah={'65vh'} style={{display: width > 767 ? 'revert' : 'none'}} mr={'2rem'}>
+                    <ScrollArea type="scroll" scrollbars={'y'} h={'100%'}>
+                        <Tabs.List >
+                            {
+                                seedDetails.map((seed) => {
+                                    let title = seed.title.replaceAll('=', '')
+                                    return (
+                                        <Tabs.Tab value={title} key={title}>
+                                            {title}
+                                        </Tabs.Tab>
+                                    )
+                                })
+                            }
+                        </Tabs.List>
                     </ScrollArea>
+                </Box>
 
-                </Tabs.List>
                 {
                     seedDetails.map((ante, i) => <AntePanel ante={ante} key={i}/>)
                 }

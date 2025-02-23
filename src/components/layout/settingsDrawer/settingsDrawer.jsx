@@ -3,7 +3,7 @@ import {useDebouncedCallback, useDebouncedValue} from "@mantine/hooks";
 import {
     AppShell, Autocomplete,
     Box, Button,
-    Divider,
+    Divider, Group,
     NativeSelect,
     NumberInput, ScrollArea,
     SimpleGrid,
@@ -14,9 +14,6 @@ import {
 } from "@mantine/core";
 import {useBlueprintStore} from "../../../modules/store.js";
 import {IconJoker, IconPlayCard} from "@tabler/icons-react";
-
-
-
 
 
 export function Settings() {
@@ -31,7 +28,7 @@ export function Settings() {
     const version = useBlueprintStore(state => state.version)
     const ante = useBlueprintStore(state => state.ante);
 
-    const showCardSpoilers = useBlueprintStore(state =>  state.showCardSpoilers);
+    const showCardSpoilers = useBlueprintStore(state => state.showCardSpoilers);
     const setShowCardSpoilers = useBlueprintStore(state => state.setShowCardSpoilers)
 
     const reset = useBlueprintStore(state => state.reset)
@@ -51,12 +48,11 @@ export function Settings() {
     const cardsPerAnteString = useBlueprintStore(state => state.getCardsPerAnteString)
 
 
-
-    const handleAnalyzeSeed = useDebouncedCallback(()=>{
+    const handleAnalyzeSeed = useDebouncedCallback(() => {
         analyzeSeed()
         setSettingsChanged(false)
         setSeedIsOpen(true)
-    },150)
+    }, 150)
 
     useEffect(() => {
         if (!seedIsOpen || !settingsChanged) return;
@@ -68,7 +64,7 @@ export function Settings() {
     }, []);
 
     return (
-        <AppShell.Navbar  p="md">
+        <AppShell.Navbar p="md">
             <AppShell.Section>
                 <Title my={'sm'} px={'1rem'} order={4}>
                     Settings
@@ -162,15 +158,19 @@ export function Settings() {
                         <option value="10103">1.0.1c</option>
                         <option value="10014">1.0.0n</option>
                     </NativeSelect>
-
-                        <Switch
-                            size={'xl'}
-                            value={showCardSpoilers}
-                            thumbIcon={ showCardSpoilers ? (<IconJoker color={'black'} />) : (<IconPlayCard color={'black'} />)}
-                            onChange={e=>setShowCardSpoilers(e.currentTarget.checked)}
-                        />
-
-
+                    <Box>
+                        <Text mb={0} fz={'xs'}>Show Joker Spoilers</Text>
+                        <Tooltip label="Cards that give jokers, are replaced with the joker the card would give."
+                                 refProp="rootRef">
+                            <Switch
+                                size={'xl'}
+                                value={showCardSpoilers}
+                                thumbIcon={showCardSpoilers ? (<IconJoker color={'black'}/>) : (
+                                    <IconPlayCard color={'black'}/>)}
+                                onChange={e => setShowCardSpoilers(e.currentTarget.checked)}
+                            />
+                        </Tooltip>
+                    </Box>
                 </SimpleGrid>
             </AppShell.Section>
             <AppShell.Section>

@@ -3,6 +3,92 @@ import {create} from "zustand";
 import {blinds, options} from "./const.js";
 import {Buy} from "./classes.js";
 
+const ItemSource = {
+    R_Joker_Common: "Joker1",
+    R_Joker_Uncommon: "Joker2",
+    R_Joker_Rare: "Joker3",
+    R_Joker_Legendary: "Joker4",
+    R_Joker_Rarity: "rarity",
+    R_Joker_Edition: "edi",
+    R_Misprint: "misprint",
+    R_Standard_Has_Enhancement: "stdset",
+    R_Enhancement: "Enhanced",
+    R_Card: "front",
+    R_Standard_Edition: "standard_edition",
+    R_Standard_Has_Seal: "stdseal",
+    R_Standard_Seal: "stdsealtype",
+    R_Shop_Pack: "shop_pack",
+    R_Tarot: "Tarot",
+    R_Spectral: "Spectral",
+    R_Tags: "Tag",
+    R_Shuffle_New_Round: "nr",
+    R_Card_Type: "cdt",
+    R_Planet: "Planet",
+    R_Lucky_Mult: "lucky_mult",
+    R_Lucky_Money: "lucky_money",
+    R_Sigil: "sigil",
+    R_Ouija: "ouija",
+    R_Wheel_of_Fortune: "wheel_of_fortune",
+    R_Gros_Michel: "gros_michel",
+    R_Cavendish: "cavendish",
+    R_Voucher: "Voucher",
+    R_Voucher_Tag: "Voucher_fromtag",
+    R_Orbital_Tag: "orbital",
+    R_Soul: "soul_",
+    R_Erratic: "erratic",
+    R_Eternal: "stake_shop_joker_eternal",
+    R_Perishable: "ssjp",
+    R_Rental: "ssjr",
+    R_Eternal_Perishable: "etperpoll",
+    R_Rental_Pack: "packssjr",
+    R_Eternal_Perishable_Pack: "packetper",
+    R_Boss: "boss",
+
+    S_Shop: "sho",
+    S_Emperor: "emp",
+    S_High_Priestess: "pri",
+    S_Judgement: "jud",
+    S_Wraith: "wra",
+    S_Arcana: "ar1",
+    S_Celestial: "pl1",
+    S_Spectral: "spe",
+    S_Standard: "sta",
+    S_Buffoon: "buf",
+    S_Vagabond: "vag",
+    S_Superposition: "sup",
+    S_8_Ball: "8ba",
+    S_Seance: "sea",
+    S_Sixth_Sense: "sixth",
+    S_Top_Up: "top",
+    S_Rare_Tag: "rta",
+    S_Uncommon_Tag: "uta",
+    S_Blue_Seal: "blusl",
+    S_Purple_Seal: "8ba",
+    S_Soul: "sou",
+    S_Riff_Raff: "rif",
+    S_Cartomancer: "car",
+};
+
+function handleConvertCardToJoker(inst,source, ante) {
+    let str = ''
+    let joker = inst.nextJoker(source, ante, false);
+    let jokerCard = joker.joker;
+    if (joker.stickers.eternal) str += "Eternal ";
+    if (joker.stickers.perishable) str += "Perishable ";
+    if (joker.stickers.rental) str += "Rental ";
+    if (joker.edition !== "No Edition") str += joker.edition + " ";
+    return { jokerCard, str }
+}
+
+function handleSoul(inst,output,ante){
+    return handleConvertCardToJoker(inst,ItemSource.S_Soul,2)
+}
+function handleJudgement(inst,output,ante){
+    return handleConvertCardToJoker(inst,ItemSource.S_Judgement,ante)
+}
+function handleWraith(inst,output,ante){
+    return handleConvertCardToJoker(inst,ItemSource.S_Wraith,ante)
+}
 
 const getUrlSearch = () => {
     return window.location.search.slice(1)
@@ -66,17 +152,19 @@ const seedSettingsSlice = (set, get) => ({
     version: '10106',
     ante: 8,
     selectedOptions: Array(61).fill(true),
+    settingsChanged: false,
+    setSettingsChanged:(value)=>set({ settingsChanged: value}),
 
-
-    setSeed: (value) => set({seed: value.toUpperCase()}),
-    setDeck: (value) => set({deck: value}),
-    setCardsPerAnte: (value) => set({cardsPerAnte: value}),
-    setStake: (value) => set({stake: value}),
-    setVersion: (value) => set({version: value}),
-    setAnte: (value) => set({ante: value}),
+    setSeed: (value) => set({seed: value.toUpperCase(), settingsChanged: true}),
+    setDeck: (value) => set({deck: value, settingsChanged: true}),
+    setCardsPerAnte: (value) => set({cardsPerAnte: value, settingsChanged: true}),
+    setStake: (value) => set({stake: value, settingsChanged: true}),
+    setVersion: (value) => set({version: value, settingsChanged: true}),
+    setAnte: (value) => set({ante: value, settingsChanged: true}),
     setSelectedOptions: (newOptions) => {
         return set({
-            selectedOptions: options.map(option => newOptions.includes(option))
+            selectedOptions: options.map(option => newOptions.includes(option)),
+            settingsChanged: true
         })
     },
 
@@ -85,7 +173,6 @@ const seedSettingsSlice = (set, get) => ({
         result[0] = 15;
         return result.join(',')
     },
-
 
 
 });
@@ -107,6 +194,10 @@ const modalsSlice = (set, get) => ({
 
 });
 const applicationSlice = (set, get) => ({
+
+    showCardSpoilers: true,
+    setShowCardSpoilers: (value) => set({showCardSpoilers: value, settingsChanged: true}),
+
     seedIsOpen: false,
     setSeedIsOpen: (value) => set({seedIsOpen: value}),
 
@@ -310,12 +401,12 @@ const makeBlueprintStore = (set, get) => ({
         selectedBlind: 'Big Blind',
         results: '',
         seedIsOpen: false,
-        buys:{},
-        sells:{},
+        buys: {},
+        sells: {},
     }),
     analyzeSeed: () => {
-
-        const {seed, deck, stake, version, ante, selectedOptions, selectedAnte, selectedBlind} = get();
+        console.log("Analyzing")
+        const {seed, deck, stake, version, ante, selectedOptions, selectedAnte, selectedBlind, showCardSpoilers} = get();
         const cardsPerAnteString = get().getCardsPerAnteString();
         let output = '';
 
@@ -378,13 +469,33 @@ const makeBlueprintStore = (set, get) => ({
             for (let q = 1; q <= cardsPerAnte[a - 1]; q++) {
                 output += q + ") ";
                 let item = inst.nextShopItem(a);
+                let card = item.item;
                 if (item.type === "Joker") {
                     if (item.jokerData.stickers.eternal) output += "Eternal ";
                     if (item.jokerData.stickers.perishable) output += "Perishable ";
                     if (item.jokerData.stickers.rental) output += "Rental ";
                     if (item.jokerData.edition !== "No Edition") output += item.jokerData.edition + " ";
+                }else if( item.type === 'Tarot' || item.type === 'Spectral') {
+                    if(showCardSpoilers){
+                        if (card === 'The Soul') {
+                            let { jokerCard, str } = handleSoul(inst,output,a)
+                            card = jokerCard
+                            output+=str
+                        }
+                        else if (card === 'Judgement'){
+                            let { jokerCard, str } = handleJudgement(inst,output,ante)
+                            card = jokerCard
+                            output+=str
+                        }
+                        else if (card === 'Wraith'){
+                            let { jokerCard, str } = handleWraith(inst,output,ante)
+                            card = jokerCard
+                            output+=str
+                        }
+                    }
                 }
-                output += item.item + "\n";
+                //
+                output += card + "\n";
                 item.delete();
             }
             output += "\nPacks: \n";
@@ -404,7 +515,20 @@ const makeBlueprintStore = (set, get) => ({
                 if (packInfo.type === "Arcana Pack") {
                     let cards = inst.nextArcanaPack(packInfo.size, a);
                     for (let c = 0; c < packInfo.size; c++) {
-                        output += cards.get(c);
+                        let card = cards.get(c);
+                        if(showCardSpoilers){
+                            if (card === 'The Soul') {
+                                let { jokerCard, str } = handleSoul(inst,output,a)
+                                card = jokerCard
+                                output+=str
+                            }
+                            else if (card === 'Judgement'){
+                                let { jokerCard, str } = handleJudgement(inst,output,ante)
+                                card = jokerCard
+                                output+=str
+                            }
+                        }
+                        output += card;
                         output += (c + 1 !== packInfo.size) ? ", " : "";
                     }
                     cards.delete();
@@ -412,7 +536,20 @@ const makeBlueprintStore = (set, get) => ({
                 if (packInfo.type === "Spectral Pack") {
                     let cards = inst.nextSpectralPack(packInfo.size, a);
                     for (let c = 0; c < packInfo.size; c++) {
-                        output += cards.get(c);
+                        let card = cards.get(c);
+                        if(showCardSpoilers){
+                            if (card === 'The Soul') {
+                                let { jokerCard, str } = handleSoul(inst,output,a)
+                                card = jokerCard
+                                output+=str
+                            }
+                            else if (card === 'Wraith'){
+                                let { jokerCard, str } = handleWraith(inst,output,ante)
+                                card = jokerCard
+                                output+=str
+                            }
+                        }
+                        output += card
                         output += (c + 1 !== packInfo.size) ? ", " : "";
                     }
                     cards.delete();

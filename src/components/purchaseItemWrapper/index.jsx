@@ -9,7 +9,6 @@ export function PurchaseItemWrapper({ showWikiLink,wikiLink, children, position=
     const removeCard = useBlueprintStore(state => state.removeCard);
     const isOwned = useBlueprintStore(state => state.owned);
     const owned = useMemo(() => isOwned({...meta}), [meta, isOwned,buys])
-    console.log(meta)
     const handleBuy = useCallback(() => {
         // use the purchased joker info to generate the card after analyze changes
         // reset needs to remove buys and sells

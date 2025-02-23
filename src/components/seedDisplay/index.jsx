@@ -59,7 +59,7 @@ export function Queue({cards, width = 71, height = 95, scale = 1}) {
                     // loop={true}
                     getEmblaApi={setEmbla}
                     align="center"
-                    initialSlide={6}
+                    initialSlide={0}
                     containScroll={"trimSnaps"}
                     slideSize={{base: Number(slideWidth + 20)}}
                     height={slideHeight + (70 * scale)}

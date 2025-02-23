@@ -1,17 +1,13 @@
-import {useCallback, useEffect, useMemo, useRef} from "react";
+import {useEffect, useRef} from "react";
 import {
-    determineItemType, getModifierColor,
+    determineItemType,
     maskToCanvas,
     parseCardItem,
     parseStandardCardName,
     renderStandardCard
 } from "../../modules/utils.js";
-import {Anchor, Badge, Box, Button, Center, Flex, Group, HoverCard, Indicator, Paper, Stack, Text} from "@mantine/core";
-import {useBlueprintStore} from "../../modules/store.js";
+import {Paper} from "@mantine/core";
 import {PurchaseItemWrapper} from "../purchaseItemWrapper/index.jsx";
-
-
-
 
 
 export function RenderCardWithCanvas({width, height, value, meta, searched}) {
@@ -41,6 +37,8 @@ export function RenderCardWithCanvas({width, height, value, meta, searched}) {
                     ...meta,
                     cardName,
                     itemType,
+                    itemModifiers,
+                    itemStickers,
                     itemSeals,
                     baseCardName
                 }}

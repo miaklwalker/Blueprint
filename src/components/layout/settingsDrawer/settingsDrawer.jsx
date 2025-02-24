@@ -14,6 +14,8 @@ import {
 } from "@mantine/core";
 import {useBlueprintStore} from "../../../modules/store.js";
 import {IconJoker, IconPlayCard} from "@tabler/icons-react";
+import {SeedInputAutoComplete} from "../../seedInputAutocomplete/index.jsx";
+
 
 
 export function Settings() {
@@ -73,21 +75,9 @@ export function Settings() {
             <Divider mb={'lg'}/>
             <AppShell.Section grow my="md" component={ScrollArea}>
                 <SimpleGrid cols={1} px={'1rem'}>
-                    <Autocomplete
-                        label={'Seed'}
-                        value={seed}
-                        onChange={(e) => setSeed(e)}
-                        data={[
-                            {
-                                group: 'Popular Seeds',
-                                items: [
-                                    '7LB2WVPK',
-                                    'PHQ8P93R',
-                                    '8Q47WV6K',
-                                    'CRNWYUXA'
-                                ]
-                            }
-                        ]}
+                    <SeedInputAutoComplete
+                        seed={seed}
+                        setSeed={setSeed}
                     />
                     <NumberInput
                         label={'Max Ante'}

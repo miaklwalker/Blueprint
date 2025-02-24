@@ -95,7 +95,7 @@ export function Packs({value, width = 71, height = 95, scale = 1}) {
     const blindOffset = offsets[selectedBlind];
 
     const packs = value.slice(...blindOffset).map((item, index) => {
-        const [title, contents] = item.split('-')
+        const [title, contents] = item.split(' - ')
         const count = contents.split(',').length;
         return (
             <Fieldset w={'100%'} legend={title} key={index}>

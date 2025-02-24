@@ -18,11 +18,18 @@ export function RenderCardWithCanvas({width, height, value, meta, searched}) {
     useEffect(() => {
         let canvas = renderCanvas?.current
         if (canvas !== null) {
-            if (itemType !== 'unknown') {
-                maskToCanvas(canvas, cardName, itemType, itemModifiers, itemStickers);
-            } else {
-                const {rank, suit, modifiers, seal} = parseStandardCardName(cardName);
-                renderStandardCard(canvas, rank, suit, modifiers, seal)
+            try {
+                if (itemType !== 'unknown') {
+                    maskToCanvas(canvas, cardName, itemType, itemModifiers, itemStickers);
+                } else {
+
+                    const {rank, suit, modifiers, seal} = parseStandardCardName(cardName);
+                    renderStandardCard(canvas, rank, suit, modifiers, seal)
+                }
+            } catch (error) {
+                console.log(value)
+                console.log(parseCardItem(value))
+                console.error(error);
             }
             canvas.width = width;
             canvas.height = height;

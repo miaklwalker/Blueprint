@@ -556,7 +556,6 @@ export function parseCardItem(item) {
     const modifiers = ['Foil', 'Holographic', 'Polychrome', 'Negative'];
     const stickers = ['Perishable', 'Rental', 'Eternal'];
     const seals = ['Purple Seal', 'Red Seal', 'Blue Seal', 'Gold Seal'];
-
     let standardCardName = item.replace(/^\d+\)/, '').trim();
     let baseCardName = item.replace(/^\d+\)/, '').trim()
     let itemModifiers = [];
@@ -583,7 +582,7 @@ export function parseCardItem(item) {
 
     seals.forEach(seal => {
         const regex = new RegExp(`\\b${seal}\\b`, 'i');
-        if (regex.test(standardCardName)) {
+        if (regex.test(baseCardName)) {
             itemStickers.push(seal);
             baseCardName = baseCardName.replace(regex, '').trim();
         }

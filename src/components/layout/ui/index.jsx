@@ -6,6 +6,7 @@ import {useCallback, useMemo} from "react";
 import {useDebouncedValue} from "@mantine/hooks";
 
 import {useBlueprintStore} from "../../../modules/store.js";
+import {SeedInputAutoComplete} from "../../seedInputAutocomplete/index.jsx";
 
 export function AnalyzeSeedInput() {
     const analyzeSeed = useBlueprintStore(state => state.analyzeSeed)
@@ -18,6 +19,7 @@ export function AnalyzeSeedInput() {
     const version = useBlueprintStore(state => state.version)
     const ante = useBlueprintStore(state => state.ante);
     const selectedOptions = useBlueprintStore(state => state.selectedOptions);
+    const setSettingsChanged = useBlueprintStore(state => state.setSettingsChanged)
 
 
     const analyzeState = useMemo(() => ({
@@ -31,19 +33,17 @@ export function AnalyzeSeedInput() {
     }), [seed, deck, cardsPerAnteString, stake, version, ante, selectedOptions]);
     const [debounced] = useDebouncedValue(analyzeState, 500);
     const handleAnalyzeClick = useCallback(() => {
-        analyzeSeed(debounced)
+        analyzeSeed()
+        setSettingsChanged(false)
         setSeedIsOpen(true)
     }, [debounced]);
 
     return (
         <Box>
-            <Text>Enter Seed</Text>
-            <Group>
-                <TextInput
-                    value={seed}
-                    onChange={(e) => setSeed(e.currentTarget.value)}
-                    flex={1}
-                    placeholder={'Enter Seed'}
+            <Group align={'flex-end'}>
+                <SeedInputAutoComplete
+                    seed={seed}
+                    setSeed={setSeed}
                 />
                 <Button onClick={handleAnalyzeClick}> Submit </Button>
             </Group>

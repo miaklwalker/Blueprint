@@ -30,6 +30,7 @@ export function SearchSeedInput({...props}) {
         const queues = extractShopQueues(results);
         const resultsFound = [];
         const LOWER_CASE_SEARCH_STRING = searchString.toLowerCase();
+        if(!searchString || !searchString?.length) return;
         for (let {packs, queue, tags, voucher, boss, title: ante} of queues) {
             let title = ante.replaceAll('=', '');
             let inQueue = queue.some(card => card?.toLowerCase()?.includes(LOWER_CASE_SEARCH_STRING));
@@ -76,8 +77,8 @@ export function SearchSeedInput({...props}) {
                 actions={
                     searchResults.map((result, index) => ({
                         id: index,
-                        description: result.name,
-                        label: `${result.ante} (${result.location})`,
+                        description: result.name + ` ${result.location === 'queue' ? ` | Queue Position: ${result.index}` : ''}`,
+                        label: `${result.ante} (${result.location}) `,
                         onClick: () => {
                             // closeSpotlight()
                             goToResults(result)

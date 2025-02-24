@@ -95,18 +95,32 @@ const getUrlSearch = () => {
 }
 const persistentStorage = {
     getItem: (key) => {
-        if (getUrlSearch()) {
-            const searchParams = new URLSearchParams(getUrlSearch())
-            return searchParams.get(key)
-        } else {
-            // Otherwise, we should load from localstorage or alternative storage
-            return JSON.parse(sessionStorage.getItem(key))
+        let urlState = {};
+        if(getUrlSearch()){
+            let searchParams = new URLSearchParams(getUrlSearch());
+            let seed = searchParams.get('seed');
+            if(seed) urlState.seed = seed;
+            let deck = searchParams.get('deck');
+            if(deck) urlState.deck = deck;
+            if( seed && deck ) {
+                urlState.seedIsOpen = true
+                urlState.settingsChanged = true
+            };
         }
+        let storedState = JSON.parse(sessionStorage.getItem(key));
+        let results = {
+            state: {
+                ...urlState,
+                ...storedState,
+            }
+        }
+        return results
     },
     setItem: (key, newValue) => {
         if (getUrlSearch()) {
             const searchParams = new URLSearchParams(getUrlSearch())
-            searchParams.set(key, JSON.stringify(newValue))
+            searchParams.set('seed', newValue.state.seed);
+            searchParams.set('deck', newValue.state.deck);
             window.history.replaceState(null, '', `?${searchParams.toString()}`)
         }
         sessionStorage.setItem(key, JSON.stringify(newValue))
@@ -120,27 +134,15 @@ const persistentStorage = {
 const buildURLSuffix = (params, version = 0) => {
     const searchParams = new URLSearchParams()
 
-    const zustandStoreParams = {
-        state: {
-            seed: params.seed,
-            deck: params.deck,
-            cardsPerAnte: params.cardsPerAnte,
-            stake: params.stake,
-            version: params.version,
-            ante: params.ante,
-            globalSearch: params.globalSearch,
-            selectedAnte: params.selectedAnte,
-            selectedBlind: params.selectedBlind,
-        },
-        version: version,
-    }
-    // The URL param key should match the name of the store, as specified as in storageOptions above
-    searchParams.set('blueprint-store', JSON.stringify(zustandStoreParams))
+    searchParams.set('seed', params.seed)
+    searchParams.set('deck', params.deck)
+    // searchParams.set('version', version)
+
     return searchParams.toString()
 }
 
 export const buildShareableUrl = (params, version) => {
-    return `${window.location.origin}?${buildURLSuffix(params, version)}`
+    return `${window.location.origin}/Blueprint/?${buildURLSuffix(params, version)}`
 }
 
 
@@ -195,7 +197,7 @@ const modalsSlice = (set, get) => ({
 });
 const applicationSlice = (set, get) => ({
 
-    showCardSpoilers: true,
+    showCardSpoilers: false,
     setShowCardSpoilers: (value) => set({showCardSpoilers: value, settingsChanged: true}),
 
     seedIsOpen: false,
@@ -603,7 +605,8 @@ const makeBlueprintStore = (set, get) => ({
         set({results: output}, undefined, 'analyzeSeed::store')
     }
 
-})
+});
+
 //3FSE45
 export const useBlueprintStore = create(
     devtools(
@@ -612,11 +615,12 @@ export const useBlueprintStore = create(
             {
                 name: 'blueprint-store',
                 version: 1,
-                storage: createJSONStorage(() => sessionStorage),
+                // storage: createJSONStorage(() => persistentStorage),
+                storage: persistentStorage,
                 migrate: (persisted, version) => {
                     if (version === 0) {
-                        persisted.buys = new Map();
-                        persisted.sells = new Map();
+                        persisted.buys = {};
+                        persisted.sells = {};
                     }
                     return persisted
                 }

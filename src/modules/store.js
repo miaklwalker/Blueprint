@@ -382,6 +382,10 @@ function initLocks(inst) {
     inst.lock("Palette");
 }
 
+
+
+
+
 const makeBlueprintStore = (set, get) => ({
     ...seedSettingsSlice(set, get),
     ...modalsSlice(set, get),
@@ -477,7 +481,8 @@ const makeBlueprintStore = (set, get) => ({
                     if (item.jokerData.stickers.perishable) output += "Perishable ";
                     if (item.jokerData.stickers.rental) output += "Rental ";
                     if (item.jokerData.edition !== "No Edition") output += item.jokerData.edition + " ";
-                }else if( item.type === 'Tarot' || item.type === 'Spectral') {
+                }
+                else if( item.type === 'Tarot' || item.type === 'Spectral') {
                     if(showCardSpoilers){
                         if (card === 'The Soul') {
                             let { jokerCard, str } = handleSoul(inst,output,a)
@@ -496,7 +501,6 @@ const makeBlueprintStore = (set, get) => ({
                         }
                     }
                 }
-                //
                 output += card + "\n";
                 item.delete();
             }

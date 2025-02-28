@@ -40,65 +40,107 @@ function BluePrint() {
 }
 
 class CardEngineWrapper {
-    constructor() {}
+    constructor() {
+    }
 
     /**
      * @param seedAnalysis {Seed}
      */
-    static printAnalysis( seedAnalysis ){
+    static printAnalysis(seedAnalysis) {
         let output = "";
         let antes = Object.entries(seedAnalysis.antes);
 
-        for(let [ante, details] of antes) {
+        for (let [ante, details] of antes) {
+            console.log(details)
             output += `==Ante ${ante}==\n`;
             output += `Boss: ${details.boss}\n`;
             output += `Tags: ${details.tags.join(', ')}\n`
             output += `Shop Queue: \n`
             let count = 0;
-            for (let i = 0 ; i < details.queue.length; i++) {
+            for (let i = 0; i < details.queue.length; i++) {
                 output += `${++count}) ${details.queue[i].name}\n`
             }
             output += '\n'
-            output += ''
+            output += "Packs: \n"
+            for (let pack of details.packs) {
+                output += `${pack.name} - ${pack.cards.map(card => card.name).join(', ')}`
+            }
         }
         return output
     }
 }
 
 class Card {
-    constructor(card) {
-        this.edition = card.edition;
+    constructor(name, type) {
+        this.name = name;
+        this.type = type;
+        // this.edition = card.edition;
     }
 }
 
 class Joker extends Card {
     constructor(card) {
-        super(card);
-        this.name = card.item;
-        this.rarity = card?.jokerData?.rarity;
+        super(null, "Joker");
+        this.edition = card?.['jokerData']?.edition;
+        this.rarity = card?.['jokerData']?.rarity;
         this.stickers = [
-            card?.jokerData?.stickers?.['eternal'],
-            card?.jokerData?.stickers?.['perishable'],
-            card?.jokerData?.stickers?.['rental'],
+            card?.['jokerData']?.stickers?.['eternal'] ? 'Eternal ' : null,
+            card?.['jokerData']?.stickers?.['perishable'] ? 'Perishable ' : null,
+            card?.['jokerData']?.stickers?.['rental'] ? 'Rental ' : null,
         ].filter(Boolean)
+    }
+    init(){
+
     }
 }
 
 class Consumables extends Card {
-    constructor(card) {
-        super(card);
-        this.type = card.type;
-        this.name = card.item;
+    constructor(card, type) {
+        super(card?.item ?? card, type);
     }
 }
-
 class StandardCard extends Card {
     constructor(card) {
-        super(card);
+        super(null,'Standard');
+        this.base = null;
+        this.edition = null;
+        this.enhancements = null;
+        this.seal = null;
+        this.rank = null;
+        this.suit = null;
+        this.init(card)
+    }
+    init(cardData){
+        let name = ''
+        if(cardData.seal !== "No Seal") {
+            this.seal = cardData.seal;
+            name += `${this.seal} `
+        }
+        if(cardData.edition !== 'No Edition') {
+            this.edition = cardData.edition;
+            name += `${this.edition} `
+        }
+        if(cardData.enhancement !== 'No Enhancement') {
+            this.enhancement = cardData.enhancement;
+            name += `${this.enhancement} `
+        }
+        this.base = cardData.base;
+        let rank = this.base[2];
+        if (rank === "T") this.rank = "10";
+        else if (rank === "J") this.rank = "Jack";
+        else if (rank === "Q") this.rank = "Queen";
+        else if (rank === "K") this.rank = "King";
+        else if (rank === "A") this.rank = "Ace";
+        else this.rank = rank;
 
-        this.base = card.base;
-        this.enhancement = card.enhancement
-        this.seal = card.seal;
+        name += " of "
+        let suit = this.base[0];
+        if (suit === "C") this.suit = "Clubs";
+        else if (suit === "S") this.suit = "Spades";
+        else if (suit === "D") this.suit = "Diamonds";
+        else if (suit === "H") this.suit = "Hearts";
+        cardData.delete();
+        this.name = name;
     }
 }
 
@@ -109,6 +151,7 @@ class Pack {
         this.size = pack.size;
         this.cards = []
     }
+
     init(instance, ante, spoilers = false) {
         let cards, factory;
         switch (this.name) {
@@ -150,6 +193,7 @@ class Pack {
             let card = new factory(data);
             this.cards.push(card)
         }
+        cards.delete();
     }
 }
 
@@ -158,6 +202,7 @@ class Seed {
         this.antes = {}
     }
 }
+
 class Ante {
     constructor(ante) {
         this.ante = ante;
@@ -177,7 +222,12 @@ class Ante {
             }
         }
     }
+
+    get packs() {
+        return Object.values(this.blinds).reduce((acc, {packs}) => [...acc, ...packs], [])
+    }
 }
+
 class ImmolateClassic extends CardEngineWrapper {
     constructor(seed) {
         super();
@@ -408,7 +458,7 @@ class ImmolateClassic extends CardEngineWrapper {
         if (type === 'Joker') {
             return new Joker(card)
         } else if (type === 'Tarot' || type === 'Planet' || type === 'Spectral') {
-            return new Consumables(card)
+            return new Consumables(card, type)
         } else {
             return new StandardCard(card)
         }
@@ -445,14 +495,14 @@ const antes = 1;
 const cardsPerAnte = 50;
 const engine = new ImmolateClassic(seed);
 
-engine.InstParams('Red Deck', 'White Stake', false, '10106');
+engine.InstParams('Red Deck', 'Gold Stake', false, '10106');
 engine.initLocks(1, false, false);
 engine.lockLevelTwoVouchers()
 
 function preformFullAnalysis() {
     let result = {}
 
-    for (let ante = 1; ante < antes; ante++) {
+    for (let ante = 1; ante <= antes; ante++) {
         result[ante] = new Ante(ante)
         result[ante].boss = engine.nextBoss(ante)
         result[ante].voucher = engine.nextVoucher(ante);
@@ -471,11 +521,13 @@ function preformFullAnalysis() {
             if (ante === 1 && blind === 'smallBlind') {
                 continue;
             }
-            let packString = engine.nextPack(ante);
-            let packInfo = engine.packInfo(packString);
-            let pack = new Pack(packInfo);
-            pack.init(engine, ante);
-            result[ante].blinds[blind].packs.push(pack)
+            for (let j = 0; j < 2; j++) {
+                let packString = engine.nextPack(ante);
+                let packInfo = engine.packInfo(packString);
+                let pack = new Pack(packInfo);
+                pack.init(engine, ante);
+                result[ante].blinds[blind].packs.push(pack)
+            }
         }
     }
     let seed = new Seed();
@@ -484,12 +536,16 @@ function preformFullAnalysis() {
 }
 
 let seedAnalysis = preformFullAnalysis();
-console.log(CardEngineWrapper.printAnalysis(seedAnalysis))
+console.log(seedAnalysis)
+// console.log(CardEngineWrapper.printAnalysis(seedAnalysis))
 
 export default function App() {
     return (
         <MantineProvider defaultColorScheme={'dark'} theme={theme}>
             <Title> Hello World!</Title>
+            {/*<pre>*/}
+            {/*    {JSON.stringify(seedAnalysis,null, 2)}*/}
+            {/*</pre>*/}
             {/*<BluePrint/>*/}
         </MantineProvider>
     );

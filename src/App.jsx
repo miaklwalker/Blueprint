@@ -51,7 +51,6 @@ class CardEngineWrapper {
         let antes = Object.entries(seedAnalysis.antes);
 
         for (let [ante, details] of antes) {
-            console.log(details)
             output += `==Ante ${ante}==\n`;
             output += `Boss: ${details.boss}\n`;
             output += `Tags: ${details.tags.join(', ')}\n`
@@ -63,8 +62,9 @@ class CardEngineWrapper {
             output += '\n'
             output += "Packs: \n"
             for (let pack of details.packs) {
-                output += `${pack.name} - ${pack.cards.map(card => card.name).join(', ')}`
+                output += `${pack.name} - ${pack.cards.map(card => card.name).join(', ')}\n`
             }
+            output += '\n'
         }
         return output
     }
@@ -81,15 +81,27 @@ class Card {
 class Joker extends Card {
     constructor(card) {
         super(null, "Joker");
-        this.edition = card?.['jokerData']?.edition;
-        this.rarity = card?.['jokerData']?.rarity;
+        this.joker = card?.item || card?.joker;
+        this.edition = card?.['jokerData']?.edition ?? card?.edition;
+        this.rarity = card?.['jokerData']?.rarity ?? card?.rarity;
         this.stickers = [
             card?.['jokerData']?.stickers?.['eternal'] ? 'Eternal ' : null,
             card?.['jokerData']?.stickers?.['perishable'] ? 'Perishable ' : null,
             card?.['jokerData']?.stickers?.['rental'] ? 'Rental ' : null,
         ].filter(Boolean)
+        if(typeof card !== 'string') {
+            this.init();
+        }else{
+            this.name = card;
+        }
+
     }
     init(){
+        let name  = '';
+        name += this.stickers.join('')
+        if (this.edition !== "No Edition") name += this.edition + " ";
+        name += this.joker
+        this.name = name;
 
     }
 }
@@ -99,6 +111,7 @@ class Consumables extends Card {
         super(card?.item ?? card, type);
     }
 }
+
 class StandardCard extends Card {
     constructor(card) {
         super(null,'Standard');
@@ -181,6 +194,10 @@ class Pack {
         }
         for (let i = 0; i < this.size; i++) {
             let data = cards.get(i);
+            if( this.name.includes('Buffoon') ) {
+                console.log(data)
+            }
+
             if ((data === "The Soul" || data === "Judgement" || data === "Wraith") && spoilers) {
                 let source = engine.commonSources[data];
                 this.cards.push(
@@ -491,7 +508,7 @@ class ImmolateClassic extends CardEngineWrapper {
 
 const seed = '5YVHAEP'
 // const ante = 1;
-const antes = 1;
+const antes = 13;
 const cardsPerAnte = 50;
 const engine = new ImmolateClassic(seed);
 
@@ -537,7 +554,7 @@ function preformFullAnalysis() {
 
 let seedAnalysis = preformFullAnalysis();
 console.log(seedAnalysis)
-// console.log(CardEngineWrapper.printAnalysis(seedAnalysis))
+console.log(CardEngineWrapper.printAnalysis(seedAnalysis))
 
 export default function App() {
     return (

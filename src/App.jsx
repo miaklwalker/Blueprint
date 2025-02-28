@@ -40,56 +40,144 @@ function BluePrint() {
 }
 
 class CardEngineWrapper {
-    constructor() {
+    constructor() {}
+
+    /**
+     * @param seedAnalysis {Seed}
+     */
+    static printAnalysis( seedAnalysis ){
+        let output = "";
+        let antes = Object.entries(seedAnalysis.antes);
+
+        for(let [ante, details] of antes) {
+            output += `==Ante ${ante}==\n`;
+            output += `Boss: ${details.boss}\n`;
+            output += `Tags: ${details.tags.join(', ')}\n`
+            output += `Shop Queue: \n`
+            let count = 0;
+            for (let i = 0 ; i < details.queue.length; i++) {
+                output += `${++count}) ${details.queue[i].name}\n`
+            }
+            output += '\n'
+            output += ''
+        }
+        return output
     }
 }
 
-/*
-    {
-        Ante:"",
-        Boss:"",
-        Voucher:""
-        Queue: [],
-        Tags:[],
-        Blinds: {
-            SmallBlind: {
+class Card {
+    constructor(card) {
+        this.edition = card.edition;
+    }
+}
+
+class Joker extends Card {
+    constructor(card) {
+        super(card);
+        this.name = card.item;
+        this.rarity = card?.jokerData?.rarity;
+        this.stickers = [
+            card?.jokerData?.stickers?.['eternal'],
+            card?.jokerData?.stickers?.['perishable'],
+            card?.jokerData?.stickers?.['rental'],
+        ].filter(Boolean)
+    }
+}
+
+class Consumables extends Card {
+    constructor(card) {
+        super(card);
+        this.type = card.type;
+        this.name = card.item;
+    }
+}
+
+class StandardCard extends Card {
+    constructor(card) {
+        super(card);
+
+        this.base = card.base;
+        this.enhancement = card.enhancement
+        this.seal = card.seal;
+    }
+}
+
+class Pack {
+    constructor(pack) {
+        this.name = pack.type;
+        this.choices = pack.choices;
+        this.size = pack.size;
+        this.cards = []
+    }
+    init(instance, ante, spoilers = false) {
+        let cards, factory;
+        switch (this.name) {
+            case "Celestial Pack":
+                cards = instance.nextCelestialPack(this.size, ante);
+                factory = Consumables
+                break;
+            case "Arcana Pack":
+                cards = instance.nextArcanaPack(this.size, ante);
+                factory = Consumables
+                break;
+            case "Spectral Pack":
+                cards = instance.nextSpectralPack(this.size, ante);
+                factory = Consumables
+                break;
+            case "Buffoon Pack":
+                cards = instance.nextBuffoonPack(this.size, ante);
+                factory = Joker
+                break;
+            case "Standard Pack":
+                cards = instance.nextStandardPack(this.size, ante);
+                factory = StandardCard
+                break;
+            default:
+                console.log("unknown pack type");
+                return;
+        }
+        for (let i = 0; i < this.size; i++) {
+            let data = cards.get(i);
+            if ((data === "The Soul" || data === "Judgement" || data === "Wraith") && spoilers) {
+                let source = engine.commonSources[data];
+                this.cards.push(
+                    new Joker(
+                        engine.nextJoker(source, ante, false)
+                    )
+                )
+                continue;
+            }
+            let card = new factory(data);
+            this.cards.push(card)
+        }
+    }
+}
+
+class Seed {
+    constructor() {
+        this.antes = {}
+    }
+}
+class Ante {
+    constructor(ante) {
+        this.ante = ante;
+        this.boss = null;
+        this.voucher = null;
+        this.queue = [];
+        this.tags = [];
+        this.blinds = {
+            smallBlind: {
                 packs: []
             },
-            BigBlind:{
+            bigBlind: {
                 packs: []
             },
-            BossBlind:{
+            bossBlind: {
                 packs: []
             }
         }
     }
- */
-class Card {
-    constructor({ seal, edition, enhancement, rank }) {
-        this.edition = edition;
-    }
 }
-class Joker extends Card {
-    constructor({ jokerData }) {
-        super(jokerData);
-        this.stickers = [
-            jokerData?.stickers?.['eternal'],
-            jokerData?.stickers?.['perishable'],
-            jokerData?.stickers?.['rental'],
-        ].filter(Boolean)
-    }
-}
-class Consumables extends Card {}
-class StandardCard extends Card {
-    constructor(...args) {
-        super(args);
-        this.enhancement = args.enhancement
-        this.rank = args.rank;
-        this.seal = args.seal;
-    }
-}
-
-class Ante {}
 class ImmolateClassic extends CardEngineWrapper {
     constructor(seed) {
         super();
@@ -158,6 +246,11 @@ class ImmolateClassic extends CardEngineWrapper {
             S_Riff_Raff: "rif",
             S_Cartomancer: "car",
         };
+        this.commonSources = {
+            "The Soul": this.sources.S_Soul,
+            "Judgment": this.sources.S_Judgement,
+            "Wraith": this.sources.S_Wraith,
+        }
         this.instance = new Immolate.Instance(seed);
         this.VOUCHERS = Immolate.VOUCHERS;
     }
@@ -251,7 +344,7 @@ class ImmolateClassic extends CardEngineWrapper {
      * @param hasStickers
      * @returns {*}
      */
-    nextJoker( source, ante, hasStickers = false) {
+    nextJoker(source, ante, hasStickers = false) {
         return this.instance.nextJoker(source, ante, hasStickers);
     }
 
@@ -264,12 +357,29 @@ class ImmolateClassic extends CardEngineWrapper {
         return this.instance.nextPack(ante);
     }
 
-    packInfo(pack) {}
-    nextCelestialPack(ante) {}
-    nextArcanaPack(ante) {}
-    nextSpectralPack(ante) {}
-    nextBuffoonPack(ante) {}
-    nextStandardPack(ante) {}
+    packInfo(pack) {
+        return Immolate.packInfo(pack)
+    }
+
+    nextCelestialPack(size, ante) {
+        return this.instance.nextCelestialPack(size, ante);
+    }
+
+    nextArcanaPack(size, ante) {
+        return this.instance.nextArcanaPack(size, ante);
+    }
+
+    nextSpectralPack(size, ante) {
+        return this.instance.nextSpectralPack(size, ante);
+    }
+
+    nextBuffoonPack(size, ante) {
+        return this.instance.nextBuffoonPack(size, ante);
+    }
+
+    nextStandardPack(size, ante) {
+        return this.instance.nextStandardPack(size, ante)
+    }
 
 
     /**
@@ -288,8 +398,20 @@ class ImmolateClassic extends CardEngineWrapper {
     activateVoucher(voucher) {
         this.instance.activateVoucher(voucher);
     }
+
     isVoucherActive(voucher) {
         return this.instance.isVoucherActive(voucher);
+    }
+
+    makeCard(card) {
+        let type = card.type;
+        if (type === 'Joker') {
+            return new Joker(card)
+        } else if (type === 'Tarot' || type === 'Planet' || type === 'Spectral') {
+            return new Consumables(card)
+        } else {
+            return new StandardCard(card)
+        }
     }
 
     delete() {
@@ -319,54 +441,50 @@ class ImmolateClassic extends CardEngineWrapper {
 
 const seed = '5YVHAEP'
 // const ante = 1;
-const antes = 8;
+const antes = 1;
 const cardsPerAnte = 50;
 const engine = new ImmolateClassic(seed);
 
 engine.InstParams('Red Deck', 'White Stake', false, '10106');
 engine.initLocks(1, false, false);
 engine.lockLevelTwoVouchers()
-function preformAnalysis(){
+
+function preformFullAnalysis() {
     let result = {}
 
     for (let ante = 1; ante < antes; ante++) {
-        result[ante] = {
-            ante:ante,
-            boss:null,
-            voucher:null,
-            queue: [],
-            tags:[],
-            blinds: {
-                smallBlind: {
-                    packs: []
-                },
-                bigBlind:{
-                    packs: []
-                },
-                bossBlind:{
-                    packs: []
-                }
-            }
-        }
+        result[ante] = new Ante(ante)
         result[ante].boss = engine.nextBoss(ante)
         result[ante].voucher = engine.nextVoucher(ante);
 
         result[ante].tags.push(engine.nextTag(ante));
         result[ante].tags.push(engine.nextTag(ante));
-
-        for (let i = 0; i < 1; i++) {
-            let card = engine.nextShopItem(ante);
-            let type = card.type;
-            if( type === 'Joker') {
-                console.log(new Joker(card))
-            }else{
-                console.log(type)
+        let max = ante === 1 ? 15 : cardsPerAnte;
+        for (let i = 0; i < max; i++) {
+            result[ante].queue.push(
+                engine.makeCard(
+                    engine.nextShopItem(ante)
+                )
+            )
+        }
+        for (let blind of Object.keys(result[ante].blinds)) {
+            if (ante === 1 && blind === 'smallBlind') {
+                continue;
             }
-
+            let packString = engine.nextPack(ante);
+            let packInfo = engine.packInfo(packString);
+            let pack = new Pack(packInfo);
+            pack.init(engine, ante);
+            result[ante].blinds[blind].packs.push(pack)
         }
     }
+    let seed = new Seed();
+    seed.antes = result;
+    return seed
 }
-preformAnalysis();
+
+let seedAnalysis = preformFullAnalysis();
+console.log(CardEngineWrapper.printAnalysis(seedAnalysis))
 
 export default function App() {
     return (

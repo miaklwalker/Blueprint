@@ -10,7 +10,10 @@ import {Output} from "./components/layout/outputDrawer/outputDrawer.jsx";
 import {Footer} from "./components/layout/footer/footer.jsx";
 import {UI} from "./components/layout/ui/index.jsx";
 import {useBlueprintStore} from "./modules/store.js";
-import {preformFullAnalysis} from "./modules/ImmolateWrapper/index.js";
+import {CardEngineWrapper} from "./modules/ImmolateWrapper/index.js";
+import {ImmolateClassic} from "./modules/ImmolateWrapper/CardEngines/immolateClassic.js";
+import {create} from "zustand";
+import {devtools} from "zustand/middleware";
 
 
 function BluePrint() {
@@ -41,17 +44,47 @@ function BluePrint() {
 }
 
 
-preformFullAnalysis()
+const seed = '5YVHAEP'
+const antes = 3;
+const cardsPerAnte = 50;
+const engine = new ImmolateClassic(seed);
+engine.InstParams('Ghost Deck', 'Gold Stake', false, '10106');
+engine.initLocks(1, false, true);
+const analyzer = new CardEngineWrapper(engine);
+let seedAnalysis = analyzer.analyzeSeed(antes, cardsPerAnte);
+console.log(seedAnalysis);
+// console.log(CardEngineWrapper.printAnalysis(seedAnalysis))
+const initialState = {
+    seed: '',
+    deck: '',
+    cardsPerAnte: 50,
+    antes: 8,
+    deckType: 'Ghost Deck',
+    stake: 'Gold Stake',
+    showmanOwned: false,
+    gameVersion: '10106',
+}
 
+const useStore = create(
+    devtools(
+        (set) => ({
+            ...initialState,
+            reset: () => {
+                set(initialState, undefined, 'Global/Reset');
+            },
+        })
+    )
+)
+
+function useSeedAnalyzer() {
+    
+}
 
 export default function App() {
     return (
         <MantineProvider defaultColorScheme={'dark'} theme={theme}>
-            <Title> Hello World!</Title>
-            {/*<pre>*/}
-            {/*    {JSON.stringify(seedAnalysis,null, 2)}*/}
-            {/*</pre>*/}
-            {/*<BluePrint/>*/}
+
+
         </MantineProvider>
     );
 }

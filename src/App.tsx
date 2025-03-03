@@ -3,48 +3,104 @@ import '@mantine/code-highlight/styles.css';
 import '@mantine/carousel/styles.css';
 import '@mantine/spotlight/styles.css';
 import {
-    ActionIcon, AppShell,
+    ActionIcon,
+    AppShell,
     AspectRatio,
-    Badge,
+    Autocomplete,
     Box,
+    Burger,
     Button,
-    Card,
     Center,
-    Collapse,
-    Container, Divider, Fieldset,
-    Flex, Grid,
-    Group, List,
-    MantineProvider, Paper, ScrollArea,
-    SimpleGrid, Spoiler, TableOfContents,
-    Text, TextInput, Title
+    Container,
+    CopyButton,
+    Group,
+    MantineProvider,
+    Modal,
+    NativeSelect,
+    NumberInput,
+    ScrollArea,
+    SimpleGrid,
+    Skeleton,
+    Slider,
+    Stack,
+    Switch, Tabs,
+    Text,
+    TextInput,
+    Title,
+    Tooltip,
+    useMantineTheme
 } from "@mantine/core";
 import {theme} from "./theme.js";
 import {create} from "zustand";
+import { immer } from 'zustand/middleware/immer'
 import {combine, devtools, persist} from "zustand/middleware";
 import {ImmolateClassic} from "./modules/ImmolateWrapper/CardEngines/immolateClassic.ts";
 import {CardEngineWrapper} from "./modules/ImmolateWrapper";
 //@ts-ignore
-import {editionMap, jokerFaces, jokers, stickerMap, tarotsAndPlanets, vouchers} from "./modules/const.js"
-//@ts-ignore
-import {getModifierColor, getSealPosition, getStandardCardPosition} from "./modules/utils.js";
-import {useEffect, useMemo, useRef, useState} from "react";
 import {
-    Ante,
-    Card_Final,
-    Joker_Final,
-    Planet_Final, Seed,
-    Spectral_Final,
-    StandardCard_Final, Tarot_Final
-} from "./modules/ImmolateWrapper/CardEngines/Cards.ts";
-import {useElementSize, useHover, useMergedRef, useMouse, useResizeObserver} from "@mantine/hooks";
-import {IconExternalLink, IconShoppingCartCheck} from "@tabler/icons-react";
-import {Carousel} from "@mantine/carousel";
-import {immer} from 'zustand/middleware/immer'
+    editionMap,
+    jokerFaces,
+    jokers, options,
+    SeedsWithLegendary,
+    stickerMap,
+    tarotsAndPlanets,
+    vouchers
+} from "./modules/const.js"
+//@ts-ignore
+import {extractShopQueues, getModifierColor, getSealPosition, getStandardCardPosition} from "./modules/utils.js";
+import {
+    JSXElementConstructor,
+    Key,
+    ReactElement,
+    ReactNode,
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState
+} from "react";
+import {useHover, useMergedRef, useMouse, useResizeObserver, useViewportSize} from "@mantine/hooks";
+import {Ante, Seed} from "./modules/ImmolateWrapper/CardEngines/Cards.ts";
+import {IconJoker, IconPlayCard, IconSearch} from "@tabler/icons-react";
+import {openSpotlight, Spotlight} from "@mantine/spotlight";
+//@ts-ignore
 
 
 const globalImageCache = new Map<string, HTMLImageElement>();
 
-const initialState: any = {
+interface InitialState {
+    immolateState: {
+        seed: string;
+        deck: string;
+        cardsPerAnte: number;
+        antes: number;
+        deckType: string;
+        stake: string;
+        showmanOwned: boolean;
+        gameVersion: string;
+        selectedOptions: string[];
+    };
+    applicationState: {
+        start: boolean;
+        settingsOpen: boolean;
+        asideOpen: boolean;
+        selectOptionsModalOpen: boolean;
+        showCardSpoilers: boolean;
+        selectedAnte: number;
+        selectedBlind: string;
+    };
+    searchState: {
+        searchTerm: string;
+        searchResults: any[];
+        selectedSearchResult: any | null;
+    };
+    shoppingState: {
+        buys: Record<string, any>;
+        sells: Record<string, any>;
+    };
+}
+
+const initialState: InitialState = {
     immolateState: {
         seed: '15IBIXCA',
         deck: 'Ghost Deck',
@@ -54,10 +110,13 @@ const initialState: any = {
         stake: 'Gold Stake',
         showmanOwned: false,
         gameVersion: '10106',
+        selectedOptions: Array(61).fill(true),
     },
     applicationState: {
+        start: false,
         settingsOpen: false,
         asideOpen: false,
+        selectOptionsModalOpen: false,
         showCardSpoilers: false,
         selectedAnte: 1,
         selectedBlind: 'Small Blind',
@@ -73,6 +132,7 @@ const initialState: any = {
     }
 }
 
+
 const useCardStore = create(
     devtools(
         persist(
@@ -80,9 +140,57 @@ const useCardStore = create(
                 combine(
                     initialState,
                     (set, get) => ({
-                        setSeed: (seed: string) => set((prev) => {
+                        setSeed: (seed: string) => set((prev: InitialState) => {
                             prev.immolateState.seed = seed
                         }, undefined, 'Global/SetSeed'),
+                        setDeck: (deck: string) => set((prev: InitialState) => {
+                            prev.immolateState.deck = deck
+                        }, undefined, 'Global/SetDeck'),
+                        setCardsPerAnte: (cardsPerAnte: number) => set((prev: InitialState) => {
+                            prev.immolateState.cardsPerAnte = cardsPerAnte
+                        }, undefined, 'Global/SetCardsPerAnte'),
+                        setAntes: (antes: number) => set((prev: InitialState) => {
+                            prev.immolateState.antes = antes
+                        }, undefined, 'Global/SetAntes'),
+                        setDeckType: (deckType: string) => set((prev: InitialState) => {
+                            prev.immolateState.deckType = deckType
+                        }, undefined, 'Global/SetDeckType'),
+                        setStake: (stake: string) => set((prev: InitialState) => {
+                            prev.immolateState.stake = stake
+                        }, undefined, 'Global/SetStake'),
+                        setShowmanOwned: (showmanOwned: boolean) => set((prev: InitialState) => {
+                            prev.immolateState.showmanOwned = showmanOwned
+                        }, undefined, 'Global/SetShowmanOwned'),
+                        setGameVersion: (gameVersion: string) => set((prev: InitialState) => {
+                            prev.immolateState.gameVersion = gameVersion
+                        }, undefined, 'Global/SetGameVersion'),
+                        setSelectedOptions: (selectedOptions: string[]) => set((prev: InitialState) => {
+                            prev.immolateState.selectedOptions = options.map((option: string) => selectedOptions.includes(option));
+                        }, undefined, 'Global/SetSelectedOptions'),
+                        setStart: (start: boolean) => set((prev: InitialState) => {
+                            prev.applicationState.start = start
+                        }, undefined, 'Global/SetStart'),
+                        setShowCardSpoilers: (showCardSpoilers: boolean) => set((prev: InitialState) => {
+                            prev.applicationState.showCardSpoilers = showCardSpoilers
+                        }, undefined, 'Global/SetShowCardSpoilers'),
+                        openSelectOptionModal: () => set((prev) => {
+                            prev.applicationState.selectOptionsModalOpen = true
+                        }, undefined, 'Global/OpenSelectOptionModal'),
+                        closeSelectOptionModal: () => set((prev) => {
+                            prev.applicationState.selectOptionsModalOpen = false
+                        }, undefined, 'Global/CloseSelectOptionModal'),
+                        toggleShowCardSpoilers: () => set((prev) => {
+                            prev.applicationState.showCardSpoilers = !prev.applicationState.showCardSpoilers
+                        }, undefined, 'Global/ToggleShowCardSpoilers'),
+                        toggleSettings: () => set((prev) => {
+                            prev.applicationState.settingsOpen = !prev.applicationState.settingsOpen
+                        }, undefined, 'Global/ToggleSettings'),
+
+                        toggleOutput: () => set((prev) => {
+                            prev.applicationState.asideOpen = !prev.applicationState.asideOpen
+                        }, undefined, 'Global/ToggleOutput'),
+
+
                         reset: () => set(initialState, undefined, 'Global/Reset'),
                     })
                 )
@@ -94,23 +202,6 @@ const useCardStore = create(
         )
     )
 )
-
-function useSeedAnalyzer(): { analyzer: CardEngineWrapper, engine: ImmolateClassic } {
-    const seed = useCardStore((state) => state.immolateState.seed);
-    const deck = useCardStore((state) => state.immolateState.deck);
-    const stake = useCardStore((state) => state.immolateState.stake);
-    const showmanOwned = useCardStore((state) => state.immolateState.showmanOwned);
-    const version = useCardStore((state) => state.immolateState.gameVersion);
-
-    const engine = new ImmolateClassic(seed);
-    engine.InstParams(deck, stake, showmanOwned, version);
-    engine.initLocks(1, false, true);
-    const analyzer: CardEngineWrapper = new CardEngineWrapper(engine);
-    return {
-        analyzer,
-        engine
-    }
-}
 
 class Layer {
     pos: { x: number, y: number };
@@ -254,21 +345,341 @@ function RenderImagesWithCanvas({layers, invert = false, spacing = false}: Rende
     )
 }
 
+function SeedInputAutoComplete({seed, setSeed}: { seed: string, setSeed: (seed: string) => void }) {
+    return (
+        <Autocomplete
+            flex={1}
+            label={'Seed'}
+            placeholder={'Enter Seed'}
+            value={seed}
+            onChange={(e) => setSeed(e)}
+            data={[
+                {
+                    group: 'Popular Seeds',
+                    items: [
+                        '7LB2WVPK',
+                        'PHQ8P93R',
+                        '8Q47WV6K',
+                        'CRNWYUXA'
+                    ]
+                }, {
+                    group: 'Generated Seeds With Legendary Jokers',
+                    items: SeedsWithLegendary
+
+                }
+            ]}
+        />
+    );
+};
+
+
 function Header() {
+    const {width} = useViewportSize();
+    const settingsOpened = useCardStore(state => state.applicationState.settingsOpen);
+    const toggleSettings = useCardStore(state => state.toggleSettings);
+
+    const outputOpened = useCardStore(state => state.applicationState.asideOpen);
+    const toggleOutput = useCardStore(state => state.toggleOutput);
     return (
-        <AppShell.Header></AppShell.Header>
+        <AppShell.Header>
+            <Container fluid h={'100%'}>
+                <Group h={'100%'} justify={'space-between'}>
+                    {width <= 348 && <Burger opened={settingsOpened} onClick={toggleSettings} size="sm"/>}
+                    <Center h={'100%'}>
+                        <Title> Blueprint </Title>
+                    </Center>
+                    <Group align={'center'}>
+                        {/*{width > 600 && seedIsOpen && <SearchSeedInput/>}*/}
+                        {width > 348 &&
+                            <Button onClick={() => toggleSettings()} variant={'transparent'}> Settings </Button>}
+                        {/*{width > 700 && seedIsOpen && (*/}
+                        {/*    <CopyButton value={shareLink}>*/}
+                        {/*        {({copied, copy}) => (*/}
+                        {/*            <Button color={copied ? 'teal' : 'blue'} onClick={copy}>*/}
+                        {/*                {copied ? 'Copied url' : 'Copy url'}*/}
+                        {/*            </Button>*/}
+                        {/*        )}*/}
+                        {/*    </CopyButton>*/}
+                        {/*)}*/}
+                        <Burger opened={outputOpened} onClick={toggleOutput} size="sm"/>
+                    </Group>
+                </Group>
+            </Container>
+        </AppShell.Header>
     )
 }
 
+function UnlocksModal() {
+    const selectOptionsModalOpen = useCardStore(state => state.applicationState.selectOptionsModalOpen);
+    const closeSelectOptionModal = useCardStore(state => state.closeSelectOptionModal);
+    const selectedOptions = useCardStore(state => state.immolateState.selectedOptions);
+    const setSelectedOptions = useCardStore(state => state.setSelectedOptions);
+    if(!selectOptionsModalOpen) return null;
+    return (
+        <Modal size="auto" title={'Unlocks'} opened={selectOptionsModalOpen} onClose={() => closeSelectOptionModal()}>
+            <Container fluid>
+                <Switch.Group
+                    defaultValue={options}
+                    label="Unlocked Items "
+                    description="Items that you have unlocked by playing the game"
+                    withAsterisk
+                    value={options.filter((_: any, i: number) => selectedOptions[i])}
+                    onChange={setSelectedOptions}
+                >
+                    <SimpleGrid cols={6} mb={'lg'} mt={'xs'}>
+                        {
+                            options.map((option:string, i:number) => (<Switch key={i} value={option} label={option} />))
+                        }
+                    </SimpleGrid>
+                </Switch.Group>
+                <Group justify={'flex-end'}>
+                    <Button onClick={()=>setSelectedOptions(options)}> Select All </Button>
+                    <Button onClick={()=>setSelectedOptions([])}> Remove All </Button>
+                </Group>
+            </Container>
+        </Modal>
+    )
+}
 function NavBar() {
+    const theme = useMantineTheme();
+    const analyzeState = useCardStore(state => state.immolateState);
+    const {seed, deck, stake, gameVersion:version, antes, cardsPerAnte} = analyzeState;
+    const showCardSpoilers = useCardStore(state => state.applicationState.showCardSpoilers);
+    const setSeed = useCardStore(state => state.setSeed);
+    const setDeck = useCardStore(state => state.setDeck);
+    const setStake = useCardStore(state => state.setStake);
+    const setVersion = useCardStore(state => state.setGameVersion);
+    const setAntes = useCardStore(state => state.setAntes);
+    const setCardsPerAnte = useCardStore(state => state.setCardsPerAnte);
+    const setShowCardSpoilers = useCardStore(state => state.setShowCardSpoilers);
+
+    const openSelectOptionModal = useCardStore(state => state.openSelectOptionModal);
+    const reset = useCardStore(state => state.reset);
+    const handleAnalyzeClick = () => {}
     return (
-        <AppShell.Navbar></AppShell.Navbar>
+        <AppShell.Navbar p="md">
+            <UnlocksModal/>
+            <AppShell.Section>Settings</AppShell.Section>
+            <AppShell.Section grow my="md" component={ScrollArea} scrollbars={'y'}>
+                <SeedInputAutoComplete
+                    seed={seed}
+                    setSeed={setSeed}
+                />
+                <NumberInput
+                    label={'Max Ante'}
+                    defaultValue={8}
+                    value={antes}
+                    onChange={(val) => setAntes(Number(val))}
+                />
+                <NativeSelect
+                    label={'Choose Deck'}
+                    value={deck}
+                    onChange={(e) => setDeck(e.currentTarget.value)}
+                >
+                    <option value="Red Deck">Red Deck</option>
+                    <option value="Blue Deck">Blue Deck</option>
+                    <option value="Yellow Deck">Yellow Deck</option>
+                    <option value="Green Deck">Green Deck</option>
+                    <option value="Black Deck">Black Deck</option>
+                    <option value="Magic Deck">Magic Deck</option>
+                    <option value="Nebula Deck">Nebula Deck</option>
+                    <option value="Ghost Deck">Ghost Deck</option>
+                    <option value="Abandoned Deck">Abandoned Deck</option>
+                    <option value="Checkered Deck">Checkered Deck</option>
+                    <option value="Zodiac Deck">Zodiac Deck</option>
+                    <option value="Painted Deck">Painted Deck</option>
+                    <option value="Anaglyph Deck">Anaglyph Deck</option>
+                    <option value="Plasma Deck">Plasma Deck</option>
+                    <option value="Erratic Deck">Erratic Deck</option>
+                </NativeSelect>
+                <NativeSelect
+                    label={'Choose Stake'}
+                    value={stake}
+                    onChange={(e) => setStake(e.currentTarget.value)}
+                >
+                    <option value="White Stake">White Stake</option>
+                    <option value="Red Stake">Red Stake</option>
+                    <option value="Green Stake">Green Stake</option>
+                    <option value="Black Stake">Black Stake</option>
+                    <option value="Blue Stake">Blue Stake</option>
+                    <option value="Purple Stake">Purple Stake</option>
+                    <option value="Orange Stake">Orange Stake</option>
+                    <option value="Gold Stake">Gold Stake</option>
+                </NativeSelect>
+                <Box mb={'sm'}>
+                    <Text size="sm"> Cards Per Ante</Text>
+                    <Slider
+                        min={0}
+                        defaultValue={50}
+                        max={100}
+                        label={'Cards per hand'}
+                        color="blue"
+                        marks={[
+                            {value: 0, label: '0'},
+                            {value: 50, label: '50'},
+                            {value: 100, label: '100'},
+                        ]}
+                        value={cardsPerAnte}
+                        onChange={setCardsPerAnte}
+
+                    />
+                </Box>
+                <NativeSelect
+                    label={'Choose Version'}
+                    value={version}
+                    onChange={(e) => setVersion(e.currentTarget.value)}
+                >
+                    <option value="10106">1.0.1f</option>
+                    <option value="10103">1.0.1c</option>
+                    <option value="10014">1.0.0n</option>
+                </NativeSelect>
+                <Box>
+                    <Text mb={0} fz={'xs'}>Show Joker Spoilers</Text>
+                    <Tooltip label="Cards that give jokers, are replaced with the joker the card would give."
+                             refProp="rootRef">
+                        <Switch
+                            size={'xl'}
+                            checked={showCardSpoilers}
+                            thumbIcon={showCardSpoilers ? (<IconJoker color={'black'}/>) : (
+                                <IconPlayCard color={'black'}/>)}
+                            onChange={e => setShowCardSpoilers(e.currentTarget.checked)}
+                        />
+                    </Tooltip>
+                </Box>
+            </AppShell.Section>
+            <AppShell.Section my="md">
+                <Stack>
+                    <Button color={theme.colors.blue[9]} onClick={() => openSelectOptionModal()}>
+                        Modify Unlocks
+                    </Button>
+                    <Button color={theme.colors.red[9]} variant={'filled'} onClick={() => reset()}>
+                        Reset
+                    </Button>
+                    <Button color={theme.colors.green[9]} variant={'filled'} onClick={handleAnalyzeClick}>
+                        Analyze Seed
+                    </Button>
+                </Stack>
+            </AppShell.Section>
+        </AppShell.Navbar>
     )
 }
 
-function Main() {
+function QuickAnalyze() {
+    const seed = useCardStore(state => state.immolateState.seed);
+    const setSeed = useCardStore(state => state.setSeed);
+    const deck = useCardStore(state => state.immolateState.deck);
+    const setDeck = useCardStore(state => state.setDeck);
+    const setStart = useCardStore(state => state.setStart);
+    const sectionWidth = 130;
+    const select = (
+        <NativeSelect
+            rightSectionWidth={28}
+            styles={{
+                input: {
+                    fontWeight: 500,
+                    borderTopLeftRadius: 0,
+                    borderBottomLeftRadius: 0,
+                    width: sectionWidth,
+                    marginRight: -2,
+                },
+            }}
+            value={deck}
+            onChange={(e) => setDeck(e.currentTarget.value)}
+        >
+            <option value="Red Deck">Red Deck</option>
+            <option value="Blue Deck">Blue Deck</option>
+            <option value="Yellow Deck">Yellow Deck</option>
+            <option value="Green Deck">Green Deck</option>
+            <option value="Black Deck">Black Deck</option>
+            <option value="Magic Deck">Magic Deck</option>
+            <option value="Nebula Deck">Nebula Deck</option>
+            <option value="Ghost Deck">Ghost Deck</option>
+            <option value="Abandoned Deck">Abandoned Deck</option>
+            <option value="Checkered Deck">Checkered Deck</option>
+            <option value="Zodiac Deck">Zodiac Deck</option>
+            <option value="Painted Deck">Painted Deck</option>
+            <option value="Anaglyph Deck">Anaglyph Deck</option>
+            <option value="Plasma Deck">Plasma Deck</option>
+            <option value="Erratic Deck">Erratic Deck</option>
+        </NativeSelect>
+    );
     return (
-        <AppShell.Main></AppShell.Main>
+        <Group align={'flex-end'}>
+            <TextInput
+                flex={1}
+                type="text"
+                placeholder="Enter Seed"
+                label="Analyze Seed"
+                value={seed}
+                onChange={(e) => setSeed(e.currentTarget.value)}
+                rightSection={select}
+                rightSectionWidth={sectionWidth}
+            />
+            <Button onClick={()=>setStart(seed.length >= 8)}> Analyze Seed </Button>
+        </Group>
+
+    );
+
+}
+
+
+function AntePanel({ante, tabName}: { ante: Ante, tabName:string }) {
+    console.log(ante)
+    return (
+        <Tabs.Panel value={tabName} >
+
+        </Tabs.Panel>
+    )
+}
+
+function Main({ SeedResults }: { SeedResults: Seed | null }) {
+    const {width} = useViewportSize()
+    // @ts-ignore
+    return (
+        <AppShell.Main>
+            {
+                !SeedResults &&
+                <QuickAnalyze/>
+            }
+            {
+                SeedResults &&
+                <>
+                    <NativeSelect
+                        mb={'sm'}
+                        hiddenFrom="sm"
+                        data={Object.keys(SeedResults.antes).map((ante: string) => `Ante ${ante}`)}
+                    />
+                    <Tabs
+                        w={'100%'}
+                        variant="pills"
+                        orientation={"vertical"}
+                        defaultValue={'ANTE 1'}
+                        keepMounted={false}
+                    >
+                        <Box mah={'65vh'} style={{display: width > 767 ? 'revert' : 'none'}} mr={'2rem'}>
+                            <ScrollArea type="scroll" scrollbars={'y'} h={'100%'}>
+                                <Tabs.List >
+                                    {
+                                        Object.keys(SeedResults.antes).map((ante: string) => (
+                                            <Tabs.Tab
+                                                key={ante}
+                                                value={ante}
+                                            >
+                                                {`Ante ${ante}`}
+                                            </Tabs.Tab>
+                                        ))
+                                    }
+                                </Tabs.List>
+                            </ScrollArea>
+                        </Box>
+                        {
+                            SeedResults &&
+                            Object.entries(SeedResults.antes).map(([ante, anteData]: [string, Ante],i:number) => (<AntePanel key={i} tabName={ante} ante={anteData}/>))
+                        }
+                    </Tabs>
+                </>
+            }
+        </AppShell.Main>
     )
 }
 
@@ -280,16 +691,38 @@ function Aside() {
 
 function Footer() {
     return (
-        <AppShell.Footer></AppShell.Footer>
+        <AppShell.Footer>
+            <Text ta={'center'} fz={'xs'}>
+                Made with Mantine, Vite, Zustand, Immolate.
+            </Text>
+            <Text ta={'center'} fz={'xs'}>
+                Made by Michael Walker 2025
+            </Text>
+        </AppShell.Footer>
     )
 }
 
-function Blueprint({}) {
+function Blueprint({SeedResults}: { SeedResults: Seed | null}) {
+    const settingsOpened = useCardStore(state => state.applicationState.settingsOpen);
+    const outputOpened = useCardStore(state => state.applicationState.asideOpen);
     return (
-        <AppShell>
+        <AppShell
+            header={{height: {base: 60, md: 70, lg: 80}}}
+            aside={{
+                width: {base: 200, md: 300, lg: 550},
+                breakpoint: 'md',
+                collapsed: {desktop: !outputOpened, mobile: !outputOpened}
+            }}
+            navbar={{
+                width: {base: 200, md: 300, lg: 400},
+                breakpoint: 'sm',
+                collapsed: {desktop: !settingsOpened, mobile: settingsOpened},
+            }}
+            padding="md"
+        >
             <Header/>
             <NavBar/>
-            <Main/>
+            <Main SeedResults={SeedResults}/>
             <Aside/>
             <Footer/>
         </AppShell>
@@ -303,15 +736,18 @@ export default function App() {
     engine.InstParams(deck, stake, showmanOwned, version);
     engine.initLocks(1, false, true);
     const analyzer: CardEngineWrapper = new CardEngineWrapper(engine);
+    const start = useCardStore(state => state.applicationState.start);
+
     const SeedResults = useMemo(() => {
+        if(seed.length < 8 || !start) return null;
         return analyzer.analyzeSeed(antes,cardsPerAnte)
-    }, [analyzeState]);
+    }, [analyzeState, start]);
     console.log(
         SeedResults
     )
     return (
         <MantineProvider defaultColorScheme={'dark'} theme={theme}>
-
+            <Blueprint SeedResults={SeedResults} />
         </MantineProvider>
     );
 }

@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite dev --host",
+    "dev": "vite dev --host --port 3000",
     "build": "tsc && vite build",
     "preview": "vite preview --host"
   },

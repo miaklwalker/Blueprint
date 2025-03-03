@@ -3,7 +3,7 @@ import '@mantine/code-highlight/styles.css';
 import '@mantine/carousel/styles.css';
 import '@mantine/spotlight/styles.css';
 import {
-    ActionIcon,
+    ActionIcon, AppShell,
     AspectRatio,
     Badge,
     Box,
@@ -11,12 +11,12 @@ import {
     Card,
     Center,
     Collapse,
-    Container,
-    Flex,
-    Group,
-    MantineProvider,
-    SimpleGrid,
-    Text
+    Container, Divider, Fieldset,
+    Flex, Grid,
+    Group, List,
+    MantineProvider, Paper, ScrollArea,
+    SimpleGrid, Spoiler, TableOfContents,
+    Text, Title
 } from "@mantine/core";
 import {theme} from "./theme.js";
 import {create} from "zustand";
@@ -29,9 +29,10 @@ import {editionMap, jokerFaces, jokers, stickerMap, tarotsAndPlanets, vouchers} 
 import {getModifierColor, getSealPosition, getStandardCardPosition} from "./modules/utils.js";
 import {useEffect, useRef, useState} from "react";
 import {
+    Ante,
     Card_Final,
     Joker_Final,
-    Planet_Final,
+    Planet_Final, Seed,
     Spectral_Final,
     StandardCard_Final, Tarot_Final
 } from "./modules/ImmolateWrapper/CardEngines/Cards.ts";
@@ -67,6 +68,8 @@ const useCardStore = create<CardStoreState>()(
     devtools(
         (set) => ({
             ...initialState,
+            views: ['Simple', 'Endless', 'Panel'],
+            selectedView: 'Simple',
             reset: () => {
                 set(initialState, undefined, 'Global/Reset');
             },
@@ -177,8 +180,8 @@ function RenderImagesWithCanvas({layers, invert = false, spacing = false}: Rende
         }
     }, [layers]);
 
-    const { hovered, ref: hoverRef } = useHover();
-    const { ref: mouseRef, x:mouseX, y:mouseY } = useMouse();
+    const {hovered, ref: hoverRef} = useHover();
+    const {ref: mouseRef, x: mouseX, y: mouseY} = useMouse();
     const [rectRef, rect] = useResizeObserver();
     const mergedRef = useMergedRef(mouseRef, hoverRef, containerRef, rectRef);
 
@@ -529,11 +532,11 @@ function PlayingCard({card, paperProps}: { card: StandardCard_Final, paperProps?
     )
 }
 
-function Consumables({card, paperProps}: { card: Planet_Final | Spectral_Final | Tarot_Final , paperProps?: any }) {
+function Consumables({card, paperProps}: { card: Planet_Final | Spectral_Final | Tarot_Final, paperProps?: any }) {
 
     let layers = [
         new Layer({
-            ...tarotsAndPlanets.find((t:any) => t.name === card.name),
+            ...tarotsAndPlanets.find((t: any) => t.name === card.name),
             order: 0,
             source: 'images/Tarots.png',
             rows: 6,
@@ -572,163 +575,228 @@ function Consumables({card, paperProps}: { card: Planet_Final | Spectral_Final |
     )
 }
 
-function GameCard ({card, paperProps} : { card: any, paperProps?: any}) {
-    if( card instanceof StandardCard_Final) {
+function GameCard({card, paperProps}: { card: any, paperProps?: any }) {
+    if (card instanceof StandardCard_Final) {
         return <PlayingCard card={card} paperProps={paperProps}/>
     }
-    if( card instanceof Joker_Final) {
+    if (card instanceof Joker_Final) {
         return <Joker card={card} paperProps={paperProps}/>
     }
-    if( card instanceof Planet_Final || card instanceof Tarot_Final || card instanceof Spectral_Final) {
+    if (card instanceof Planet_Final || card instanceof Tarot_Final || card instanceof Spectral_Final) {
         return <Consumables card={card} paperProps={paperProps}/>
     }
 }
 
+function Queue({queue}: { queue: any[] }) {
+    return (
+        <Carousel
+            containScroll={"trimSnaps"}
+            slideGap={{base: 'sm'}}
+            slideSize={{base: 120}}
+            withControls={false}
+            dragFree
+        >
+            {
+                queue.map((card: any, index: number) => {
+                    return (
+                        <Carousel.Slide key={index}>
+                            {
+                                <GameCard
+                                    card={card}
+                                    paperProps={cardProps}
+                                />
+                            }
+                        </Carousel.Slide>
+                    )
+                })
+            }
+        </Carousel>
+    )
+}
 
+const cardProps = {
+    maw: '140px',
+    withBorder: true,
+    shadow: "xl",
+}
+
+function SimpleView({seedResult}: { seedResult: Seed }) {
+    console.log(seedResult)
+    return (
+        <Container fluid id={'simple-view'}>
+            {
+                seedResult &&
+                Object.keys(seedResult.antes).length > 0 &&
+                Object.entries(seedResult.antes).map(([key, ante]: [string, Ante], index) => {
+                    return (
+                        <Box id={`ANTE-${ante}`} data-order={0} key={index}>
+                            <Title mb={'sm'}>Ante {key}</Title>
+                            <Grid>
+                                <Grid.Col span={4}>
+                                    <Fieldset legend={'Boss'}>
+                                        <Text>{ante.boss}</Text>
+                                    </Fieldset>
+                                </Grid.Col>
+                                <Grid.Col span={4}>
+                                    <Fieldset legend={'Tags'}>
+                                        <Text>{ante.tags.join(', ')}</Text>
+                                    </Fieldset>
+                                </Grid.Col>
+                                <Grid.Col span={4}>
+                                    <Fieldset legend={'Voucher'}>
+                                        <Text>{ante.voucher}</Text>
+                                    </Fieldset>
+                                </Grid.Col>
+
+                                <Grid.Col span={6}>
+                                    <Fieldset legend={'Shop Queue'}>
+                                        <Spoiler maxHeight={700} showLabel="Show more" hideLabel="Hide">
+                                            <List type="ordered">
+                                                {
+                                                    ante.queue.map((card, index) => {
+                                                        return (
+                                                            <List.Item key={index}>
+                                                                {card.edition === 'No Edition' ? '' : card.edition} {card.name}
+                                                            </List.Item>
+                                                        )
+                                                    })
+                                                }
+                                            </List>
+                                        </Spoiler>
+                                    </Fieldset>
+                                </Grid.Col>
+                                <Grid.Col span={6}>
+                                    <Fieldset legend={'Packs'}>
+                                        <List>
+                                            {
+                                                ante.blinds &&
+                                                Object.keys(ante.blinds).length > 0 &&
+                                                Object.entries(ante.blinds).map(([key, {packs}]) => {
+                                                    return (
+                                                        <List.Item key={key}>
+                                                            <Text>
+                                                                Blind: {key.split('Blind')[0].toUpperCase()}
+                                                            </Text>
+                                                            {/*<Fieldset legend = {`Blind: ${key.split('Blind')[0].toUpperCase()}`}>*/}
+                                                            <List>
+                                                                {packs.length === 0 && <List.Item><Text>No Packs</Text></List.Item>}
+                                                                {
+                                                                    packs.map((pack: any, index: number) => {
+                                                                        return (
+                                                                            <List.Item key={index}>
+                                                                                {/*<Fieldset legend={`${pack.name} (${pack.size} cards, pick ${pack.choices})`}>*/}
+                                                                                    <Text>
+                                                                                        {pack.name} - {pack.size} cards, pick {pack.choices}
+                                                                                    </Text>
+                                                                                    <List>
+                                                                                        {
+                                                                                            pack.cards.map((card: any, index: number) => {
+                                                                                                return (
+                                                                                                    <List.Item key={index}>
+                                                                                                        {card.name}
+                                                                                                    </List.Item>
+                                                                                                )
+                                                                                            })
+                                                                                        }
+                                                                                    </List>
+                                                                                {/*</Fieldset>*/}
+
+
+                                                                            </List.Item>
+                                                                        )
+                                                                    })
+                                                                }
+                                                            </List>
+                                                            {/*</Fieldset>*/}
+
+
+
+                                                        </List.Item>
+                                                    )
+                                                })
+                                            }
+                                        </List>
+                                    </Fieldset>
+                                </Grid.Col>
+
+                                <Grid.Col span={12}>
+
+                                </Grid.Col>
+                            </Grid>
+
+                            <SimpleGrid cols={3}>
+
+
+
+
+
+                            </SimpleGrid>
+
+
+
+
+                            <Divider my={'sm'}/>
+                        </Box>
+                    )
+                })
+            }
+        </Container>
+    )
+
+}
 
 export default function App() {
     const {analyzer} = useSeedAnalyzer();
     const cardsPerAnte = useCardStore((state) => state.cardsPerAnte);
     const antes = useCardStore((state) => state.antes);
+    const selectedView = useCardStore((state) => state.selectedView);
     const seedResults = analyzer.analyzeSeed(antes, cardsPerAnte);
-    const currentAnte = 4;
-    const joker = seedResults.antes[currentAnte].queue[30];
-    const planet = seedResults.antes[currentAnte].queue[0];
-    const spectral = seedResults.antes[currentAnte].queue[10];
-    const tarot = seedResults.antes[currentAnte].queue[33];
-    const pack = seedResults.antes[currentAnte].blinds.bossBlind.packs[0];
-    const packCard = pack.cards[2];
-    const cardProps = {
-        maw: '140px',
-        withBorder: true,
-        shadow: "xl",
-    }
+
+    const reinitializeRef = useRef(() => {
+    });
+
+    useEffect(() => {
+        reinitializeRef.current();
+    }, [seedResults]);
+
+
     return (
         <MantineProvider defaultColorScheme={'dark'} theme={theme}>
-            <Container>
-                <Group>
-                    <Voucher
-                        voucherName={seedResults.antes[currentAnte].voucher || ""}
-                        paperProps={{
-                            maw: '120px',
-                            m: 'sm',
-                            withBorder: true,
-                            shadow: "xl",
-                        }}
-                    />
-                </Group>
-                <Carousel
-                    containScroll={"trimSnaps"}
-                    slideGap={{base: 'sm'}}
-                    slideSize={{ base: 120 }}
-                    withControls={false}
-                    dragFree
-                >
-                    {
-                        seedResults.antes[currentAnte].queue.map((card: any, index: number) => {
-                            return (
-                                <Carousel.Slide key={index}>
-                                    {
-                                        <GameCard
-                                            card={card}
-                                            paperProps={cardProps}
-                                        />
-                                    }
-                                </Carousel.Slide>
-                            )
-                        })
-                    }
-                    {
-                        pack.cards.map((card: any, index: number) => {
-                            return (
-                                <Carousel.Slide key={index}>
-                                    {
-                                        <GameCard
-                                            card={card}
-                                            paperProps={cardProps}
-                                        />
-                                    }
-                                </Carousel.Slide>
-                            )
-                        })
-                    }
-                    <Carousel.Slide>
-                        {
-                            <GameCard
-                                card={packCard}
-                                paperProps={cardProps}
+            <AppShell
+                navbar={{
+                    width: 100,
+                    breakpoint: 'sm',
+                    collapsed: {desktop: selectedView !== "Simple", mobile: true},
+                }}
+            >
+                <AppShell.Header></AppShell.Header>
+                {selectedView === 'Simple' && (
+                    <>
+                        <AppShell.Navbar>
+                            <TableOfContents
+                                p={'xs'}
+                                reinitializeRef={reinitializeRef}
+                                scrollSpyOptions={{
+                                    selector: '#simple-view :is(h1, h2, h3, h4, h5, h6)',
+                                }}
+                                getControlProps={({data}) => ({
+                                    onClick: () => data.getNode().scrollIntoView(),
+                                    children: data.value,
+                                })}
                             />
-                        }
-                    </Carousel.Slide>
-                    <Carousel.Slide>
-                        {
-                            <GameCard
-                                card={joker}
-                                paperProps={cardProps}
-                            />
-                        }
-                    </Carousel.Slide>
-                    <Carousel.Slide>
-                        {
-                            <GameCard
-                                card={new Joker_Final({
-                                    name: "Perkeo",
-                                    type: "Joker",
-                                    edition: "No Edition",
-                                    isEternal: false,
-                                    isPerishable: false,
-                                    isRental: false,
+                        </AppShell.Navbar>
+                        <AppShell.Aside></AppShell.Aside>
+                        <AppShell.Main>
+                            <ScrollArea>
+                                <SimpleView seedResult={seedResults}/>
+                            </ScrollArea>
+                        </AppShell.Main>
 
-                                } as Card_Final)}
-                                paperProps={cardProps}
-                            />
-                        }
-                    </Carousel.Slide>
-                    <Carousel.Slide>
-                        {
-                            <GameCard
-                                card={new Joker_Final({
-                                    name: "Perkeo",
-                                    type: "Joker",
-                                    edition: "Negative",
-                                    isEternal: false,
-                                    isPerishable: false,
-                                    isRental: false,
+                    </>
+                )}
 
-                                } as Card_Final)}
-                                paperProps={cardProps}
-                            />
-                        }
-                    </Carousel.Slide>
-                    <Carousel.Slide>
-                        {
-                            <GameCard
-                                card={planet}
-                                paperProps={cardProps}
-                            />
-                        }
-                    </Carousel.Slide>
-                    <Carousel.Slide>
-                        {
-                            <GameCard
-                                card={spectral}
-                                paperProps={cardProps}
-                            />
-                        }
-                    </Carousel.Slide>
-                    <Carousel.Slide>
-                        {
-                            <GameCard
-                                card={tarot}
-                                paperProps={cardProps}
-                            />
-                        }
-                    </Carousel.Slide>
-
-                </Carousel>
-
-
-            </Container>
+                <AppShell.Footer></AppShell.Footer>
+            </AppShell>
         </MantineProvider>
     );
 }

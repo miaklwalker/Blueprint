@@ -15,11 +15,13 @@ export interface NextShopItem {
         }
     } | undefined
 }
-export interface BoosterPack{
-    type:string;
+
+export interface BoosterPack {
+    type: string;
     choices: number;
     size: number;
 }
+
 export interface PackCard {
     base: string | undefined;
     type: string;
@@ -35,6 +37,7 @@ export interface PackCard {
     } | undefined
 
 }
+
 export class NextPackCard {
     name: string | null;
     type: string;
@@ -61,10 +64,10 @@ export class NextPackCard {
         this.seal = packCard?.seal;
         this.type = packCard.type;
         this.jokerData = {
-            edition : packCard.edition,
-            joker : packCard?.joker,
-            rarity : packCard?.rarity,
-            stickers : {
+            edition: packCard.edition,
+            joker: packCard?.joker,
+            rarity: packCard?.rarity,
+            stickers: {
                 eternal: packCard?.stickers?.eternal,
                 perishable: packCard?.stickers?.perishable,
                 rental: packCard?.stickers?.rental,
@@ -80,6 +83,7 @@ export interface Stringifies {
     type: string;
     edition?: string | undefined;
 }
+
 export interface CardAttributes {
     name: string;
     type: string;
@@ -95,6 +99,7 @@ export interface CardAttributes {
     isPerishable?: boolean;
     isRental?: boolean;
 }
+
 export class Card_Final implements Stringifies {
     name: string;
     type: string;
@@ -109,7 +114,8 @@ export class Card_Final implements Stringifies {
     isEternal: boolean | undefined;
     isPerishable: boolean | undefined;
     isRental: boolean | undefined;
-    constructor( card: CardAttributes){
+
+    constructor(card: CardAttributes) {
         // base line card attributes
         this.name = card.name;
         this.type = card.type;
@@ -129,7 +135,8 @@ export class Card_Final implements Stringifies {
         this.isRental = card.isRental;
     }
 }
-export class Joker_Final implements Stringifies{
+
+export class Joker_Final implements Stringifies {
     name: string;
     type: string;
     edition: string;
@@ -137,7 +144,8 @@ export class Joker_Final implements Stringifies{
     isEternal: boolean | undefined;
     isPerishable: boolean | undefined;
     isRental: boolean | undefined;
-    constructor( joker: Card_Final ){
+
+    constructor(joker: Card_Final) {
         this.name = joker.name;
         this.type = joker.type;
         this.edition = joker?.edition ?? "No Edition";
@@ -147,27 +155,36 @@ export class Joker_Final implements Stringifies{
         this.isRental = joker.isRental;
     }
 }
+
 export class Consumables_Final implements Stringifies {
     name: string;
     type: string;
     edition: string | undefined;
-    constructor( planet: Card_Final ){
+
+    constructor(planet: Card_Final) {
         this.name = planet.name;
         this.type = planet.type;
         this.edition = planet?.edition;
     }
 }
-export class Planet_Final extends Consumables_Final implements Stringifies  {}
-export class Tarot_Final extends Consumables_Final implements Stringifies {}
-export class Spectral_Final extends Consumables_Final implements Stringifies {}
+
+export class Planet_Final extends Consumables_Final implements Stringifies {
+}
+
+export class Tarot_Final extends Consumables_Final implements Stringifies {
+}
+
+export class Spectral_Final extends Consumables_Final implements Stringifies {
+}
 
 export class StandardCard_Final extends Card_Final implements Stringifies {
-    constructor( card: Card_Final ){
+    constructor(card: Card_Final) {
         super(card);
         this.init(card)
     }
+
     init(cardData: Card_Final) {
-        if(cardData.base === undefined) return;
+        if (cardData.base === undefined) return;
         let name = ''
         if (cardData.seal !== "No Seal") {
             this.seal = cardData.seal;
@@ -206,11 +223,66 @@ export class Pack {
     choices: number;
     size: number;
     cards: any[]
+
     constructor(pack: BoosterPack) {
         this.name = pack.type;
         this.choices = pack.choices;
         this.size = pack.size;
         this.cards = []
+    }
+
+    static PackCardToCard(data: string | PackCard, cardType: string) {
+        if (data === undefined) {
+            console.log("No data for pack card");
+            return [];
+        }
+        let card: any;
+        if (typeof data === 'string') {
+            if (cardType === 'Planet') {
+                return new Planet_Final({
+                    name: data,
+                    type: cardType
+                } as Card_Final);
+            }
+            if (cardType === 'Tarot') {
+                return new Tarot_Final({
+                    name: data,
+                    type: cardType
+                } as Card_Final);
+            }
+            if (cardType === 'Spectral') {
+                return new Spectral_Final({
+                    name: data,
+                    type: cardType
+                } as Card_Final);
+            }
+        } else {
+            let packCard = new NextPackCard(data);
+            if (cardType === 'Standard') {
+                let templateCard = new Card_Final({
+                    name: packCard.name,
+                    type: cardType,
+                    edition: packCard.edition,
+                    seal: packCard.seal,
+                    base: packCard.base,
+                    enhancements: packCard.enhancement,
+                } as CardAttributes);
+                return new StandardCard_Final(templateCard);
+            } else {
+                let templateCard = new Card_Final({
+                    name: packCard.jokerData.joker,
+                    type: cardType,
+                    edition: packCard.edition,
+                    enhancements: packCard.enhancement,
+                    rarity: packCard.jokerData?.rarity,
+                    isEternal: packCard.jokerData?.stickers?.eternal,
+                    isPerishable: packCard.jokerData?.stickers?.perishable,
+                    isRental: packCard.jokerData?.stickers?.rental
+                } as CardAttributes);
+                return new Joker_Final(templateCard);
+            }
+        }
+        return card
     }
 
     init(instance: CardEngine, ante: number, spoilers = true) {
@@ -243,78 +315,26 @@ export class Pack {
         }
         for (let i = 0; i < this.size; i++) {
             let data: string | PackCard | undefined = cards.get(i);
-            if( data === undefined) {
+            if (data === undefined) {
                 console.log("No data for pack card");
                 continue;
             }
-            if ( typeof data === 'string') {
-                if( itemsWithSpoilers.includes(data) && spoilers) {
-                    let joker = instance.nextJoker(instance.commonSources[data], ante, true);
-                    let commonCardInterface = {
-                        name: joker.joker,
-                        type: cardType,
-                        edition: joker.edition,
-                        seal: joker.seal,
-                        isEternal: joker?.stickers?.eternal,
-                        isPerishable: joker?.stickers?.perishable,
-                        isRental: joker?.stickers?.rental,
-                    } as Card_Final
-                    let jokerCard = new Joker_Final(commonCardInterface);
-                    this.cards.push(jokerCard);
-                    continue;
-                }
-                if(cardType === 'Planet') {
-                    let planet = new Planet_Final({
-                        name: data,
-                        type: cardType
-                    } as Card_Final);
-                    this.cards.push(planet);
-                }
-                if(cardType === 'Tarot') {
-                    let tarot = new Tarot_Final({
-                        name: data,
-                        type: cardType
-                    } as Card_Final);
-                    this.cards.push(tarot);
-                }
-                if(cardType === 'Spectral') {
-                    let spectral = new Spectral_Final({
-                        name: data,
-                        type: cardType
-                    } as Card_Final);
-                    this.cards.push(spectral);
-                }
+            if (typeof data === 'string' && itemsWithSpoilers.includes(data) && spoilers) {
+                let joker = instance.nextJoker(instance.commonSources[data], ante, true);
+                let commonCardInterface = {
+                    name: joker.joker,
+                    type: cardType,
+                    edition: joker.edition,
+                    seal: joker.seal,
+                    isEternal: joker?.stickers?.eternal,
+                    isPerishable: joker?.stickers?.perishable,
+                    isRental: joker?.stickers?.rental,
+                } as Card_Final
+                let jokerCard = new Joker_Final(commonCardInterface);
+                this.cards.push(jokerCard);
+                continue;
             }
-            else{
-                let packCard = new NextPackCard(data);
-                if( cardType === 'Standard') {
-                    let templateCard = new Card_Final({
-                        name: packCard.name,
-                        type: cardType,
-                        edition: packCard.edition,
-                        seal: packCard.seal,
-                        base: packCard.base,
-                        enhancements: packCard.enhancement,
-                    } as CardAttributes);
-                    let standardCard = new StandardCard_Final(templateCard);
-                    this.cards.push(standardCard);
-                }
-                else{
-                    let templateCard = new Card_Final({
-                        name: packCard.jokerData.joker,
-                        type: cardType,
-                        edition: packCard.edition,
-                        enhancements: packCard.enhancement,
-                        rarity: packCard.jokerData?.rarity,
-                        isEternal: packCard.jokerData?.stickers?.eternal,
-                        isPerishable: packCard.jokerData?.stickers?.perishable,
-                        isRental: packCard.jokerData?.stickers?.rental
-                    } as CardAttributes);
-                    let jokerCard = new Joker_Final(templateCard);
-                    this.cards.push(jokerCard);
-                }
-            }
-
+            this.cards.push(Pack.PackCardToCard(data, cardType))
         }
         // @ts-ignore
         cards.delete();
@@ -323,6 +343,7 @@ export class Pack {
 
 export class Seed {
     antes: { [key: number]: Ante };
+
     constructor() {
         this.antes = {}
     }
@@ -335,6 +356,7 @@ export class Ante {
     queue: Stringifies[];
     tags: string[];
     blinds: { [key: string]: { [key: string]: any[] } }
+    miscCardSources: { [key: string]: any[] }
 
     constructor(ante: number) {
         this.ante = ante;
@@ -342,6 +364,7 @@ export class Ante {
         this.voucher = null;
         this.queue = [];
         this.tags = [];
+        this.miscCardSources = {};
         this.blinds = {
             smallBlind: {
                 packs: []

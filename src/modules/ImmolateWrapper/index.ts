@@ -1,12 +1,28 @@
 import {
     Ante, BoosterPack,
-    Card_Final,
+    Card_Final, CardAttributes,
     Consumables_Final,
-    Joker_Final,
+    Joker_Final, NextPackCard,
     NextShopItem, Pack, PackCard, Planet_Final,
     Seed, Spectral_Final,
     StandardCard_Final, Tarot_Final
 } from "./CardEngines/Cards.ts";
+
+
+function transformPackJokerToJokerFinal(card: PackCard): Joker_Final{
+    let packCard= new NextPackCard(card);
+    let templateCard = new Card_Final({
+        name: packCard.jokerData.joker,
+        type: "Joker",
+        edition: packCard.edition,
+        enhancements: packCard.enhancement,
+        rarity: packCard.jokerData?.rarity,
+        isEternal: packCard.jokerData?.stickers?.eternal,
+        isPerishable: packCard.jokerData?.stickers?.perishable,
+        isRental: packCard.jokerData?.stickers?.rental
+    } as CardAttributes);
+    return new Joker_Final(templateCard);
+}
 
 export interface CardEngine {
     sources: { [key: string]: string };
@@ -27,6 +43,9 @@ export interface CardEngine {
     nextTag(ante: number): string;
     nextShopItem(ante: number): NextShopItem;
     nextJoker(source: string, ante: number, hasStickers?: boolean): PackCard;
+    nextTarot(source: string, ante: number, hasStickers?: boolean): PackCard;
+    nextPlanet(source: string, ante: number, hasStickers?: boolean): PackCard;
+    nextSpectral(source: string, ante: number, hasStickers?: boolean): PackCard;
     nextPack(ante: number): string;
 
     // Pack generators
@@ -120,6 +139,7 @@ export class CardEngineWrapper implements EngineWrapper{
     }
     analyzeAnte(ante: number, cardsPerAnte: number): Ante {
         let result = new Ante(ante);
+        this.engine.initUnlocks(ante, false);
         result.boss = this.engine.nextBoss(ante)
         result.voucher = this.engine.nextVoucher(ante);
         result.tags.push(this.engine.nextTag(ante));
@@ -143,6 +163,39 @@ export class CardEngineWrapper implements EngineWrapper{
                 pack.init(this.engine, ante);
                 result.blinds[blind].packs.push(pack)
             }
+        }
+        result.miscCardSources = {
+            // jokers
+            riffRaff: [],
+            uncommonTag: [],
+            rareTag: [],
+            topUpTag: [],
+            judgement: [],
+            wraith: [],
+            // planet cards
+            highPriestess: [],
+            // tarot cards
+            emperor: [],
+            vagabond: [],
+            purpleSeal: [],
+            // spectral cards
+            spectral: [],
+        }
+        for (let i = 0 ; i<9; i++) {
+            result.miscCardSources.riffRaff.push( Pack.PackCardToCard(this.engine.nextJoker(this.engine.sources.S_Riff_Raff, ante, false),"Joker"))
+            result.miscCardSources.uncommonTag.push( Pack.PackCardToCard(this.engine.nextJoker(this.engine.sources.S_Uncommon_Tag, ante, false),"Joker"))
+            result.miscCardSources.rareTag.push( Pack.PackCardToCard(this.engine.nextJoker(this.engine.sources.S_Rare_Tag, ante, false),"Joker"))
+            result.miscCardSources.topUpTag.push( Pack.PackCardToCard(this.engine.nextJoker(this.engine.sources.S_Top_Up, ante, false),"Joker"))
+            result.miscCardSources.judgement.push( Pack.PackCardToCard(this.engine.nextJoker(this.engine.sources.S_Judgement, ante, false),"Joker"))
+            result.miscCardSources.wraith.push( Pack.PackCardToCard(this.engine.nextJoker(this.engine.sources.S_Wraith, ante, false),"Joker"))
+
+            result.miscCardSources.highPriestess.push( Pack.PackCardToCard(this.engine.nextPlanet(this.engine.sources.S_High_Priestess, ante, false),"Planet"))
+            result.miscCardSources.emperor.push( Pack.PackCardToCard(this.engine.nextTarot(this.engine.sources.S_Emperor, ante, false),"Tarot"))
+            result.miscCardSources.vagabond.push( Pack.PackCardToCard(this.engine.nextTarot(this.engine.sources.S_Vagabond, ante, false),"Tarot"))
+            result.miscCardSources.purpleSeal.push( Pack.PackCardToCard(this.engine.nextTarot(this.engine.sources.S_Purple_Seal, ante, false),"Tarot"))
+            result.miscCardSources.spectral.push( Pack.PackCardToCard(this.engine.nextSpectral(this.engine.sources.S_Spectral, ante, false),"Spectral"))
+
+
         }
         return result
     }

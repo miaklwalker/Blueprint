@@ -77,6 +77,7 @@ export class ImmolateClassic implements CardEngine{
             "The Soul": this.sources.S_Soul,
             "Judgment": this.sources.S_Judgement,
             "Wraith": this.sources.S_Wraith,
+            "RiffRaff": this.sources.S_Riff_Raff,
         }
         // @ts-ignore
         this.instance = new Immolate.Instance(seed);
@@ -161,6 +162,16 @@ export class ImmolateClassic implements CardEngine{
     nextJoker(source: string, ante: number, hasStickers: boolean = false): PackCard {
         return this.instance.nextJoker(source, ante, hasStickers);
     }
+    nextTarot(source: string, ante: number, soulable: boolean = false): PackCard {
+        return this.instance.nextTarot(source, ante, soulable);
+    }
+    nextPlanet(source: string, ante: number, soulable: boolean = false): PackCard {
+        return this.instance.nextPlanet(source, ante, soulable);
+    }
+    nextSpectral(source: string, ante: number, soulable: boolean = false): PackCard {
+        return this.instance.nextSpectral(source, ante, soulable);
+    }
+
     /**
      * @method nextPack
      * @param ante {Number}

@@ -9,20 +9,6 @@ import {
 } from "./CardEngines/Cards.ts";
 
 
-function transformPackJokerToJokerFinal(card: PackCard): Joker_Final{
-    let packCard= new NextPackCard(card);
-    let templateCard = new Card_Final({
-        name: packCard.jokerData.joker,
-        type: "Joker",
-        edition: packCard.edition,
-        enhancements: packCard.enhancement,
-        rarity: packCard.jokerData?.rarity,
-        isEternal: packCard.jokerData?.stickers?.eternal,
-        isPerishable: packCard.jokerData?.stickers?.perishable,
-        isRental: packCard.jokerData?.stickers?.rental
-    } as CardAttributes);
-    return new Joker_Final(templateCard);
-}
 
 export interface CardEngine {
     sources: { [key: string]: string };

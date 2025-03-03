@@ -16,18 +16,18 @@ import {
     Group, List,
     MantineProvider, Paper, ScrollArea,
     SimpleGrid, Spoiler, TableOfContents,
-    Text, Title
+    Text, TextInput, Title
 } from "@mantine/core";
 import {theme} from "./theme.js";
 import {create} from "zustand";
-import {devtools} from "zustand/middleware";
+import {combine, devtools, persist} from "zustand/middleware";
 import {ImmolateClassic} from "./modules/ImmolateWrapper/CardEngines/immolateClassic.ts";
 import {CardEngineWrapper} from "./modules/ImmolateWrapper";
 //@ts-ignore
 import {editionMap, jokerFaces, jokers, stickerMap, tarotsAndPlanets, vouchers} from "./modules/const.js"
 //@ts-ignore
 import {getModifierColor, getSealPosition, getStandardCardPosition} from "./modules/utils.js";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
 import {
     Ante,
     Card_Final,
@@ -39,50 +39,68 @@ import {
 import {useElementSize, useHover, useMergedRef, useMouse, useResizeObserver} from "@mantine/hooks";
 import {IconExternalLink, IconShoppingCartCheck} from "@tabler/icons-react";
 import {Carousel} from "@mantine/carousel";
+import {immer} from 'zustand/middleware/immer'
 
 
 const globalImageCache = new Map<string, HTMLImageElement>();
-const initialState = {
-    seed: '15IBIXCA',
-    deck: 'Ghost Deck',
-    cardsPerAnte: 50,
-    antes: 8,
-    deckType: 'Ghost Deck',
-    stake: 'Gold Stake',
-    showmanOwned: false,
-    gameVersion: '10106',
+
+const initialState: any = {
+    immolateState: {
+        seed: '15IBIXCA',
+        deck: 'Ghost Deck',
+        cardsPerAnte: 50,
+        antes: 8,
+        deckType: 'Ghost Deck',
+        stake: 'Gold Stake',
+        showmanOwned: false,
+        gameVersion: '10106',
+    },
+    applicationState: {
+        settingsOpen: false,
+        asideOpen: false,
+        showCardSpoilers: false,
+        selectedAnte: 1,
+        selectedBlind: 'Small Blind',
+    },
+    searchState: {
+        searchTerm: '',
+        searchResults: [],
+        selectedSearchResult: null
+    },
+    shoppingState: {
+        buys: {},
+        sells: {},
+    }
 }
 
-interface CardStoreState {
-    seed: string;
-    deck: string;
-    cardsPerAnte: number;
-    antes: number;
-    deckType: string;
-    stake: string;
-    showmanOwned: boolean;
-    gameVersion: string;
-}
-
-const useCardStore = create<CardStoreState>()(
+const useCardStore = create(
     devtools(
-        (set) => ({
-            ...initialState,
-            views: ['Simple', 'Endless', 'Panel'],
-            selectedView: 'Simple',
-            reset: () => {
-                set(initialState, undefined, 'Global/Reset');
-            },
-        })
+        persist(
+            immer(
+                combine(
+                    initialState,
+                    (set, get) => ({
+                        setSeed: (seed: string) => set((prev) => {
+                            prev.immolateState.seed = seed
+                        }, undefined, 'Global/SetSeed'),
+                        reset: () => set(initialState, undefined, 'Global/Reset'),
+                    })
+                )
+            ),
+            {
+                name: 'blueprint-store',
+                version: 1,
+            }
+        )
     )
 )
 
 function useSeedAnalyzer(): { analyzer: CardEngineWrapper, engine: ImmolateClassic } {
-    const seed = useCardStore((state) => state.seed);
-    const deck = useCardStore((state) => state.deck);
-    const stake: string = useCardStore((state) => state.stake);
-    const showmanOwned = useCardStore((state) => state.showmanOwned);
-    const version = useCardStore((state) => state.gameVersion);
+    const seed = useCardStore((state) => state.immolateState.seed);
+    const deck = useCardStore((state) => state.immolateState.deck);
+    const stake = useCardStore((state) => state.immolateState.stake);
+    const showmanOwned = useCardStore((state) => state.immolateState.showmanOwned);
+    const version = useCardStore((state) => state.immolateState.gameVersion);
 
     const engine = new ImmolateClassic(seed);
     engine.InstParams(deck, stake, showmanOwned, version);
@@ -119,6 +137,11 @@ class Layer {
     }
 }
 
+interface RenderCanvasProps {
+    layers: any[],
+    invert?: boolean,
+    spacing?: boolean
+}
 
 function renderImage(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, image: HTMLImageElement, layer: Layer) {
     if (!image) return 0;
@@ -136,12 +159,6 @@ function renderImage(canvas: HTMLCanvasElement, context: CanvasRenderingContext2
         canvas.height
     );
     return cardWidth / cardHeight;
-}
-
-interface RenderCanvasProps {
-    layers: any[],
-    invert?: boolean,
-    spacing?: boolean
 }
 
 function RenderImagesWithCanvas({layers, invert = false, spacing = false}: RenderCanvasProps) {
@@ -237,566 +254,64 @@ function RenderImagesWithCanvas({layers, invert = false, spacing = false}: Rende
     )
 }
 
-function Voucher({voucherName, paperProps}: { voucherName: string, paperProps?: any }) {
-    let layers = [];
-    const {ref: sizeRef, width} = useElementSize()
-    const {hovered, ref: hoverRef} = useHover();
-    const mergedRef = useMergedRef(
-        sizeRef,
-        hoverRef
-    );
-    const voucherData = vouchers.find((voucher: any) => voucher.name === voucherName);
-    if (voucherData) layers.push(new Layer({
-        ...voucherData,
-        source: 'images/Vouchers.png',
-        order: 0,
-        columns: 9,
-        rows: 4
-    }));
-
+function Header() {
     return (
-        <Card ref={mergedRef} {...paperProps} >
-            <Card.Section withBorder>
-                <Flex direction={'column'} p={'xs'}>
-                    <SimpleGrid cols={{base: 1, sm: width > 200 ? 2 : 1}} spacing={'xs'}>
-                        <Box>
-                            <Text fz={'sm'}>{voucherName}</Text>
-                        </Box>
-                    </SimpleGrid>
-                </Flex>
-            </Card.Section>
-            <Card.Section withBorder>
-                <Center>
-                    <RenderImagesWithCanvas
-                        layers={layers}
-                        spacing
-                    />
-                </Center>
-            </Card.Section>
-            <Card.Section withBorder={hovered}>
-                <Flex direction={'row'} p={'xs'} justify={'space-evenly'} align={'center'} gap={'xs'}>
-                    <ActionIcon>
-                        <IconShoppingCartCheck/>
-                    </ActionIcon>
-                    <ActionIcon>
-                        <IconExternalLink/>
-                    </ActionIcon>
-                </Flex>
-            </Card.Section>
-        </Card>
+        <AppShell.Header></AppShell.Header>
     )
 }
 
-function Joker({card, paperProps}: { card: any | Joker_Final, paperProps?: any }) {
-    let layers = [];
-    const {ref: sizeRef, width} = useElementSize()
-    const {hovered, ref: hoverRef} = useHover();
-    const mergedRef = useMergedRef(
-        sizeRef,
-        hoverRef
-    );
-    const jokerData = jokers.find((joker: any) => joker.name === card.name);
-    if (jokerData) layers.push(new Layer({...jokerData, source: 'images/Jokers.png', order: 0, columns: 10, rows: 16}));
-    const face = jokerFaces.find((joker: any) => joker.name === card.name);
-    if (face) layers.push(new Layer({...face, source: 'images/Jokers.png', order: 1, columns: 10, rows: 16}));
-    if (card.edition) {
-        const index = editionMap[card.edition];
-        layers.push(new Layer({
-            pos: {x: index, y: 0},
-            name: card.edition,
-            order: 2,
-            source: 'images/Editions.png',
-            rows: 1,
-            columns: 5
-        }));
-    }
-    if (card.isEternal) {
-        layers.push(new Layer({
-            pos: stickerMap['Eternal'],
-            name: 'Eternal',
-            order: 3,
-            source: 'images/stickers.png',
-            rows: 3,
-            columns: 5
-        }));
-    }
-    if (card.isPerishable) {
-        layers.push(new Layer({
-            pos: stickerMap['Perishable'],
-            name: 'Perishable',
-            order: 4,
-            source: 'images/stickers.png',
-            rows: 3,
-            columns: 5
-        }));
-    }
-    if (card.isRental) {
-        layers.push(new Layer({
-            pos: stickerMap['Rental'],
-            name: 'Rental',
-            order: 5,
-            source: 'images/stickers.png',
-            rows: 3,
-            columns: 5
-        }));
-    }
+function NavBar() {
     return (
-        <Card ref={mergedRef} {...paperProps} >
-            <Card.Section withBorder>
-                <Flex direction={'column'} p={'xs'}>
-                    <SimpleGrid cols={{base: 1, sm: width > 200 ? 2 : 1}} spacing={'xs'}>
-                        <Box>
-                            <Text fz={'sm'}>{card.name}</Text>
-                        </Box>
-                    </SimpleGrid>
-                </Flex>
-            </Card.Section>
-            <Card.Section withBorder>
-                <Center>
-                    <RenderImagesWithCanvas
-                        spacing={true}
-                        invert={card.edition === "Negative"}
-                        layers={layers}
-                    />
-                </Center>
-            </Card.Section>
-            {
-                card.edition &&
-                card.edition !== "No Edition" &&
-                <Card.Section withBorder>
-                    <Collapse in={hovered}>
-                        <Flex direction={'column'} p={'xs'}>
-                            <Group>
-                                <Badge autoContrast color={getModifierColor(card.edition)}>{card.edition}</Badge>
-                            </Group>
-                        </Flex>
-                    </Collapse>
-                </Card.Section>
-            }
-            {
-                (card.isEternal || card.isRental || card.isPerishable) &&
-                <Card.Section withBorder={hovered}>
-                    <Collapse in={hovered}>
-                        <Flex direction={'column'} p={'xs'}>
-                            <Group>
-                                {
-                                    card.isEternal &&
-                                    <Badge autoContrast color={getModifierColor("Eternal")}>Eternal</Badge>
-                                }
-                                {
-                                    card.isPerishable &&
-                                    <Badge autoContrast color={getModifierColor("Perishable")}>Perishable</Badge>
-                                }
-                                {
-                                    card.isRental &&
-                                    <Badge autoContrast color={getModifierColor("Rental")}>Rental</Badge>
-                                }
-                            </Group>
-                        </Flex>
-                    </Collapse>
-                </Card.Section>
-            }
-
-            <Card.Section>
-                <Flex direction={'row'} p={'xs'} justify={'space-evenly'} align={'center'} gap={'xs'}>
-                    <Button>Buy</Button>
-                    <ActionIcon>
-                        <IconExternalLink/>
-                    </ActionIcon>
-                </Flex>
-            </Card.Section>
-
-
-        </Card>
+        <AppShell.Navbar></AppShell.Navbar>
     )
 }
 
-function PlayingCard({card, paperProps}: { card: StandardCard_Final, paperProps?: any }) {
-    const {ref: sizeRef, width} = useElementSize()
-    const {hovered, ref: hoverRef} = useHover();
-    const mergedRef = useMergedRef(
-        sizeRef,
-        hoverRef
-    );
-    const position = getStandardCardPosition(card.rank, card.suit);
-    let layers = [
-        new Layer({
-            pos: {x: 1, y: 0},
-            name: 'background',
-            order: 0,
-            source: 'images/Enhancers.png',
-            rows: 5,
-            columns: 7
-        }),
-        new Layer({
-            pos: position,
-            name: card.name,
-            order: 1,
-            source: 'images/8BitDeck.png',
-            rows: 4,
-            columns: 13
-        })
-    ]
-    if (card.edition) {
-        const index = editionMap[card.edition];
-        layers.push(new Layer({
-            pos: {x: index, y: 0},
-            name: card.edition,
-            order: 2,
-            source: 'images/Editions.png',
-            rows: 1,
-            columns: 5
-        }));
-    }
-    if (card.seal) {
-        layers.push(new Layer({
-            pos: getSealPosition(card.seal),
-            name: card.seal,
-            order: 3,
-            source: 'images/Enhancers.png',
-            rows: 5,
-            columns: 7
-        }));
-    }
-
-
+function Main() {
     return (
-        <Card withBorder ref={mergedRef} {...paperProps} >
-            <Card.Section style={{borderBottom: '1px solid rgba(255, 255, 255, 0.1)'}}>
-                <Group px={'md'} py={'xs'} justify={'space-between'}>
-                    <Text fz={'sm'}>{card.rank} of {card.suit}</Text>
-                    {width > 200 && <Badge>Card</Badge>}
-                </Group>
-
-            </Card.Section>
-            <Card.Section withBorder>
-                <Center>
-                    <RenderImagesWithCanvas
-                        spacing={true}
-                        layers={layers}
-                    />
-                </Center>
-            </Card.Section>
-            {
-                card.enhancements &&
-                card.enhancements !== "No Enhancement" &&
-                <Card.Section withBorder={hovered}>
-                    <Collapse in={hovered}>
-                        <Group grow p={'xs'}>
-                            <Box>
-                                <Text fz={'xs'} c={'dimmed'}>Enhancement</Text>
-                                <Text fz={'sm'}>{card.enhancements}</Text>
-                            </Box>
-                        </Group>
-                    </Collapse>
-                </Card.Section>
-            }
-            {
-                card.edition &&
-                card.edition !== "No Edition" &&
-                <Card.Section withBorder={hovered}>
-                    <Collapse in={hovered}>
-                        <Group grow p={'md'}>
-                            <Box>
-                                <Text fz={'xs'} c={'dimmed'}>Edition</Text>
-                                <Text fz={'sm'}>{card.edition}</Text>
-                            </Box>
-                        </Group>
-                    </Collapse>
-                </Card.Section>
-            }
-            {
-                card.seal &&
-                card.seal !== "No Seal" &&
-                <Card.Section withBorder={hovered}>
-                    <Collapse in={hovered}>
-                        <Group grow p={'xs'}>
-                            <Box>
-                                <Text fz={'xs'} c={'dimmed'}>Seal</Text>
-                                <Text fz={'sm'}>{card.seal}</Text>
-                            </Box>
-                        </Group>
-                    </Collapse>
-                </Card.Section>
-            }
-            <Card.Section>
-                <Flex direction={'row'} p={'xs'} justify={'space-evenly'} align={'center'} gap={'xs'}>
-                    <Button>Buy</Button>
-                    <ActionIcon>
-                        <IconExternalLink/>
-                    </ActionIcon>
-                </Flex>
-            </Card.Section>
-
-        </Card>
+        <AppShell.Main></AppShell.Main>
     )
 }
 
-function Consumables({card, paperProps}: { card: Planet_Final | Spectral_Final | Tarot_Final, paperProps?: any }) {
-
-    let layers = [
-        new Layer({
-            ...tarotsAndPlanets.find((t: any) => t.name === card.name),
-            order: 0,
-            source: 'images/Tarots.png',
-            rows: 6,
-            columns: 10
-        })
-    ]
+function Aside() {
     return (
-        <Card {...paperProps}>
-            <Card.Section withBorder>
-                <Flex direction={'column'} p={'xs'}>
-                    <SimpleGrid cols={1} spacing={'xs'}>
-                        <Box>
-                            <Text truncate={'end'} fz={'sm'}>{card.name}</Text>
-                        </Box>
-                    </SimpleGrid>
-                </Flex>
-            </Card.Section>
-            <Card.Section withBorder>
-                <Center>
-                    <RenderImagesWithCanvas
-                        spacing={true}
-                        invert={card?.edition === "Negative"}
-                        layers={layers}
-                    />
-                </Center>
-            </Card.Section>
-            <Card.Section>
-                <Flex direction={'row'} p={'xs'} justify={'space-evenly'} align={'center'} gap={'xs'}>
-                    <Button>Buy</Button>
-                    <ActionIcon>
-                        <IconExternalLink/>
-                    </ActionIcon>
-                </Flex>
-            </Card.Section>
-        </Card>
+        <AppShell.Aside></AppShell.Aside>
     )
 }
 
-function GameCard({card, paperProps}: { card: any, paperProps?: any }) {
-    if (card instanceof StandardCard_Final) {
-        return <PlayingCard card={card} paperProps={paperProps}/>
-    }
-    if (card instanceof Joker_Final) {
-        return <Joker card={card} paperProps={paperProps}/>
-    }
-    if (card instanceof Planet_Final || card instanceof Tarot_Final || card instanceof Spectral_Final) {
-        return <Consumables card={card} paperProps={paperProps}/>
-    }
-}
-
-function Queue({queue}: { queue: any[] }) {
+function Footer() {
     return (
-        <Carousel
-            containScroll={"trimSnaps"}
-            slideGap={{base: 'sm'}}
-            slideSize={{base: 120}}
-            withControls={false}
-            dragFree
-        >
-            {
-                queue.map((card: any, index: number) => {
-                    return (
-                        <Carousel.Slide key={index}>
-                            {
-                                <GameCard
-                                    card={card}
-                                    paperProps={cardProps}
-                                />
-                            }
-                        </Carousel.Slide>
-                    )
-                })
-            }
-        </Carousel>
+        <AppShell.Footer></AppShell.Footer>
     )
 }
 
-const cardProps = {
-    maw: '140px',
-    withBorder: true,
-    shadow: "xl",
-}
-
-function SimpleView({seedResult}: { seedResult: Seed }) {
-    console.log(seedResult)
+function Blueprint({}) {
     return (
-        <Container fluid id={'simple-view'}>
-            {
-                seedResult &&
-                Object.keys(seedResult.antes).length > 0 &&
-                Object.entries(seedResult.antes).map(([key, ante]: [string, Ante], index) => {
-                    return (
-                        <Box id={`ANTE-${ante}`} data-order={0} key={index}>
-                            <Title mb={'sm'}>Ante {key}</Title>
-                            <Grid>
-                                <Grid.Col span={4}>
-                                    <Fieldset legend={'Boss'}>
-                                        <Text>{ante.boss}</Text>
-                                    </Fieldset>
-                                </Grid.Col>
-                                <Grid.Col span={4}>
-                                    <Fieldset legend={'Tags'}>
-                                        <Text>{ante.tags.join(', ')}</Text>
-                                    </Fieldset>
-                                </Grid.Col>
-                                <Grid.Col span={4}>
-                                    <Fieldset legend={'Voucher'}>
-                                        <Text>{ante.voucher}</Text>
-                                    </Fieldset>
-                                </Grid.Col>
-
-                                <Grid.Col span={6}>
-                                    <Fieldset legend={'Shop Queue'}>
-                                        <Spoiler maxHeight={700} showLabel="Show more" hideLabel="Hide">
-                                            <List type="ordered">
-                                                {
-                                                    ante.queue.map((card, index) => {
-                                                        return (
-                                                            <List.Item key={index}>
-                                                                {card.edition === 'No Edition' ? '' : card.edition} {card.name}
-                                                            </List.Item>
-                                                        )
-                                                    })
-                                                }
-                                            </List>
-                                        </Spoiler>
-                                    </Fieldset>
-                                </Grid.Col>
-                                <Grid.Col span={6}>
-                                    <Fieldset legend={'Packs'}>
-                                        <List>
-                                            {
-                                                ante.blinds &&
-                                                Object.keys(ante.blinds).length > 0 &&
-                                                Object.entries(ante.blinds).map(([key, {packs}]) => {
-                                                    return (
-                                                        <List.Item key={key}>
-                                                            <Text>
-                                                                Blind: {key.split('Blind')[0].toUpperCase()}
-                                                            </Text>
-                                                            {/*<Fieldset legend = {`Blind: ${key.split('Blind')[0].toUpperCase()}`}>*/}
-                                                            <List>
-                                                                {packs.length === 0 && <List.Item><Text>No Packs</Text></List.Item>}
-                                                                {
-                                                                    packs.map((pack: any, index: number) => {
-                                                                        return (
-                                                                            <List.Item key={index}>
-                                                                                {/*<Fieldset legend={`${pack.name} (${pack.size} cards, pick ${pack.choices})`}>*/}
-                                                                                    <Text>
-                                                                                        {pack.name} - {pack.size} cards, pick {pack.choices}
-                                                                                    </Text>
-                                                                                    <List>
-                                                                                        {
-                                                                                            pack.cards.map((card: any, index: number) => {
-                                                                                                return (
-                                                                                                    <List.Item key={index}>
-                                                                                                        {card.name}
-                                                                                                    </List.Item>
-                                                                                                )
-                                                                                            })
-                                                                                        }
-                                                                                    </List>
-                                                                                {/*</Fieldset>*/}
-
-
-                                                                            </List.Item>
-                                                                        )
-                                                                    })
-                                                                }
-                                                            </List>
-                                                            {/*</Fieldset>*/}
-
-
-
-                                                        </List.Item>
-                                                    )
-                                                })
-                                            }
-                                        </List>
-                                    </Fieldset>
-                                </Grid.Col>
-
-                                <Grid.Col span={12}>
-
-                                </Grid.Col>
-                            </Grid>
-
-                            <SimpleGrid cols={3}>
-
-
-
-
-
-                            </SimpleGrid>
-
-
-
-
-                            <Divider my={'sm'}/>
-                        </Box>
-                    )
-                })
-            }
-        </Container>
+        <AppShell>
+            <Header/>
+            <NavBar/>
+            <Main/>
+            <Aside/>
+            <Footer/>
+        </AppShell>
     )
-
 }
 
 export default function App() {
-    const {analyzer} = useSeedAnalyzer();
-    const cardsPerAnte = useCardStore((state) => state.cardsPerAnte);
-    const antes = useCardStore((state) => state.antes);
-    const selectedView = useCardStore((state) => state.selectedView);
-    const seedResults = analyzer.analyzeSeed(antes, cardsPerAnte);
-
-    const reinitializeRef = useRef(() => {
-    });
-
-    useEffect(() => {
-        reinitializeRef.current();
-    }, [seedResults]);
-
-
+    const analyzeState = useCardStore(state => state.immolateState);
+    const {seed, deck, stake, showmanOwned, gameVersion:version, antes, cardsPerAnte} = analyzeState;
+    const engine = new ImmolateClassic(seed);
+    engine.InstParams(deck, stake, showmanOwned, version);
+    engine.initLocks(1, false, true);
+    const analyzer: CardEngineWrapper = new CardEngineWrapper(engine);
+    const SeedResults = useMemo(() => {
+        return analyzer.analyzeSeed(antes,cardsPerAnte)
+    }, [analyzeState]);
+    console.log(
+        SeedResults
+    )
     return (
         <MantineProvider defaultColorScheme={'dark'} theme={theme}>
-            <AppShell
-                navbar={{
-                    width: 100,
-                    breakpoint: 'sm',
-                    collapsed: {desktop: selectedView !== "Simple", mobile: true},
-                }}
-            >
-                <AppShell.Header></AppShell.Header>
-                {selectedView === 'Simple' && (
-                    <>
-                        <AppShell.Navbar>
-                            <TableOfContents
-                                p={'xs'}
-                                reinitializeRef={reinitializeRef}
-                                scrollSpyOptions={{
-                                    selector: '#simple-view :is(h1, h2, h3, h4, h5, h6)',
-                                }}
-                                getControlProps={({data}) => ({
-                                    onClick: () => data.getNode().scrollIntoView(),
-                                    children: data.value,
-                                })}
-                            />
-                        </AppShell.Navbar>
-                        <AppShell.Aside></AppShell.Aside>
-                        <AppShell.Main>
-                            <ScrollArea>
-                                <SimpleView seedResult={seedResults}/>
-                            </ScrollArea>
-                        </AppShell.Main>
 
-                    </>
-                )}
-
-                <AppShell.Footer></AppShell.Footer>
-            </AppShell>
         </MantineProvider>
     );
 }

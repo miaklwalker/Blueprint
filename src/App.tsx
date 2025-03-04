@@ -9,16 +9,16 @@ import {
     Autocomplete,
     Box,
     Burger,
-    Button,
+    Button, Card,
     Center,
     Container,
-    CopyButton,
+    CopyButton, Flex,
     Group,
     MantineProvider,
     Modal,
     NativeSelect,
-    NumberInput,
-    ScrollArea,
+    NumberInput, Paper,
+    ScrollArea, SegmentedControl,
     SimpleGrid,
     Skeleton,
     Slider,
@@ -32,12 +32,13 @@ import {
 } from "@mantine/core";
 import {theme} from "./theme.js";
 import {create} from "zustand";
-import { immer } from 'zustand/middleware/immer'
+import {immer} from 'zustand/middleware/immer'
 import {combine, devtools, persist} from "zustand/middleware";
 import {ImmolateClassic} from "./modules/ImmolateWrapper/CardEngines/immolateClassic.ts";
 import {CardEngineWrapper} from "./modules/ImmolateWrapper";
 //@ts-ignore
 import {
+    blinds,
     editionMap,
     jokerFaces,
     jokers, options,
@@ -60,9 +61,16 @@ import {
     useState
 } from "react";
 import {useHover, useMergedRef, useMouse, useResizeObserver, useViewportSize} from "@mantine/hooks";
-import {Ante, Seed} from "./modules/ImmolateWrapper/CardEngines/Cards.ts";
-import {IconJoker, IconPlayCard, IconSearch} from "@tabler/icons-react";
+import {
+    Ante,
+    Joker_Final,
+    Planet_Final,
+    Seed, Spectral_Final,
+    StandardCard_Final, Tarot_Final
+} from "./modules/ImmolateWrapper/CardEngines/Cards.ts";
+import {IconExternalLink, IconJoker, IconPlayCard, IconSearch} from "@tabler/icons-react";
 import {openSpotlight, Spotlight} from "@mantine/spotlight";
+import {Carousel} from "@mantine/carousel";
 //@ts-ignore
 
 
@@ -179,9 +187,15 @@ const useCardStore = create(
                         closeSelectOptionModal: () => set((prev) => {
                             prev.applicationState.selectOptionsModalOpen = false
                         }, undefined, 'Global/CloseSelectOptionModal'),
-                        toggleShowCardSpoilers: () => set((prev) => {
-                            prev.applicationState.showCardSpoilers = !prev.applicationState.showCardSpoilers
-                        }, undefined, 'Global/ToggleShowCardSpoilers'),
+
+                        setSelectedAnte: (selectedAnte: number) => set((prev) => {
+                            prev.applicationState.selectedAnte = selectedAnte
+                        }, undefined, 'Global/SetSelectedAnte'),
+
+                        setSelectedBlind: (selectedBlind: string) => set((prev) => {
+                            prev.applicationState.selectedBlind = selectedBlind
+                        }, undefined, 'Global/SetSelectedBlind'),
+
                         toggleSettings: () => set((prev) => {
                             prev.applicationState.settingsOpen = !prev.applicationState.settingsOpen
                         }, undefined, 'Global/ToggleSettings'),
@@ -325,10 +339,11 @@ function RenderImagesWithCanvas({layers, invert = false, spacing = false}: Rende
             py={spacing ? 'xs' : 0}
             ref={mergedRef}
             style={{
-                transition: hovered ? 'none' : 'transform 0.4s ease-out',
-                transform: transform,
+                transition: hovered ? 'none' : 'transform 0.4s ease',
+                transform: hovered ? transform : 'none',
                 transformStyle: 'preserve-3d',
-                transformOrigin: 'center center'
+                transformOrigin: 'center center',
+                display: 'flex'
             }}
         >
             <canvas
@@ -344,6 +359,169 @@ function RenderImagesWithCanvas({layers, invert = false, spacing = false}: Rende
         </AspectRatio>
     )
 }
+
+function Voucher({voucherName}: { voucherName: string }) {
+    let layers = [];
+    const voucherData = vouchers.find((voucher: any) => voucher.name === voucherName);
+    if (voucherData) layers.push(new Layer({
+        ...voucherData,
+        source: 'images/Vouchers.png',
+        order: 0,
+        columns: 9,
+        rows: 4
+    }));
+    return (
+        <Box maw={'80px'}>
+            <RenderImagesWithCanvas
+                layers={layers}
+                spacing
+            />
+        </Box>
+
+    )
+}
+
+function JokerCard({card}: { card: Joker_Final }) {
+    let layers = [];
+    const jokerData = jokers.find((joker: any) => joker.name === card.name);
+    if (jokerData) layers.push(new Layer({...jokerData, source: 'images/Jokers.png', order: 0, columns: 10, rows: 16}));
+    const face = jokerFaces.find((joker: any) => joker.name === card.name);
+    if (face) layers.push(new Layer({...face, source: 'images/Jokers.png', order: 1, columns: 10, rows: 16}));
+    if (card.edition) {
+        const index = editionMap[card.edition];
+        layers.push(new Layer({
+            pos: {x: index, y: 0},
+            name: card.edition,
+            order: 2,
+            source: 'images/Editions.png',
+            rows: 1,
+            columns: 5
+        }));
+    }
+    if (card.isEternal) {
+        layers.push(new Layer({
+            pos: stickerMap['Eternal'],
+            name: 'Eternal',
+            order: 3,
+            source: 'images/stickers.png',
+            rows: 3,
+            columns: 5
+        }));
+    }
+    if (card.isPerishable) {
+        layers.push(new Layer({
+            pos: stickerMap['Perishable'],
+            name: 'Perishable',
+            order: 4,
+            source: 'images/stickers.png',
+            rows: 3,
+            columns: 5
+        }));
+    }
+    if (card.isRental) {
+        layers.push(new Layer({
+            pos: stickerMap['Rental'],
+            name: 'Rental',
+            order: 5,
+            source: 'images/stickers.png',
+            rows: 3,
+            columns: 5
+        }));
+    }
+    return (
+        <RenderImagesWithCanvas
+            invert={card.edition === "Negative"}
+            layers={layers}
+        />
+    )
+}
+
+function PlayingCard({card}: { card: StandardCard_Final }) {
+    const position = getStandardCardPosition(card.rank, card.suit);
+    let layers = [
+        new Layer({
+            pos: {x: 1, y: 0},
+            name: 'background',
+            order: 0,
+            source: 'images/Enhancers.png',
+            rows: 5,
+            columns: 7
+        }),
+        new Layer({
+            pos: position,
+            name: card.name,
+            order: 1,
+            source: 'images/8BitDeck.png',
+            rows: 4,
+            columns: 13
+        })
+    ]
+    if (card.edition) {
+        const index = editionMap[card.edition];
+        layers.push(new Layer({
+            pos: {x: index, y: 0},
+            name: card.edition,
+            order: 2,
+            source: 'images/Editions.png',
+            rows: 1,
+            columns: 5
+        }));
+    }
+    if (card.seal) {
+        layers.push(new Layer({
+            pos: getSealPosition(card.seal),
+            name: card.seal,
+            order: 3,
+            source: 'images/Enhancers.png',
+            rows: 5,
+            columns: 7
+        }));
+    }
+    return (
+        <RenderImagesWithCanvas
+            layers={layers}
+        />
+    )
+}
+
+function Consumables({card}: { card: Planet_Final | Spectral_Final | Tarot_Final }) {
+
+    let layers = [
+        new Layer({
+            ...tarotsAndPlanets.find((t: any) => t.name === card.name),
+            order: 0,
+            source: 'images/Tarots.png',
+            rows: 6,
+            columns: 10
+        })
+    ]
+    return (
+        <RenderImagesWithCanvas
+            invert={card?.edition === "Negative"}
+            layers={layers}
+        />
+    )
+}
+
+function GameCard({card}: { card: any }) {
+    let Card = () => {
+        if (card instanceof StandardCard_Final) {
+            return <PlayingCard card={card}/>
+        }
+        if (card instanceof Joker_Final) {
+            return <JokerCard card={card}/>
+        }
+        if (card instanceof Planet_Final || card instanceof Tarot_Final || card instanceof Spectral_Final) {
+            return <Consumables card={card}/>
+        }
+    }
+    return (
+        <Paper maw={'80px'}>
+            <Card/>
+        </Paper>
+    )
+}
+
 
 function SeedInputAutoComplete({seed, setSeed}: { seed: string, setSeed: (seed: string) => void }) {
     return (
@@ -414,7 +592,7 @@ function UnlocksModal() {
     const closeSelectOptionModal = useCardStore(state => state.closeSelectOptionModal);
     const selectedOptions = useCardStore(state => state.immolateState.selectedOptions);
     const setSelectedOptions = useCardStore(state => state.setSelectedOptions);
-    if(!selectOptionsModalOpen) return null;
+    if (!selectOptionsModalOpen) return null;
     return (
         <Modal size="auto" title={'Unlocks'} opened={selectOptionsModalOpen} onClose={() => closeSelectOptionModal()}>
             <Container fluid>
@@ -428,22 +606,24 @@ function UnlocksModal() {
                 >
                     <SimpleGrid cols={6} mb={'lg'} mt={'xs'}>
                         {
-                            options.map((option:string, i:number) => (<Switch key={i} value={option} label={option} />))
+                            options.map((option: string, i: number) => (
+                                <Switch key={i} value={option} label={option}/>))
                         }
                     </SimpleGrid>
                 </Switch.Group>
                 <Group justify={'flex-end'}>
-                    <Button onClick={()=>setSelectedOptions(options)}> Select All </Button>
-                    <Button onClick={()=>setSelectedOptions([])}> Remove All </Button>
+                    <Button onClick={() => setSelectedOptions(options)}> Select All </Button>
+                    <Button onClick={() => setSelectedOptions([])}> Remove All </Button>
                 </Group>
             </Container>
         </Modal>
     )
 }
+
 function NavBar() {
     const theme = useMantineTheme();
     const analyzeState = useCardStore(state => state.immolateState);
-    const {seed, deck, stake, gameVersion:version, antes, cardsPerAnte} = analyzeState;
+    const {seed, deck, stake, gameVersion: version, antes, cardsPerAnte} = analyzeState;
     const showCardSpoilers = useCardStore(state => state.applicationState.showCardSpoilers);
     const setSeed = useCardStore(state => state.setSeed);
     const setDeck = useCardStore(state => state.setDeck);
@@ -455,7 +635,8 @@ function NavBar() {
 
     const openSelectOptionModal = useCardStore(state => state.openSelectOptionModal);
     const reset = useCardStore(state => state.reset);
-    const handleAnalyzeClick = () => {}
+    const handleAnalyzeClick = () => {
+    }
     return (
         <AppShell.Navbar p="md">
             <UnlocksModal/>
@@ -615,7 +796,7 @@ function QuickAnalyze() {
                 rightSection={select}
                 rightSectionWidth={sectionWidth}
             />
-            <Button onClick={()=>setStart(seed.length >= 8)}> Analyze Seed </Button>
+            <Button onClick={() => setStart(seed.length >= 8)}> Analyze Seed </Button>
         </Group>
 
     );
@@ -623,17 +804,52 @@ function QuickAnalyze() {
 }
 
 
-function AntePanel({ante, tabName}: { ante: Ante, tabName:string }) {
-    console.log(ante)
-    return (
-        <Tabs.Panel value={tabName} >
+function AntePanel({ante, tabName}: { ante: Ante, tabName: string }) {
 
+    const queue = ante.queue;
+    return (
+        <Tabs.Panel w={'100%'} value={tabName}>
+            <Paper withBorder h={'100%'} p={'sm'}>
+                <Box>
+                    <Carousel
+                        containScroll={"trimSnaps"}
+                        slideGap={{base: 'sm'}}
+                        slideSize={{base: 110}}
+                        withControls={false}
+                        dragFree
+                    >
+                        {
+                            queue.map((card: any, index: number) => {
+                                return (
+                                    <Carousel.Slide h={190} key={index}>
+                                        <Center h={'100%'}>
+                                            {
+                                                <GameCard
+                                                    card={card}
+                                                />
+                                            }
+                                        </Center>
+                                    </Carousel.Slide>
+                                )
+                            })
+                        }
+                    </Carousel>
+                </Box>
+                <Group>
+                    <Voucher voucherName={'Magic Trick'}/>
+                </Group>
+            </Paper>
         </Tabs.Panel>
     )
 }
 
-function Main({ SeedResults }: { SeedResults: Seed | null }) {
-    const {width} = useViewportSize()
+function Main({SeedResults}: { SeedResults: Seed | null }) {
+    const {width} = useViewportSize();
+    const selectedAnte = useCardStore(state => state.applicationState.selectedAnte);
+    const setSelectedAnte = useCardStore(state => state.setSelectedAnte);
+    const selectedBlind = useCardStore(state => state.applicationState.selectedBlind);
+    const setSelectedBlind = useCardStore(state => state.setSelectedBlind);
+    console.log(selectedAnte)
     // @ts-ignore
     return (
         <AppShell.Main>
@@ -644,26 +860,48 @@ function Main({ SeedResults }: { SeedResults: Seed | null }) {
             {
                 SeedResults &&
                 <>
-                    <NativeSelect
-                        mb={'sm'}
-                        hiddenFrom="sm"
-                        data={Object.keys(SeedResults.antes).map((ante: string) => `Ante ${ante}`)}
-                    />
+                    <Box>
+                        <NativeSelect
+                            mb={'sm'}
+                            hiddenFrom="sm"
+                            value={selectedAnte}
+                            onChange={(e) => setSelectedAnte(Number(e.currentTarget.value))}
+                            data={Object.keys(SeedResults.antes).map((ante: string) => ({
+                                label: `Ante ${ante}`,
+                                value: String(ante)
+                            }))}
+                        />
+                        <SegmentedControl
+                            value={selectedBlind}
+                            onChange={setSelectedBlind}
+                            fullWidth
+                            radius="xl"
+                            mb={'sm'}
+                            data={blinds.map((blind: string) => ({
+                                value: blind,
+                                label: blind,
+                            }))}
+                        />
+                    </Box>
                     <Tabs
                         w={'100%'}
                         variant="pills"
                         orientation={"vertical"}
-                        defaultValue={'ANTE 1'}
+                        defaultValue={'1'}
                         keepMounted={false}
+                        value={String(selectedAnte)}
+                        onChange={(value) => {
+                            setSelectedAnte(Number(value));
+                        }}
                     >
                         <Box mah={'65vh'} style={{display: width > 767 ? 'revert' : 'none'}} mr={'2rem'}>
                             <ScrollArea type="scroll" scrollbars={'y'} h={'100%'}>
-                                <Tabs.List >
+                                <Tabs.List>
                                     {
                                         Object.keys(SeedResults.antes).map((ante: string) => (
                                             <Tabs.Tab
                                                 key={ante}
-                                                value={ante}
+                                                value={String(ante)}
                                             >
                                                 {`Ante ${ante}`}
                                             </Tabs.Tab>
@@ -674,7 +912,8 @@ function Main({ SeedResults }: { SeedResults: Seed | null }) {
                         </Box>
                         {
                             SeedResults &&
-                            Object.entries(SeedResults.antes).map(([ante, anteData]: [string, Ante],i:number) => (<AntePanel key={i} tabName={ante} ante={anteData}/>))
+                            Object.entries(SeedResults.antes).map(([ante, anteData]: [string, Ante], i: number) => (
+                                <AntePanel key={i} tabName={ante} ante={anteData}/>))
                         }
                     </Tabs>
                 </>
@@ -702,7 +941,7 @@ function Footer() {
     )
 }
 
-function Blueprint({SeedResults}: { SeedResults: Seed | null}) {
+function Blueprint({SeedResults}: { SeedResults: Seed | null }) {
     const settingsOpened = useCardStore(state => state.applicationState.settingsOpen);
     const outputOpened = useCardStore(state => state.applicationState.asideOpen);
     return (
@@ -731,7 +970,7 @@ function Blueprint({SeedResults}: { SeedResults: Seed | null}) {
 
 export default function App() {
     const analyzeState = useCardStore(state => state.immolateState);
-    const {seed, deck, stake, showmanOwned, gameVersion:version, antes, cardsPerAnte} = analyzeState;
+    const {seed, deck, stake, showmanOwned, gameVersion: version, antes, cardsPerAnte} = analyzeState;
     const engine = new ImmolateClassic(seed);
     engine.InstParams(deck, stake, showmanOwned, version);
     engine.initLocks(1, false, true);
@@ -739,15 +978,15 @@ export default function App() {
     const start = useCardStore(state => state.applicationState.start);
 
     const SeedResults = useMemo(() => {
-        if(seed.length < 8 || !start) return null;
-        return analyzer.analyzeSeed(antes,cardsPerAnte)
+        if (seed.length < 8 || !start) return null;
+        return analyzer.analyzeSeed(antes, cardsPerAnte)
     }, [analyzeState, start]);
     console.log(
         SeedResults
     )
     return (
         <MantineProvider defaultColorScheme={'dark'} theme={theme}>
-            <Blueprint SeedResults={SeedResults} />
+            <Blueprint SeedResults={SeedResults}/>
         </MantineProvider>
     );
 }

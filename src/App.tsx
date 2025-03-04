@@ -252,6 +252,11 @@ function renderImage(canvas: HTMLCanvasElement, context: CanvasRenderingContext2
     if (!image) return 0;
     const cardWidth = (image.width / layer.columns);
     const cardHeight = (image.height / layer.rows);
+    if(layer.order === 0){
+        canvas.width = cardWidth;
+        canvas.height = cardHeight;
+    }
+
     context.drawImage(
         image,
         layer.pos.x * cardWidth,
@@ -516,9 +521,20 @@ function GameCard({card}: { card: any }) {
         }
     }
     return (
-        <Paper maw={'80px'}>
+        <Paper maw={'71px'}>
             <Card/>
         </Paper>
+    )
+}
+
+
+function BuyWrapper({children}:{ children: ReactNode }) {
+    return (
+        <Card>
+            <Card.Section>
+                {children}
+            </Card.Section>
+        </Card>
     )
 }
 
@@ -814,7 +830,7 @@ function AntePanel({ante, tabName}: { ante: Ante, tabName: string }) {
                     <Carousel
                         containScroll={"trimSnaps"}
                         slideGap={{base: 'sm'}}
-                        slideSize={{base: 110}}
+                        slideSize={{base: 90}}
                         withControls={false}
                         dragFree
                     >
@@ -823,11 +839,10 @@ function AntePanel({ante, tabName}: { ante: Ante, tabName: string }) {
                                 return (
                                     <Carousel.Slide h={190} key={index}>
                                         <Center h={'100%'}>
-                                            {
-                                                <GameCard
-                                                    card={card}
-                                                />
-                                            }
+                                            <BuyWrapper>
+                                                <GameCard card={card}/>
+                                            </BuyWrapper>
+
                                         </Center>
                                     </Carousel.Slide>
                                 )

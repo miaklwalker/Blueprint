@@ -27,7 +27,7 @@ import {
     Text,
     TextInput,
     Title,
-    Tooltip,
+    Tooltip, Transition,
     useMantineTheme
 } from "@mantine/core";
 import {theme} from "./theme.js";
@@ -43,7 +43,7 @@ import {
     jokerFaces,
     jokers, options,
     SeedsWithLegendary,
-    stickerMap,
+    stickerMap, tags,
     tarotsAndPlanets,
     vouchers
 } from "./modules/const.js"
@@ -252,7 +252,7 @@ function renderImage(canvas: HTMLCanvasElement, context: CanvasRenderingContext2
     if (!image) return 0;
     const cardWidth = (image.width / layer.columns);
     const cardHeight = (image.height / layer.rows);
-    if(layer.order === 0){
+    if (layer.order === 0) {
         canvas.width = cardWidth;
         canvas.height = cardHeight;
     }
@@ -526,15 +526,49 @@ function GameCard({card}: { card: any }) {
         </Paper>
     )
 }
-
-
-function BuyWrapper({children}:{ children: ReactNode }) {
+function Tag ({ tagName }: { tagName: string })  {
+    const tagData = tags.find((tag:{name:string}) => tag.name === tagName);
+    if (!tagData) {
+        console.error("Tag not found:", tagName);
+        return;
+    }
+    const layers = [
+        new Layer({
+            ...tagData,
+            order: 0,
+            source: 'images/tags.png',
+            rows: 5,
+            columns: 4
+        })
+    ];
     return (
-        <Card>
-            <Card.Section>
-                {children}
-            </Card.Section>
-        </Card>
+        <Box h={32} w={32}>
+            <RenderImagesWithCanvas
+                layers={layers}
+            />
+        </Box>
+
+    )
+    
+}
+
+function BuyWrapper({children}: { children: ReactNode }) {
+    const {hovered, ref} = useHover();
+    return (
+        <Center pos={'relative'} ref={ref} h={'100%'}>
+            <Transition   mounted={hovered} transition="slide-up" duration={200} enterDelay={350} exitDelay={150} timingFunction="ease">
+                {(styles) => (<Button pos={'absolute'} style={styles} top={'0'} color={'blue'}>wiki</Button>)}
+            </Transition>
+            <Card style={{ transform: hovered ? 'scale(1.15)' : 'none', transition: 'transform 0.4s ease' }}>
+                <Card.Section>
+                    {children}
+                </Card.Section>
+            </Card>
+            <Transition  mounted={hovered} transition="slide-down" duration={200} enterDelay={350} exitDelay={150} timingFunction="ease">
+                {(styles) => (<Button pos={'absolute'} style={styles} top={'80%'} color={'red'}>Buy</Button>)}
+            </Transition>
+        </Center>
+
     )
 }
 
@@ -832,18 +866,17 @@ function AntePanel({ante, tabName}: { ante: Ante, tabName: string }) {
                         slideGap={{base: 'sm'}}
                         slideSize={{base: 90}}
                         withControls={false}
+                        height={190}
                         dragFree
+                        type={'container'}
                     >
                         {
                             queue.map((card: any, index: number) => {
                                 return (
                                     <Carousel.Slide h={190} key={index}>
-                                        <Center h={'100%'}>
-                                            <BuyWrapper>
-                                                <GameCard card={card}/>
-                                            </BuyWrapper>
-
-                                        </Center>
+                                        <BuyWrapper>
+                                            <GameCard card={card}/>
+                                        </BuyWrapper>
                                     </Carousel.Slide>
                                 )
                             })
@@ -864,7 +897,6 @@ function Main({SeedResults}: { SeedResults: Seed | null }) {
     const setSelectedAnte = useCardStore(state => state.setSelectedAnte);
     const selectedBlind = useCardStore(state => state.applicationState.selectedBlind);
     const setSelectedBlind = useCardStore(state => state.setSelectedBlind);
-    console.log(selectedAnte)
     // @ts-ignore
     return (
         <AppShell.Main>
@@ -891,10 +923,14 @@ function Main({SeedResults}: { SeedResults: Seed | null }) {
                             onChange={setSelectedBlind}
                             fullWidth
                             radius="xl"
+                            size="lg"
                             mb={'sm'}
                             data={blinds.map((blind: string) => ({
                                 value: blind,
-                                label: blind,
+                                label: <Center>
+                                    <Tag tagName={SeedResults.antes[selectedAnte]?.tags?.[0]}/>
+                                    {blind}
+                                </Center>,
                             }))}
                         />
                     </Box>

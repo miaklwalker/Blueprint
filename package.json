@@ -16,6 +16,7 @@
     "@tabler/icons-react": "^3.30.0",
     "embla-carousel-react": "^7.1.0",
     "immer": "^10.1.1",
+    "js-convert-case": "^4.2.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-error-boundary": "^5.0.0",

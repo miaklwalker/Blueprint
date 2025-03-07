@@ -14,6 +14,8 @@ export interface NextShopItem {
             rental: boolean;
         }
     } | undefined
+
+    delete(): void;
 }
 
 export interface BoosterPack {

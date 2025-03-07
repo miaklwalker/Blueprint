@@ -3,31 +3,42 @@ import '@mantine/code-highlight/styles.css';
 import '@mantine/carousel/styles.css';
 import '@mantine/spotlight/styles.css';
 import {
+    Accordion,
     ActionIcon,
     AppShell,
     AspectRatio,
     Autocomplete,
+    Badge,
     Box,
     Burger,
-    Button, Card,
+    Button,
+    Card,
     Center,
     Container,
-    CopyButton, Flex,
+    Fieldset,
+    Grid,
     Group,
+    Indicator,
     MantineProvider,
     Modal,
     NativeSelect,
-    NumberInput, Paper,
-    ScrollArea, SegmentedControl,
+    NumberInput,
+    Overlay,
+    Paper,
+    ScrollArea,
+    SegmentedControl,
     SimpleGrid,
-    Skeleton,
     Slider,
+    Space,
     Stack,
-    Switch, Tabs,
+    Switch,
+    Tabs,
     Text,
     TextInput,
+    Timeline,
     Title,
-    Tooltip, Transition,
+    Tooltip,
+    Transition,
     useMantineTheme
 } from "@mantine/core";
 import {theme} from "./theme.js";
@@ -39,37 +50,41 @@ import {CardEngineWrapper} from "./modules/ImmolateWrapper";
 //@ts-ignore
 import {
     blinds,
+    bosses,
+    consumablesFaces,
     editionMap,
     jokerFaces,
-    jokers, options,
+    jokers,
+    options,
     SeedsWithLegendary,
-    stickerMap, tags,
+    stickerMap,
+    tags,
     tarotsAndPlanets,
     vouchers
 } from "./modules/const.js"
+import { toHeaderCase } from 'js-convert-case';
 //@ts-ignore
 import {extractShopQueues, getModifierColor, getSealPosition, getStandardCardPosition} from "./modules/utils.js";
-import {
-    JSXElementConstructor,
-    Key,
-    ReactElement,
-    ReactNode,
-    useCallback,
-    useEffect,
-    useMemo,
-    useRef,
-    useState
-} from "react";
+import {ReactNode, useEffect, useMemo, useRef, useState} from "react";
 import {useHover, useMergedRef, useMouse, useResizeObserver, useViewportSize} from "@mantine/hooks";
 import {
     Ante,
     Joker_Final,
+    Pack,
     Planet_Final,
-    Seed, Spectral_Final,
-    StandardCard_Final, Tarot_Final
+    Seed,
+    Spectral_Final,
+    StandardCard_Final,
+    Tarot_Final
 } from "./modules/ImmolateWrapper/CardEngines/Cards.ts";
-import {IconExternalLink, IconJoker, IconPlayCard, IconSearch} from "@tabler/icons-react";
-import {openSpotlight, Spotlight} from "@mantine/spotlight";
+import {
+    IconCards,
+    IconInfoCircle,
+    IconJoker,
+    IconPlayCard,
+    IconShoppingCart,
+    IconShoppingCartOff
+} from "@tabler/icons-react";
 import {Carousel} from "@mantine/carousel";
 //@ts-ignore
 
@@ -103,8 +118,12 @@ interface InitialState {
         selectedSearchResult: any | null;
     };
     shoppingState: {
-        buys: Record<string, any>;
-        sells: Record<string, any>;
+        buys: {
+            [key: string]: BuyMetaData
+        },
+        sells: {
+            [key: string]: BuyMetaData
+        }
     };
 }
 
@@ -127,7 +146,7 @@ const initialState: InitialState = {
         selectOptionsModalOpen: false,
         showCardSpoilers: false,
         selectedAnte: 1,
-        selectedBlind: 'Small Blind',
+        selectedBlind: 'bigBlind',
     },
     searchState: {
         searchTerm: '',
@@ -140,6 +159,68 @@ const initialState: InitialState = {
     }
 }
 
+const globalSettingsSetters = (set: any) => ({
+    setSeed: (seed: string) => set((prev: InitialState) => {
+        prev.immolateState.seed = seed
+    }, undefined, 'Global/SetSeed'),
+    setDeck: (deck: string) => set((prev: InitialState) => {
+        prev.immolateState.deck = deck
+    }, undefined, 'Global/SetDeck'),
+    setCardsPerAnte: (cardsPerAnte: number) => set((prev: InitialState) => {
+        prev.immolateState.cardsPerAnte = cardsPerAnte
+    }, undefined, 'Global/SetCardsPerAnte'),
+    setAntes: (antes: number) => set((prev: InitialState) => {
+        prev.immolateState.antes = antes
+    }, undefined, 'Global/SetAntes'),
+    setDeckType: (deckType: string) => set((prev: InitialState) => {
+        prev.immolateState.deckType = deckType
+    }, undefined, 'Global/SetDeckType'),
+    setStake: (stake: string) => set((prev: InitialState) => {
+        prev.immolateState.stake = stake
+    }, undefined, 'Global/SetStake'),
+    setShowmanOwned: (showmanOwned: boolean) => set((prev: InitialState) => {
+        prev.immolateState.showmanOwned = showmanOwned
+    }, undefined, 'Global/SetShowmanOwned'),
+    setGameVersion: (gameVersion: string) => set((prev: InitialState) => {
+        prev.immolateState.gameVersion = gameVersion
+    }, undefined, 'Global/SetGameVersion'),
+    setSelectedOptions: (selectedOptions: string[]) => set((prev: InitialState) => {
+        prev.immolateState.selectedOptions = options.map((option: string) => selectedOptions.includes(option));
+    }, undefined, 'Global/SetSelectedOptions'),
+});
+const applicationSetters = (set: any) => ({
+    setStart: (start: boolean) => set((prev: InitialState) => {
+        prev.applicationState.start = start
+    }, undefined, 'Global/SetStart'),
+    setShowCardSpoilers: (showCardSpoilers: boolean) => set((prev: InitialState) => {
+        prev.applicationState.showCardSpoilers = showCardSpoilers
+    }, undefined, 'Global/SetShowCardSpoilers'),
+    openSelectOptionModal: () => set((prev: { applicationState: { selectOptionsModalOpen: boolean; }; }) => {
+        prev.applicationState.selectOptionsModalOpen = true
+    }, undefined, 'Global/OpenSelectOptionModal'),
+    closeSelectOptionModal: () => set((prev: { applicationState: { selectOptionsModalOpen: boolean; }; }) => {
+        prev.applicationState.selectOptionsModalOpen = false
+    }, undefined, 'Global/CloseSelectOptionModal'),
+
+    setSelectedAnte: (selectedAnte: number) => set((prev: {
+        applicationState: { selectedAnte: number; selectedBlind: string; };
+    }) => {
+        prev.applicationState.selectedAnte = selectedAnte
+        prev.applicationState.selectedBlind = prev.applicationState.selectedAnte === 1 ? 'bigBlind' : 'smallBlind'
+    }, undefined, 'Global/SetSelectedAnte'),
+
+    setSelectedBlind: (selectedBlind: string) => set((prev: { applicationState: { selectedBlind: string; }; }) => {
+        prev.applicationState.selectedBlind = selectedBlind
+    }, undefined, 'Global/SetSelectedBlind'),
+
+    toggleSettings: () => set((prev: { applicationState: { settingsOpen: boolean; }; }) => {
+        prev.applicationState.settingsOpen = !prev.applicationState.settingsOpen
+    }, undefined, 'Global/ToggleSettings'),
+
+    toggleOutput: () => set((prev: { applicationState: { asideOpen: boolean; }; }) => {
+        prev.applicationState.asideOpen = !prev.applicationState.asideOpen
+    }, undefined, 'Global/ToggleOutput'),
+})
 
 const useCardStore = create(
     devtools(
@@ -148,61 +229,19 @@ const useCardStore = create(
                 combine(
                     initialState,
                     (set, get) => ({
-                        setSeed: (seed: string) => set((prev: InitialState) => {
-                            prev.immolateState.seed = seed
-                        }, undefined, 'Global/SetSeed'),
-                        setDeck: (deck: string) => set((prev: InitialState) => {
-                            prev.immolateState.deck = deck
-                        }, undefined, 'Global/SetDeck'),
-                        setCardsPerAnte: (cardsPerAnte: number) => set((prev: InitialState) => {
-                            prev.immolateState.cardsPerAnte = cardsPerAnte
-                        }, undefined, 'Global/SetCardsPerAnte'),
-                        setAntes: (antes: number) => set((prev: InitialState) => {
-                            prev.immolateState.antes = antes
-                        }, undefined, 'Global/SetAntes'),
-                        setDeckType: (deckType: string) => set((prev: InitialState) => {
-                            prev.immolateState.deckType = deckType
-                        }, undefined, 'Global/SetDeckType'),
-                        setStake: (stake: string) => set((prev: InitialState) => {
-                            prev.immolateState.stake = stake
-                        }, undefined, 'Global/SetStake'),
-                        setShowmanOwned: (showmanOwned: boolean) => set((prev: InitialState) => {
-                            prev.immolateState.showmanOwned = showmanOwned
-                        }, undefined, 'Global/SetShowmanOwned'),
-                        setGameVersion: (gameVersion: string) => set((prev: InitialState) => {
-                            prev.immolateState.gameVersion = gameVersion
-                        }, undefined, 'Global/SetGameVersion'),
-                        setSelectedOptions: (selectedOptions: string[]) => set((prev: InitialState) => {
-                            prev.immolateState.selectedOptions = options.map((option: string) => selectedOptions.includes(option));
-                        }, undefined, 'Global/SetSelectedOptions'),
-                        setStart: (start: boolean) => set((prev: InitialState) => {
-                            prev.applicationState.start = start
-                        }, undefined, 'Global/SetStart'),
-                        setShowCardSpoilers: (showCardSpoilers: boolean) => set((prev: InitialState) => {
-                            prev.applicationState.showCardSpoilers = showCardSpoilers
-                        }, undefined, 'Global/SetShowCardSpoilers'),
-                        openSelectOptionModal: () => set((prev) => {
-                            prev.applicationState.selectOptionsModalOpen = true
-                        }, undefined, 'Global/OpenSelectOptionModal'),
-                        closeSelectOptionModal: () => set((prev) => {
-                            prev.applicationState.selectOptionsModalOpen = false
-                        }, undefined, 'Global/CloseSelectOptionModal'),
-
-                        setSelectedAnte: (selectedAnte: number) => set((prev) => {
-                            prev.applicationState.selectedAnte = selectedAnte
-                        }, undefined, 'Global/SetSelectedAnte'),
-
-                        setSelectedBlind: (selectedBlind: string) => set((prev) => {
-                            prev.applicationState.selectedBlind = selectedBlind
-                        }, undefined, 'Global/SetSelectedBlind'),
-
-                        toggleSettings: () => set((prev) => {
-                            prev.applicationState.settingsOpen = !prev.applicationState.settingsOpen
-                        }, undefined, 'Global/ToggleSettings'),
-
-                        toggleOutput: () => set((prev) => {
-                            prev.applicationState.asideOpen = !prev.applicationState.asideOpen
-                        }, undefined, 'Global/ToggleOutput'),
+                        ...globalSettingsSetters(set),
+                        ...applicationSetters(set),
+                        addBuy: (buy: BuyMetaData) => set(prev => {
+                            let key = `${buy.ante}-${buy.location}-${buy.index}`;
+                            prev.shoppingState.buys[key] = buy;
+                        }, undefined, 'Global/AddBuy'),
+                        removeBuy: (buy: BuyMetaData) => set(prev => {
+                            let key = `${buy.ante}-${buy.location}-${buy.index}`;
+                            delete prev.shoppingState.buys[key];
+                        }, undefined, 'Global/RemoveBuy'),
+                        isOwned: (key: string) => {
+                            return key in get().shoppingState.buys;
+                        },
 
 
                         reset: () => set(initialState, undefined, 'Global/Reset'),
@@ -249,14 +288,15 @@ interface RenderCanvasProps {
 }
 
 function renderImage(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, image: HTMLImageElement, layer: Layer) {
-    if (!image) return 0;
+    if (!image || !layer || !layer?.pos) return 0;
     const cardWidth = (image.width / layer.columns);
     const cardHeight = (image.height / layer.rows);
     if (layer.order === 0) {
         canvas.width = cardWidth;
         canvas.height = cardHeight;
+        canvas.style.width = `${cardWidth}px`;
+        canvas.style.height = `${cardHeight}px`;
     }
-
     context.drawImage(
         image,
         layer.pos.x * cardWidth,
@@ -365,7 +405,8 @@ function RenderImagesWithCanvas({layers, invert = false, spacing = false}: Rende
     )
 }
 
-function Voucher({voucherName}: { voucherName: string }) {
+function Voucher({voucherName}: { voucherName: string | null }) {
+
     let layers = [];
     const voucherData = vouchers.find((voucher: any) => voucher.name === voucherName);
     if (voucherData) layers.push(new Layer({
@@ -490,7 +531,6 @@ function PlayingCard({card}: { card: StandardCard_Final }) {
 }
 
 function Consumables({card}: { card: Planet_Final | Spectral_Final | Tarot_Final }) {
-
     let layers = [
         new Layer({
             ...tarotsAndPlanets.find((t: any) => t.name === card.name),
@@ -500,6 +540,17 @@ function Consumables({card}: { card: Planet_Final | Spectral_Final | Tarot_Final
             columns: 10
         })
     ]
+    let consumablesFace = consumablesFaces.find((t: any) => t.name === card.name);
+    if (consumablesFace) {
+        layers.push(new Layer({
+            ...consumablesFace,
+            order: 1,
+            source: 'images/Enhancers.png',
+            rows: 5,
+            columns: 7
+        }))
+
+    }
     return (
         <RenderImagesWithCanvas
             invert={card?.edition === "Negative"}
@@ -526,8 +577,9 @@ function GameCard({card}: { card: any }) {
         </Paper>
     )
 }
-function Tag ({ tagName }: { tagName: string })  {
-    const tagData = tags.find((tag:{name:string}) => tag.name === tagName);
+
+function Tag({tagName}: { tagName: string }) {
+    const tagData = tags.find((tag: { name: string }) => tag.name === tagName);
     if (!tagData) {
         console.error("Tag not found:", tagName);
         return;
@@ -538,7 +590,7 @@ function Tag ({ tagName }: { tagName: string })  {
             order: 0,
             source: 'images/tags.png',
             rows: 5,
-            columns: 4
+            columns: 6
         })
     ];
     return (
@@ -549,29 +601,117 @@ function Tag ({ tagName }: { tagName: string })  {
         </Box>
 
     )
-    
+
 }
 
-function BuyWrapper({children}: { children: ReactNode }) {
-    const {hovered, ref} = useHover();
+function Boss({bossName}: { bossName: string }) {
+    const bossData = bosses.find((boss: { name: string }) => boss.name === bossName);
+    if (!bossData) {
+        console.error("Boss not found:", bossName);
+        return;
+    }
+
+    const layers = [
+        new Layer({
+            ...bossData,
+            order: 0,
+            source: 'images/BlindChips.png',
+            rows: 31,
+            columns: 21
+        })
+    ];
+
     return (
-        <Center pos={'relative'} ref={ref} h={'100%'}>
-            <Transition   mounted={hovered} transition="slide-up" duration={200} enterDelay={350} exitDelay={150} timingFunction="ease">
-                {(styles) => (<Button pos={'absolute'} style={styles} top={'0'} color={'blue'}>wiki</Button>)}
+        <Box h={32} w={32}>
+            <RenderImagesWithCanvas
+                layers={layers}
+            />
+        </Box>
+    )
+
+}
+
+interface BuyWrapperProps {
+    children: ReactNode,
+    bottomOffset?: number,
+    topOffset?: number,
+    metaData?: BuyMetaData
+}
+
+function BuyWrapper({children, bottomOffset, topOffset, metaData}: BuyWrapperProps) {
+
+    const {hovered, ref} = useHover();
+    const addBuy = useCardStore(state => state.addBuy);
+    const removeBuy = useCardStore(state => state.removeBuy);
+    const owned = useCardStore(state => state.isOwned);
+    let key = `${metaData?.ante}-${metaData?.location}-${metaData?.index}`;
+    const cardIsOwned = owned(key);
+
+    return (
+        <Center pos={'relative'} ref={ref} h={'100%'} style={{overflow: 'visible'}}>
+            <Indicator disabled={!cardIsOwned} inline label="Owned" size={16} position={'top-center'}>
+                <Card style={{
+                    transform: hovered ? 'scale(1.15)' : 'none',
+                    transition: 'transform 0.4s ease',
+                    zIndex: hovered ? 20 : 0
+                }}>
+                    <Card.Section>
+                        {cardIsOwned && <Overlay color="#000" backgroundOpacity={0.55} blur={1}/>}
+                        {children}
+                    </Card.Section>
+                </Card>
+            </Indicator>
+            <Transition
+                mounted={hovered}
+                transition="slide-up"
+                duration={200}
+                enterDelay={350}
+                exitDelay={150}
+                timingFunction="ease"
+            >
+                {(styles) => (
+                    <Button
+                        pos={'absolute'}
+                        style={styles}
+                        bottom={topOffset ? `calc(80% + ${topOffset}px)` : '80%'}
+                        color={'blue'}
+                    >
+                        wiki
+                    </Button>
+                )}
             </Transition>
-            <Card style={{ transform: hovered ? 'scale(1.15)' : 'none', transition: 'transform 0.4s ease' }}>
-                <Card.Section>
-                    {children}
-                </Card.Section>
-            </Card>
-            <Transition  mounted={hovered} transition="slide-down" duration={200} enterDelay={350} exitDelay={150} timingFunction="ease">
-                {(styles) => (<Button pos={'absolute'} style={styles} top={'80%'} color={'red'}>Buy</Button>)}
+            <Transition
+                mounted={hovered}
+                transition="slide-down"
+                duration={200}
+                enterDelay={350}
+                exitDelay={150}
+                timingFunction="ease"
+            >
+                {
+                    (styles) => (
+                        <Button
+                            pos={'absolute'}
+                            style={{...styles, zIndex: 1}}
+                            top={bottomOffset ? `calc(80% + ${bottomOffset}px)` : '80%'}
+                            color={'red'}
+                            onClick={() => {
+                                if (!metaData) return;
+                                if (cardIsOwned) {
+                                    removeBuy(metaData);
+                                } else {
+                                    addBuy(metaData);
+                                }
+                            }}
+                        >
+                            {cardIsOwned ? "undo" : "Buy"}
+                        </Button>
+                    )
+                }
             </Transition>
         </Center>
-
     )
 }
-
 
 function SeedInputAutoComplete({seed, setSeed}: { seed: string, setSeed: (seed: string) => void }) {
     return (
@@ -598,8 +738,7 @@ function SeedInputAutoComplete({seed, setSeed}: { seed: string, setSeed: (seed: 
             ]}
         />
     );
-};
-
+}
 
 function Header() {
     const {width} = useViewportSize();
@@ -853,39 +992,121 @@ function QuickAnalyze() {
 
 }
 
+export class BuyMetaData {
+    location: string;
+    locationType: string;
+    index: number;
+    ante: string;
+    blind: string;
+
+    constructor({location, locationType, index, ante, blind}: {
+        location: string,
+        locationType: string,
+        index: number,
+        ante: string,
+        blind: string,
+        itemType: string
+    }) {
+        this.location = location;
+        this.locationType = locationType;
+        this.index = index;
+        this.ante = ante;
+        this.blind = blind;
+    }
+}
 
 function AntePanel({ante, tabName}: { ante: Ante, tabName: string }) {
-
     const queue = ante.queue;
+    const selectedBlind = useCardStore(state => state.applicationState.selectedBlind);
+    const packs = ante?.blinds?.[selectedBlind]?.packs;
     return (
         <Tabs.Panel w={'100%'} value={tabName}>
             <Paper withBorder h={'100%'} p={'sm'}>
-                <Box>
-                    <Carousel
-                        containScroll={"trimSnaps"}
-                        slideGap={{base: 'sm'}}
-                        slideSize={{base: 90}}
-                        withControls={false}
-                        height={190}
-                        dragFree
-                        type={'container'}
-                    >
-                        {
-                            queue.map((card: any, index: number) => {
-                                return (
-                                    <Carousel.Slide h={190} key={index}>
-                                        <BuyWrapper>
-                                            <GameCard card={card}/>
-                                        </BuyWrapper>
-                                    </Carousel.Slide>
-                                )
-                            })
-                        }
-                    </Carousel>
-                </Box>
-                <Group>
-                    <Voucher voucherName={'Magic Trick'}/>
-                </Group>
+                <Fieldset legend={'Shop'} mb={'sm'}>
+                    <Paper>
+                        <Carousel
+                            containScroll={"keepSnaps"}
+                            slideGap={{base: 'sm'}}
+                            slideSize={{base: 90}}
+                            withControls={false}
+                            height={190}
+                            dragFree
+                            type={'container'}
+                        >
+                            {
+                                queue.map((card: any, index: number) => {
+                                    return (
+                                        <Carousel.Slide h={190} key={index}>
+                                            <BuyWrapper
+                                                metaData={{
+                                                    location: "Shop",
+                                                    locationType: "queue",
+                                                    index: index,
+                                                    ante: tabName,
+                                                    blind: selectedBlind,
+                                                }}
+                                            >
+                                                <GameCard card={card}/>
+                                            </BuyWrapper>
+                                        </Carousel.Slide>
+                                    )
+                                })
+                            }
+                        </Carousel>
+                    </Paper>
+                </Fieldset>
+                <Grid grow>
+                    <Grid.Col span={{base: 2, md: 2}}>
+                        <Fieldset h={'100%'} legend={'Vouchers'} mr={'sm'}>
+                            <Center h={'100%'} w={'100%'}>
+
+                                <BuyWrapper>
+                                    <Voucher voucherName={ante.voucher}/>
+                                </BuyWrapper>
+
+                            </Center>
+                        </Fieldset>
+                    </Grid.Col>
+                    <Grid.Col span={{base: 10, md: 10}}>
+                        <Stack>
+                            {
+                                packs &&
+                                packs.map((pack: Pack, index: number) => {
+                                    return (
+                                        <Fieldset key={index} legend={pack.name}>
+                                            <Group pos={'relative'}>
+                                                {
+                                                    pack?.cards &&
+                                                    pack.cards.map((card: any, index: number) => {
+                                                        return (
+                                                            <BuyWrapper
+                                                                metaData={
+                                                                    new BuyMetaData({
+                                                                        location: pack.name,
+                                                                        locationType: "pack",
+                                                                        index: index,
+                                                                        ante: tabName,
+                                                                        blind: selectedBlind,
+                                                                        itemType: 'card'
+                                                                    })
+                                                                }
+                                                                bottomOffset={30}
+                                                                topOffset={30}
+                                                                key={index}
+                                                            >
+                                                                <GameCard card={card}/>
+                                                            </BuyWrapper>
+                                                        )
+                                                    })
+                                                }
+                                            </Group>
+                                        </Fieldset>
+                                    )
+                                })
+                            }
+                        </Stack>
+                    </Grid.Col>
+                </Grid>
             </Paper>
         </Tabs.Panel>
     )
@@ -923,14 +1144,16 @@ function Main({SeedResults}: { SeedResults: Seed | null }) {
                             onChange={setSelectedBlind}
                             fullWidth
                             radius="xl"
-                            size="lg"
+                            size="md"
                             mb={'sm'}
-                            data={blinds.map((blind: string) => ({
-                                value: blind,
-                                label: <Center>
-                                    <Tag tagName={SeedResults.antes[selectedAnte]?.tags?.[0]}/>
+                            data={blinds.map((blind: string, i: number) => ({
+                                value: ['smallBlind', 'bigBlind', 'bossBlind'][i],
+                                label: <Group justify={'center'}>
                                     {blind}
-                                </Center>,
+                                    {i < 2 && <Tag tagName={SeedResults.antes[selectedAnte]?.tags?.[i]}/>}
+                                    {i === 2 && <Boss bossName={SeedResults.antes[selectedAnte]?.boss ?? ''}/>}
+
+                                </Group>,
                             }))}
                         />
                     </Box>
@@ -973,9 +1196,195 @@ function Main({SeedResults}: { SeedResults: Seed | null }) {
     )
 }
 
-function Aside() {
+function MiscCardSourcesDisplay({ miscSources }: { miscSources?: { [key: string]: any[] } }) {
+    if (!miscSources || Object.keys(miscSources).length === 0) {
+        return (
+            <Paper p="md" withBorder mb="md">
+                <Text c="dimmed" size="sm" ta="center">No miscellaneous card sources available for this ante</Text>
+            </Paper>
+        );
+    }
+
     return (
-        <AppShell.Aside></AppShell.Aside>
+        <Paper p="md" withBorder mb="md">
+            <Title order={3} mb="xs">Card Sources</Title>
+            <Accordion defaultValue={Object.keys(miscSources)[0]}>
+                {Object.entries(miscSources).map(([sourceName, cards]) => (
+                    <Accordion.Item key={sourceName} value={sourceName}>
+                        <Accordion.Control>
+                            <Group>
+                                <Text fw={500}>{toHeaderCase(sourceName)}</Text>
+                            </Group>
+                        </Accordion.Control>
+                        <Accordion.Panel>
+                            <ScrollArea h={150} type="auto">
+                                <Carousel
+                                    type={'container'}
+                                    containScroll={"keepSnaps"}
+                                    slideSize="90px"
+                                    slideGap={{ base: 'xs' }}
+                                    align="start"
+                                    withControls={false}
+                                    height={120}
+                                    dragFree
+                                >
+                                    {cards.map((card, i) => (
+                                        <Carousel.Slide key={i}>
+                                            <GameCard card={card} />
+                                        </Carousel.Slide>
+                                    ))}
+                                </Carousel>
+                            </ScrollArea>
+                        </Accordion.Panel>
+                    </Accordion.Item>
+                ))}
+            </Accordion>
+        </Paper>
+    );
+}
+
+function PurchaseTimeline({ buys }: { buys: { [key: string]: BuyMetaData } }) {
+    const buyEntries = Object.entries(buys);
+    const removeBuy = useCardStore(state => state.removeBuy);
+
+    if (buyEntries.length === 0) {
+        return (
+            <Paper p="md" withBorder>
+                <Text c="dimmed" size="sm" ta="center">No purchases yet</Text>
+            </Paper>
+        );
+    }
+
+    return (
+        <Paper p="md" withBorder>
+            <Title order={3} mb="md">Purchase History</Title>
+            <Timeline active={buyEntries.length - 1} bulletSize={24} lineWidth={2}>
+                {buyEntries.map(([key, buyData]) => {
+                    // Parse the key to extract information
+                    const [ante, location, index] = key.split('-');
+
+                    return (
+                        <Timeline.Item
+                            key={key}
+                            bullet={<IconJoker size={12} />}
+                            title={
+                                <Group justify="space-between" wrap="nowrap">
+                                    <Text size="sm" fw={500}>
+                                        {location} (Ante {ante})
+                                    </Text>
+                                    <ActionIcon
+                                        size="sm"
+                                        color="red"
+                                        variant="subtle"
+                                        onClick={() => removeBuy(buyData)}
+                                        title="Return item"
+                                    >
+                                        <IconShoppingCartOff size={48} />
+                                    </ActionIcon>
+                                </Group>
+                            }
+                        >
+                            <Text size="xs" c="dimmed" mt={4}>
+                                {buyData.locationType === "pack" ?
+                                    `${buyData.location} - Card ${Number(index) + 1}` :
+                                    `Shop Item ${Number(index) + 1}`}
+                            </Text>
+                            <Text size="xs" c="dimmed">
+                                {buyData.blind} Blind
+                            </Text>
+                            <Badge size="xs" variant="light" color="blue" mt={4}>
+                                Ante {buyData.ante}
+                            </Badge>
+                        </Timeline.Item>
+                    );
+                })}
+            </Timeline>
+
+            <Group justify="space-between" mt="md">
+                <Text size="sm" fw={500}>Total Purchases:</Text>
+                <Badge size="lg">{buyEntries.length}</Badge>
+            </Group>
+        </Paper>
+    );
+}
+
+function Aside({SeedResults}: { SeedResults: Seed | null }) {
+    const selectedAnte = useCardStore(state => state.applicationState.selectedAnte);
+    const anteData = SeedResults?.antes[selectedAnte];
+    const miscSources = anteData?.miscCardSources;
+    const buys = useCardStore(state => state.shoppingState.buys);
+    const theme = useMantineTheme();
+
+
+    return (
+        <AppShell.Aside p="md">
+            <AppShell.Section>
+                <Group justify="space-between" mb="md">
+                    <Title order={2}>Analysis</Title>
+                    <Tooltip label="This panel shows misc card sources and your purchase timeline">
+                        <ActionIcon variant="subtle" color="gray">
+                            <IconInfoCircle size={18} />
+                        </ActionIcon>
+                    </Tooltip>
+                </Group>
+            </AppShell.Section>
+
+            <AppShell.Section grow component={ScrollArea} scrollbars="y">
+                <Tabs defaultValue="sources">
+                    <Tabs.List grow mb="md">
+                        <Tabs.Tab
+                            value="sources"
+                            leftSection={<IconCards size={16} />}
+                        >
+                            Card Sources
+                        </Tabs.Tab>
+                        <Tabs.Tab
+                            value="purchases"
+                            leftSection={<IconShoppingCart size={16} />}
+                            rightSection={
+                                <Badge size="xs" circle variant="filled" color={theme.colors.blue[7]}>
+                                    {Object.keys(buys).length}
+                                </Badge>
+                            }
+                        >
+                            Purchases
+                        </Tabs.Tab>
+                    </Tabs.List>
+
+                    <Tabs.Panel value="sources">
+                        {SeedResults ? (
+                            <MiscCardSourcesDisplay miscSources={miscSources} />
+                        ) : (
+                            <Center h={200}>
+                                <Text c="dimmed">Select a seed to view card sources</Text>
+                            </Center>
+                        )}
+                    </Tabs.Panel>
+
+                    <Tabs.Panel value="purchases">
+                        <PurchaseTimeline buys={buys} />
+                    </Tabs.Panel>
+                </Tabs>
+            </AppShell.Section>
+
+            {/*<AppShell.Section>*/}
+            {/*    <Paper withBorder p="xs">*/}
+            {/*        <Group justify="space-between">*/}
+            {/*            <Text size="sm">Current Ante</Text>*/}
+            {/*            <Badge size="md">{selectedAnte}</Badge>*/}
+            {/*        </Group>*/}
+            {/*        {anteData?.boss && (*/}
+            {/*            <Group mt="xs">*/}
+            {/*                <Text size="sm">Boss:</Text>*/}
+            {/*                <Group gap="xs">*/}
+            {/*                    <Boss bossName={anteData.boss} />*/}
+            {/*                    <Text size="sm">{anteData.boss}</Text>*/}
+            {/*                </Group>*/}
+            {/*            </Group>*/}
+            {/*        )}*/}
+            {/*    </Paper>*/}
+            {/*</AppShell.Section>*/}
+        </AppShell.Aside>
     )
 }
 
@@ -1013,31 +1422,50 @@ function Blueprint({SeedResults}: { SeedResults: Seed | null }) {
             <Header/>
             <NavBar/>
             <Main SeedResults={SeedResults}/>
-            <Aside/>
+            <Aside SeedResults={SeedResults}/>
             <Footer/>
         </AppShell>
     )
 }
-
+export interface AnalyzeOptions {
+    showCardSpoilers: boolean,
+    buys: { [key: string]: BuyMetaData },
+    sells: { [key: string]: BuyMetaData }
+}
 export default function App() {
     const analyzeState = useCardStore(state => state.immolateState);
     const {seed, deck, stake, showmanOwned, gameVersion: version, antes, cardsPerAnte} = analyzeState;
-    const engine = new ImmolateClassic(seed);
-    engine.InstParams(deck, stake, showmanOwned, version);
-    engine.initLocks(1, false, true);
-    const analyzer: CardEngineWrapper = new CardEngineWrapper(engine);
-    const start = useCardStore(state => state.applicationState.start);
 
+    const start = useCardStore(state => state.applicationState.start);
+    const buys = useCardStore(state => state.shoppingState.buys);
+    const sells = useCardStore(state => state.shoppingState.sells);
+    const showCardSpoilers = useCardStore(state => state.applicationState.showCardSpoilers);
     const SeedResults = useMemo(() => {
-        if (seed.length < 8 || !start) return null;
-        return analyzer.analyzeSeed(antes, cardsPerAnte)
-    }, [analyzeState, start]);
-    console.log(
-        SeedResults
-    )
+                if (seed.length < 6 || !start) return null;
+                const engine = new ImmolateClassic(seed);
+                engine.InstParams(deck, stake, showmanOwned, version);
+                engine.initLocks(1, false, true);
+                const analyzer: CardEngineWrapper = new CardEngineWrapper(engine);
+                const transactions = {buys, sells}
+
+                const options: AnalyzeOptions = {
+                        showCardSpoilers,
+                        ...transactions
+                };
+
+                let results = analyzer.analyzeSeed(antes, cardsPerAnte, options);
+                engine.delete();
+                return results;
+            },
+            [analyzeState, start, buys, showCardSpoilers]
+        )
+    ;
+
+
     return (
         <MantineProvider defaultColorScheme={'dark'} theme={theme}>
             <Blueprint SeedResults={SeedResults}/>
+            <Space my={'xl'}/>
         </MantineProvider>
     );
 }

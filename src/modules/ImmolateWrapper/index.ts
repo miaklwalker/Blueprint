@@ -13,6 +13,7 @@ import {
     StandardCard_Final,
     Tarot_Final
 } from "./CardEngines/Cards.ts";
+import {AnalyzeOptions} from "../../App.tsx";
 
 
 export interface CardEngine {
@@ -128,21 +129,38 @@ export class CardEngineWrapper implements EngineWrapper{
         }
         return output
     }
-    analyzeAnte(ante: number, cardsPerAnte: number): Ante {
+    analyzeAnte(ante: number, cardsPerAnte: number, options?: AnalyzeOptions): Ante {
+        let itemsWithSpoilers: string[] = ["The Soul", "Judgment", "Wraith"];
+        let spoilerSources = [this.engine.sources.S_Soul, this.engine.sources.S_Judgement, this.engine.sources.S_Wraith]
         let result = new Ante(ante);
         this.engine.initUnlocks(ante, false);
+
         result.boss = this.engine.nextBoss(ante)
         result.voucher = this.engine.nextVoucher(ante);
         result.tags.push(this.engine.nextTag(ante));
         result.tags.push(this.engine.nextTag(ante));
         let max = ante === 1 ? 15 : cardsPerAnte;
         for (let i = 0; i < max; i++) {
+            let key = `${ante}-Shop-${i}`;
+            let item = this.engine.nextShopItem(ante);
             result.queue.push(
                 this.makeCard(
-                    this.engine.nextShopItem(ante)
+                    item
                 )
             )
+            item.delete()
+            if(options && options?.showCardSpoilers ) {
+                if (itemsWithSpoilers.includes(result.queue[i].name)) {
+                    result.queue[i] = Pack.PackCardToCard(this.engine.nextJoker(spoilerSources[itemsWithSpoilers.indexOf(result.queue[i].name)], ante, false),'Joker')
+                }
+            }
+            if(options && options.buys[key]) {
+                console.log(result.queue[i])
+                this.engine.lock(result.queue[i].name)
+            }
+
         }
+
         for (let blind of Object.keys(result.blinds)) {
             if (ante === 1 && blind === 'smallBlind') {
                 continue;
@@ -151,8 +169,15 @@ export class CardEngineWrapper implements EngineWrapper{
                 let packString = this.engine.nextPack(ante);
                 let packInfo = this.engine.packInfo(packString);
                 let pack = new Pack(packInfo);
-                pack.init(this.engine, ante);
+                pack.init(this.engine, ante, options?.showCardSpoilers ?? false);
                 result.blinds[blind].packs.push(pack)
+                for ( let k = 0; k < packInfo.size; k++) {
+                    let key = `${ante}-${packString}-${k}`;
+                    if(options && options.buys[key]) {
+                        this.engine.lock(pack.cards[k].name)
+                    }
+
+                }
             }
         }
         result.miscCardSources = {
@@ -190,10 +215,11 @@ export class CardEngineWrapper implements EngineWrapper{
         }
         return result
     }
-    analyzeSeed(antes: number, cardsPerAnte: number = 50): Seed {
+    analyzeSeed(antes: number, cardsPerAnte: number = 50, options?: AnalyzeOptions): Seed {
         let result = new Seed();
+        this.engine.lockLevelTwoVouchers();
         for (let ante = 1; ante <= antes; ante++) {
-            result.antes[ante] = this.analyzeAnte(ante,cardsPerAnte);
+            result.antes[ante] = this.analyzeAnte(ante,cardsPerAnte, options);
         }
         return result
     }

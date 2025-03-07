@@ -15,7 +15,8 @@ import {
     Card,
     Center,
     Container,
-    Fieldset, Flex,
+    Fieldset,
+    Flex,
     Grid,
     Group,
     Indicator,
@@ -47,7 +48,7 @@ import {immer} from 'zustand/middleware/immer'
 import {combine, devtools, persist} from "zustand/middleware";
 import {ImmolateClassic} from "./modules/ImmolateWrapper/CardEngines/immolateClassic.ts";
 import {CardEngineWrapper} from "./modules/ImmolateWrapper";
-//@ts-ignore
+
 import {
     blinds,
     bosses,
@@ -61,20 +62,13 @@ import {
     tags,
     tarotsAndPlanets,
     vouchers
+    //@ts-ignore
 } from "./modules/const.js"
 import {toHeaderCase} from 'js-convert-case';
 //@ts-ignore
 import {extractShopQueues, getModifierColor, getSealPosition, getStandardCardPosition} from "./modules/utils.js";
 import {ReactNode, useEffect, useMemo, useRef, useState} from "react";
-import {
-    useDebouncedValue,
-    useHover,
-    useMergedRef,
-    useMouse,
-    useResizeObserver,
-    useToggle,
-    useViewportSize
-} from "@mantine/hooks";
+import {useHover, useMergedRef, useMouse, useResizeObserver, useViewportSize} from "@mantine/hooks";
 import {
     Ante,
     Joker_Final,
@@ -85,15 +79,8 @@ import {
     StandardCard_Final,
     Tarot_Final
 } from "./modules/ImmolateWrapper/CardEngines/Cards.ts";
-import {
-    IconCards,
-    IconInfoCircle,
-    IconJoker,
-    IconPlayCard,
-    IconShoppingCart,
-    IconShoppingCartOff
-} from "@tabler/icons-react";
-import {Carousel, Embla, useAnimationOffsetEffect} from "@mantine/carousel";
+import {IconCards, IconJoker, IconPlayCard, IconShoppingCart, IconShoppingCartOff} from "@tabler/icons-react";
+import {Carousel} from "@mantine/carousel";
 //@ts-ignore
 
 
@@ -1012,20 +999,23 @@ export class BuyMetaData {
     index: number;
     ante: string;
     blind: string;
+    name: string;
 
-    constructor({location, locationType, index, ante, blind}: {
+    constructor({location, locationType, index, ante, blind, name}: {
         location: string,
         locationType: string,
         index: number,
         ante: string,
         blind: string,
-        itemType: string
+        itemType: string,
+        name: string
     }) {
         this.location = location;
         this.locationType = locationType;
         this.index = index;
         this.ante = ante;
         this.blind = blind;
+        this.name = name;
     }
 }
 function QueueCarousel({queue, tabName} : { queue: any[], tabName: string }) {
@@ -1053,6 +1043,7 @@ function QueueCarousel({queue, tabName} : { queue: any[], tabName: string }) {
                                         index: index,
                                         ante: tabName,
                                         blind: selectedBlind,
+                                        name: card.name
                                     }}
                                 >
                                     <GameCard card={card}/>
@@ -1117,7 +1108,8 @@ function AntePanel({ante, tabName}: { ante: Ante, tabName: string }) {
                                                             index: cardIndex,
                                                             ante: tabName,
                                                             blind: selectedBlind,
-                                                            itemType: 'card'
+                                                            itemType: 'card',
+                                                            name: card.name
                                                         })
                                                     }
                                                 >
@@ -1333,7 +1325,7 @@ function PurchaseTimeline({buys}: { buys: { [key: string]: BuyMetaData } }) {
                 {buyEntries.map(([key, buyData]) => {
                     // Parse the key to extract information
                     const [ante, location, index] = key.split('-');
-
+                    console.log(buyData)
                     return (
                         <Timeline.Item
                             key={key}
@@ -1341,7 +1333,7 @@ function PurchaseTimeline({buys}: { buys: { [key: string]: BuyMetaData } }) {
                             title={
                                 <Group justify="space-between" wrap="nowrap">
                                     <Text size="sm" fw={500}>
-                                        {location} (Ante {ante})
+                                        {buyData.name}
                                     </Text>
                                     <ActionIcon
                                         size="sm"
@@ -1355,13 +1347,14 @@ function PurchaseTimeline({buys}: { buys: { [key: string]: BuyMetaData } }) {
                                 </Group>
                             }
                         >
+                            <Text></Text>
                             <Text size="xs" c="dimmed" mt={4}>
                                 {buyData.locationType === "pack" ?
                                     `${buyData.location} - Card ${Number(index) + 1}` :
                                     `Shop Item ${Number(index) + 1}`}
                             </Text>
                             <Text size="xs" c="dimmed">
-                                {buyData.blind} Blind
+                                {toHeaderCase(buyData.blind)}
                             </Text>
                             <Badge size="xs" variant="light" color="blue" mt={4}>
                                 Ante {buyData.ante}
@@ -1385,23 +1378,12 @@ function Aside({SeedResults}: { SeedResults: Seed | null }) {
     const miscSources = anteData?.miscCardSources;
     const buys = useCardStore(state => state.shoppingState.buys);
     const theme = useMantineTheme();
-
+    const [tab, setTab] = useState('sources');
 
     return (
         <AppShell.Aside p="md">
             <AppShell.Section>
-                <Group justify="space-between" mb="md">
-                    <Title order={2}>Analysis</Title>
-                    <Tooltip label="This panel shows misc card sources and your purchase timeline">
-                        <ActionIcon variant="subtle" color="gray">
-                            <IconInfoCircle size={18}/>
-                        </ActionIcon>
-                    </Tooltip>
-                </Group>
-            </AppShell.Section>
-
-            <AppShell.Section grow component={ScrollArea} scrollbars="y">
-                <Tabs defaultValue="sources">
+                <Tabs value={tab} onChange={(e)=>setTab(`${e}`)}>
                     <Tabs.List grow mb="md">
                         <Tabs.Tab
                             value="sources"
@@ -1421,7 +1403,10 @@ function Aside({SeedResults}: { SeedResults: Seed | null }) {
                             Purchases
                         </Tabs.Tab>
                     </Tabs.List>
-
+                </Tabs>
+            </AppShell.Section>
+            <AppShell.Section component={ScrollArea} scrollbars="y">
+                <Tabs value={tab}>
                     <Tabs.Panel value="sources">
                         {SeedResults ? (
                             <MiscCardSourcesDisplay miscSources={miscSources}/>
@@ -1431,30 +1416,28 @@ function Aside({SeedResults}: { SeedResults: Seed | null }) {
                             </Center>
                         )}
                     </Tabs.Panel>
-
                     <Tabs.Panel value="purchases">
                         <PurchaseTimeline buys={buys}/>
                     </Tabs.Panel>
                 </Tabs>
             </AppShell.Section>
-
-            <AppShell.Section>
-                <Paper withBorder p="xs">
-                    <Group justify="space-between">
-                        <Text size="sm">Current Ante</Text>
-                        <Badge size="md">{selectedAnte}</Badge>
-                    </Group>
-                    {anteData?.boss && (
-                        <Group mt="xs">
-                            <Text size="sm">Boss:</Text>
-                            <Group gap="xs">
-                                <Boss bossName={anteData.boss} />
-                                <Text size="sm">{anteData.boss}</Text>
-                            </Group>
-                        </Group>
-                    )}
-                </Paper>
-            </AppShell.Section>
+            {/*<AppShell.Section>*/}
+            {/*    <Paper withBorder p="xs">*/}
+            {/*        <Group justify="space-between">*/}
+            {/*            <Text size="sm">Current Ante</Text>*/}
+            {/*            <Badge size="md">{selectedAnte}</Badge>*/}
+            {/*        </Group>*/}
+            {/*        {anteData?.boss && (*/}
+            {/*            <Group mt="xs">*/}
+            {/*                <Text size="sm">Boss:</Text>*/}
+            {/*                <Group gap="xs">*/}
+            {/*                    <Boss bossName={anteData.boss} />*/}
+            {/*                    <Text size="sm">{anteData.boss}</Text>*/}
+            {/*                </Group>*/}
+            {/*            </Group>*/}
+            {/*        )}*/}
+            {/*    </Paper>*/}
+            {/*</AppShell.Section>*/}
         </AppShell.Aside>
     )
 }

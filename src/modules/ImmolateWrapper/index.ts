@@ -130,7 +130,7 @@ export class CardEngineWrapper implements EngineWrapper{
         return output
     }
     analyzeAnte(ante: number, cardsPerAnte: number, options?: AnalyzeOptions): Ante {
-        let itemsWithSpoilers: string[] = ["The Soul", "Judgment", "Wraith"];
+        let itemsWithSpoilers: string[] = ["The Soul", "Judgement", "Wraith"];
         let spoilerSources = [this.engine.sources.S_Soul, this.engine.sources.S_Judgement, this.engine.sources.S_Wraith]
         let result = new Ante(ante);
         this.engine.initUnlocks(ante, false);
@@ -155,12 +155,11 @@ export class CardEngineWrapper implements EngineWrapper{
                 }
             }
             if(options && options.buys[key]) {
-                console.log(result.queue[i])
                 this.engine.lock(result.queue[i].name)
             }
 
         }
-
+        console.log(result.queue)
         for (let blind of Object.keys(result.blinds)) {
             if (ante === 1 && blind === 'smallBlind') {
                 continue;

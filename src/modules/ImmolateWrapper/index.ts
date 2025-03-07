@@ -191,14 +191,18 @@ export class CardEngineWrapper implements EngineWrapper{
             // planet cards
             highPriestess: [],
             // tarot cards
+            arcanaPack: [],
             emperor: [],
             vagabond: [],
             purpleSeal: [],
             // spectral cards
             spectral: [],
         }
-        for (let i = 0 ; i<9; i++) {
-            result.miscCardSources.riffRaff.push( Pack.PackCardToCard(this.engine.nextJoker(this.engine.sources.S_Riff_Raff, ante, false),"Joker"))
+        for (let i = 0 ; i<15; i++) {
+            if(i<6){
+                result.miscCardSources.riffRaff.push( Pack.PackCardToCard(this.engine.nextJoker(this.engine.sources.S_Riff_Raff, ante, false),"Joker"))
+            }
+
             result.miscCardSources.uncommonTag.push( Pack.PackCardToCard(this.engine.nextJoker(this.engine.sources.S_Uncommon_Tag, ante, false),"Joker"))
             result.miscCardSources.rareTag.push( Pack.PackCardToCard(this.engine.nextJoker(this.engine.sources.S_Rare_Tag, ante, false),"Joker"))
             result.miscCardSources.topUpTag.push( Pack.PackCardToCard(this.engine.nextJoker(this.engine.sources.S_Top_Up, ante, false),"Joker"))
@@ -208,8 +212,18 @@ export class CardEngineWrapper implements EngineWrapper{
             result.miscCardSources.highPriestess.push( Pack.PackCardToCard(this.engine.nextPlanet(this.engine.sources.S_High_Priestess, ante, false),"Planet"))
             result.miscCardSources.emperor.push( Pack.PackCardToCard(this.engine.nextTarot(this.engine.sources.S_Emperor, ante, false),"Tarot"))
             result.miscCardSources.vagabond.push( Pack.PackCardToCard(this.engine.nextTarot(this.engine.sources.S_Vagabond, ante, false),"Tarot"))
-            result.miscCardSources.purpleSeal.push( Pack.PackCardToCard(this.engine.nextTarot(this.engine.sources.S_Purple_Seal, ante, false),"Tarot"))
+            result.miscCardSources.purpleSeal.push( Pack.PackCardToCard(this.engine.nextTarot(this.engine.sources.S_Purple_Seal, ante, false),"Tarot"));
+            const arcanaCard = this.engine.nextTarot(this.engine.sources.S_Arcana, ante, true) as unknown as string;
+            if( arcanaCard === 'The Soul' && options?.showCardSpoilers) {
+                result.miscCardSources.arcanaPack.push(
+                    Pack.PackCardToCard(this.engine.nextJoker(this.engine.sources.S_Soul, ante, false),'Joker')
+                )
+            }else{
+                result.miscCardSources.arcanaPack.push( Pack.PackCardToCard(arcanaCard,"Tarot"))
+            }
+
             result.miscCardSources.spectral.push( Pack.PackCardToCard(this.engine.nextSpectral(this.engine.sources.S_Spectral, ante, false),"Spectral"))
+
 
 
         }

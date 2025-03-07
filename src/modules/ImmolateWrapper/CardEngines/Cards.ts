@@ -233,7 +233,7 @@ export class Pack {
         this.cards = []
     }
 
-    static PackCardToCard(data: string | PackCard, cardType: string) {
+    static PackCardToCard(data: string | PackCard, cardType: string, spoilers? :boolean) {
         if (data === undefined) {
             console.log("No data for pack card");
             return [];
@@ -247,10 +247,19 @@ export class Pack {
                 } as Card_Final);
             }
             if (cardType === 'Tarot') {
-                return new Tarot_Final({
-                    name: data,
-                    type: cardType
-                } as Card_Final);
+                if(data !== 'The Soul') {
+                    return new Tarot_Final({
+                        name: data,
+                        type: cardType
+                    } as Card_Final);
+                }else{
+                    if(!spoilers) {
+                        return new Spectral_Final({
+                            name: data,
+                            type: cardType
+                        } as Card_Final);
+                    }
+                }
             }
             if (cardType === 'Spectral') {
                 return new Spectral_Final({

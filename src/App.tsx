@@ -15,7 +15,7 @@ import {
     Card,
     Center,
     Container,
-    Fieldset,
+    Fieldset, Flex,
     Grid,
     Group,
     Indicator,
@@ -62,11 +62,19 @@ import {
     tarotsAndPlanets,
     vouchers
 } from "./modules/const.js"
-import { toHeaderCase } from 'js-convert-case';
+import {toHeaderCase} from 'js-convert-case';
 //@ts-ignore
 import {extractShopQueues, getModifierColor, getSealPosition, getStandardCardPosition} from "./modules/utils.js";
 import {ReactNode, useEffect, useMemo, useRef, useState} from "react";
-import {useHover, useMergedRef, useMouse, useResizeObserver, useViewportSize} from "@mantine/hooks";
+import {
+    useDebouncedValue,
+    useHover,
+    useMergedRef,
+    useMouse,
+    useResizeObserver,
+    useToggle,
+    useViewportSize
+} from "@mantine/hooks";
 import {
     Ante,
     Joker_Final,
@@ -85,7 +93,7 @@ import {
     IconShoppingCart,
     IconShoppingCartOff
 } from "@tabler/icons-react";
-import {Carousel} from "@mantine/carousel";
+import {Carousel, Embla, useAnimationOffsetEffect} from "@mantine/carousel";
 //@ts-ignore
 
 
@@ -646,14 +654,20 @@ function BuyWrapper({children, bottomOffset, topOffset, metaData}: BuyWrapperPro
     const owned = useCardStore(state => state.isOwned);
     let key = `${metaData?.ante}-${metaData?.location}-${metaData?.index}`;
     const cardIsOwned = owned(key);
+    const hasUserAttention = hovered;
+
+
+
+
+
 
     return (
         <Center pos={'relative'} ref={ref} h={'100%'} style={{overflow: 'visible'}}>
             <Indicator disabled={!cardIsOwned} inline label="Owned" size={16} position={'top-center'}>
                 <Card style={{
-                    transform: hovered ? 'scale(1.15)' : 'none',
+                    transform: hasUserAttention ? 'scale(1.15)' : 'none',
                     transition: 'transform 0.4s ease',
-                    zIndex: hovered ? 20 : 0
+                    zIndex: hasUserAttention ? 20 : 0
                 }}>
                     <Card.Section>
                         {cardIsOwned && <Overlay color="#000" backgroundOpacity={0.55} blur={1}/>}
@@ -662,7 +676,7 @@ function BuyWrapper({children, bottomOffset, topOffset, metaData}: BuyWrapperPro
                 </Card>
             </Indicator>
             <Transition
-                mounted={hovered}
+                mounted={hasUserAttention}
                 transition="slide-up"
                 duration={200}
                 enterDelay={350}
@@ -681,7 +695,7 @@ function BuyWrapper({children, bottomOffset, topOffset, metaData}: BuyWrapperPro
                 )}
             </Transition>
             <Transition
-                mounted={hovered}
+                mounted={hasUserAttention}
                 transition="slide-down"
                 duration={200}
                 enterDelay={350}
@@ -1014,99 +1028,150 @@ export class BuyMetaData {
         this.blind = blind;
     }
 }
+function QueueCarousel({queue, tabName} : { queue: any[], tabName: string }) {
+    const selectedBlind = useCardStore(state => state.applicationState.selectedBlind);
 
+    return (
+        <Paper >
+            <Carousel
+                containScroll={'keepSnaps'}
+                slideGap={{base: 'sm'}}
+                slideSize={{base: 90}}
+                withControls={false}
+                height={190}
+                dragFree
+                type={'container'}
+            >
+                {
+                    queue.map((card: any, index: number) => {
+                        return (
+                            <Carousel.Slide h={190} key={index}>
+                                <BuyWrapper
+                                    metaData={{
+                                        location: "Shop",
+                                        locationType: "queue",
+                                        index: index,
+                                        ante: tabName,
+                                        blind: selectedBlind,
+                                    }}
+                                >
+                                    <GameCard card={card}/>
+                                </BuyWrapper>
+                            </Carousel.Slide>
+                        )
+                    })
+                }
+            </Carousel>
+        </Paper>
+    )
+}
 function AntePanel({ante, tabName}: { ante: Ante, tabName: string }) {
     const queue = ante.queue;
     const selectedBlind = useCardStore(state => state.applicationState.selectedBlind);
     const packs = ante?.blinds?.[selectedBlind]?.packs;
+
     return (
         <Tabs.Panel w={'100%'} value={tabName}>
             <Paper withBorder h={'100%'} p={'sm'}>
                 <Fieldset legend={'Shop'} mb={'sm'}>
-                    <Paper>
-                        <Carousel
-                            containScroll={"keepSnaps"}
-                            slideGap={{base: 'sm'}}
-                            slideSize={{base: 90}}
-                            withControls={false}
-                            height={190}
-                            dragFree
-                            type={'container'}
-                        >
-                            {
-                                queue.map((card: any, index: number) => {
-                                    return (
-                                        <Carousel.Slide h={190} key={index}>
-                                            <BuyWrapper
-                                                metaData={{
-                                                    location: "Shop",
-                                                    locationType: "queue",
-                                                    index: index,
-                                                    ante: tabName,
-                                                    blind: selectedBlind,
-                                                }}
-                                            >
-                                                <GameCard card={card}/>
-                                            </BuyWrapper>
-                                        </Carousel.Slide>
-                                    )
-                                })
-                            }
-                        </Carousel>
-                    </Paper>
+                    <QueueCarousel queue={queue} tabName={tabName} />
                 </Fieldset>
-                <Grid grow>
-                    <Grid.Col span={{base: 2, md: 2}}>
-                        <Fieldset h={'100%'} legend={'Vouchers'} mr={'sm'}>
-                            <Center h={'100%'} w={'100%'}>
-
+                <Grid>
+                    <Grid.Col span={{base:12, lg: 2}}>
+                        <Paper h={'100%'} withBorder p={'1rem'}>
+                            <Flex  h={'100%'} direction={'column'} align={'space-between'}>
+                                <Text ta={'center'} c={'dimmed'} fz={'md'}> Voucher </Text>
                                 <BuyWrapper>
                                     <Voucher voucherName={ante.voucher}/>
                                 </BuyWrapper>
-
-                            </Center>
-                        </Fieldset>
+                                <Text ta={'center'}  fz={'md'}>  {ante.voucher} </Text>
+                            </Flex>
+                        </Paper>
                     </Grid.Col>
-                    <Grid.Col span={{base: 10, md: 10}}>
-                        <Stack>
-                            {
-                                packs &&
-                                packs.map((pack: Pack, index: number) => {
-                                    return (
-                                        <Fieldset key={index} legend={pack.name}>
-                                            <Group pos={'relative'}>
-                                                {
-                                                    pack?.cards &&
-                                                    pack.cards.map((card: any, index: number) => {
-                                                        return (
-                                                            <BuyWrapper
-                                                                metaData={
-                                                                    new BuyMetaData({
-                                                                        location: pack.name,
-                                                                        locationType: "pack",
-                                                                        index: index,
-                                                                        ante: tabName,
-                                                                        blind: selectedBlind,
-                                                                        itemType: 'card'
-                                                                    })
-                                                                }
-                                                                bottomOffset={30}
-                                                                topOffset={30}
-                                                                key={index}
-                                                            >
-                                                                <GameCard card={card}/>
-                                                            </BuyWrapper>
-                                                        )
-                                                    })
-                                                }
-                                            </Group>
-                                        </Fieldset>
-                                    )
-                                })
-                            }
-                        </Stack>
+                    <Grid.Col span={{ base:12, lg:10 }}>
+                        <Accordion w={'100%'} multiple={true} defaultValue={packs.map(({name}) => name)}
+                                   variant="separated">
+                            {packs.map((pack: Pack, index: number) => (
+                                <Accordion.Item key={index} value={pack.name}>
+                                    <Accordion.Control>
+                                        <Group justify={'space-between'} pr={'md'}>
+                                            <Text fw={500}>{pack.name}</Text>
+                                            <Badge>{pack.cards?.length || 0} cards</Badge>
+                                        </Group>
+                                    </Accordion.Control>
+                                    <Accordion.Panel>
+
+                                        <SimpleGrid
+                                            cols={{base: 4, sm: 5, md: 6, lg: 5}}
+                                            spacing="sm"
+                                        >
+                                            {pack.cards && pack.cards.map((card: any, cardIndex: number) => (
+                                                <BuyWrapper
+                                                    key={cardIndex}
+                                                    bottomOffset={30}
+                                                    topOffset={30}
+                                                    metaData={
+                                                        new BuyMetaData({
+                                                            location: pack.name,
+                                                            locationType: "pack",
+                                                            index: cardIndex,
+                                                            ante: tabName,
+                                                            blind: selectedBlind,
+                                                            itemType: 'card'
+                                                        })
+                                                    }
+                                                >
+                                                    <GameCard card={card}/>
+                                                </BuyWrapper>
+                                            ))}
+                                        </SimpleGrid>
+                                    </Accordion.Panel>
+                                </Accordion.Item>
+                            ))}
+                        </Accordion>
+                        {/*<Stack flex={1}>*/}
+                        {/*    {*/}
+                        {/*        packs &&*/}
+                        {/*        packs.map((pack: Pack, index: number) => {*/}
+                        {/*            return (*/}
+                        {/*                <Fieldset key={index} legend={pack.name}>*/}
+                        {/*                    <Group pos={'relative'}>*/}
+                        {/*                        {*/}
+                        {/*                            pack?.cards &&*/}
+                        {/*                            pack.cards.map((card: any, index: number) => {*/}
+                        {/*                                return (*/}
+                        {/*                                    <BuyWrapper*/}
+                        {/*                                        metaData={*/}
+                        {/*                                            new BuyMetaData({*/}
+                        {/*                                                location: pack.name,*/}
+                        {/*                                                locationType: "pack",*/}
+                        {/*                                                index: index,*/}
+                        {/*                                                ante: tabName,*/}
+                        {/*                                                blind: selectedBlind,*/}
+                        {/*                                                itemType: 'card'*/}
+                        {/*                                            })*/}
+                        {/*                                        }*/}
+                        {/*                                        bottomOffset={30}*/}
+                        {/*                                        topOffset={30}*/}
+                        {/*                                        key={index}*/}
+                        {/*                                    >*/}
+                        {/*                                        <GameCard card={card}/>*/}
+                        {/*                                    </BuyWrapper>*/}
+                        {/*                                )*/}
+                        {/*                            })*/}
+                        {/*                        }*/}
+                        {/*                    </Group>*/}
+                        {/*                </Fieldset>*/}
+                        {/*            )*/}
+                        {/*        })*/}
+                        {/*    }*/}
+                        {/*</Stack>*/}
                     </Grid.Col>
                 </Grid>
+
+
+                {/*</Grid.Col>*/}
+                {/*</Grid>*/}
             </Paper>
         </Tabs.Panel>
     )
@@ -1196,7 +1261,7 @@ function Main({SeedResults}: { SeedResults: Seed | null }) {
     )
 }
 
-function MiscCardSourcesDisplay({ miscSources }: { miscSources?: { [key: string]: any[] } }) {
+function MiscCardSourcesDisplay({miscSources}: { miscSources?: { [key: string]: any[] } }) {
     if (!miscSources || Object.keys(miscSources).length === 0) {
         return (
             <Paper p="md" withBorder mb="md">
@@ -1204,11 +1269,13 @@ function MiscCardSourcesDisplay({ miscSources }: { miscSources?: { [key: string]
             </Paper>
         );
     }
-
+    const [currentSource, setCurrentSource] = useState('');
+    // const [embla, setEmbla] = useState<Embla | null>(null);
+    // useAnimationOffsetEffect(embla, 200)
     return (
         <Paper p="md" withBorder mb="md">
             <Title order={3} mb="xs">Card Sources</Title>
-            <Accordion defaultValue={Object.keys(miscSources)[0]}>
+            <Accordion onChange={e => setCurrentSource(`${e}`)} variant={'separated'} value={currentSource}>
                 {Object.entries(miscSources).map(([sourceName, cards]) => (
                     <Accordion.Item key={sourceName} value={sourceName}>
                         <Accordion.Control>
@@ -1217,24 +1284,28 @@ function MiscCardSourcesDisplay({ miscSources }: { miscSources?: { [key: string]
                             </Group>
                         </Accordion.Control>
                         <Accordion.Panel>
-                            <ScrollArea h={150} type="auto">
-                                <Carousel
-                                    type={'container'}
-                                    containScroll={"keepSnaps"}
-                                    slideSize="90px"
-                                    slideGap={{ base: 'xs' }}
-                                    align="start"
-                                    withControls={false}
-                                    height={120}
-                                    dragFree
-                                >
-                                    {cards.map((card, i) => (
-                                        <Carousel.Slide key={i}>
-                                            <GameCard card={card} />
-                                        </Carousel.Slide>
-                                    ))}
-                                </Carousel>
-                            </ScrollArea>
+                            {
+                                sourceName === currentSource &&
+                                <Box>
+                                    <Carousel
+                                        // getEmblaApi={setEmbla}
+                                        type={'container'}
+                                        slideSize="90px"
+                                        slideGap={{base: 'xs'}}
+                                        align="start"
+                                        withControls={true}
+                                        height={120}
+                                        dragFree
+                                    >
+                                        {cards.map((card, i) => (
+                                            <Carousel.Slide key={i}>
+                                                <GameCard card={card}/>
+                                            </Carousel.Slide>
+                                        ))}
+                                    </Carousel>
+                                </Box>
+                            }
+
                         </Accordion.Panel>
                     </Accordion.Item>
                 ))}
@@ -1243,7 +1314,7 @@ function MiscCardSourcesDisplay({ miscSources }: { miscSources?: { [key: string]
     );
 }
 
-function PurchaseTimeline({ buys }: { buys: { [key: string]: BuyMetaData } }) {
+function PurchaseTimeline({buys}: { buys: { [key: string]: BuyMetaData } }) {
     const buyEntries = Object.entries(buys);
     const removeBuy = useCardStore(state => state.removeBuy);
 
@@ -1266,7 +1337,7 @@ function PurchaseTimeline({ buys }: { buys: { [key: string]: BuyMetaData } }) {
                     return (
                         <Timeline.Item
                             key={key}
-                            bullet={<IconJoker size={12} />}
+                            bullet={<IconJoker size={12}/>}
                             title={
                                 <Group justify="space-between" wrap="nowrap">
                                     <Text size="sm" fw={500}>
@@ -1279,7 +1350,7 @@ function PurchaseTimeline({ buys }: { buys: { [key: string]: BuyMetaData } }) {
                                         onClick={() => removeBuy(buyData)}
                                         title="Return item"
                                     >
-                                        <IconShoppingCartOff size={48} />
+                                        <IconShoppingCartOff size={48}/>
                                     </ActionIcon>
                                 </Group>
                             }
@@ -1323,7 +1394,7 @@ function Aside({SeedResults}: { SeedResults: Seed | null }) {
                     <Title order={2}>Analysis</Title>
                     <Tooltip label="This panel shows misc card sources and your purchase timeline">
                         <ActionIcon variant="subtle" color="gray">
-                            <IconInfoCircle size={18} />
+                            <IconInfoCircle size={18}/>
                         </ActionIcon>
                     </Tooltip>
                 </Group>
@@ -1334,13 +1405,13 @@ function Aside({SeedResults}: { SeedResults: Seed | null }) {
                     <Tabs.List grow mb="md">
                         <Tabs.Tab
                             value="sources"
-                            leftSection={<IconCards size={16} />}
+                            leftSection={<IconCards size={16}/>}
                         >
                             Card Sources
                         </Tabs.Tab>
                         <Tabs.Tab
                             value="purchases"
-                            leftSection={<IconShoppingCart size={16} />}
+                            leftSection={<IconShoppingCart size={16}/>}
                             rightSection={
                                 <Badge size="xs" circle variant="filled" color={theme.colors.blue[7]}>
                                     {Object.keys(buys).length}
@@ -1353,7 +1424,7 @@ function Aside({SeedResults}: { SeedResults: Seed | null }) {
 
                     <Tabs.Panel value="sources">
                         {SeedResults ? (
-                            <MiscCardSourcesDisplay miscSources={miscSources} />
+                            <MiscCardSourcesDisplay miscSources={miscSources}/>
                         ) : (
                             <Center h={200}>
                                 <Text c="dimmed">Select a seed to view card sources</Text>
@@ -1362,28 +1433,28 @@ function Aside({SeedResults}: { SeedResults: Seed | null }) {
                     </Tabs.Panel>
 
                     <Tabs.Panel value="purchases">
-                        <PurchaseTimeline buys={buys} />
+                        <PurchaseTimeline buys={buys}/>
                     </Tabs.Panel>
                 </Tabs>
             </AppShell.Section>
 
-            {/*<AppShell.Section>*/}
-            {/*    <Paper withBorder p="xs">*/}
-            {/*        <Group justify="space-between">*/}
-            {/*            <Text size="sm">Current Ante</Text>*/}
-            {/*            <Badge size="md">{selectedAnte}</Badge>*/}
-            {/*        </Group>*/}
-            {/*        {anteData?.boss && (*/}
-            {/*            <Group mt="xs">*/}
-            {/*                <Text size="sm">Boss:</Text>*/}
-            {/*                <Group gap="xs">*/}
-            {/*                    <Boss bossName={anteData.boss} />*/}
-            {/*                    <Text size="sm">{anteData.boss}</Text>*/}
-            {/*                </Group>*/}
-            {/*            </Group>*/}
-            {/*        )}*/}
-            {/*    </Paper>*/}
-            {/*</AppShell.Section>*/}
+            <AppShell.Section>
+                <Paper withBorder p="xs">
+                    <Group justify="space-between">
+                        <Text size="sm">Current Ante</Text>
+                        <Badge size="md">{selectedAnte}</Badge>
+                    </Group>
+                    {anteData?.boss && (
+                        <Group mt="xs">
+                            <Text size="sm">Boss:</Text>
+                            <Group gap="xs">
+                                <Boss bossName={anteData.boss} />
+                                <Text size="sm">{anteData.boss}</Text>
+                            </Group>
+                        </Group>
+                    )}
+                </Paper>
+            </AppShell.Section>
         </AppShell.Aside>
     )
 }
@@ -1427,11 +1498,13 @@ function Blueprint({SeedResults}: { SeedResults: Seed | null }) {
         </AppShell>
     )
 }
+
 export interface AnalyzeOptions {
     showCardSpoilers: boolean,
     buys: { [key: string]: BuyMetaData },
     sells: { [key: string]: BuyMetaData }
 }
+
 export default function App() {
     const analyzeState = useCardStore(state => state.immolateState);
     const {seed, deck, stake, showmanOwned, gameVersion: version, antes, cardsPerAnte} = analyzeState;
@@ -1449,8 +1522,8 @@ export default function App() {
                 const transactions = {buys, sells}
 
                 const options: AnalyzeOptions = {
-                        showCardSpoilers,
-                        ...transactions
+                    showCardSpoilers,
+                    ...transactions
                 };
 
                 let results = analyzer.analyzeSeed(antes, cardsPerAnte, options);

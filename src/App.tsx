@@ -47,7 +47,7 @@ import {create} from "zustand";
 import {immer} from 'zustand/middleware/immer'
 import {combine, devtools, persist} from "zustand/middleware";
 import {ImmolateClassic} from "./modules/ImmolateWrapper/CardEngines/immolateClassic.ts";
-import {CardEngineWrapper} from "./modules/ImmolateWrapper";
+import {CardEngineWrapper, MiscCardSource} from "./modules/ImmolateWrapper";
 
 import {
     blinds,
@@ -80,7 +80,7 @@ import {
     Tarot_Final
 } from "./modules/ImmolateWrapper/CardEngines/Cards.ts";
 import {IconCards, IconJoker, IconPlayCard, IconShoppingCart, IconShoppingCartOff} from "@tabler/icons-react";
-import {Carousel} from "@mantine/carousel";
+import {Carousel, Embla} from "@mantine/carousel";
 //@ts-ignore
 
 
@@ -1253,7 +1253,7 @@ function Main({SeedResults}: { SeedResults: Seed | null }) {
     )
 }
 
-function MiscCardSourcesDisplay({miscSources}: { miscSources?: { [key: string]: any[] } }) {
+function MiscCardSourcesDisplay({miscSources}: { miscSources?: MiscCardSource[] }) {
     if (!miscSources || Object.keys(miscSources).length === 0) {
         return (
             <Paper p="md" withBorder mb="md">
@@ -1262,25 +1262,29 @@ function MiscCardSourcesDisplay({miscSources}: { miscSources?: { [key: string]: 
         );
     }
     const [currentSource, setCurrentSource] = useState('');
-    // const [embla, setEmbla] = useState<Embla | null>(null);
+    const [embla, setEmbla] = useState<Embla | null>(null);
+    useEffect(()=>{
+        if(!embla)return;
+        embla.reInit()
+    },[embla])
     // useAnimationOffsetEffect(embla, 200)
     return (
         <Paper p="md" withBorder mb="md">
             <Title order={3} mb="xs">Card Sources</Title>
             <Accordion onChange={e => setCurrentSource(`${e}`)} variant={'separated'} value={currentSource}>
-                {Object.entries(miscSources).map(([sourceName, cards]) => (
-                    <Accordion.Item key={sourceName} value={sourceName}>
+                {miscSources.map(({name, cards}) => (
+                    <Accordion.Item key={String(name)} value={String(name)}>
                         <Accordion.Control>
                             <Group>
-                                <Text fw={500}>{toHeaderCase(sourceName)}</Text>
+                                <Text fw={500}>{toHeaderCase(String(name))}</Text>
                             </Group>
                         </Accordion.Control>
                         <Accordion.Panel>
                             {
-                                sourceName === currentSource &&
+                                name === currentSource &&
                                 <Box>
                                     <Carousel
-                                        // getEmblaApi={setEmbla}
+                                        getEmblaApi={setEmbla}
                                         type={'container'}
                                         slideSize="90px"
                                         slideGap={{base: 'xs'}}
@@ -1289,7 +1293,7 @@ function MiscCardSourcesDisplay({miscSources}: { miscSources?: { [key: string]: 
                                         height={120}
                                         dragFree
                                     >
-                                        {cards.map((card, i) => (
+                                        {cards?.map((card, i) => (
                                             <Carousel.Slide key={i}>
                                                 <GameCard card={card}/>
                                             </Carousel.Slide>
@@ -1324,8 +1328,8 @@ function PurchaseTimeline({buys}: { buys: { [key: string]: BuyMetaData } }) {
             <Timeline active={buyEntries.length - 1} bulletSize={24} lineWidth={2}>
                 {buyEntries.map(([key, buyData]) => {
                     // Parse the key to extract information
-                    const [ante, location, index] = key.split('-');
-                    console.log(buyData)
+                    const [, , index] = key.split('-');
+                    // console.log(buyData)
                     return (
                         <Timeline.Item
                             key={key}
@@ -1421,23 +1425,6 @@ function Aside({SeedResults}: { SeedResults: Seed | null }) {
                     </Tabs.Panel>
                 </Tabs>
             </AppShell.Section>
-            {/*<AppShell.Section>*/}
-            {/*    <Paper withBorder p="xs">*/}
-            {/*        <Group justify="space-between">*/}
-            {/*            <Text size="sm">Current Ante</Text>*/}
-            {/*            <Badge size="md">{selectedAnte}</Badge>*/}
-            {/*        </Group>*/}
-            {/*        {anteData?.boss && (*/}
-            {/*            <Group mt="xs">*/}
-            {/*                <Text size="sm">Boss:</Text>*/}
-            {/*                <Group gap="xs">*/}
-            {/*                    <Boss bossName={anteData.boss} />*/}
-            {/*                    <Text size="sm">{anteData.boss}</Text>*/}
-            {/*                </Group>*/}
-            {/*            </Group>*/}
-            {/*        )}*/}
-            {/*    </Paper>*/}
-            {/*</AppShell.Section>*/}
         </AppShell.Aside>
     )
 }
@@ -1485,7 +1472,8 @@ function Blueprint({SeedResults}: { SeedResults: Seed | null }) {
 export interface AnalyzeOptions {
     showCardSpoilers: boolean,
     buys: { [key: string]: BuyMetaData },
-    sells: { [key: string]: BuyMetaData }
+    sells: { [key: string]: BuyMetaData },
+    updates: { [key: string]: any }[]
 }
 
 export default function App() {

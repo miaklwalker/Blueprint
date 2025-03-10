@@ -367,7 +367,7 @@ export class Ante {
     queue: Stringifies[];
     tags: string[];
     blinds: { [key: string]: { [key: string]: any[] } }
-    miscCardSources: { [key: string]: any[] }
+    miscCardSources: MiscCardSource[]
 
     constructor(ante: number) {
         this.ante = ante;

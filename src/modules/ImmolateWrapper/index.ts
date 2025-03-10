@@ -15,36 +15,61 @@ import {
 } from "./CardEngines/Cards.ts";
 import {AnalyzeOptions} from "../../App.tsx";
 
+export interface MiscCardSource {
+    name: string;
+    cardsToGenerate: number;
+    cardType: string;
+    source: string;
+    hasStickers?: boolean,
+    cards: PackCard[]
+}
 
 export interface CardEngine {
     sources: { [key: string]: string };
     commonSources: { [key: string]: string };
+
     // Initialization methods
     InstParams(deck: string, stake: string, showman: boolean, version: string): void;
+
     initLocks(ante: number, fresh_profile: boolean, fresh_run: boolean): void;
+
     initUnlocks(ante: number, fresh_profile: boolean): void;
 
     // Lock management
     lock(item: string): void;
+
     unlock(item: string): void;
+
     isLocked(item: string): boolean;
 
     // Next item generators
     nextBoss(ante: number): string;
+
     nextVoucher(ante: number): string;
+
     nextTag(ante: number): string;
+
     nextShopItem(ante: number): NextShopItem;
+
     nextJoker(source: string, ante: number, hasStickers?: boolean): PackCard;
+
     nextTarot(source: string, ante: number, hasStickers?: boolean): PackCard;
+
     nextPlanet(source: string, ante: number, hasStickers?: boolean): PackCard;
+
     nextSpectral(source: string, ante: number, hasStickers?: boolean): PackCard;
+
     nextPack(ante: number): string;
 
     // Pack generators
     nextCelestialPack(size: number, ante: number): Map<number, string>;
+
     nextArcanaPack(size: number, ante: number): Map<number, string>;
+
     nextSpectralPack(size: number, ante: number): Map<number, string>;
+
     nextBuffoonPack(size: number, ante: number): Map<number, PackCard>;
+
     nextStandardPack(size: number, ante: number): Map<number, PackCard>;
 
     // Pack info
@@ -52,6 +77,7 @@ export interface CardEngine {
 
     // Voucher methods
     activateVoucher(voucher: string): void;
+
     isVoucherActive(voucher: string): boolean;
 
     // Specialized methods
@@ -60,17 +86,23 @@ export interface CardEngine {
     // Cleanup
     delete(): void;
 }
+
 export interface EngineWrapper {
     // Card creation and analysis
     makeCard(card: NextShopItem): Joker_Final | StandardCard_Final | Consumables_Final;
+
     analyzeAnte(ante: number, cardsPerAnte: number): Ante;
+
     analyzeSeed(antes: number, cardsPerAnte?: number): Seed;
 }
-export class CardEngineWrapper implements EngineWrapper{
+
+export class CardEngineWrapper implements EngineWrapper {
     engine: CardEngine;
+
     constructor(engine: CardEngine) {
         this.engine = engine;
     }
+
     makeCard(card: NextShopItem): Joker_Final | StandardCard_Final | Consumables_Final {
         let cardType = card.type;
         if (cardType === 'Joker') {
@@ -83,22 +115,22 @@ export class CardEngineWrapper implements EngineWrapper{
                 isPerishable: card.jokerData?.stickers?.perishable,
                 isRental: card.jokerData?.stickers?.rental
             } as Card_Final)
-        }else if ( cardType === "Tarot") {
+        } else if (cardType === "Tarot") {
             return new Tarot_Final({
                 name: card.item,
                 type: cardType
             } as Card_Final)
-        }else if ( cardType === "Planet") {
+        } else if (cardType === "Planet") {
             return new Planet_Final({
                 name: card.item,
                 type: cardType
             } as Card_Final)
-        }else if  ( cardType === "Spectral") {
+        } else if (cardType === "Spectral") {
             return new Spectral_Final({
                 name: card.item,
                 type: cardType
             } as Card_Final)
-        }else{
+        } else {
             // Not yet implemented by immolate
             return new StandardCard_Final({
                 name: card.item,
@@ -107,6 +139,7 @@ export class CardEngineWrapper implements EngineWrapper{
             } as Card_Final)
         }
     }
+
     static printAnalysis(seedAnalysis: Seed) {
         let output = "";
         let antes = Object.entries(seedAnalysis.antes);
@@ -129,6 +162,7 @@ export class CardEngineWrapper implements EngineWrapper{
         }
         return output
     }
+
     analyzeAnte(ante: number, cardsPerAnte: number, options?: AnalyzeOptions): Ante {
         let itemsWithSpoilers: string[] = ["The Soul", "Judgement", "Wraith"];
         let spoilerSources = [this.engine.sources.S_Soul, this.engine.sources.S_Judgement, this.engine.sources.S_Wraith]
@@ -149,12 +183,12 @@ export class CardEngineWrapper implements EngineWrapper{
                 )
             )
             item.delete()
-            if(options && options?.showCardSpoilers ) {
+            if (options && options?.showCardSpoilers) {
                 if (itemsWithSpoilers.includes(result.queue[i].name)) {
-                    result.queue[i] = Pack.PackCardToCard(this.engine.nextJoker(spoilerSources[itemsWithSpoilers.indexOf(result.queue[i].name)], ante, false),'Joker')
+                    result.queue[i] = Pack.PackCardToCard(this.engine.nextJoker(spoilerSources[itemsWithSpoilers.indexOf(result.queue[i].name)], ante, false), 'Joker')
                 }
             }
-            if(options && options.buys[key]) {
+            if (options && options.buys[key]) {
                 this.engine.lock(result.queue[i].name)
             }
 
@@ -170,69 +204,153 @@ export class CardEngineWrapper implements EngineWrapper{
                 let pack = new Pack(packInfo);
                 pack.init(this.engine, ante, options?.showCardSpoilers ?? false);
                 result.blinds[blind].packs.push(pack)
-                for ( let k = 0; k < packInfo.size; k++) {
+                for (let k = 0; k < packInfo.size; k++) {
                     let key = `${ante}-${packString}-${k}`;
-                    if(options && options.buys[key]) {
+                    if (options && options.buys[key]) {
                         this.engine.lock(pack.cards[k].name)
                     }
 
                 }
             }
         }
-        result.miscCardSources = {
-            // jokers
-            riffRaff: [],
-            uncommonTag: [],
-            rareTag: [],
-            topUpTag: [],
-            judgement: [],
-            wraith: [],
-            // planet cards
-            highPriestess: [],
-            // tarot cards
-            arcanaPack: [],
-            emperor: [],
-            vagabond: [],
-            purpleSeal: [],
-            // spectral cards
-            spectral: [],
-        }
-        for (let i = 0 ; i<15; i++) {
-            if(i<6){
-                result.miscCardSources.riffRaff.push( Pack.PackCardToCard(this.engine.nextJoker(this.engine.sources.S_Riff_Raff, ante, false),"Joker"))
+
+        const miscCardSources: MiscCardSource[] = [
+            {
+                name: "riffRaff",
+                cardsToGenerate: 6,
+                cardType: "Joker",
+                source: this.engine.sources.S_Riff_Raff,
+                hasStickers: false,
+                cards: []
+            },
+            {
+                name: "uncommonTag",
+                cardsToGenerate: 12,
+                cardType: "Joker",
+                source: this.engine.sources.S_Uncommon_Tag,
+                cards: []
+            },
+            {
+                name: "rareTag",
+                cardsToGenerate: 12,
+                cardType: "Joker",
+                source: this.engine.sources.S_Rare_Tag,
+                cards: []
+            },
+            {
+                name: "topUpTag",
+                cardsToGenerate: 12,
+                cardType: "Joker",
+                source: this.engine.sources.S_Top_Up,
+                hasStickers: false,
+                cards: []
+            },
+            {
+                name: "judgement",
+                cardsToGenerate: 12,
+                cardType: "Joker",
+                source: this.engine.sources.S_Judgement,
+                cards: []
+            },
+            {
+                name: "wraith",
+                cardsToGenerate: 12,
+                cardType: "Joker",
+                source: this.engine.sources.S_Wraith,
+                hasStickers: false,
+                cards: []
+            },
+            {
+                name: "highPriestess",
+                cardsToGenerate: 12,
+                cardType: "Planet",
+                source: this.engine.sources.S_High_Priestess,
+                cards: []
+            },
+            {
+                name: "emperor",
+                cardsToGenerate: 12,
+                cardType: "Tarot",
+                source: this.engine.sources.S_Emperor,
+                cards: []
+            },
+            {
+                name: "vagabond",
+                cardsToGenerate: 12,
+                cardType: "Tarot",
+                source: this.engine.sources.S_Vagabond,
+                cards: []
+            },
+            {
+                name: "purpleSeal and 8 Ball",
+                cardsToGenerate: 12,
+                cardType: "Tarot",
+                source: this.engine.sources.S_Purple_Seal,
+                cards: []
+            },
+            {
+                name: "arcanaPack",
+                cardsToGenerate: 12,
+                cardType: "Tarot",
+                source: this.engine.sources.S_Arcana,
+                cards: []
+            },
+        ]
+        const updates = options?.updates;
+        if (updates) {
+            for (let update of updates) {
+                let source = miscCardSources.find((source) => source.name === update.source);
+                if (source) {
+                    source.cardsToGenerate = update.count;
+                    if (update.type) {
+                        source.cardType = update.type;
+                    }
+                }
             }
+        }
+        let generators: any = {
+            // @ts-ignore
+            "Joker": (...args: any) => this.engine.nextJoker(...args),
+            // @ts-ignore
+            "Planet": (...args: any) => this.engine.nextPlanet(...args),
+            // @ts-ignore
+            "Tarot": (...args: any) => this.engine.nextTarot(...args),
+            // @ts-ignore
+            "Spectral": (...args: any) => this.engine.nextSpectral(...args)
+        }
+        for (let source of miscCardSources) {
+            for (let i = 0; i < source.cardsToGenerate; i++) {
+                let generator = generators[source.cardType];
+                let card: string | PackCard = generator(source.source, ante, source?.hasStickers ?? true);
+                let canBeSpoiled = typeof card === 'string' && itemsWithSpoilers.indexOf(card)
+                if (canBeSpoiled && canBeSpoiled !== -1 && options?.showCardSpoilers) {
+                    let spoilerSource = spoilerSources[canBeSpoiled];
+                    card = generators['Joker'](
+                        spoilerSource,
+                        ante,
+                        true
+                    )
 
-            result.miscCardSources.uncommonTag.push( Pack.PackCardToCard(this.engine.nextJoker(this.engine.sources.S_Uncommon_Tag, ante, false),"Joker"))
-            result.miscCardSources.rareTag.push( Pack.PackCardToCard(this.engine.nextJoker(this.engine.sources.S_Rare_Tag, ante, false),"Joker"))
-            result.miscCardSources.topUpTag.push( Pack.PackCardToCard(this.engine.nextJoker(this.engine.sources.S_Top_Up, ante, false),"Joker"))
-            result.miscCardSources.judgement.push( Pack.PackCardToCard(this.engine.nextJoker(this.engine.sources.S_Judgement, ante, false),"Joker"))
-            result.miscCardSources.wraith.push( Pack.PackCardToCard(this.engine.nextJoker(this.engine.sources.S_Wraith, ante, false),"Joker"))
-
-            result.miscCardSources.highPriestess.push( Pack.PackCardToCard(this.engine.nextPlanet(this.engine.sources.S_High_Priestess, ante, false),"Planet"))
-            result.miscCardSources.emperor.push( Pack.PackCardToCard(this.engine.nextTarot(this.engine.sources.S_Emperor, ante, false),"Tarot"))
-            result.miscCardSources.vagabond.push( Pack.PackCardToCard(this.engine.nextTarot(this.engine.sources.S_Vagabond, ante, false),"Tarot"))
-            result.miscCardSources.purpleSeal.push( Pack.PackCardToCard(this.engine.nextTarot(this.engine.sources.S_Purple_Seal, ante, false),"Tarot"));
-            const arcanaCard = this.engine.nextTarot(this.engine.sources.S_Arcana, ante, true) as unknown as string;
-            if( arcanaCard === 'The Soul' && options?.showCardSpoilers) {
-                result.miscCardSources.arcanaPack.push(
-                    Pack.PackCardToCard(this.engine.nextJoker(this.engine.sources.S_Soul, ante, false),'Joker')
+                }
+                source.cards.push(
+                    Pack.PackCardToCard(
+                        card,
+                        source.cardType
+                    )
                 )
-            }else{
-                result.miscCardSources.arcanaPack.push( Pack.PackCardToCard(arcanaCard,"Tarot"))
             }
-
-            result.miscCardSources.spectral.push( Pack.PackCardToCard(this.engine.nextSpectral(this.engine.sources.S_Spectral, ante, false),"Spectral"))
-
-
-
         }
+
+        result.miscCardSources = miscCardSources
+
         return result
     }
+
     analyzeSeed(antes: number, cardsPerAnte: number = 50, options?: AnalyzeOptions): Seed {
         let result = new Seed();
         this.engine.lockLevelTwoVouchers();
         for (let ante = 1; ante <= antes; ante++) {
-            result.antes[ante] = this.analyzeAnte(ante,cardsPerAnte, options);
+            result.antes[ante] = this.analyzeAnte(ante, cardsPerAnte, options);
         }
         return result
     }

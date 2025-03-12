@@ -1,4 +1,4 @@
-import {CardEngine} from "../index.ts";
+import {CardEngine, MiscCardSource} from "../index.ts";
 
 export interface NextShopItem {
     edition: string | undefined;
@@ -375,7 +375,7 @@ export class Ante {
         this.voucher = null;
         this.queue = [];
         this.tags = [];
-        this.miscCardSources = {};
+        this.miscCardSources = [];
         this.blinds = {
             smallBlind: {
                 packs: []

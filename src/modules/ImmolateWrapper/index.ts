@@ -21,6 +21,7 @@ export interface MiscCardSource {
     cardType: string;
     source: string;
     hasStickers?: boolean,
+    soulable?: boolean,
     cards: PackCard[]
 }
 
@@ -193,7 +194,6 @@ export class CardEngineWrapper implements EngineWrapper {
             }
 
         }
-        console.log(result.queue)
         for (let blind of Object.keys(result.blinds)) {
             if (ante === 1 && blind === 'smallBlind') {
                 continue;
@@ -293,6 +293,8 @@ export class CardEngineWrapper implements EngineWrapper {
                 cardsToGenerate: 12,
                 cardType: "Tarot",
                 source: this.engine.sources.S_Arcana,
+                soulable: true,
+                hasStickers: true,
                 cards: []
             },
         ]
@@ -321,22 +323,31 @@ export class CardEngineWrapper implements EngineWrapper {
         for (let source of miscCardSources) {
             for (let i = 0; i < source.cardsToGenerate; i++) {
                 let generator = generators[source.cardType];
-                let card: string | PackCard = generator(source.source, ante, source?.hasStickers ?? true);
-                let canBeSpoiled = typeof card === 'string' && itemsWithSpoilers.indexOf(card)
-                if (canBeSpoiled && canBeSpoiled !== -1 && options?.showCardSpoilers) {
-                    let spoilerSource = spoilerSources[canBeSpoiled];
-                    card = generators['Joker'](
-                        spoilerSource,
-                        ante,
-                        true
-                    )
+                let card: string | PackCard = generator(source.source, ante, source?.soulable ?? source?.hasStickers ?? false);
 
+                if(typeof card === 'string') {
+
+                    let canBeSpoiled = itemsWithSpoilers.indexOf(card)
+                    if( canBeSpoiled !== -1 && options?.showCardSpoilers) {
+                        card = generators['Joker'](
+                            spoilerSources[canBeSpoiled],
+                            ante,
+                            true
+                        )
+                    }
+                    console.table({
+                        card: card,
+                        canBeSpoiled: !!canBeSpoiled,
+                        source: spoilerSources[canBeSpoiled]
+                    })
                 }
+
+                let generatedCard = Pack.PackCardToCard(
+                    card,
+                    card === 'Wraith' || card === 'The Soul' ? 'Spectral' : source.cardType
+                );
                 source.cards.push(
-                    Pack.PackCardToCard(
-                        card,
-                        source.cardType
-                    )
+                    generatedCard
                 )
             }
         }

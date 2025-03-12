@@ -67,7 +67,7 @@ import {
 import {toHeaderCase} from 'js-convert-case';
 //@ts-ignore
 import {extractShopQueues, getModifierColor, getSealPosition, getStandardCardPosition} from "./modules/utils.js";
-import {ReactNode, useEffect, useMemo, useRef, useState} from "react";
+import {ReactNode, useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {useHover, useMergedRef, useMouse, useResizeObserver, useViewportSize} from "@mantine/hooks";
 import {
     Ante,
@@ -79,8 +79,16 @@ import {
     StandardCard_Final,
     Tarot_Final
 } from "./modules/ImmolateWrapper/CardEngines/Cards.ts";
-import {IconCards, IconJoker, IconPlayCard, IconShoppingCart, IconShoppingCartOff} from "@tabler/icons-react";
+import {
+    IconCards,
+    IconJoker,
+    IconPlayCard,
+    IconSearch,
+    IconShoppingCart,
+    IconShoppingCartOff
+} from "@tabler/icons-react";
 import {Carousel, Embla} from "@mantine/carousel";
+import {openSpotlight, Spotlight} from "@mantine/spotlight";
 //@ts-ignore
 
 
@@ -215,6 +223,15 @@ const applicationSetters = (set: any) => ({
     toggleOutput: () => set((prev: { applicationState: { asideOpen: boolean; }; }) => {
         prev.applicationState.asideOpen = !prev.applicationState.asideOpen
     }, undefined, 'Global/ToggleOutput'),
+
+    setSearchString: (searchString: string) => set((prev: { searchState: { searchTerm: string } }) => {
+        prev.searchState.searchTerm = searchString
+    }, undefined, 'Global/Search/SetSearch'),
+    setSelectedSearchResult: (result: BuyMetaData) => set((prev: {applicationState:{ selectedAnte: number }, searchState: { selectedSearchResult: BuyMetaData | null } }) => {
+        prev.searchState.selectedSearchResult = result
+        prev.applicationState.selectedAnte = Number(result.ante)
+
+    }, undefined, 'Global/Search/SetSelectedSearchResult'),
 })
 
 const useCardStore = create(
@@ -644,10 +661,6 @@ function BuyWrapper({children, bottomOffset, topOffset, metaData}: BuyWrapperPro
     const hasUserAttention = hovered;
 
 
-
-
-
-
     return (
         <Center pos={'relative'} ref={ref} h={'100%'} style={{overflow: 'visible'}}>
             <Indicator disabled={!cardIsOwned} inline label="Owned" size={16} position={'top-center'}>
@@ -741,8 +754,121 @@ function SeedInputAutoComplete({seed, setSeed}: { seed: string, setSeed: (seed: 
     );
 }
 
-function Header() {
+function SearchSeedInput({SeedResults}: { SeedResults: Seed | null }) {
+    const searchString = useCardStore(state => state.searchState.searchTerm);
+    const setSearchString = useCardStore(state => state.setSearchString);
+    const [searchActive, setSearchActive] = useState(false);
+    const handleSearch = useCallback(() => {
+        setSearchActive(true)
+        openSpotlight()
+    }, []);
+
+    const searchResults = useMemo(() => {
+        if (searchString === '' || !searchActive) return [];
+        const cards: BuyMetaData[] = [];
+        let antes: Ante[] = Object?.values(SeedResults?.antes ?? {});
+
+        antes.forEach((ante: Ante) => {
+            ante.queue.forEach((card) => {
+                const cardString = `${card?.edition ?? ''} ${card.name}`.trim();
+                if (cardString.toLowerCase().includes(searchString.toLowerCase())) {
+                    cards.push({
+                        location: "queue",
+                        locationType: "shop",
+                        ante: String(ante.ante),
+                        name: cardString,
+                        index: 0,
+                        blind: 'smallBlind'
+                    })
+                }
+            })
+            Object.keys(ante.blinds).forEach((blind) => {
+                ante.blinds[blind].packs.forEach((card, index) => {
+                    const cardString = `${card?.edition ?? ''} ${card.name}`.trim();
+                    if (cardString.toLowerCase().includes(searchString.toLowerCase())) {
+                        cards.push({
+                            location: "packs",
+                            locationType: "shop",
+                            ante: String(ante.ante),
+                            name: cardString,
+                            index: index,
+                            blind: blind
+                        })
+                    }
+                })
+            })
+            Object.values(ante.miscCardSources).forEach((source: MiscCardSource) => {
+                source.cards.forEach((card:any, index) => {
+                    const cardString = `${card?.edition ?? ''} ${card.name}`.trim();
+                    if (cardString.toLowerCase().includes(searchString.toLowerCase())) {
+                        cards.push({
+                            location: source.name,
+                            locationType: "Misc Card Sources",
+                            ante: String(ante.ante),
+                            name: cardString,
+                            index: index,
+                            blind: 'smallBlind'
+                        })
+                    }
+                })
+            });
+        })
+        return cards
+    }, [searchString])
+
+
+
+
+
+    return (
+        <>
+            <Spotlight
+                nothingFound="Nothing found..."
+                actions={
+                    searchResults.map((result, index) => ({
+                        id: index,
+                        description: result.name + ` ${result.location === 'queue' ? ` | Queue Position: ${result.index}` : ''}`,
+                        label: `${result.ante} (${result.location}) `,
+                        onClick: () => {
+                            // closeSpotlight()
+                            // goToResults(result)
+                        }
+                    }))
+                }
+                searchProps={{
+                    value: searchString,
+                    onChange: (e) => {
+                        setSearchString(e.currentTarget.value)
+                    },
+                }}
+            />
+            <Group align={'flex-end'}>
+                <TextInput
+                    flex={1}
+                    value={searchString}
+                    placeholder={'Search for cards'}
+                    onChange={e => setSearchString(e.currentTarget.value)}
+                    onKeyDown={e => {
+                        if (e.key === 'Enter') {
+                            handleSearch()
+                        }
+                    }}
+                    rightSection={
+                        <ActionIcon onClick={handleSearch}>
+                            <IconSearch/>
+                        </ActionIcon>
+                    }
+                />
+            </Group>
+
+        </>
+
+    )
+}
+
+function Header({SeedResults}: { SeedResults: Seed | null }) {
     const {width} = useViewportSize();
+    const start = useCardStore(state => state.applicationState.start)
     const settingsOpened = useCardStore(state => state.applicationState.settingsOpen);
     const toggleSettings = useCardStore(state => state.toggleSettings);
 
@@ -757,7 +883,7 @@ function Header() {
                         <Title> Blueprint </Title>
                     </Center>
                     <Group align={'center'}>
-                        {/*{width > 600 && seedIsOpen && <SearchSeedInput/>}*/}
+                        {width > 600 && start && <SearchSeedInput SeedResults={SeedResults}/>}
                         {width > 348 &&
                             <Button onClick={() => toggleSettings()} variant={'transparent'}> Settings </Button>}
                         {/*{width > 700 && seedIsOpen && (*/}
@@ -1018,11 +1144,12 @@ export class BuyMetaData {
         this.name = name;
     }
 }
-function QueueCarousel({queue, tabName} : { queue: any[], tabName: string }) {
+
+function QueueCarousel({queue, tabName}: { queue: any[], tabName: string }) {
     const selectedBlind = useCardStore(state => state.applicationState.selectedBlind);
 
     return (
-        <Paper >
+        <Paper>
             <Carousel
                 containScroll={'keepSnaps'}
                 slideGap={{base: 'sm'}}
@@ -1056,6 +1183,7 @@ function QueueCarousel({queue, tabName} : { queue: any[], tabName: string }) {
         </Paper>
     )
 }
+
 function AntePanel({ante, tabName}: { ante: Ante, tabName: string }) {
     const queue = ante.queue;
     const selectedBlind = useCardStore(state => state.applicationState.selectedBlind);
@@ -1065,21 +1193,21 @@ function AntePanel({ante, tabName}: { ante: Ante, tabName: string }) {
         <Tabs.Panel w={'100%'} value={tabName}>
             <Paper withBorder h={'100%'} p={'sm'}>
                 <Fieldset legend={'Shop'} mb={'sm'}>
-                    <QueueCarousel queue={queue} tabName={tabName} />
+                    <QueueCarousel queue={queue} tabName={tabName}/>
                 </Fieldset>
                 <Grid>
-                    <Grid.Col span={{base:12, lg: 2}}>
+                    <Grid.Col span={{base: 12, lg: 2}}>
                         <Paper h={'100%'} withBorder p={'1rem'}>
-                            <Flex  h={'100%'} direction={'column'} align={'space-between'}>
+                            <Flex h={'100%'} direction={'column'} align={'space-between'}>
                                 <Text ta={'center'} c={'dimmed'} fz={'md'}> Voucher </Text>
                                 <BuyWrapper>
                                     <Voucher voucherName={ante.voucher}/>
                                 </BuyWrapper>
-                                <Text ta={'center'}  fz={'md'}>  {ante.voucher} </Text>
+                                <Text ta={'center'} fz={'md'}>  {ante.voucher} </Text>
                             </Flex>
                         </Paper>
                     </Grid.Col>
-                    <Grid.Col span={{ base:12, lg:10 }}>
+                    <Grid.Col span={{base: 12, lg: 10}}>
                         <Accordion w={'100%'} multiple={true} defaultValue={packs.map(({name}) => name)}
                                    variant="separated">
                             {packs.map((pack: Pack, index: number) => (
@@ -1263,10 +1391,10 @@ function MiscCardSourcesDisplay({miscSources}: { miscSources?: MiscCardSource[] 
     }
     const [currentSource, setCurrentSource] = useState('');
     const [embla, setEmbla] = useState<Embla | null>(null);
-    useEffect(()=>{
-        if(!embla)return;
+    useEffect(() => {
+        if (!embla) return;
         embla.reInit()
-    },[embla])
+    }, [embla])
     // useAnimationOffsetEffect(embla, 200)
     return (
         <Paper p="md" withBorder mb="md">
@@ -1387,7 +1515,7 @@ function Aside({SeedResults}: { SeedResults: Seed | null }) {
     return (
         <AppShell.Aside p="md">
             <AppShell.Section>
-                <Tabs value={tab} onChange={(e)=>setTab(`${e}`)}>
+                <Tabs value={tab} onChange={(e) => setTab(`${e}`)}>
                     <Tabs.List grow mb="md">
                         <Tabs.Tab
                             value="sources"
@@ -1460,7 +1588,7 @@ function Blueprint({SeedResults}: { SeedResults: Seed | null }) {
             }}
             padding="md"
         >
-            <Header/>
+            <Header SeedResults={SeedResults}/>
             <NavBar/>
             <Main SeedResults={SeedResults}/>
             <Aside SeedResults={SeedResults}/>
@@ -1492,8 +1620,9 @@ export default function App() {
                 const analyzer: CardEngineWrapper = new CardEngineWrapper(engine);
                 const transactions = {buys, sells}
 
-                const options: AnalyzeOptions = {
+                const options: { buys: any; sells: any; showCardSpoilers: any, updates: any } = {
                     showCardSpoilers,
+                    updates: [],
                     ...transactions
                 };
 
@@ -1502,8 +1631,7 @@ export default function App() {
                 return results;
             },
             [analyzeState, start, buys, showCardSpoilers]
-        )
-    ;
+    );
 
 
     return (

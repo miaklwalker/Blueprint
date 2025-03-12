@@ -335,11 +335,6 @@ export class CardEngineWrapper implements EngineWrapper {
                             true
                         )
                     }
-                    console.table({
-                        card: card,
-                        canBeSpoiled: !!canBeSpoiled,
-                        source: spoilerSources[canBeSpoiled]
-                    })
                 }
 
                 let generatedCard = Pack.PackCardToCard(

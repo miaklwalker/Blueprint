@@ -13,8 +13,7 @@ import {
     StandardCard_Final,
     Tarot_Final
 } from "./CardEngines/Cards.ts";
-import {AnalyzeOptions} from "../../App.tsx";
-
+import {AnalyzeOptions} from "../const.ts";
 export interface MiscCardSource {
     name: string;
     cardsToGenerate: number;

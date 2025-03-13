@@ -6,25 +6,21 @@ import {
     Accordion,
     ActionIcon,
     AppShell,
-    AspectRatio,
     Autocomplete,
     Badge,
     Box,
     Burger,
     Button,
-    Card,
     Center,
     Container,
     Fieldset,
     Flex,
     Grid,
     Group,
-    Indicator,
     MantineProvider,
     Modal,
     NativeSelect,
     NumberInput,
-    Overlay,
     Paper,
     ScrollArea,
     SegmentedControl,
@@ -39,45 +35,17 @@ import {
     Timeline,
     Title,
     Tooltip,
-    Transition,
     useMantineTheme
 } from "@mantine/core";
 import {theme} from "./theme.js";
-import {create} from "zustand";
-import {immer} from 'zustand/middleware/immer'
-import {combine, devtools, persist} from "zustand/middleware";
 import {ImmolateClassic} from "./modules/ImmolateWrapper/CardEngines/immolateClassic.ts";
 import {CardEngineWrapper, MiscCardSource} from "./modules/ImmolateWrapper";
 
-import {
-    blinds,
-    bosses,
-    consumablesFaces,
-    editionMap,
-    jokerFaces,
-    jokers,
-    options,
-    SeedsWithLegendary,
-    stickerMap,
-    tags,
-    tarotsAndPlanets,
-    vouchers
-    //@ts-ignore
-} from "./modules/const.js"
+import {blinds, LOCATIONS, options, SeedsWithLegendary} from "./modules/const.js"
 import {toHeaderCase} from 'js-convert-case';
-import {getSealPosition, getStandardCardPosition} from "./modules/utils.ts";
-import {ReactNode, useCallback, useEffect, useMemo, useRef, useState} from "react";
-import {useHover, useMergedRef, useMouse, useResizeObserver, useViewportSize} from "@mantine/hooks";
-import {
-    Ante,
-    Joker_Final,
-    Pack,
-    Planet_Final,
-    Seed,
-    Spectral_Final,
-    StandardCard_Final,
-    Tarot_Final
-} from "./modules/ImmolateWrapper/CardEngines/Cards.ts";
+import {useCallback, useEffect, useMemo, useState} from "react";
+import {useViewportSize} from "@mantine/hooks";
+import {Ante, Pack, Seed} from "./modules/ImmolateWrapper/CardEngines/Cards.ts";
 import {
     IconCards,
     IconJoker,
@@ -88,686 +56,17 @@ import {
 } from "@tabler/icons-react";
 import {Carousel, Embla} from "@mantine/carousel";
 import {openSpotlight, Spotlight} from "@mantine/spotlight";
+import {useCardStore} from "./modules/state/store.ts";
+import {GameCard} from "./components/cards.tsx";
+import {Boss, Tag, Voucher} from "./components/gameElements.tsx";
+import {BuyWrapper} from "./components/buyerWrapper.tsx";
+import {BuyMetaData} from "./modules/classes/BuyMetaData.ts";
 //@ts-ignore
 
 //TODO MAKE ALL LOCATION BLINDS ANTES into a global ENUM to keep strings consistent
 
 
-const SHOP = Symbol('SHOP');
-const PACK = Symbol('PACK');
-const MISC = Symbol('MISC');
 
-const GLOBAL_ENUM: {
-    [key: string]: Symbol
-    [key: symbol]: string
-} = {
-    ...enumFactory('SHOP', SHOP),
-    ...enumFactory('PACK', PACK),
-    ...enumFactory('MISC', MISC)
-}
-
-
-const globalImageCache = new Map<string, HTMLImageElement>();
-
-interface InitialState {
-    immolateState: {
-        seed: string;
-        deck: string;
-        cardsPerAnte: number;
-        antes: number;
-        deckType: string;
-        stake: string;
-        showmanOwned: boolean;
-        gameVersion: string;
-        selectedOptions: string[];
-    };
-    applicationState: {
-        start: boolean;
-        settingsOpen: boolean;
-        asideOpen: boolean;
-        selectOptionsModalOpen: boolean;
-        showCardSpoilers: boolean;
-        miscSource: string;
-        asideTab: string;
-        selectedAnte: number;
-        selectedBlind: string;
-    };
-    searchState: {
-        searchTerm: string;
-        searchResults: any[];
-        selectedSearchResult: any | null;
-    };
-    shoppingState: {
-        buys: {
-            [key: string]: BuyMetaData
-        },
-        sells: {
-            [key: string]: BuyMetaData
-        }
-    };
-}
-
-const initialState: InitialState = {
-    immolateState: {
-        seed: '15IBIXCA',
-        deck: 'Ghost Deck',
-        cardsPerAnte: 50,
-        antes: 8,
-        deckType: 'Ghost Deck',
-        stake: 'Gold Stake',
-        showmanOwned: false,
-        gameVersion: '10106',
-        selectedOptions: Array(61).fill(true),
-    },
-    applicationState: {
-        start: false,
-        settingsOpen: false,
-        asideOpen: false,
-        selectOptionsModalOpen: false,
-        showCardSpoilers: false,
-        miscSource: 'riffRaff',
-        asideTab: 'sources',
-        selectedAnte: 1,
-        selectedBlind: 'bigBlind',
-    },
-    searchState: {
-        searchTerm: '',
-        searchResults: [],
-        selectedSearchResult: null
-    },
-    shoppingState: {
-        buys: {},
-        sells: {},
-    }
-}
-
-const globalSettingsSetters = (set: any) => ({
-    setSeed: (seed: string) => set((prev: InitialState) => {
-        prev.immolateState.seed = seed
-    }, undefined, 'Global/SetSeed'),
-    setDeck: (deck: string) => set((prev: InitialState) => {
-        prev.immolateState.deck = deck
-    }, undefined, 'Global/SetDeck'),
-    setCardsPerAnte: (cardsPerAnte: number) => set((prev: InitialState) => {
-        prev.immolateState.cardsPerAnte = cardsPerAnte
-    }, undefined, 'Global/SetCardsPerAnte'),
-    setAntes: (antes: number) => set((prev: InitialState) => {
-        prev.immolateState.antes = antes
-    }, undefined, 'Global/SetAntes'),
-    setDeckType: (deckType: string) => set((prev: InitialState) => {
-        prev.immolateState.deckType = deckType
-    }, undefined, 'Global/SetDeckType'),
-    setStake: (stake: string) => set((prev: InitialState) => {
-        prev.immolateState.stake = stake
-    }, undefined, 'Global/SetStake'),
-    setShowmanOwned: (showmanOwned: boolean) => set((prev: InitialState) => {
-        prev.immolateState.showmanOwned = showmanOwned
-    }, undefined, 'Global/SetShowmanOwned'),
-    setGameVersion: (gameVersion: string) => set((prev: InitialState) => {
-        prev.immolateState.gameVersion = gameVersion
-    }, undefined, 'Global/SetGameVersion'),
-    setSelectedOptions: (selectedOptions: string[]) => set((prev: InitialState) => {
-        prev.immolateState.selectedOptions = options.map((option: string) => selectedOptions.includes(option));
-    }, undefined, 'Global/SetSelectedOptions'),
-});
-const applicationSetters = (set: any) => ({
-    setStart: (start: boolean) => set((prev: InitialState) => {
-        prev.applicationState.start = start
-    }, undefined, 'Global/SetStart'),
-    setShowCardSpoilers: (showCardSpoilers: boolean) => set((prev: InitialState) => {
-        prev.applicationState.showCardSpoilers = showCardSpoilers
-    }, undefined, 'Global/SetShowCardSpoilers'),
-    openSelectOptionModal: () => set((prev: { applicationState: { selectOptionsModalOpen: boolean; }; }) => {
-        prev.applicationState.selectOptionsModalOpen = true
-    }, undefined, 'Global/OpenSelectOptionModal'),
-    closeSelectOptionModal: () => set((prev: { applicationState: { selectOptionsModalOpen: boolean; }; }) => {
-        prev.applicationState.selectOptionsModalOpen = false
-    }, undefined, 'Global/CloseSelectOptionModal'),
-
-    setSelectedAnte: (selectedAnte: number) => set((prev: {
-        applicationState: { selectedAnte: number; selectedBlind: string; };
-    }) => {
-        prev.applicationState.selectedAnte = selectedAnte
-        prev.applicationState.selectedBlind = prev.applicationState.selectedAnte === 1 ? 'bigBlind' : 'smallBlind'
-    }, undefined, 'Global/SetSelectedAnte'),
-
-    setSelectedBlind: (selectedBlind: string) => set((prev: { applicationState: { selectedBlind: string; }; }) => {
-        prev.applicationState.selectedBlind = selectedBlind
-    }, undefined, 'Global/SetSelectedBlind'),
-
-    toggleSettings: () => set((prev: { applicationState: { settingsOpen: boolean; }; }) => {
-        prev.applicationState.settingsOpen = !prev.applicationState.settingsOpen
-    }, undefined, 'Global/ToggleSettings'),
-
-    toggleOutput: () => set((prev: { applicationState: { asideOpen: boolean; }; }) => {
-        prev.applicationState.asideOpen = !prev.applicationState.asideOpen
-    }, undefined, 'Global/ToggleOutput'),
-    setMiscSource: (source: string) => set((prev: { applicationState: { miscSource: string; }; }) => {
-        prev.applicationState.miscSource = source
-
-    }, undefined, "Global/SetMiscSource"),
-    setAsideTab: (tab: string) => set((prev: { applicationState: { asideTab: string; }; }) => {
-        prev.applicationState.asideTab = tab
-    }, undefined, "Global/SetAsideTab"),
-    setSearchString: (searchString: string) => set((prev: { searchState: { searchTerm: string } }) => {
-        prev.searchState.searchTerm = searchString
-    }, undefined, 'Global/Search/SetSearch'),
-    setSelectedSearchResult: (result: BuyMetaData) => set((prev: {
-        applicationState: {
-            selectedAnte: number,
-            selectedBlind: string,
-            asideOpen: boolean,
-            settingsOpen: boolean,
-            asideTab: string,
-            miscSource: string
-        },
-        searchState: { selectedSearchResult: BuyMetaData | null }
-    }) => {
-        prev.searchState.selectedSearchResult = result
-        prev.applicationState.selectedAnte = Number(result.ante)
-        prev.applicationState.selectedBlind = result.blind
-        if (result.locationType === GLOBAL_ENUM[MISC]) {
-            prev.applicationState.asideOpen = true
-            prev.applicationState.settingsOpen = false
-            prev.applicationState.asideTab = 'sources'
-            prev.applicationState.miscSource = result.location
-        }
-
-    }, undefined, 'Global/Search/SetSelectedSearchResult'),
-})
-
-const useCardStore = create(devtools(persist(immer(combine(initialState,
-                (set, get) => ({
-                    ...globalSettingsSetters(set),
-                    ...applicationSetters(set),
-                    addBuy: (buy: BuyMetaData) => set(prev => {
-                        let key = `${buy.ante}-${buy.location}-${buy.index}`;
-                        prev.shoppingState.buys[key] = buy;
-                    }, undefined, 'Global/AddBuy'),
-                    removeBuy: (buy: BuyMetaData) => set(prev => {
-                        let key = `${buy.ante}-${buy.location}-${buy.index}`;
-                        delete prev.shoppingState.buys[key];
-                    }, undefined, 'Global/RemoveBuy'),
-                    isOwned: (key: string) => {
-                        return key in get().shoppingState.buys;
-                    },
-
-
-                    reset: () => set(initialState, undefined, 'Global/Reset'),
-                })
-            )),
-            {
-                name: 'blueprint-store',
-                version: 1,
-            }
-        )
-    )
-)
-
-class Layer {
-    pos: { x: number, y: number };
-    name: string;
-    order: number;
-    source: string;
-    rows: number;
-    columns: number;
-
-    constructor({pos, name, order, source, rows, columns}: {
-        pos: { x: number, y: number },
-        name: string,
-        order: number,
-        source: string
-        rows: number,
-        columns: number
-    }) {
-        this.pos = pos;
-        this.name = name;
-        this.order = order;
-        this.source = source;
-        this.rows = rows;
-        this.columns = columns;
-    }
-}
-
-interface RenderCanvasProps {
-    layers: any[],
-    invert?: boolean,
-    spacing?: boolean
-}
-
-function renderImage(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, image: HTMLImageElement, layer: Layer) {
-    if (!image || !layer || !layer?.pos) return 0;
-    const cardWidth = (image.width / layer.columns);
-    const cardHeight = (image.height / layer.rows);
-    if (layer.order === 0) {
-        canvas.width = cardWidth;
-        canvas.height = cardHeight;
-        canvas.style.width = `${cardWidth}px`;
-        canvas.style.height = `${cardHeight}px`;
-    }
-    context.drawImage(
-        image,
-        layer.pos.x * cardWidth,
-        layer.pos.y * cardHeight,
-        cardWidth,
-        cardHeight,
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
-    return cardWidth / cardHeight;
-}
-
-function RenderImagesWithCanvas({layers, invert = false, spacing = false}: RenderCanvasProps) {
-    const canvasRef = useRef(null);
-    const containerRef = useRef(null);
-    const [ratio, setRatio] = useState(3 / 4);
-    const [transform, setTransform] = useState('');
-
-    useEffect(() => {
-        if (!canvasRef.current) return;
-        if (!layers) return;
-        const canvas: HTMLCanvasElement = canvasRef.current;
-        const context: CanvasRenderingContext2D | null = canvas.getContext('2d');
-        if (!context) return;
-        context.clearRect(0, 0, canvas.width, canvas.height);
-        layers
-            .sort((a, b) => a.order - b.order)
-            .forEach((layer => {
-                if (globalImageCache.has(layer.source)) {
-                    let image = globalImageCache.get(layer.source) as HTMLImageElement;
-                    renderImage(canvas, context, image, layer);
-                    return;
-                }
-                const img = new Image();
-                img.src = layer.source;
-                img.onload = () => {
-                    const imageRatio = renderImage(canvas, context, img, layer);
-                    globalImageCache.set(layer.source, img);
-                    if (layer.order === 0) {
-                        setRatio(imageRatio);
-                    }
-                }
-            }))
-        if (invert) {
-            canvas.style.filter = 'invert(0.8)';
-        }
-    }, [layers]);
-
-    const {hovered, ref: hoverRef} = useHover();
-    const {ref: mouseRef, x: mouseX, y: mouseY} = useMouse();
-    const [rectRef, rect] = useResizeObserver();
-    const mergedRef = useMergedRef(mouseRef, hoverRef, containerRef, rectRef);
-
-
-    // Handle card tilt effect
-    useEffect(() => {
-        const SCALE_X = 6;
-        const SCALE_Y = 8;
-        const x = mouseX - rect.x;
-        const y = mouseY - rect.y;
-        let mousePosition = {
-            x,
-            y
-        }
-        let cardSize = {
-            width: rect.width,
-            height: rect.height
-        }
-        setTransform(
-            `perspective(1000px) rotateX(${
-                (mousePosition.y / cardSize.height) * -(SCALE_Y * 2) + SCALE_Y
-            }deg) rotateY(${
-                (mousePosition.x / cardSize.width) * (SCALE_X * 2) - SCALE_X
-            }deg) translateZ(10px)`
-        )
-
-    }, [mouseX, mouseY, hovered]);
-
-    return (
-        <AspectRatio
-            ratio={ratio}
-            w={spacing ? '80%' : "100%"}
-            py={spacing ? 'xs' : 0}
-            ref={mergedRef}
-            style={{
-                transition: hovered ? 'none' : 'transform 0.4s ease',
-                transform: hovered ? transform : 'none',
-                transformStyle: 'preserve-3d',
-                transformOrigin: 'center center',
-                display: 'flex'
-            }}
-        >
-            <canvas
-                ref={canvasRef}
-                style={{
-                    boxShadow: hovered
-                        ? `0 2px 12px rgba(0,0,0,0.3)`
-                        : '0 2px 8px rgba(0,0,0,0.2)',
-                    borderRadius: '6px',
-                    transition: hovered ? 'none' : 'box-shadow 0.4s ease-out'
-                }}
-            />
-        </AspectRatio>
-    )
-}
-
-function Voucher({voucherName}: { voucherName: string | null }) {
-
-    let layers = [];
-    const voucherData = vouchers.find((voucher: any) => voucher.name === voucherName);
-    if (voucherData) layers.push(new Layer({
-        ...voucherData,
-        source: 'images/Vouchers.png',
-        order: 0,
-        columns: 9,
-        rows: 4
-    }));
-    return (
-        <Box maw={'80px'}>
-            <RenderImagesWithCanvas
-                layers={layers}
-                spacing
-            />
-        </Box>
-
-    )
-}
-
-function JokerCard({card}: { card: Joker_Final }) {
-    let layers = [];
-    const jokerData = jokers.find((joker: any) => joker.name === card.name);
-    if (jokerData) layers.push(new Layer({...jokerData, source: 'images/Jokers.png', order: 0, columns: 10, rows: 16}));
-    const face = jokerFaces.find((joker: any) => joker.name === card.name);
-    if (face) layers.push(new Layer({...face, source: 'images/Jokers.png', order: 1, columns: 10, rows: 16}));
-    if (card.edition) {
-        const index = editionMap[card.edition];
-        layers.push(new Layer({
-            pos: {x: index, y: 0},
-            name: card.edition,
-            order: 2,
-            source: 'images/Editions.png',
-            rows: 1,
-            columns: 5
-        }));
-    }
-    if (card.isEternal) {
-        layers.push(new Layer({
-            pos: stickerMap['Eternal'],
-            name: 'Eternal',
-            order: 3,
-            source: 'images/stickers.png',
-            rows: 3,
-            columns: 5
-        }));
-    }
-    if (card.isPerishable) {
-        layers.push(new Layer({
-            pos: stickerMap['Perishable'],
-            name: 'Perishable',
-            order: 4,
-            source: 'images/stickers.png',
-            rows: 3,
-            columns: 5
-        }));
-    }
-    if (card.isRental) {
-        layers.push(new Layer({
-            pos: stickerMap['Rental'],
-            name: 'Rental',
-            order: 5,
-            source: 'images/stickers.png',
-            rows: 3,
-            columns: 5
-        }));
-    }
-    return (
-        <RenderImagesWithCanvas
-            invert={card.edition === "Negative"}
-            layers={layers}
-        />
-    )
-}
-
-function PlayingCard({card}: { card: StandardCard_Final }) {
-    const position = getStandardCardPosition(card.rank, card.suit);
-    let layers = [
-        new Layer({
-            pos: {x: 1, y: 0},
-            name: 'background',
-            order: 0,
-            source: 'images/Enhancers.png',
-            rows: 5,
-            columns: 7
-        }),
-        new Layer({
-            pos: position,
-            name: card.name,
-            order: 1,
-            source: 'images/8BitDeck.png',
-            rows: 4,
-            columns: 13
-        })
-    ]
-    if (card.edition) {
-        const index = editionMap[card.edition];
-        layers.push(new Layer({
-            pos: {x: index, y: 0},
-            name: card.edition,
-            order: 2,
-            source: 'images/Editions.png',
-            rows: 1,
-            columns: 5
-        }));
-    }
-    if (card.seal) {
-        layers.push(new Layer({
-            pos: getSealPosition(card.seal),
-            name: card.seal,
-            order: 3,
-            source: 'images/Enhancers.png',
-            rows: 5,
-            columns: 7
-        }));
-    }
-    return (
-        <RenderImagesWithCanvas
-            layers={layers}
-        />
-    )
-}
-
-function Consumables({card}: { card: Planet_Final | Spectral_Final | Tarot_Final }) {
-    let layers = [
-        new Layer({
-            ...tarotsAndPlanets.find((t: any) => t.name === card.name),
-            order: 0,
-            source: 'images/Tarots.png',
-            rows: 6,
-            columns: 10
-        })
-    ]
-    let consumablesFace = consumablesFaces.find((t: any) => t.name === card.name);
-    if (consumablesFace) {
-        layers.push(new Layer({
-            ...consumablesFace,
-            order: 1,
-            source: 'images/Enhancers.png',
-            rows: 5,
-            columns: 7
-        }))
-
-    }
-    return (
-        <RenderImagesWithCanvas
-            invert={card?.edition === "Negative"}
-            layers={layers}
-        />
-    )
-}
-
-function GameCard({card}: { card: any }) {
-    let Card = () => {
-        if (card instanceof StandardCard_Final) {
-            return <PlayingCard card={card}/>
-        }
-        if (card instanceof Joker_Final) {
-            return <JokerCard card={card}/>
-        }
-        if (card instanceof Planet_Final || card instanceof Tarot_Final || card instanceof Spectral_Final) {
-            return <Consumables card={card}/>
-        }
-    }
-    return (
-        <Paper maw={'71px'}>
-            <Card/>
-        </Paper>
-    )
-}
-
-function Tag({tagName}: { tagName: string }) {
-    const tagData = tags.find((tag: { name: string }) => tag.name === tagName);
-    if (!tagData) {
-        console.error("Tag not found:", tagName);
-        return;
-    }
-    const layers = [
-        new Layer({
-            ...tagData,
-            order: 0,
-            source: 'images/tags.png',
-            rows: 5,
-            columns: 6
-        })
-    ];
-    return (
-        <Box h={32} w={32}>
-            <RenderImagesWithCanvas
-                layers={layers}
-            />
-        </Box>
-
-    )
-
-}
-
-function Boss({bossName}: { bossName: string }) {
-    const bossData = bosses.find((boss: { name: string }) => boss.name === bossName);
-    if (!bossData) {
-        console.error("Boss not found:", bossName);
-        return;
-    }
-
-    const layers = [
-        new Layer({
-            ...bossData,
-            order: 0,
-            source: 'images/BlindChips.png',
-            rows: 31,
-            columns: 21
-        })
-    ];
-
-    return (
-        <Box h={32} w={32}>
-            <RenderImagesWithCanvas
-                layers={layers}
-            />
-        </Box>
-    )
-
-}
-
-interface BuyWrapperProps {
-    children: ReactNode,
-    bottomOffset?: number,
-    topOffset?: number,
-    metaData?: BuyMetaData
-}
-
-function BuyWrapper({children, bottomOffset, topOffset, metaData}: BuyWrapperProps) {
-    const selectedSearchResult = useCardStore(state => state.searchState.selectedSearchResult);
-    let sameLocation = selectedSearchResult?.location === metaData?.location;
-    let sameAnte = selectedSearchResult?.ante === metaData?.ante;
-    let sameIndex = selectedSearchResult?.index === metaData?.index;
-    let isSelected = sameAnte && sameIndex && sameLocation;
-
-    const {hovered, ref} = useHover();
-    const addBuy = useCardStore(state => state.addBuy);
-    const removeBuy = useCardStore(state => state.removeBuy);
-    const owned = useCardStore(state => state.isOwned);
-    let key = `${metaData?.ante}-${metaData?.location}-${metaData?.index}`;
-    const cardIsOwned = owned(key);
-    const hasUserAttention = hovered;
-
-
-    return (
-        <Center pos={'relative'} ref={ref} h={'100%'} style={{overflow: 'visible'}}>
-            <Indicator disabled={!cardIsOwned} inline label="Owned" size={16} position={'top-center'}>
-                <Card style={{
-                    boxShadow: isSelected ? '0 0 12px 12px rgba(255,255,255,0.3)' : 'none',
-                    transform: hasUserAttention ? 'scale(1.15)' : 'none',
-                    transition: 'transform 0.4s ease',
-                    zIndex: hasUserAttention ? 20 : 0
-                }}>
-                    <Card.Section>
-                        {cardIsOwned && <Overlay color="#000" backgroundOpacity={0.55} blur={1}/>}
-                        {children}
-                    </Card.Section>
-                </Card>
-            </Indicator>
-            <Transition
-                mounted={hasUserAttention}
-                transition="slide-up"
-                duration={200}
-                enterDelay={350}
-                exitDelay={150}
-                timingFunction="ease"
-            >
-                {(styles) => (
-                    <Button
-                        pos={'absolute'}
-                        style={styles}
-                        bottom={topOffset ? `calc(80% + ${topOffset}px)` : '80%'}
-                        color={'blue'}
-                    >
-                        wiki
-                    </Button>
-                )}
-            </Transition>
-            <Transition
-                mounted={hasUserAttention}
-                transition="slide-down"
-                duration={200}
-                enterDelay={350}
-                exitDelay={150}
-                timingFunction="ease"
-            >
-                {
-                    (styles) => (
-                        <Button
-                            pos={'absolute'}
-                            style={{...styles, zIndex: 1}}
-                            top={bottomOffset ? `calc(80% + ${bottomOffset}px)` : '80%'}
-                            color={'red'}
-                            onClick={() => {
-                                if (!metaData) return;
-                                if (cardIsOwned) {
-                                    removeBuy(metaData);
-                                } else {
-                                    addBuy(metaData);
-                                }
-                            }}
-                        >
-                            {cardIsOwned ? "undo" : "Buy"}
-                        </Button>
-                    )
-                }
-            </Transition>
-        </Center>
-    )
-}
 
 function SeedInputAutoComplete({seed, setSeed}: { seed: string, setSeed: (seed: string) => void }) {
     return (
@@ -816,8 +115,8 @@ function SearchSeedInput({SeedResults}: { SeedResults: Seed | null }) {
                 const cardString = `${(card?.edition && card.edition !== 'No Edition') ? card.edition : ''} ${card.name}`.trim();
                 if (cardString.toLowerCase().includes(searchString.toLowerCase())) {
                     cards.push({
-                        location: GLOBAL_ENUM[SHOP],
-                        locationType: GLOBAL_ENUM[SHOP],
+                        location: LOCATIONS.SHOP,
+                        locationType: LOCATIONS.SHOP,
                         ante: String(ante.ante),
                         name: cardString,
                         index: index,
@@ -833,7 +132,7 @@ function SearchSeedInput({SeedResults}: { SeedResults: Seed | null }) {
                         if (cardString.toLowerCase().includes(searchString.toLowerCase())) {
                             cards.push({
                                 location: pack.name,
-                                locationType: GLOBAL_ENUM[PACK],
+                                locationType: LOCATIONS.PACK,
                                 ante: String(ante.ante),
                                 name: cardString,
                                 index: index,
@@ -849,7 +148,7 @@ function SearchSeedInput({SeedResults}: { SeedResults: Seed | null }) {
                     if (cardString.toLowerCase().includes(searchString.toLowerCase())) {
                         cards.push({
                             location: source.name,
-                            locationType: GLOBAL_ENUM[MISC],
+                            locationType: LOCATIONS.MISC,
                             ante: String(ante.ante),
                             name: cardString,
                             index: index,
@@ -867,7 +166,7 @@ function SearchSeedInput({SeedResults}: { SeedResults: Seed | null }) {
             <Spotlight
                 nothingFound="Nothing found..."
                 actions={
-                    searchResults.map((result, index) => {
+                    searchResults.map((result: any, index) => {
                             const name = result.name;
                             const edition = result?.['edition'];
                             const label = edition && edition !== 'No Edition' ? `${edition} ${name}` : name;
@@ -875,13 +174,13 @@ function SearchSeedInput({SeedResults}: { SeedResults: Seed | null }) {
                             const locationType = result?.locationType;
 
                             let description = '';
-                            if (locationType === GLOBAL_ENUM[SHOP]) {
+                            if (locationType === LOCATIONS.SHOP) {
                                 description += `ANTE ${result.ante} SHOP: Card ${result.index + 1}`;
                             }
-                            if (locationType === GLOBAL_ENUM[PACK]) {
+                            if (locationType === LOCATIONS.PACK) {
                                 description += `ANTE ${result.ante} Blind: ${toHeaderCase(result.blind)} ${result.location}`;
                             }
-                            if (locationType === GLOBAL_ENUM[MISC]) {
+                            if (locationType === LOCATIONS.MISC) {
                                 description += `ANTE ${result.ante} ${result.location}: Card ${result.index + 1}`;
                             }
 
@@ -981,7 +280,7 @@ function UnlocksModal() {
                     value={options.filter((_: any, i: number) => selectedOptions[i])}
                     onChange={setSelectedOptions}
                 >
-                    <SimpleGrid cols={6} mb={'lg'} mt={'xs'}>
+                    <SimpleGrid cols={{ base: 2 , md: 4, lg: 6}} mb={'lg'} mt={'xs'}>
                         {
                             options.map((option: string, i: number) => (
                                 <Switch key={i} value={option} label={option}/>))
@@ -1180,39 +479,13 @@ function QuickAnalyze() {
 
 }
 
-export class BuyMetaData {
-    location: string;
-    locationType: string;
-    index: number;
-    ante: string;
-    blind: string;
-    name: string;
-
-    constructor({location, locationType, index, ante, blind, name}: {
-        location: string,
-        locationType: string,
-        index: number,
-        ante: string,
-        blind: string,
-        itemType: string,
-        name: string
-    }) {
-        this.location = location;
-        this.locationType = locationType;
-        this.index = index;
-        this.ante = ante;
-        this.blind = blind;
-        this.name = name;
-    }
-}
-
 function QueueCarousel({queue, tabName}: { queue: any[], tabName: string }) {
     const selectedBlind = useCardStore(state => state.applicationState.selectedBlind);
     const selectedSearchResult = useCardStore(state => state.searchState.selectedSearchResult);
     const [embla, setEmbla] = useState<Embla | null>(null);
     useEffect(() => {
         if (embla && selectedSearchResult) {
-            if (selectedSearchResult?.location === GLOBAL_ENUM[SHOP] && selectedSearchResult?.index) {
+            if (selectedSearchResult?.location === LOCATIONS.SHOP && selectedSearchResult?.index) {
                 embla.scrollTo(selectedSearchResult.index - 1)
             }
         }
@@ -1235,8 +508,8 @@ function QueueCarousel({queue, tabName}: { queue: any[], tabName: string }) {
                             <Carousel.Slide h={190} key={index}>
                                 <BuyWrapper
                                     metaData={{
-                                        location: GLOBAL_ENUM[SHOP],
-                                        locationType: GLOBAL_ENUM[SHOP],
+                                        location: LOCATIONS.SHOP,
+                                        locationType: LOCATIONS.SHOP,
                                         index: index,
                                         ante: tabName,
                                         blind: selectedBlind,
@@ -1258,7 +531,6 @@ function AntePanel({ante, tabName}: { ante: Ante, tabName: string }) {
     const queue = ante.queue;
     const selectedBlind = useCardStore(state => state.applicationState.selectedBlind);
     const packs = ante?.blinds?.[selectedBlind]?.packs;
-
     return (
         <Tabs.Panel w={'100%'} value={tabName}>
             <Paper withBorder h={'100%'} p={'sm'}>
@@ -1270,7 +542,7 @@ function AntePanel({ante, tabName}: { ante: Ante, tabName: string }) {
                         <Paper h={'100%'} withBorder p={'1rem'}>
                             <Flex h={'100%'} direction={'column'} align={'space-between'}>
                                 <Text ta={'center'} c={'dimmed'} fz={'md'}> Voucher </Text>
-                                <BuyWrapper>
+                                <BuyWrapper horizontal>
                                     <Voucher voucherName={ante.voucher}/>
                                 </BuyWrapper>
                                 <Text ta={'center'} fz={'md'}>  {ante.voucher} </Text>
@@ -1302,7 +574,7 @@ function AntePanel({ante, tabName}: { ante: Ante, tabName: string }) {
                                                     metaData={
                                                         new BuyMetaData({
                                                             location: pack.name,
-                                                            locationType: GLOBAL_ENUM[PACK],
+                                                            locationType: LOCATIONS.PACK,
                                                             index: cardIndex,
                                                             ante: tabName,
                                                             blind: selectedBlind,
@@ -1319,49 +591,8 @@ function AntePanel({ante, tabName}: { ante: Ante, tabName: string }) {
                                 </Accordion.Item>
                             ))}
                         </Accordion>
-                        {/*<Stack flex={1}>*/}
-                        {/*    {*/}
-                        {/*        packs &&*/}
-                        {/*        packs.map((pack: Pack, index: number) => {*/}
-                        {/*            return (*/}
-                        {/*                <Fieldset key={index} legend={pack.name}>*/}
-                        {/*                    <Group pos={'relative'}>*/}
-                        {/*                        {*/}
-                        {/*                            pack?.cards &&*/}
-                        {/*                            pack.cards.map((card: any, index: number) => {*/}
-                        {/*                                return (*/}
-                        {/*                                    <BuyWrapper*/}
-                        {/*                                        metaData={*/}
-                        {/*                                            new BuyMetaData({*/}
-                        {/*                                                location: pack.name,*/}
-                        {/*                                                locationType: "pack",*/}
-                        {/*                                                index: index,*/}
-                        {/*                                                ante: tabName,*/}
-                        {/*                                                blind: selectedBlind,*/}
-                        {/*                                                itemType: 'card'*/}
-                        {/*                                            })*/}
-                        {/*                                        }*/}
-                        {/*                                        bottomOffset={30}*/}
-                        {/*                                        topOffset={30}*/}
-                        {/*                                        key={index}*/}
-                        {/*                                    >*/}
-                        {/*                                        <GameCard card={card}/>*/}
-                        {/*                                    </BuyWrapper>*/}
-                        {/*                                )*/}
-                        {/*                            })*/}
-                        {/*                        }*/}
-                        {/*                    </Group>*/}
-                        {/*                </Fieldset>*/}
-                        {/*            )*/}
-                        {/*        })*/}
-                        {/*    }*/}
-                        {/*</Stack>*/}
                     </Grid.Col>
                 </Grid>
-
-
-                {/*</Grid.Col>*/}
-                {/*</Grid>*/}
             </Paper>
         </Tabs.Panel>
     )
@@ -1470,7 +701,7 @@ function MiscCardSourcesDisplay({miscSources}: { miscSources?: MiscCardSource[] 
     }, [embla])
     useEffect(() => {
         if(!selectedResult || !embla)return;
-        if(selectedResult?.locationType === GLOBAL_ENUM[MISC]) {
+        if(selectedResult?.locationType === LOCATIONS.MISC) {
             if (selectedResult?.index) {
                 embla.scrollTo(selectedResult.index)
             }
@@ -1480,7 +711,7 @@ function MiscCardSourcesDisplay({miscSources}: { miscSources?: MiscCardSource[] 
         <Paper p="md" withBorder mb="md">
             <Title order={3} mb="xs">Card Sources</Title>
             <Accordion onChange={e => setCurrentSource(`${e}`)} variant={'separated'} value={currentSource}>
-                {miscSources.map(({name, cards}) => (
+                {miscSources.map(({name, cards}:{name: string, cards: any}) => (
                     <Accordion.Item key={String(name)} value={String(name)}>
                         <Accordion.Control>
                             <Group>
@@ -1501,12 +732,12 @@ function MiscCardSourcesDisplay({miscSources}: { miscSources?: MiscCardSource[] 
                                         height={190}
                                         dragFree
                                     >
-                                        {cards?.map((card, i) => (
+                                        {cards?.map((card: any, i: number) => (
                                             <Carousel.Slide key={i}>
                                                 <BuyWrapper
                                                     metaData={{
                                                         location: name,
-                                                        locationType: GLOBAL_ENUM[MISC],
+                                                        locationType: LOCATIONS.MISC,
                                                         index: i,
                                                         ante: String(currentAnte),
                                                         blind: "smallBlind",
@@ -1691,12 +922,6 @@ function Blueprint({SeedResults}: { SeedResults: Seed | null }) {
     )
 }
 
-export interface AnalyzeOptions {
-    showCardSpoilers: boolean,
-    buys: { [key: string]: BuyMetaData },
-    sells: { [key: string]: BuyMetaData },
-    updates: { [key: string]: any }[]
-}
 
 export default function App() {
     const analyzeState = useCardStore(state => state.immolateState);

@@ -23,10 +23,4 @@ export function getSealPosition(seal: string) {
     return sealMap[seal];
 }
 
-export function enumFactory(key: string, symbol: symbol): { [key: string | symbol]: string | symbol } {
-    return {
-        [key]: symbol,
-        [symbol]: key
-    }
-}
 

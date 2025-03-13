@@ -65,7 +65,7 @@ import {
     //@ts-ignore
 } from "./modules/const.js"
 import {toHeaderCase} from 'js-convert-case';
-import {getSealPosition, getStandardCardPosition} from "./modules/utils.js";
+import {getSealPosition, getStandardCardPosition} from "./modules/utils.ts";
 import {ReactNode, useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {useHover, useMergedRef, useMouse, useResizeObserver, useViewportSize} from "@mantine/hooks";
 import {
@@ -91,20 +91,15 @@ import {openSpotlight, Spotlight} from "@mantine/spotlight";
 //@ts-ignore
 
 //TODO MAKE ALL LOCATION BLINDS ANTES into a global ENUM to keep strings consistent
-function enumFactory(key, symbol) {
-    return {
-        [key]: symbol,
-        [symbol]: key
-    }
-}
+
 
 const SHOP = Symbol('SHOP');
 const PACK = Symbol('PACK');
 const MISC = Symbol('MISC');
 
-const GLOBAL_ENUM:{
-    [key: string] : Symbol
-    [key: symbol] : string
+const GLOBAL_ENUM: {
+    [key: string]: Symbol
+    [key: symbol]: string
 } = {
     ...enumFactory('SHOP', SHOP),
     ...enumFactory('PACK', PACK),
@@ -132,6 +127,8 @@ interface InitialState {
         asideOpen: boolean;
         selectOptionsModalOpen: boolean;
         showCardSpoilers: boolean;
+        miscSource: string;
+        asideTab: string;
         selectedAnte: number;
         selectedBlind: string;
     };
@@ -168,6 +165,8 @@ const initialState: InitialState = {
         asideOpen: false,
         selectOptionsModalOpen: false,
         showCardSpoilers: false,
+        miscSource: 'riffRaff',
+        asideTab: 'sources',
         selectedAnte: 1,
         selectedBlind: 'bigBlind',
     },
@@ -243,17 +242,36 @@ const applicationSetters = (set: any) => ({
     toggleOutput: () => set((prev: { applicationState: { asideOpen: boolean; }; }) => {
         prev.applicationState.asideOpen = !prev.applicationState.asideOpen
     }, undefined, 'Global/ToggleOutput'),
+    setMiscSource: (source: string) => set((prev: { applicationState: { miscSource: string; }; }) => {
+        prev.applicationState.miscSource = source
 
+    }, undefined, "Global/SetMiscSource"),
+    setAsideTab: (tab: string) => set((prev: { applicationState: { asideTab: string; }; }) => {
+        prev.applicationState.asideTab = tab
+    }, undefined, "Global/SetAsideTab"),
     setSearchString: (searchString: string) => set((prev: { searchState: { searchTerm: string } }) => {
         prev.searchState.searchTerm = searchString
     }, undefined, 'Global/Search/SetSearch'),
     setSelectedSearchResult: (result: BuyMetaData) => set((prev: {
-        applicationState: { selectedAnte: number, selectedBlind: string },
+        applicationState: {
+            selectedAnte: number,
+            selectedBlind: string,
+            asideOpen: boolean,
+            settingsOpen: boolean,
+            asideTab: string,
+            miscSource: string
+        },
         searchState: { selectedSearchResult: BuyMetaData | null }
     }) => {
         prev.searchState.selectedSearchResult = result
         prev.applicationState.selectedAnte = Number(result.ante)
         prev.applicationState.selectedBlind = result.blind
+        if (result.locationType === GLOBAL_ENUM[MISC]) {
+            prev.applicationState.asideOpen = true
+            prev.applicationState.settingsOpen = false
+            prev.applicationState.asideTab = 'sources'
+            prev.applicationState.miscSource = result.location
+        }
 
     }, undefined, 'Global/Search/SetSelectedSearchResult'),
 })
@@ -826,7 +844,7 @@ function SearchSeedInput({SeedResults}: { SeedResults: Seed | null }) {
                 })
             })
             Object.values(ante.miscCardSources).forEach((source: MiscCardSource) => {
-                source.cards.forEach((card:any, index) => {
+                source.cards.forEach((card: any, index) => {
                     const cardString = `${card?.edition ?? ''} ${card.name}`.trim();
                     if (cardString.toLowerCase().includes(searchString.toLowerCase())) {
                         cards.push({
@@ -860,10 +878,10 @@ function SearchSeedInput({SeedResults}: { SeedResults: Seed | null }) {
                             if (locationType === GLOBAL_ENUM[SHOP]) {
                                 description += `ANTE ${result.ante} SHOP: Card ${result.index + 1}`;
                             }
-                            if(locationType === GLOBAL_ENUM[PACK]){
+                            if (locationType === GLOBAL_ENUM[PACK]) {
                                 description += `ANTE ${result.ante} Blind: ${toHeaderCase(result.blind)} ${result.location}`;
                             }
-                            if(locationType === GLOBAL_ENUM[MISC]){
+                            if (locationType === GLOBAL_ENUM[MISC]) {
                                 description += `ANTE ${result.ante} ${result.location}: Card ${result.index + 1}`;
                             }
 
@@ -1441,13 +1459,23 @@ function MiscCardSourcesDisplay({miscSources}: { miscSources?: MiscCardSource[] 
             </Paper>
         );
     }
-    const [currentSource, setCurrentSource] = useState('');
+    const selectedResult = useCardStore(state => state.searchState.selectedSearchResult);
+    const currentSource = useCardStore(state => state.applicationState.miscSource);
+    const setCurrentSource = useCardStore(state => state.setMiscSource);
+    const currentAnte = useCardStore(state => state.applicationState.selectedAnte);
     const [embla, setEmbla] = useState<Embla | null>(null);
     useEffect(() => {
         if (!embla) return;
         embla.reInit()
     }, [embla])
-    // useAnimationOffsetEffect(embla, 200)
+    useEffect(() => {
+        if(!selectedResult || !embla)return;
+        if(selectedResult?.locationType === GLOBAL_ENUM[MISC]) {
+            if (selectedResult?.index) {
+                embla.scrollTo(selectedResult.index)
+            }
+        }
+    }, [currentSource, selectedResult, currentSource])
     return (
         <Paper p="md" withBorder mb="md">
             <Title order={3} mb="xs">Card Sources</Title>
@@ -1470,12 +1498,24 @@ function MiscCardSourcesDisplay({miscSources}: { miscSources?: MiscCardSource[] 
                                         slideGap={{base: 'xs'}}
                                         align="start"
                                         withControls={true}
-                                        height={120}
+                                        height={190}
                                         dragFree
                                     >
                                         {cards?.map((card, i) => (
                                             <Carousel.Slide key={i}>
-                                                <GameCard card={card}/>
+                                                <BuyWrapper
+                                                    metaData={{
+                                                        location: name,
+                                                        locationType: GLOBAL_ENUM[MISC],
+                                                        index: i,
+                                                        ante: String(currentAnte),
+                                                        blind: "smallBlind",
+                                                        name: card?.name
+                                                    }}
+                                                >
+                                                    <GameCard card={card}/>
+                                                </BuyWrapper>
+
                                             </Carousel.Slide>
                                         ))}
                                     </Carousel>
@@ -1562,7 +1602,9 @@ function Aside({SeedResults}: { SeedResults: Seed | null }) {
     const miscSources = anteData?.miscCardSources;
     const buys = useCardStore(state => state.shoppingState.buys);
     const theme = useMantineTheme();
-    const [tab, setTab] = useState('sources');
+
+    const tab = useCardStore(state => state.applicationState.asideTab);
+    const setTab = useCardStore(state => state.setAsideTab);
 
     return (
         <AppShell.Aside p="md">

@@ -91,6 +91,27 @@ import {openSpotlight, Spotlight} from "@mantine/spotlight";
 //@ts-ignore
 
 //TODO MAKE ALL LOCATION BLINDS ANTES into a global ENUM to keep strings consistent
+function enumFactory(key, symbol) {
+    return {
+        [key]: symbol,
+        [symbol]: key
+    }
+}
+
+const SHOP = Symbol('SHOP');
+const PACK = Symbol('PACK');
+const MISC = Symbol('MISC');
+
+const GLOBAL_ENUM:{
+    [key: string] : Symbol
+    [key: symbol] : string
+} = {
+    ...enumFactory('SHOP', SHOP),
+    ...enumFactory('PACK', PACK),
+    ...enumFactory('MISC', MISC)
+}
+
+
 const globalImageCache = new Map<string, HTMLImageElement>();
 
 interface InitialState {
@@ -226,7 +247,10 @@ const applicationSetters = (set: any) => ({
     setSearchString: (searchString: string) => set((prev: { searchState: { searchTerm: string } }) => {
         prev.searchState.searchTerm = searchString
     }, undefined, 'Global/Search/SetSearch'),
-    setSelectedSearchResult: (result: BuyMetaData) => set((prev: {applicationState:{ selectedAnte: number, selectedBlind: string }, searchState: { selectedSearchResult: BuyMetaData | null } }) => {
+    setSelectedSearchResult: (result: BuyMetaData) => set((prev: {
+        applicationState: { selectedAnte: number, selectedBlind: string },
+        searchState: { selectedSearchResult: BuyMetaData | null }
+    }) => {
         prev.searchState.selectedSearchResult = result
         prev.applicationState.selectedAnte = Number(result.ante)
         prev.applicationState.selectedBlind = result.blind
@@ -234,26 +258,26 @@ const applicationSetters = (set: any) => ({
     }, undefined, 'Global/Search/SetSelectedSearchResult'),
 })
 
-const useCardStore = create( devtools( persist( immer( combine(initialState,
-                    (set, get) => ({
-                        ...globalSettingsSetters(set),
-                        ...applicationSetters(set),
-                        addBuy: (buy: BuyMetaData) => set(prev => {
-                            let key = `${buy.ante}-${buy.location}-${buy.index}`;
-                            prev.shoppingState.buys[key] = buy;
-                        }, undefined, 'Global/AddBuy'),
-                        removeBuy: (buy: BuyMetaData) => set(prev => {
-                            let key = `${buy.ante}-${buy.location}-${buy.index}`;
-                            delete prev.shoppingState.buys[key];
-                        }, undefined, 'Global/RemoveBuy'),
-                        isOwned: (key: string) => {
-                            return key in get().shoppingState.buys;
-                        },
+const useCardStore = create(devtools(persist(immer(combine(initialState,
+                (set, get) => ({
+                    ...globalSettingsSetters(set),
+                    ...applicationSetters(set),
+                    addBuy: (buy: BuyMetaData) => set(prev => {
+                        let key = `${buy.ante}-${buy.location}-${buy.index}`;
+                        prev.shoppingState.buys[key] = buy;
+                    }, undefined, 'Global/AddBuy'),
+                    removeBuy: (buy: BuyMetaData) => set(prev => {
+                        let key = `${buy.ante}-${buy.location}-${buy.index}`;
+                        delete prev.shoppingState.buys[key];
+                    }, undefined, 'Global/RemoveBuy'),
+                    isOwned: (key: string) => {
+                        return key in get().shoppingState.buys;
+                    },
 
 
-                        reset: () => set(initialState, undefined, 'Global/Reset'),
-                    })
-                )),
+                    reset: () => set(initialState, undefined, 'Global/Reset'),
+                })
+            )),
             {
                 name: 'blueprint-store',
                 version: 1,
@@ -645,6 +669,11 @@ interface BuyWrapperProps {
 }
 
 function BuyWrapper({children, bottomOffset, topOffset, metaData}: BuyWrapperProps) {
+    const selectedSearchResult = useCardStore(state => state.searchState.selectedSearchResult);
+    let sameLocation = selectedSearchResult?.location === metaData?.location;
+    let sameAnte = selectedSearchResult?.ante === metaData?.ante;
+    let sameIndex = selectedSearchResult?.index === metaData?.index;
+    let isSelected = sameAnte && sameIndex && sameLocation;
 
     const {hovered, ref} = useHover();
     const addBuy = useCardStore(state => state.addBuy);
@@ -659,6 +688,7 @@ function BuyWrapper({children, bottomOffset, topOffset, metaData}: BuyWrapperPro
         <Center pos={'relative'} ref={ref} h={'100%'} style={{overflow: 'visible'}}>
             <Indicator disabled={!cardIsOwned} inline label="Owned" size={16} position={'top-center'}>
                 <Card style={{
+                    boxShadow: isSelected ? '0 0 12px 12px rgba(255,255,255,0.3)' : 'none',
                     transform: hasUserAttention ? 'scale(1.15)' : 'none',
                     transition: 'transform 0.4s ease',
                     zIndex: hasUserAttention ? 20 : 0
@@ -764,12 +794,12 @@ function SearchSeedInput({SeedResults}: { SeedResults: Seed | null }) {
         let antes: Ante[] = Object?.values(SeedResults?.antes ?? {});
 
         antes.forEach((ante: Ante) => {
-            ante.queue.forEach((card,index) => {
+            ante.queue.forEach((card, index) => {
                 const cardString = `${(card?.edition && card.edition !== 'No Edition') ? card.edition : ''} ${card.name}`.trim();
                 if (cardString.toLowerCase().includes(searchString.toLowerCase())) {
                     cards.push({
-                        location: "queue",
-                        locationType: "shop",
+                        location: GLOBAL_ENUM[SHOP],
+                        locationType: GLOBAL_ENUM[SHOP],
                         ante: String(ante.ante),
                         name: cardString,
                         index: index,
@@ -777,68 +807,77 @@ function SearchSeedInput({SeedResults}: { SeedResults: Seed | null }) {
                     })
                 }
             })
-            // Object.keys(ante.blinds).forEach((blind) => {
-            //     ante.blinds[blind].packs.forEach((card, index) => {
-            //         const cardString = `${card?.edition ?? ''} ${card.name}`.trim();
-            //         if (cardString.toLowerCase().includes(searchString.toLowerCase())) {
-            //             cards.push({
-            //                 location: "packs",
-            //                 locationType: "shop",
-            //                 ante: String(ante.ante),
-            //                 name: cardString,
-            //                 index: index,
-            //                 blind: blind
-            //             })
-            //         }
-            //     })
-            // })
-            // Object.values(ante.miscCardSources).forEach((source: MiscCardSource) => {
-            //     source.cards.forEach((card:any, index) => {
-            //         const cardString = `${card?.edition ?? ''} ${card.name}`.trim();
-            //         if (cardString.toLowerCase().includes(searchString.toLowerCase())) {
-            //             cards.push({
-            //                 location: source.name,
-            //                 locationType: "Misc Card Sources",
-            //                 ante: String(ante.ante),
-            //                 name: cardString,
-            //                 index: index,
-            //                 blind: 'smallBlind'
-            //             })
-            //         }
-            //     })
-            // });
+            console.log(ante.blinds['smallBlind'].packs)
+            Object.keys(ante.blinds).forEach((blind) => {
+                ante.blinds[blind]?.packs?.forEach((pack) => {
+                    pack.cards.forEach((card: any, index: number) => {
+                        const cardString = `${card?.edition ?? ''} ${card.name}`.trim();
+                        if (cardString.toLowerCase().includes(searchString.toLowerCase())) {
+                            cards.push({
+                                location: pack.name,
+                                locationType: GLOBAL_ENUM[PACK],
+                                ante: String(ante.ante),
+                                name: cardString,
+                                index: index,
+                                blind: blind
+                            })
+                        }
+                    })
+                })
+            })
+            Object.values(ante.miscCardSources).forEach((source: MiscCardSource) => {
+                source.cards.forEach((card:any, index) => {
+                    const cardString = `${card?.edition ?? ''} ${card.name}`.trim();
+                    if (cardString.toLowerCase().includes(searchString.toLowerCase())) {
+                        cards.push({
+                            location: source.name,
+                            locationType: GLOBAL_ENUM[MISC],
+                            ante: String(ante.ante),
+                            name: cardString,
+                            index: index,
+                            blind: 'smallBlind'
+                        })
+                    }
+                })
+            });
         })
         return cards
-    }, [searchString])
+    }, [searchString, searchActive])
 
     return (
         <>
             <Spotlight
                 nothingFound="Nothing found..."
                 actions={
-                searchResults.map((result, index) => {
-                    const name = result.name;
-                    const edition = result?.edition;
-                    const label = edition && edition !== 'No Edition' ? `${edition} ${name}` : name;
+                    searchResults.map((result, index) => {
+                            const name = result.name;
+                            const edition = result?.['edition'];
+                            const label = edition && edition !== 'No Edition' ? `${edition} ${name}` : name;
 
-                    const locationType = result?.locationType;
+                            const locationType = result?.locationType;
 
-                    let description = '';
-                    if (locationType === 'shop') {
-                        description += `ANTE ${result.ante} SHOP: Card ${result.index + 1}`;
-                    }
+                            let description = '';
+                            if (locationType === GLOBAL_ENUM[SHOP]) {
+                                description += `ANTE ${result.ante} SHOP: Card ${result.index + 1}`;
+                            }
+                            if(locationType === GLOBAL_ENUM[PACK]){
+                                description += `ANTE ${result.ante} Blind: ${toHeaderCase(result.blind)} ${result.location}`;
+                            }
+                            if(locationType === GLOBAL_ENUM[MISC]){
+                                description += `ANTE ${result.ante} ${result.location}: Card ${result.index + 1}`;
+                            }
 
-                    return {
-                        id: String(index),
-                        label,
-                        description,
-                        onClick: () => {
-                            // closeSpotlight()
-                            goToResults(result)
+                            return {
+                                id: String(index),
+                                label,
+                                description,
+                                onClick: () => {
+                                    // closeSpotlight()
+                                    goToResults(result)
+                                }
+                            }
                         }
-                    }
-                }
-                )}
+                    )}
                 searchProps={{
                     value: searchString,
                     onChange: (e) => {
@@ -1154,11 +1193,8 @@ function QueueCarousel({queue, tabName}: { queue: any[], tabName: string }) {
     const selectedSearchResult = useCardStore(state => state.searchState.selectedSearchResult);
     const [embla, setEmbla] = useState<Embla | null>(null);
     useEffect(() => {
-console.log("effect")
         if (embla && selectedSearchResult) {
-            console.log("here")
-            if (selectedSearchResult?.location === 'queue' && selectedSearchResult?.index) {
-                console.log("Scroollll")
+            if (selectedSearchResult?.location === GLOBAL_ENUM[SHOP] && selectedSearchResult?.index) {
                 embla.scrollTo(selectedSearchResult.index - 1)
             }
         }
@@ -1181,8 +1217,8 @@ console.log("effect")
                             <Carousel.Slide h={190} key={index}>
                                 <BuyWrapper
                                     metaData={{
-                                        location: "Shop",
-                                        locationType: "queue",
+                                        location: GLOBAL_ENUM[SHOP],
+                                        locationType: GLOBAL_ENUM[SHOP],
                                         index: index,
                                         ante: tabName,
                                         blind: selectedBlind,
@@ -1248,7 +1284,7 @@ function AntePanel({ante, tabName}: { ante: Ante, tabName: string }) {
                                                     metaData={
                                                         new BuyMetaData({
                                                             location: pack.name,
-                                                            locationType: "pack",
+                                                            locationType: GLOBAL_ENUM[PACK],
                                                             index: cardIndex,
                                                             ante: tabName,
                                                             blind: selectedBlind,
@@ -1629,24 +1665,24 @@ export default function App() {
     const sells = useCardStore(state => state.shoppingState.sells);
     const showCardSpoilers = useCardStore(state => state.applicationState.showCardSpoilers);
     const SeedResults = useMemo(() => {
-                if (seed.length < 6 || !start) return null;
-                const engine = new ImmolateClassic(seed);
-                engine.InstParams(deck, stake, showmanOwned, version);
-                engine.initLocks(1, false, true);
-                const analyzer: CardEngineWrapper = new CardEngineWrapper(engine);
-                const transactions = {buys, sells}
+            if (seed.length < 6 || !start) return null;
+            const engine = new ImmolateClassic(seed);
+            engine.InstParams(deck, stake, showmanOwned, version);
+            engine.initLocks(1, false, true);
+            const analyzer: CardEngineWrapper = new CardEngineWrapper(engine);
+            const transactions = {buys, sells}
 
-                const options: { buys: any; sells: any; showCardSpoilers: any, updates: any } = {
-                    showCardSpoilers,
-                    updates: [],
-                    ...transactions
-                };
+            const options: { buys: any; sells: any; showCardSpoilers: any, updates: any } = {
+                showCardSpoilers,
+                updates: [],
+                ...transactions
+            };
 
-                let results = analyzer.analyzeSeed(antes, cardsPerAnte, options);
-                engine.delete();
-                return results;
-            },
-            [analyzeState, start, buys, showCardSpoilers]
+            let results = analyzer.analyzeSeed(antes, cardsPerAnte, options);
+            engine.delete();
+            return results;
+        },
+        [analyzeState, start, buys, showCardSpoilers]
     );
 
 

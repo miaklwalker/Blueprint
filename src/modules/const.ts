@@ -10,11 +10,11 @@ export const jokerFaces: any = [
         "pos" : { "x": 2, "y": 9 },
         "animated" : true
     },
-    { "name": "Canio", "pos": { "x": 3, "y": 9 } },
-    { "name": "Triboulet", "pos": { "x": 4, "y": 9 } },
-    { "name": "Yorick", "pos": { "x": 5, "y": 9 } },
-    { "name": "Chicot", "pos": { "x": 6, "y": 9 } },
-    { "name": "Perkeo", "pos": { "x": 7, "y": 9 } },
+    { "name": "Canio", "pos": { "x": 3, "y": 9 },"animated" : true },
+    { "name": "Triboulet", "pos": { "x": 4, "y": 9 },"animated" : true  },
+    { "name": "Yorick", "pos": { "x": 5, "y": 9 },"animated" : true  },
+    { "name": "Chicot", "pos": { "x": 6, "y": 9 },"animated" : true  },
+    { "name": "Perkeo", "pos": { "x": 7, "y": 9 },"animated" : true  },
 ];
 export const consumablesFaces: any = [
     {
@@ -415,5 +415,6 @@ export interface BuyWrapperProps {
 export enum LOCATIONS {
     SHOP = 'SHOP',
     PACK = 'PACK',
-    MISC = 'MISC'
+    MISC = 'MISC',
+    VOUCHER = 'VOUCHER'
 }

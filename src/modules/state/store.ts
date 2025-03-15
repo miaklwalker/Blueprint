@@ -2,7 +2,8 @@ import {LOCATIONS, options} from "../const.ts";
 import {create} from "zustand/index";
 import {combine, devtools, persist} from "zustand/middleware";
 import {immer} from "zustand/middleware/immer";
-import {BuyMetaData} from "../../App.tsx";
+import {BuyMetaData} from "../classes/BuyMetaData.ts";
+
 
 export interface InitialState {
     immolateState: {
@@ -129,13 +130,50 @@ const applicationSetters = (set: any) => ({
         prev.applicationState.selectedBlind = selectedBlind
     }, undefined, 'Global/SetSelectedBlind'),
 
-    toggleSettings: () => set((prev: { applicationState: { settingsOpen: boolean; }; }) => {
-        prev.applicationState.settingsOpen = !prev.applicationState.settingsOpen
+    toggleSettings: () => set((prev: { applicationState: { settingsOpen: boolean; asideOpen: boolean; }; }) => {
+        const isSmallScreen = window.innerWidth < 1660;
+
+        // If screen is small and we're opening settings, close aside
+        if (isSmallScreen && !prev.applicationState.settingsOpen && prev.applicationState.asideOpen) {
+            prev.applicationState.asideOpen = false;
+        }
+
+        prev.applicationState.settingsOpen = !prev.applicationState.settingsOpen;
     }, undefined, 'Global/ToggleSettings'),
 
-    toggleOutput: () => set((prev: { applicationState: { asideOpen: boolean; }; }) => {
-        prev.applicationState.asideOpen = !prev.applicationState.asideOpen
+    toggleOutput: () => set((prev: { applicationState: { asideOpen: boolean; settingsOpen: boolean; }; }) => {
+        const isSmallScreen = window.innerWidth < 1660;
+
+        // If screen is small and we're opening aside, close settings
+        if (isSmallScreen && !prev.applicationState.asideOpen && prev.applicationState.settingsOpen) {
+            prev.applicationState.settingsOpen = false;
+        }
+
+        prev.applicationState.asideOpen = !prev.applicationState.asideOpen;
     }, undefined, 'Global/ToggleOutput'),
+
+    // Also update the direct setters to implement the same logic
+    setSettings: (settingsOpen: boolean) => set((prev: { applicationState: { settingsOpen: boolean; asideOpen: boolean; }; }) => {
+        const isSmallScreen = window.innerWidth < 1660;
+
+        // If screen is small and we're opening settings, close aside
+        if (isSmallScreen && settingsOpen && prev.applicationState.asideOpen) {
+            prev.applicationState.asideOpen = false;
+        }
+
+        prev.applicationState.settingsOpen = settingsOpen;
+    }, undefined, 'Global/SetSettings'),
+
+    setOutput: (asideOpen: boolean) => set((prev: { applicationState: { asideOpen: boolean; settingsOpen: boolean; }; }) => {
+        const isSmallScreen = window.innerWidth < 1660;
+
+        // If screen is small and we're opening aside, close settings
+        if (isSmallScreen && asideOpen && prev.applicationState.settingsOpen) {
+            prev.applicationState.settingsOpen = false;
+        }
+
+        prev.applicationState.asideOpen = asideOpen;
+    }, undefined, 'Global/SetOutput'),
     setMiscSource: (source: string) => set((prev: { applicationState: { miscSource: string; }; }) => {
         prev.applicationState.miscSource = source
 

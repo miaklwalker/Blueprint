@@ -5,14 +5,16 @@ export class Layer {
     source: string;
     rows: number;
     columns: number;
+    animated: boolean;
 
-    constructor({pos, name, order, source, rows, columns}: {
+    constructor({pos, name, order, source, rows, columns, animated=false}: {
         pos: { x: number, y: number },
         name: string,
         order: number,
         source: string
         rows: number,
-        columns: number
+        columns: number,
+        animated?: boolean
     }) {
         this.pos = pos;
         this.name = name;
@@ -20,5 +22,6 @@ export class Layer {
         this.source = source;
         this.rows = rows;
         this.columns = columns;
+        this.animated = animated;
     }
 }

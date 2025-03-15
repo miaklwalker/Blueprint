@@ -44,7 +44,7 @@ import {CardEngineWrapper, MiscCardSource} from "./modules/ImmolateWrapper";
 import {blinds, LOCATIONS, options, SeedsWithLegendary} from "./modules/const.js"
 import {toHeaderCase} from 'js-convert-case';
 import {useCallback, useEffect, useMemo, useState} from "react";
-import {useViewportSize} from "@mantine/hooks";
+import {useLogger, usePrevious, useViewportSize} from "@mantine/hooks";
 import {Ante, Pack, Seed} from "./modules/ImmolateWrapper/CardEngines/Cards.ts";
 import {
     IconCards,
@@ -61,12 +61,8 @@ import {GameCard} from "./components/cards.tsx";
 import {Boss, Tag, Voucher} from "./components/gameElements.tsx";
 import {BuyWrapper} from "./components/buyerWrapper.tsx";
 import {BuyMetaData} from "./modules/classes/BuyMetaData.ts";
+
 //@ts-ignore
-
-//TODO MAKE ALL LOCATION BLINDS ANTES into a global ENUM to keep strings consistent
-
-
-
 
 function SeedInputAutoComplete({seed, setSeed}: { seed: string, setSeed: (seed: string) => void }) {
     return (
@@ -280,7 +276,7 @@ function UnlocksModal() {
                     value={options.filter((_: any, i: number) => selectedOptions[i])}
                     onChange={setSelectedOptions}
                 >
-                    <SimpleGrid cols={{ base: 2 , md: 4, lg: 6}} mb={'lg'} mt={'xs'}>
+                    <SimpleGrid cols={{base: 2, md: 4, lg: 6}} mb={'lg'} mt={'xs'}>
                         {
                             options.map((option: string, i: number) => (
                                 <Switch key={i} value={option} label={option}/>))
@@ -537,66 +533,87 @@ function AntePanel({ante, tabName}: { ante: Ante, tabName: string }) {
                 <Fieldset legend={'Shop'} mb={'sm'}>
                     <QueueCarousel queue={queue} tabName={tabName}/>
                 </Fieldset>
-                <Grid>
-                    <Grid.Col span={{base: 12, lg: 2}}>
-                        <Paper h={'100%'} withBorder p={'1rem'}>
-                            <Flex h={'100%'} direction={'column'} align={'space-between'}>
-                                <Text ta={'center'} c={'dimmed'} fz={'md'}> Voucher </Text>
-                                <BuyWrapper horizontal>
-                                    <Voucher voucherName={ante.voucher}/>
-                                </BuyWrapper>
-                                <Text ta={'center'} fz={'md'}>  {ante.voucher} </Text>
-                            </Flex>
-                        </Paper>
-                    </Grid.Col>
-                    <Grid.Col span={{base: 12, lg: 10}}>
-                        <Accordion w={'100%'} multiple={true} defaultValue={packs.map(({name}) => name)}
-                                   variant="separated">
-                            {packs.map((pack: Pack, index: number) => (
-                                <Accordion.Item key={index} value={pack.name}>
-                                    <Accordion.Control>
-                                        <Group justify={'space-between'} pr={'md'}>
-                                            <Text fw={500}>{pack.name}</Text>
-                                            <Badge>{pack.cards?.length || 0} cards</Badge>
-                                        </Group>
-                                    </Accordion.Control>
-                                    <Accordion.Panel>
-
-                                        <SimpleGrid
-                                            cols={{base: 4, sm: 5, md: 6, lg: 5}}
-                                            spacing="sm"
-                                        >
-                                            {pack.cards && pack.cards.map((card: any, cardIndex: number) => (
-                                                <BuyWrapper
-                                                    key={cardIndex}
-                                                    bottomOffset={30}
-                                                    topOffset={30}
-                                                    metaData={
-                                                        new BuyMetaData({
-                                                            location: pack.name,
-                                                            locationType: LOCATIONS.PACK,
-                                                            index: cardIndex,
-                                                            ante: tabName,
-                                                            blind: selectedBlind,
-                                                            itemType: 'card',
-                                                            name: card.name
-                                                        })
-                                                    }
+                <Flex gap={'md'}>
+                    <Paper h={'100%'} withBorder p={'1rem'}>
+                        <Flex h={'100%'} direction={'column'} align={'space-between'}>
+                            <Text ta={'center'} c={'dimmed'} fz={'md'}> Voucher </Text>
+                            <BuyWrapper
+                                bottomOffset={40}
+                                topOffset={40}
+                                metaData={
+                                    new BuyMetaData({
+                                        location: LOCATIONS.SHOP,
+                                        ante: tabName,
+                                        blind: selectedBlind,
+                                        itemType: 'voucher',
+                                        name: ante?.voucher ?? "",
+                                        index: 0,
+                                        locationType: LOCATIONS.VOUCHER
+                                    })
+                                }
+                            >
+                                <Voucher voucherName={ante.voucher}/>
+                            </BuyWrapper>
+                            <Text ta={'center'} fz={'md'}>  {ante.voucher} </Text>
+                        </Flex>
+                    </Paper>
+                    <Accordion multiple={true} value={packs?.map(({name}: {name:string}) => name) ?? []} w={'100%'} variant={'separated'}>
+                        {
+                            packs.map((pack: Pack, index: number) => {
+                                return (
+                                    <Accordion.Item key={String(pack.name) + String(index)} value={String(pack.name)}>
+                                        <Accordion.Control w={'100%'}>
+                                            <Group w={'100%'}>
+                                                <Text fw={500}>{toHeaderCase(String(pack.name))}</Text>
+                                            </Group>
+                                        </Accordion.Control>
+                                        <Accordion.Panel>
+                                            <Box w={'100%'} key={index}>
+                                                <Carousel
+                                                    type={'container'}
+                                                    slideSize="90px"
+                                                    slideGap={{base: 'xs'}}
+                                                    align="start"
+                                                    withControls={true}
+                                                    height={190}
+                                                    dragFree
                                                 >
-                                                    <GameCard card={card}/>
-                                                </BuyWrapper>
-                                            ))}
-                                        </SimpleGrid>
-                                    </Accordion.Panel>
-                                </Accordion.Item>
-                            ))}
-                        </Accordion>
-                    </Grid.Col>
-                </Grid>
+                                                    {pack.cards && pack.cards.map((card: any, cardIndex: number) => (
+                                                        <Carousel.Slide key={cardIndex}>
+                                                            <BuyWrapper
+                                                                key={cardIndex}
+                                                                // bottomOffset={30}
+                                                                // topOffset={30}
+                                                                metaData={
+                                                                    new BuyMetaData({
+                                                                        location: pack.name,
+                                                                        locationType: LOCATIONS.PACK,
+                                                                        index: cardIndex,
+                                                                        ante: tabName,
+                                                                        blind: selectedBlind,
+                                                                        itemType: 'card',
+                                                                        name: card.name
+                                                                    })
+                                                                }
+                                                            >
+                                                                <GameCard card={card}/>
+                                                            </BuyWrapper>
+                                                        </Carousel.Slide>
+                                                    ))}
+                                                </Carousel>
+                                            </Box>
+                                        </Accordion.Panel>
+                                    </Accordion.Item>
+                                )
+                            })
+                        }
+                    </Accordion>
+                </Flex>
             </Paper>
         </Tabs.Panel>
     )
 }
+
 
 function Main({SeedResults}: { SeedResults: Seed | null }) {
     const {width} = useViewportSize();
@@ -700,8 +717,8 @@ function MiscCardSourcesDisplay({miscSources}: { miscSources?: MiscCardSource[] 
         embla.reInit()
     }, [embla])
     useEffect(() => {
-        if(!selectedResult || !embla)return;
-        if(selectedResult?.locationType === LOCATIONS.MISC) {
+        if (!selectedResult || !embla) return;
+        if (selectedResult?.locationType === LOCATIONS.MISC) {
             if (selectedResult?.index) {
                 embla.scrollTo(selectedResult.index)
             }
@@ -711,7 +728,7 @@ function MiscCardSourcesDisplay({miscSources}: { miscSources?: MiscCardSource[] 
         <Paper p="md" withBorder mb="md">
             <Title order={3} mb="xs">Card Sources</Title>
             <Accordion onChange={e => setCurrentSource(`${e}`)} variant={'separated'} value={currentSource}>
-                {miscSources.map(({name, cards}:{name: string, cards: any}) => (
+                {miscSources.map(({name, cards}: { name: string, cards: any }) => (
                     <Accordion.Item key={String(name)} value={String(name)}>
                         <Accordion.Control>
                             <Group>
@@ -728,7 +745,7 @@ function MiscCardSourcesDisplay({miscSources}: { miscSources?: MiscCardSource[] 
                                         slideSize="90px"
                                         slideGap={{base: 'xs'}}
                                         align="start"
-                                        withControls={true}
+                                        withControls={false}
                                         height={190}
                                         dragFree
                                     >
@@ -741,7 +758,8 @@ function MiscCardSourcesDisplay({miscSources}: { miscSources?: MiscCardSource[] 
                                                         index: i,
                                                         ante: String(currentAnte),
                                                         blind: "smallBlind",
-                                                        name: card?.name
+                                                        name: card?.name,
+                                                        link: `https://balatrogame.fandom.com/wiki/${card.name}`
                                                     }}
                                                 >
                                                     <GameCard card={card}/>
@@ -898,18 +916,27 @@ function Footer() {
 function Blueprint({SeedResults}: { SeedResults: Seed | null }) {
     const settingsOpened = useCardStore(state => state.applicationState.settingsOpen);
     const outputOpened = useCardStore(state => state.applicationState.asideOpen);
+    const {width} = useViewportSize();
+    const isSmallScreen = width < 1660;
+
     return (
         <AppShell
             header={{height: {base: 60, md: 70, lg: 80}}}
             aside={{
-                width: {base: 200, md: 300, lg: 550},
+                width: {base: '100%', md: 400, lg: 550},
                 breakpoint: 'md',
-                collapsed: {desktop: !outputOpened, mobile: !outputOpened}
+                collapsed: {
+                    desktop: !outputOpened || (isSmallScreen && settingsOpened),
+                    mobile: !outputOpened
+                },
             }}
             navbar={{
-                width: {base: 200, md: 300, lg: 400},
+                width: {base: '100%', md: 400, lg: 400},
                 breakpoint: 'sm',
-                collapsed: {desktop: !settingsOpened, mobile: settingsOpened},
+                collapsed: {
+                    desktop: !settingsOpened || (isSmallScreen && outputOpened),
+                    mobile: !settingsOpened
+                },
             }}
             padding="md"
         >

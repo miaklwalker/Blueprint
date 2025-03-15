@@ -1,9 +1,10 @@
 import {useCardStore} from "../modules/state/store.ts";
 import {useHover} from "@mantine/hooks";
-import {Button, Card, Center, Indicator, Overlay, Transition} from "@mantine/core";
+import {Button, Card, Center, Indicator, Overlay, Tooltip, Transition, Text, ActionIcon} from "@mantine/core";
 import {BuyWrapperProps} from "../modules/const.ts";
+import {IconExternalLink} from "@tabler/icons-react";
 
-export function BuyWrapper({children, bottomOffset, topOffset, metaData, horizontal = false}: BuyWrapperProps) {
+export function BuyWrapper({children, bottomOffset, metaData, horizontal = false}: BuyWrapperProps) {
     const selectedSearchResult = useCardStore(state => state.searchState.selectedSearchResult);
     let sameLocation = selectedSearchResult?.location === metaData?.location;
     let sameAnte = selectedSearchResult?.ante === metaData?.ante;
@@ -22,41 +23,33 @@ export function BuyWrapper({children, bottomOffset, topOffset, metaData, horizon
     return (
         <Center pos={'relative'} ref={ref} h={'100%'} style={{overflow: 'visible'}}>
             <Indicator disabled={!cardIsOwned} inline label="Owned" size={16} position={'top-center'}>
-                <Card style={{
-                    boxShadow: isSelected ? '0 0 12px 12px rgba(255,255,255,0.3)' : 'none',
-                    transform: hasUserAttention ? 'scale(1.15)' : 'none',
-                    transition: 'transform 0.4s ease',
-                    zIndex: hasUserAttention ? 20 : 0
-                }}>
-                    <Card.Section>
-                        {cardIsOwned && <Overlay color="#000" backgroundOpacity={0.55} blur={1}/>}
-                        {children}
-                    </Card.Section>
-                </Card>
+                <Tooltip
+                    events={{hover: true, focus: true, touch: true}}
+                    label={
+                        <Text ta={'center'}>
+                            {metaData?.name} <ActionIcon size={'xs'}> <IconExternalLink/> </ActionIcon>
+                        </Text>
+                    }
+                    position="top"
+                    withinPortal
+                    transitionProps={{transition: 'slide-up', duration: 300, enterDelay: 350, exitDelay: 150}}
+                >
+                    <Card style={{
+                        boxShadow: isSelected ? '0 0 12px 12px rgba(255,255,255,0.3)' : 'none',
+                        transform: hasUserAttention ? 'scale(1.15)' : 'none',
+                        transition: 'transform 0.4s ease',
+                        zIndex: hasUserAttention ? 20 : 0
+                    }}>
+                        <Card.Section>
+                            {cardIsOwned && <Overlay color="#000" backgroundOpacity={0.55} blur={1}/>}
+                            {children}
+                        </Card.Section>
+                    </Card>
+                </Tooltip>
             </Indicator>
             <Transition
                 mounted={hasUserAttention}
-                transition={horizontal ? "slide-left": "slide-up" }
-                duration={200}
-                enterDelay={350}
-                exitDelay={150}
-                timingFunction="ease"
-            >
-                {(styles) => (
-                    <Button
-                        pos={'absolute'}
-                        style={styles}
-                        right={horizontal ? "200px" : 'unset'}
-                        bottom={horizontal ? "unset" : topOffset ? `calc(80% + ${topOffset}px)` : '80%'}
-                        color={'blue'}
-                    >
-                        wiki
-                    </Button>
-                )}
-            </Transition>
-            <Transition
-                mounted={hasUserAttention}
-                transition={horizontal ? "slide-right": "slide-down" }
+                transition={horizontal ? "slide-right" : "slide-down"}
                 duration={200}
                 enterDelay={350}
                 exitDelay={150}
@@ -64,12 +57,13 @@ export function BuyWrapper({children, bottomOffset, topOffset, metaData, horizon
             >
                 {
                     (styles) => (
+
                         <Button
                             pos={'absolute'}
                             style={{...styles, zIndex: 1}}
                             left={horizontal ? "200px" : 'unset'}
                             top={horizontal ? 'unset' : bottomOffset ? `calc(80% + ${bottomOffset}px)` : '80%'}
-                            color={'red'}
+                            color={cardIsOwned ? 'red' : 'green'}
                             onClick={() => {
                                 if (!metaData) return;
                                 if (cardIsOwned) {
@@ -79,8 +73,9 @@ export function BuyWrapper({children, bottomOffset, topOffset, metaData, horizon
                                 }
                             }}
                         >
-                            {cardIsOwned ? "undo" : "Buy"}
+                            {cardIsOwned ? "Undo" : "Buy"}
                         </Button>
+
                     )
                 }
             </Transition>

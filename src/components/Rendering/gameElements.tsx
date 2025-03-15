@@ -1,5 +1,5 @@
-import {bosses, tags, vouchers} from "../modules/const.ts";
-import {Layer} from "../modules/classes/Layer.ts";
+import {bosses, tags, vouchers} from "../../modules/const.ts";
+import {Layer} from "../../modules/classes/Layer.ts";
 import {Box} from "@mantine/core";
 import {RenderImagesWithCanvas} from "./canvasRenderer.tsx";
 

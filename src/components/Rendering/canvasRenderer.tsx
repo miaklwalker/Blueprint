@@ -1,4 +1,4 @@
-import {Layer} from "../modules/classes/Layer.ts";
+import {Layer} from "../../modules/classes/Layer.ts";
 import {useEffect, useRef, useState} from "react";
 import {useHover, useMergedRef, useMouse, useResizeObserver} from "@mantine/hooks";
 import {AspectRatio} from "@mantine/core";

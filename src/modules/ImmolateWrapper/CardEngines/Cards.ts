@@ -235,10 +235,9 @@ export class Pack {
 
     static PackCardToCard(data: string | PackCard, cardType: string, spoilers? :boolean) {
         if (data === undefined) {
-            console.log("No data for pack card");
+            console.debug("No data for pack card");
             return [];
         }
-        let card: any;
         if (typeof data === 'string') {
             if (cardType === 'Planet') {
                 return new Planet_Final({
@@ -267,7 +266,8 @@ export class Pack {
                     type: cardType
                 } as Card_Final);
             }
-        } else {
+        }
+        else {
             let packCard = new NextPackCard(data);
             if (cardType === 'Standard') {
                 let templateCard = new Card_Final({
@@ -279,7 +279,8 @@ export class Pack {
                     enhancements: packCard.enhancement,
                 } as CardAttributes);
                 return new StandardCard_Final(templateCard);
-            } else {
+            }
+            else {
                 let templateCard = new Card_Final({
                     name: packCard.jokerData.joker,
                     type: cardType,
@@ -293,7 +294,6 @@ export class Pack {
                 return new Joker_Final(templateCard);
             }
         }
-        return card
     }
 
     init(instance: CardEngine, ante: number, spoilers = true) {
@@ -321,13 +321,13 @@ export class Pack {
                 cardType = "Standard"
                 break;
             default:
-                console.log("unknown pack type");
+                console.debug("unknown pack type");
                 return;
         }
         for (let i = 0; i < this.size; i++) {
             let data: string | PackCard | undefined = cards.get(i);
             if (data === undefined) {
-                console.log("No data for pack card");
+                console.debug("No data for pack card");
                 continue;
             }
             if (typeof data === 'string' && itemsWithSpoilers.includes(data) && spoilers) {

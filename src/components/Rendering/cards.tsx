@@ -3,10 +3,10 @@ import {
     Planet_Final,
     Spectral_Final,
     StandardCard_Final, Tarot_Final
-} from "../modules/ImmolateWrapper/CardEngines/Cards.ts";
-import {consumablesFaces, editionMap, jokerFaces, jokers, stickerMap, tarotsAndPlanets} from "../modules/const.ts";
-import {Layer} from "../modules/classes/Layer.ts";
-import {getSealPosition, getStandardCardPosition} from "../modules/utils.ts";
+} from "../../modules/ImmolateWrapper/CardEngines/Cards.ts";
+import {consumablesFaces, editionMap, jokerFaces, jokers, stickerMap, tarotsAndPlanets} from "../../modules/const.ts";
+import {Layer} from "../../modules/classes/Layer.ts";
+import {getEnhancerPosition, getSealPosition, getStandardCardPosition} from "../../modules/utils.ts";
 import {Paper} from "@mantine/core";
 import {RenderImagesWithCanvas} from "./canvasRenderer.tsx";
 
@@ -68,9 +68,11 @@ export function JokerCard({card}: { card: Joker_Final }) {
 export function PlayingCard({card}: { card: StandardCard_Final }) {
     if(!card?.rank || !card?.suit) return null;
     const position = getStandardCardPosition(card.rank, card.suit);
+    //getEnhancerPosition
+    const background = getEnhancerPosition([card?.enhancements ?? '']);
     let layers = [
         new Layer({
-            pos: {x: 1, y: 0},
+            pos: background,
             name: 'background',
             order: 0,
             source: 'images/Enhancers.png',

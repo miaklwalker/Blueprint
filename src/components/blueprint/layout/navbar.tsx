@@ -26,10 +26,14 @@ export default function NavBar() {
     const setAntes = useCardStore(state => state.setAntes);
     const setCardsPerAnte = useCardStore(state => state.setCardsPerAnte);
     const setShowCardSpoilers = useCardStore(state => state.setShowCardSpoilers);
-
+    const setStart = useCardStore(state => state.setStart);
     const openSelectOptionModal = useCardStore(state => state.openSelectOptionModal);
     const reset = useCardStore(state => state.reset);
     const handleAnalyzeClick = () => {
+        if (seed.length < 6) {
+            return;
+        }
+        setStart(true);
     }
     return (
         <AppShell.Navbar p="md">

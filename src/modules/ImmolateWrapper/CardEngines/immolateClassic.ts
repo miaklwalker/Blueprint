@@ -1,5 +1,6 @@
 import {CardEngine} from "../index.ts";
 import {NextShopItem, PackCard} from "./Cards.ts";
+import {options} from "../../const.ts";
 
 export class ImmolateClassic implements CardEngine{
     sources: { [key: string]: string };
@@ -237,5 +238,15 @@ export class ImmolateClassic implements CardEngine{
         this.instance.lock("Petroglyph");
         this.instance.lock("Retcon");
         this.instance.lock("Palette");
+    }
+
+    handleSelectedUnlocks(unlocks: boolean[]): void {
+        options.forEach( (option: string, index: number) => {
+            if(!unlocks[index]){
+                this.instance.lock(option);
+            }else{
+                this.instance.unlock(option);
+            }
+        })
     }
 }

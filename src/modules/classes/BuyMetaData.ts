@@ -6,8 +6,9 @@ export class BuyMetaData {
     blind: string;
     name: string;
     link?: string;
+    rarity?:number;
 
-    constructor({location, locationType, index, ante, blind, name, link}: {
+    constructor({location, locationType, index, ante, blind, name, link, rarity}: {
         location: string,
         locationType: string,
         index: number,
@@ -16,6 +17,7 @@ export class BuyMetaData {
         itemType: string,
         name: string
         link?: string
+        rarity?: number
     }) {
         this.location = location;
         this.locationType = locationType;
@@ -24,5 +26,6 @@ export class BuyMetaData {
         this.blind = blind;
         this.name = name;
         this.link = link;
+        this.rarity = rarity;
     }
 }

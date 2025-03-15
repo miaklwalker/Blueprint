@@ -15,13 +15,12 @@ import {
     Container,
     Fieldset,
     Flex,
-    Grid,
     Group,
     MantineProvider,
     Modal,
     NativeSelect,
     NumberInput,
-    Paper,
+    Paper, Popover,
     ScrollArea,
     SegmentedControl,
     SimpleGrid,
@@ -41,10 +40,10 @@ import {theme} from "./theme.js";
 import {ImmolateClassic} from "./modules/ImmolateWrapper/CardEngines/immolateClassic.ts";
 import {CardEngineWrapper, MiscCardSource} from "./modules/ImmolateWrapper";
 
-import {blinds, LOCATIONS, options, SeedsWithLegendary} from "./modules/const.js"
+import {AnalyzeOptions, blinds, LOCATIONS, options, SeedsWithLegendary} from "./modules/const.js"
 import {toHeaderCase} from 'js-convert-case';
 import {useCallback, useEffect, useMemo, useState} from "react";
-import {useLogger, usePrevious, useViewportSize} from "@mantine/hooks";
+import {useViewportSize} from "@mantine/hooks";
 import {Ante, Pack, Seed} from "./modules/ImmolateWrapper/CardEngines/Cards.ts";
 import {
     IconCards,
@@ -359,24 +358,6 @@ function NavBar() {
                     <option value="Orange Stake">Orange Stake</option>
                     <option value="Gold Stake">Gold Stake</option>
                 </NativeSelect>
-                <Box mb={'sm'}>
-                    <Text size="sm"> Cards Per Ante</Text>
-                    <Slider
-                        min={0}
-                        defaultValue={50}
-                        max={100}
-                        label={'Cards per hand'}
-                        color="blue"
-                        marks={[
-                            {value: 0, label: '0'},
-                            {value: 50, label: '50'},
-                            {value: 100, label: '100'},
-                        ]}
-                        value={cardsPerAnte}
-                        onChange={setCardsPerAnte}
-
-                    />
-                </Box>
                 <NativeSelect
                     label={'Choose Version'}
                     value={version}
@@ -386,19 +367,35 @@ function NavBar() {
                     <option value="10103">1.0.1c</option>
                     <option value="10014">1.0.0n</option>
                 </NativeSelect>
-                <Box>
-                    <Text mb={0} fz={'xs'}>Show Joker Spoilers</Text>
-                    <Tooltip label="Cards that give jokers, are replaced with the joker the card would give."
-                             refProp="rootRef">
-                        <Switch
-                            size={'xl'}
-                            checked={showCardSpoilers}
-                            thumbIcon={showCardSpoilers ? (<IconJoker color={'black'}/>) : (
-                                <IconPlayCard color={'black'}/>)}
-                            onChange={e => setShowCardSpoilers(e.currentTarget.checked)}
-                        />
-                    </Tooltip>
-                </Box>
+                <NumberInput
+                    min={0}
+                    defaultValue={50}
+                    max={300}
+                    label={'Cards per ante'}
+                    color="blue"
+                    value={cardsPerAnte}
+                    onChange={(v) => setCardsPerAnte(Number(v))}
+
+                />
+                <Group>
+                    <Box>
+                        <Text mb={0} fz={'xs'}>Show Joker Spoilers</Text>
+                        <Tooltip label="Cards that give jokers, are replaced with the joker the card would give."
+                                 refProp="rootRef">
+                            <Switch
+                                size={'xl'}
+                                checked={showCardSpoilers}
+                                thumbIcon={showCardSpoilers ? (<IconJoker color={'black'}/>) : (
+                                    <IconPlayCard color={'black'}/>)}
+                                onChange={e => setShowCardSpoilers(e.currentTarget.checked)}
+                            />
+                        </Tooltip>
+                    </Box>
+                    <Box mb={'sm'}>
+
+                    </Box>
+                </Group>
+
             </AppShell.Section>
             <AppShell.Section my="md">
                 <Stack>
@@ -509,7 +506,9 @@ function QueueCarousel({queue, tabName}: { queue: any[], tabName: string }) {
                                         index: index,
                                         ante: tabName,
                                         blind: selectedBlind,
-                                        name: card.name
+                                        name: card.name,
+                                        link: `https://balatrogame.fandom.com/wiki/${card.name}`,
+                                        rarity: card?.rarity
                                     }}
                                 >
                                     <GameCard card={card}/>
@@ -542,13 +541,14 @@ function AntePanel({ante, tabName}: { ante: Ante, tabName: string }) {
                                 topOffset={40}
                                 metaData={
                                     new BuyMetaData({
-                                        location: LOCATIONS.SHOP,
+                                        location: LOCATIONS.VOUCHER,
                                         ante: tabName,
                                         blind: selectedBlind,
                                         itemType: 'voucher',
                                         name: ante?.voucher ?? "",
                                         index: 0,
-                                        locationType: LOCATIONS.VOUCHER
+                                        locationType: LOCATIONS.VOUCHER,
+                                        link: `https://balatrogame.fandom.com/wiki/vouchers`
                                     })
                                 }
                             >
@@ -557,7 +557,8 @@ function AntePanel({ante, tabName}: { ante: Ante, tabName: string }) {
                             <Text ta={'center'} fz={'md'}>  {ante.voucher} </Text>
                         </Flex>
                     </Paper>
-                    <Accordion multiple={true} value={packs?.map(({name}: {name:string}) => name) ?? []} w={'100%'} variant={'separated'}>
+                    <Accordion multiple={true} value={packs?.map(({name}: { name: string }) => name) ?? []} w={'100%'}
+                               variant={'separated'}>
                         {
                             packs.map((pack: Pack, index: number) => {
                                 return (
@@ -592,7 +593,9 @@ function AntePanel({ante, tabName}: { ante: Ante, tabName: string }) {
                                                                         ante: tabName,
                                                                         blind: selectedBlind,
                                                                         itemType: 'card',
-                                                                        name: card.name
+                                                                        name: card?.edition ? `${card?.edition} ${card.name}` : card.name,
+                                                                        link: `https://balatrogame.fandom.com/wiki/${card.name}`,
+                                                                        rarity: card?.rarity
                                                                     })
                                                                 }
                                                             >
@@ -613,7 +616,6 @@ function AntePanel({ante, tabName}: { ante: Ante, tabName: string }) {
         </Tabs.Panel>
     )
 }
-
 
 function Main({SeedResults}: { SeedResults: Seed | null }) {
     const {width} = useViewportSize();
@@ -653,7 +655,22 @@ function Main({SeedResults}: { SeedResults: Seed | null }) {
                                 value: ['smallBlind', 'bigBlind', 'bossBlind'][i],
                                 label: <Group justify={'center'}>
                                     {blind}
-                                    {i < 2 && <Tag tagName={SeedResults.antes[selectedAnte]?.tags?.[i]}/>}
+                                    {i < 2 && (
+                                        <Popover>
+                                            <Popover.Target>
+                                                <Box>
+                                                    <Tag tagName={SeedResults.antes[selectedAnte]?.tags?.[i]}/>
+                                                </Box>
+                                            </Popover.Target>
+                                            <Popover.Dropdown>
+                                                <Box>
+                                                    <Text>{SeedResults.antes[selectedAnte]?.tags?.[i]}</Text>
+                                                </Box>
+                                            </Popover.Dropdown>
+                                        </Popover>
+
+                                    )
+                                    }
                                     {i === 2 && <Boss bossName={SeedResults.antes[selectedAnte]?.boss ?? ''}/>}
 
                                 </Group>,
@@ -759,7 +776,8 @@ function MiscCardSourcesDisplay({miscSources}: { miscSources?: MiscCardSource[] 
                                                         ante: String(currentAnte),
                                                         blind: "smallBlind",
                                                         name: card?.name,
-                                                        link: `https://balatrogame.fandom.com/wiki/${card.name}`
+                                                        link: `https://balatrogame.fandom.com/wiki/${card.name}`,
+                                                        rarity: card?.rarity,
                                                     }}
                                                 >
                                                     <GameCard card={card}/>
@@ -822,9 +840,12 @@ function PurchaseTimeline({buys}: { buys: { [key: string]: BuyMetaData } }) {
                         >
                             <Text></Text>
                             <Text size="xs" c="dimmed" mt={4}>
-                                {buyData.locationType === "pack" ?
-                                    `${buyData.location} - Card ${Number(index) + 1}` :
-                                    `Shop Item ${Number(index) + 1}`}
+                                {
+                                    buyData.locationType === LOCATIONS.PACK ?
+                                        `${buyData.location} - Card ${Number(index) + 1}` :
+                                        buyData.locationType === LOCATIONS.MISC ?
+                                            `${buyData.location} - Card ${Number(index) + 1}` :
+                                            `Shop Item ${Number(index) + 1}`}
                             </Text>
                             <Text size="xs" c="dimmed">
                                 {toHeaderCase(buyData.blind)}
@@ -917,7 +938,7 @@ function Blueprint({SeedResults}: { SeedResults: Seed | null }) {
     const settingsOpened = useCardStore(state => state.applicationState.settingsOpen);
     const outputOpened = useCardStore(state => state.applicationState.asideOpen);
     const {width} = useViewportSize();
-    const isSmallScreen = width < 1660;
+    const isSmallScreen = width < 1280;
 
     return (
         <AppShell
@@ -958,6 +979,7 @@ export default function App() {
     const buys = useCardStore(state => state.shoppingState.buys);
     const sells = useCardStore(state => state.shoppingState.sells);
     const showCardSpoilers = useCardStore(state => state.applicationState.showCardSpoilers);
+    const unlocks: boolean[] = useCardStore(state => state.immolateState.selectedOptions);
     const SeedResults = useMemo(() => {
             if (seed.length < 6 || !start) return null;
             const engine = new ImmolateClassic(seed);
@@ -966,8 +988,9 @@ export default function App() {
             const analyzer: CardEngineWrapper = new CardEngineWrapper(engine);
             const transactions = {buys, sells}
 
-            const options: { buys: any; sells: any; showCardSpoilers: any, updates: any } = {
+            const options: AnalyzeOptions = {
                 showCardSpoilers,
+                unlocks,
                 updates: [],
                 ...transactions
             };
@@ -976,7 +999,7 @@ export default function App() {
             engine.delete();
             return results;
         },
-        [analyzeState, start, buys, showCardSpoilers]
+        [analyzeState, start, buys, showCardSpoilers, unlocks]
     );
 
 

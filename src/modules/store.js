@@ -362,7 +362,7 @@ const shoppingListSlice = (set, get) => ({
 })
 
 
-function initLocks(inst) {
+function initLocks(inst, selectedOptions) {
     // level 2 vouchers
     inst.lock("Overstock Plus");
     inst.lock("Liquidation");

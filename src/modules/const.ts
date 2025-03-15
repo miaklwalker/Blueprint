@@ -403,6 +403,7 @@ export interface AnalyzeOptions {
     buys: { [key: string]: BuyMetaData },
     sells: { [key: string]: BuyMetaData },
     updates: { [key: string]: any }[]
+    unlocks: boolean[],
 }
 export interface BuyWrapperProps {
     children: ReactNode,

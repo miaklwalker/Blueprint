@@ -13,7 +13,8 @@ import {
     StandardCard_Final,
     Tarot_Final
 } from "./CardEngines/Cards.ts";
-import {AnalyzeOptions} from "../const.ts";
+import {AnalyzeOptions, LOCATIONS, options} from "../const.ts";
+
 export interface MiscCardSource {
     name: string;
     cardsToGenerate: number;
@@ -25,6 +26,7 @@ export interface MiscCardSource {
 }
 
 export interface CardEngine {
+    VOUCHERS: any;
     sources: { [key: string]: string };
     commonSources: { [key: string]: string };
 
@@ -82,6 +84,8 @@ export interface CardEngine {
 
     // Specialized methods
     lockLevelTwoVouchers(): void;
+
+    handleSelectedUnlocks(unlocks: boolean[]): void;
 
     // Cleanup
     delete(): void;
@@ -163,7 +167,7 @@ export class CardEngineWrapper implements EngineWrapper {
         return output
     }
 
-    analyzeAnte(ante: number, cardsPerAnte: number, options?: AnalyzeOptions): Ante {
+    analyzeAnte(ante: number, cardsPerAnte: number, analyzeOptions?: AnalyzeOptions): Ante {
         let itemsWithSpoilers: string[] = ["The Soul", "Judgement", "Wraith"];
         let spoilerSources = [this.engine.sources.S_Soul, this.engine.sources.S_Judgement, this.engine.sources.S_Wraith]
         let result = new Ante(ante);
@@ -171,10 +175,28 @@ export class CardEngineWrapper implements EngineWrapper {
 
         result.boss = this.engine.nextBoss(ante)
         result.voucher = this.engine.nextVoucher(ante);
+        let voucherKey = `${ante}-${LOCATIONS.VOUCHER}-0`;
+        if (analyzeOptions && analyzeOptions?.buys && analyzeOptions.buys[voucherKey]) {
+            let name = analyzeOptions.buys[voucherKey].name;
+            let AllVouchers = this.engine.VOUCHERS;
+            let unlocks = analyzeOptions?.unlocks;
+            for (let i = 0; i < AllVouchers.size(); i+=2) {
+                // if the user has the level two voucher enabled, then allow it!
+                if (AllVouchers.get(i) === name) {
+                    // the user has bought the level one
+                    this.engine.lock(name);
+                    this.engine.activateVoucher(name)
+                    let levelTwo = AllVouchers.get(i + 1);
+                    if(unlocks[i + 1] && options?.includes(levelTwo)) {
+                        this.engine.unlock(levelTwo);
+                    }
+                }
+            }
+        }
+
         result.tags.push(this.engine.nextTag(ante));
         result.tags.push(this.engine.nextTag(ante));
-        let max = ante === 1 ? 15 : cardsPerAnte;
-        for (let i = 0; i < max; i++) {
+        for (let i = 0; i < cardsPerAnte; i++) {
             let key = `${ante}-Shop-${i}`;
             let item = this.engine.nextShopItem(ante);
             result.queue.push(
@@ -183,12 +205,12 @@ export class CardEngineWrapper implements EngineWrapper {
                 )
             )
             item.delete()
-            if (options && options?.showCardSpoilers) {
+            if (analyzeOptions && analyzeOptions?.showCardSpoilers) {
                 if (itemsWithSpoilers.includes(result.queue[i].name)) {
                     result.queue[i] = Pack.PackCardToCard(this.engine.nextJoker(spoilerSources[itemsWithSpoilers.indexOf(result.queue[i].name)], ante, false), 'Joker')
                 }
             }
-            if (options && options.buys[key]) {
+            if (analyzeOptions && analyzeOptions.buys[key]) {
                 this.engine.lock(result.queue[i].name)
             }
 
@@ -201,11 +223,11 @@ export class CardEngineWrapper implements EngineWrapper {
                 let packString = this.engine.nextPack(ante);
                 let packInfo = this.engine.packInfo(packString);
                 let pack = new Pack(packInfo);
-                pack.init(this.engine, ante, options?.showCardSpoilers ?? false);
+                pack.init(this.engine, ante, analyzeOptions?.showCardSpoilers ?? false);
                 result.blinds[blind].packs.push(pack)
                 for (let k = 0; k < packInfo.size; k++) {
                     let key = `${ante}-${packString}-${k}`;
-                    if (options && options.buys[key]) {
+                    if (analyzeOptions && analyzeOptions.buys[key]) {
                         this.engine.lock(pack.cards[k].name)
                     }
 
@@ -297,7 +319,7 @@ export class CardEngineWrapper implements EngineWrapper {
                 cards: []
             },
         ]
-        const updates = options?.updates;
+        const updates = analyzeOptions?.updates;
         if (updates) {
             for (let update of updates) {
                 let source = miscCardSources.find((source) => source.name === update.source);
@@ -324,10 +346,10 @@ export class CardEngineWrapper implements EngineWrapper {
                 let generator = generators[source.cardType];
                 let card: string | PackCard = generator(source.source, ante, source?.soulable ?? source?.hasStickers ?? false);
 
-                if(typeof card === 'string') {
+                if (typeof card === 'string') {
 
                     let canBeSpoiled = itemsWithSpoilers.indexOf(card)
-                    if( canBeSpoiled !== -1 && options?.showCardSpoilers) {
+                    if (canBeSpoiled !== -1 && analyzeOptions?.showCardSpoilers) {
                         card = generators['Joker'](
                             spoilerSources[canBeSpoiled],
                             ante,
@@ -354,6 +376,9 @@ export class CardEngineWrapper implements EngineWrapper {
     analyzeSeed(antes: number, cardsPerAnte: number = 50, options?: AnalyzeOptions): Seed {
         let result = new Seed();
         this.engine.lockLevelTwoVouchers();
+        if (options?.unlocks) {
+            this.engine.handleSelectedUnlocks(options.unlocks);
+        }
         for (let ante = 1; ante <= antes; ante++) {
             result.antes[ante] = this.analyzeAnte(ante, cardsPerAnte, options);
         }

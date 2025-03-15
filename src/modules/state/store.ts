@@ -15,7 +15,7 @@ export interface InitialState {
         stake: string;
         showmanOwned: boolean;
         gameVersion: string;
-        selectedOptions: string[];
+        selectedOptions: boolean[];
     };
     applicationState: {
         start: boolean;
@@ -79,6 +79,8 @@ const initialState: InitialState = {
 const globalSettingsSetters = (set: any) => ({
     setSeed: (seed: string) => set((prev: InitialState) => {
         prev.immolateState.seed = seed
+        prev.shoppingState = initialState.shoppingState
+        prev.searchState = initialState.searchState
     }, undefined, 'Global/SetSeed'),
     setDeck: (deck: string) => set((prev: InitialState) => {
         prev.immolateState.deck = deck

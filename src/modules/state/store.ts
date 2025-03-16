@@ -235,18 +235,21 @@ const blueprintStorage: StateStorage = {
 
         let results = {
             state: {
-                immolateState,
+                immolateState:{
+                    ...initialState.immolateState,
+                    ...immolateState
+                },
                 applicationState: {
                     ...initialState.applicationState,
                     start : !!immolateState?.seed
                 },
                 shoppingState: {
+                    ...initialState.shoppingState,
                     buys: getBuysFromHash(),
                     sells: {},
                 },
             }
         }
-        console.log(results)
         return JSON.stringify(results)
     },
 

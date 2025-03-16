@@ -419,3 +419,32 @@ export enum LOCATIONS {
     MISC = 'MISC',
     VOUCHER = 'VOUCHER'
 }
+
+
+export const tagDescriptions: {[key:string]: string} = {
+    "Uncommon Tag": "The next shop will have a free Uncommon Joker.",
+    "Rare Tag": "The next shop will have a free Rare Joker.",
+    "Negative Tag": "The next base edition Joker you find in a Shop becomes Negative (+1 joker slot) and free.",
+    "Foil Tag": "The next base edition Joker you find in a Shop becomes Foil (+50 Chips) and free.",
+    "Holographic Tag": "The next base edition Joker you find in a Shop becomes Holographic (+10 Mult) and free.",
+    "Polychrome Tag": "The next base edition Joker you find in a Shop becomes Polychrome (X1.5 Mult) and free.",
+    "Investment Tag": "Gain $25 after defeating the next Boss Blind.",
+    "Voucher Tag": "Adds a Voucher to the next Shop.",
+    "Boss Tag": "Re-rolls the next Boss Blind.",
+    "Standard Tag": "Immediately open a free Mega Standard Pack.",
+    "Charm Tag": "Immediately open a free Mega Arcana Pack.",
+    "Meteor Tag": "Immediately open a free Mega Celestial Pack.",
+    "Buffoon Tag": "Immediately open a free Mega Buffoon Pack.",
+    "Handy Tag": "Gain $1 for each hand played this run.",
+    "Garbage Tag": "Gain $1 for each unused discard this run.",
+    "Ethereal Tag": "Immediately open a free Spectral Pack.",
+    "Coupon Tag": "In the next shop, initial Jokers, Consumables Cards and Booster Packs are free ($0).",
+    "Double Tag": "Gives a copy of the next Tag selected (excluding Double Tags).",
+    "Juggle Tag": "+3 Hand Size for the next round only.",
+    "D6 Tag": "In the next Shop, Rerolls start at $0.",
+    "Top Tag-up": "Create up to 2 Common Jokers (if you have space).",
+    "Speed Tag": "Gives $5 for each Blind you've skipped this run.",
+    "Orbital Tag": "Upgrades a specified random Poker Hand by three levels.",
+    "Economy Tag": "Doubles your money (adds a maximum of $40).",
+}
+

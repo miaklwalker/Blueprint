@@ -236,48 +236,48 @@ export class CardEngineWrapper implements EngineWrapper {
                 }
             }
         }
-
+        const maxCards = 15
         const miscCardSources: MiscCardSource[] = [
-            {
-                name: "riffRaff",
-                cardsToGenerate: 6,
-                cardType: "Joker",
-                source: this.engine.sources.S_Riff_Raff,
-                hasStickers: false,
-                cards: []
-            },
+            // {
+            //     name: "riffRaff",
+            //     cardsToGenerate: 6,
+            //     cardType: "Joker",
+            //     source: this.engine.sources.S_Riff_Raff,
+            //     hasStickers: false,
+            //     cards: []
+            // },
             {
                 name: "uncommonTag",
-                cardsToGenerate: 12,
+                cardsToGenerate: maxCards,
                 cardType: "Joker",
                 source: this.engine.sources.S_Uncommon_Tag,
                 cards: []
             },
             {
                 name: "rareTag",
-                cardsToGenerate: 12,
+                cardsToGenerate: maxCards,
                 cardType: "Joker",
                 source: this.engine.sources.S_Rare_Tag,
                 cards: []
             },
-            {
-                name: "topUpTag",
-                cardsToGenerate: 12,
-                cardType: "Joker",
-                source: this.engine.sources.S_Top_Up,
-                hasStickers: false,
-                cards: []
-            },
+            // {
+            //     name: "topUpTag",
+            //     cardsToGenerate: maxCards,
+            //     cardType: "Joker",
+            //     source: this.engine.sources.S_Top_Up,
+            //     hasStickers: false,
+            //     cards: []
+            // },
             {
                 name: "judgement",
-                cardsToGenerate: 12,
+                cardsToGenerate: maxCards,
                 cardType: "Joker",
                 source: this.engine.sources.S_Judgement,
                 cards: []
             },
             {
                 name: "wraith",
-                cardsToGenerate: 12,
+                cardsToGenerate: maxCards,
                 cardType: "Joker",
                 source: this.engine.sources.S_Wraith,
                 hasStickers: false,
@@ -285,35 +285,35 @@ export class CardEngineWrapper implements EngineWrapper {
             },
             {
                 name: "highPriestess",
-                cardsToGenerate: 12,
+                cardsToGenerate: maxCards,
                 cardType: "Planet",
                 source: this.engine.sources.S_High_Priestess,
                 cards: []
             },
             {
                 name: "emperor",
-                cardsToGenerate: 12,
+                cardsToGenerate: maxCards,
                 cardType: "Tarot",
                 source: this.engine.sources.S_Emperor,
                 cards: []
             },
             {
                 name: "vagabond",
-                cardsToGenerate: 12,
+                cardsToGenerate: maxCards,
                 cardType: "Tarot",
                 source: this.engine.sources.S_Vagabond,
                 cards: []
             },
             {
                 name: "purpleSeal and 8 Ball",
-                cardsToGenerate: 12,
+                cardsToGenerate: maxCards,
                 cardType: "Tarot",
                 source: this.engine.sources.S_Purple_Seal,
                 cards: []
             },
             {
                 name: "arcanaPack",
-                cardsToGenerate: 12,
+                cardsToGenerate: maxCards,
                 cardType: "Tarot",
                 source: this.engine.sources.S_Arcana,
                 soulable: true,

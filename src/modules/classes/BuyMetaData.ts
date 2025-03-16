@@ -1,31 +1,39 @@
+import {
+    Card_Final,
+    Joker_Final,
+    Planet_Final,
+    Spectral_Final,
+    Tarot_Final
+} from "../ImmolateWrapper/CardEngines/Cards.ts";
+
 export class BuyMetaData {
     location: string;
     locationType: string;
     index: number;
     ante: string;
     blind: string;
-    name: string;
     link?: string;
-    rarity?:number;
+    name?: string;
+    card?: Card_Final | Joker_Final | Spectral_Final | Tarot_Final | Planet_Final
 
-    constructor({location, locationType, index, ante, blind, name, link, rarity}: {
+    constructor({location, locationType, index, ante, blind, card, link, name}: {
         location: string,
         locationType: string,
         index: number,
         ante: string,
         blind: string,
         itemType: string,
-        name: string
-        link?: string
-        rarity?: number
+        link?: string,
+        name?: string
+        card?: Card_Final | Joker_Final | Spectral_Final | Tarot_Final | Planet_Final
     }) {
         this.location = location;
         this.locationType = locationType;
         this.index = index;
         this.ante = ante;
         this.blind = blind;
-        this.name = name;
         this.link = link;
-        this.rarity = rarity;
+        this.card = card;
+        this.name = name;
     }
 }

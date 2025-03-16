@@ -1,7 +1,7 @@
 import {useCardStore} from "../../modules/state/store.ts";
 import {useEffect, useState} from "react";
 import {Carousel, Embla} from "@mantine/carousel";
-import {blinds, LOCATIONS} from "../../modules/const.ts";
+import {blinds, LOCATIONS, tagDescriptions} from "../../modules/const.ts";
 import {
     Accordion,
     AppShell,
@@ -64,9 +64,8 @@ function QueueCarousel({queue, tabName}: { queue: any[], tabName: string }) {
                                         index: index,
                                         ante: tabName,
                                         blind: selectedBlind,
-                                        name: card.name,
                                         link: `https://balatrogame.fandom.com/wiki/${card.name}`,
-                                        rarity: card?.rarity
+                                        card: card
                                     }}
                                 >
                                     <GameCard card={card}/>
@@ -151,9 +150,8 @@ function AntePanel({ante, tabName}: { ante: Ante, tabName: string }) {
                                                                         ante: tabName,
                                                                         blind: selectedBlind,
                                                                         itemType: 'card',
-                                                                        name: card?.edition ? `${card?.edition} ${card.name}` : card.name,
                                                                         link: `https://balatrogame.fandom.com/wiki/${card.name}`,
-                                                                        rarity: card?.rarity
+                                                                        card: card
                                                                     })
                                                                 }
                                                             >
@@ -186,6 +184,9 @@ function SeedExplorer({SeedResults}: { SeedResults: Seed  }) {
     const setSelectedAnte = useCardStore(state => state.setSelectedAnte);
     const selectedBlind = useCardStore(state => state.applicationState.selectedBlind);
     const setSelectedBlind = useCardStore(state => state.setSelectedBlind);
+
+
+
     return (
         <>
             <Box>
@@ -211,7 +212,7 @@ function SeedExplorer({SeedResults}: { SeedResults: Seed  }) {
                         label: <Group justify={'center'}>
                             {blind}
                             {i < 2 && (
-                                <Popover>
+                                <Popover >
                                     <Popover.Target>
                                         <Box>
                                             <Tag tagName={SeedResults.antes[selectedAnte]?.tags?.[i]}/>
@@ -219,14 +220,32 @@ function SeedExplorer({SeedResults}: { SeedResults: Seed  }) {
                                     </Popover.Target>
                                     <Popover.Dropdown>
                                         <Box>
-                                            <Text>{SeedResults.antes[selectedAnte]?.tags?.[i]}</Text>
+                                            <Text ta={'center'}>{SeedResults.antes[selectedAnte]?.tags?.[i]}</Text>
+                                            <Text>
+                                                {tagDescriptions[SeedResults.antes[selectedAnte]?.tags?.[i] ?? ''] ?? 'No description available'}
+                                            </Text>
                                         </Box>
                                     </Popover.Dropdown>
                                 </Popover>
 
                             )
                             }
-                            {i === 2 && <Boss bossName={SeedResults.antes[selectedAnte]?.boss ?? ''}/>}
+                            {
+                                i === 2 &&
+                                <Popover >
+                                    <Popover.Target>
+                                        <Box>
+                                            <Boss bossName={SeedResults.antes[selectedAnte]?.boss ?? ''}/>
+                                        </Box>
+                                    </Popover.Target>
+                                    <Popover.Dropdown>
+                                        <Box>
+                                            <Text>{SeedResults.antes[selectedAnte]?.boss}</Text>
+                                        </Box>
+                                    </Popover.Dropdown>
+                                </Popover>
+
+                            }
 
                         </Group>,
                     }))}

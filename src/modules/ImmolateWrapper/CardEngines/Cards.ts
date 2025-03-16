@@ -150,7 +150,7 @@ export class Joker_Final implements Stringifies {
     constructor(joker: Card_Final) {
         this.name = joker.name;
         this.type = joker.type;
-        this.edition = joker?.edition ?? "No Edition";
+        this.edition = joker?.edition === "No Edition" ? '' : joker?.edition ?? '';
         this.rarity = joker?.rarity ?? 0;
         this.isEternal = joker.isEternal;
         this.isPerishable = joker.isPerishable;
@@ -273,7 +273,7 @@ export class Pack {
                 let templateCard = new Card_Final({
                     name: packCard.name,
                     type: cardType,
-                    edition: packCard.edition,
+                    edition: packCard?.edition === "No Edition" ? '' : packCard.edition,
                     seal: packCard.seal,
                     base: packCard.base,
                     enhancements: packCard.enhancement,

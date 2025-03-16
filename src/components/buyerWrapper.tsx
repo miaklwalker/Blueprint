@@ -40,17 +40,31 @@ export function BuyWrapper({children, bottomOffset, metaData, horizontal = false
         3: "#ff4c40",
         4: "#ab5bb5",
     }
+
+
+
     return (
         <Center pos={'relative'} ref={ref} h={'100%'} style={{overflow: 'visible'}}>
             <Indicator disabled={!cardIsOwned} inline label="Owned" size={16} position={'top-center'}>
                 <Tooltip
+                    bg={'transparent'}
                     opened={hasUserAttention}
                     events={{hover: true, focus: true, touch: true}}
                     label={
                         <Flex align={'center'} justify={'space-between'} gap={4}>
-                            <Badge autoContrast color={metaData?.rarity ? rarityColorMap[metaData?.rarity] : undefined}>
-                                {metaData?.name}
+                            {/*// @ts-ignore*/}
+                            <Badge autoContrast color={metaData?.card?.rarity ? rarityColorMap[metaData?.card?.rarity] : undefined}>
+                                {metaData?.name ?? metaData?.card?.name ?? 'Unknown'}
                             </Badge>
+                            {
+                                metaData?.card &&
+                                metaData.card?.edition &&
+                                metaData.card?.edition !== '' &&
+                                metaData.card?.edition !== 'No Edition' &&
+                                <Badge autoContrast color={theme.colors.gray[0]} variant="filled">
+                                    {metaData?.card?.edition}
+                                </Badge>
+                            }
                         </Flex>
                     }
                     position="top"

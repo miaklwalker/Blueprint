@@ -182,7 +182,7 @@ export class CardEngineWrapper implements EngineWrapper {
             let unlocks = analyzeOptions?.unlocks;
             for (let i = 0; i < AllVouchers.size(); i+=2) {
                 // if the user has the level two voucher enabled, then allow it!
-                if (AllVouchers.get(i) === name) {
+                if (AllVouchers.get(i) === name && name) {
                     // the user has bought the level one
                     this.engine.lock(name);
                     this.engine.activateVoucher(name)

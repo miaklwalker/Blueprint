@@ -53,7 +53,7 @@ export default function App() {
             engine.delete();
             return results;
         },
-        [analyzeState, start, buys, showCardSpoilers, unlocks, window?.immolate]
+        [analyzeState, start, buys, showCardSpoilers, unlocks]
     );
 
 

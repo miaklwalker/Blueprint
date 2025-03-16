@@ -23,10 +23,10 @@ export default function Footer() {
                     </Stack>
 
 
-                    <ActionIcon component={'a'} href={'https://github.com/miaklwalker/Blueprint'} target={'_blank'} radius={'xl'} variant={'outline'} color={'white'}>
-                        <IconBrandGithubFilled/>
-                    </ActionIcon>
-                    <Button component={'a'} target={'_blank'} href={'https://buymeacoffee.com/ouisihai2'} size={'compact-sm'} color={'yellow'} leftSection={<IconCoffee/>}>Buy me a coffee</Button>
+                    {/*<ActionIcon component={'a'} href={'https://github.com/miaklwalker/Blueprint'} target={'_blank'} radius={'xl'} variant={'outline'} color={'white'}>*/}
+                    {/*    <IconBrandGithubFilled/>*/}
+                    {/*</ActionIcon>*/}
+                    {/*<Button component={'a'} target={'_blank'} href={'https://buymeacoffee.com/ouisihai2'} size={'compact-sm'} color={'yellow'} leftSection={<IconCoffee/>}>Buy me a coffee</Button>*/}
                 </Group>
 
 

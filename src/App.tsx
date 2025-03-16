@@ -43,13 +43,6 @@ export default function App() {
                 // @ts-ignore
                 console.log("Immolate loaded", window.Immolate);
             }
-            try{
-                // @ts-ignore
-                new window.Immolate.Instance(seed);
-            }catch (e){
-                console.error("Immolate instance failed to load", e);
-                return null;
-            }
             try {
                 const engine = new ImmolateClassic(seed);
                 engine.InstParams(deck, stake, showmanOwned, version);

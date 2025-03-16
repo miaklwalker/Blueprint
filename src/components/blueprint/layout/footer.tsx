@@ -1,5 +1,4 @@
-import {ActionIcon, Anchor, AppShell, Button, Center, Group, Stack, Text} from "@mantine/core";
-import {IconBrandGithubFilled, IconCoffee} from "@tabler/icons-react";
+import {Anchor, AppShell, Center, Group, Stack, Text} from "@mantine/core";
 
 
 export default function Footer() {

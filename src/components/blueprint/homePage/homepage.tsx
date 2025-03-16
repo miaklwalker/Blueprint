@@ -1,6 +1,6 @@
 import {IconEye, IconGauge, IconList, IconMessage2, IconShoppingCart, IconUser} from '@tabler/icons-react';
 import {Container, Paper, SimpleGrid, Space, Text, ThemeIcon, Title} from '@mantine/core';
-import classes from './homePage.module.css';
+import classes from './Homepage.module.css';
 import HeroClasses from "./Hero.module.css"
 import React from "react";
 import {QuickAnalyze} from "../../SeedInputAutoComplete.tsx";

@@ -69,7 +69,7 @@ export default function MiscCardSourcesDisplay({miscSources}: { miscSources?: Mi
                                                         blind: "smallBlind",
                                                         name: card?.name,
                                                         link: `https://balatrogame.fandom.com/wiki/${card.name}`,
-                                                        rarity: card?.rarity,
+                                                        card: card
                                                     }}
                                                 >
                                                     <GameCard card={card}/>

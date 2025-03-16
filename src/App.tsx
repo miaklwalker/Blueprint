@@ -8,7 +8,7 @@ import {ImmolateClassic} from "./modules/ImmolateWrapper/CardEngines/immolateCla
 import {CardEngineWrapper} from "./modules/ImmolateWrapper";
 
 import {AnalyzeOptions} from "./modules/const.js"
-import {useMemo} from "react";
+import {useEffect, useMemo} from "react";
 import {useCardStore} from "./modules/state/store.ts";
 import {Blueprint} from "./components/blueprint";
 
@@ -28,12 +28,21 @@ export default function App() {
     const {seed, deck, stake, showmanOwned, gameVersion: version, antes, cardsPerAnte} = analyzeState;
 
     const start = useCardStore(state => state.applicationState.start);
+    const setStart = useCardStore(state => state.setStart);
     const buys = useCardStore(state => state.shoppingState.buys);
     const sells = useCardStore(state => state.shoppingState.sells);
     const showCardSpoilers = useCardStore(state => state.applicationState.showCardSpoilers);
     const unlocks: boolean[] = useCardStore(state => state.immolateState.selectedOptions);
     //@ts-ignore
     const ImmolateDefined = window?.ImmolateReady
+    useEffect(() => {
+        if(seed && ImmolateDefined && seed.length > 6 && !start) {
+            setStart(true);
+        }
+    },[seed]);
+
+
+
     const SeedResults = useMemo(() => {
             if (seed.length < 6 || !start || !ImmolateDefined) return null;
             try {

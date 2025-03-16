@@ -44,7 +44,7 @@ export interface InitialState {
 
 const initialState: InitialState = {
     immolateState: {
-        seed: '15IBIXCA',
+        seed: '',
         deck: 'Ghost Deck',
         cardsPerAnte: 50,
         antes: 8,

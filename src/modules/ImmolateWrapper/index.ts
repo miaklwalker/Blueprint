@@ -197,16 +197,18 @@ export class CardEngineWrapper implements EngineWrapper {
         result.tags.push(this.engine.nextTag(ante));
         result.tags.push(this.engine.nextTag(ante));
         for (let i = 0; i < cardsPerAnte; i++) {
-            let key = `${ante}-Shop-${i}`;
+            let key = `${ante}-${LOCATIONS.SHOP}-${i}`;
             let item = this.engine.nextShopItem(ante);
+            let card =this.makeCard(
+                item
+            )
             result.queue.push(
-                this.makeCard(
-                    item
-                )
+                card
             )
             item.delete()
             if (analyzeOptions && analyzeOptions?.showCardSpoilers) {
                 if (itemsWithSpoilers.includes(result.queue[i].name)) {
+                    // @ts-ignore
                     result.queue[i] = Pack.PackCardToCard(this.engine.nextJoker(spoilerSources[itemsWithSpoilers.indexOf(result.queue[i].name)], ante, false), 'Joker')
                 }
             }
@@ -343,11 +345,11 @@ export class CardEngineWrapper implements EngineWrapper {
         }
         for (let source of miscCardSources) {
             for (let i = 0; i < source.cardsToGenerate; i++) {
+            let key = `${ante}-${source.name}-${i}`;
                 let generator = generators[source.cardType];
                 let card: string | PackCard = generator(source.source, ante, source?.soulable ?? source?.hasStickers ?? false);
 
                 if (typeof card === 'string') {
-
                     let canBeSpoiled = itemsWithSpoilers.indexOf(card)
                     if (canBeSpoiled !== -1 && analyzeOptions?.showCardSpoilers) {
                         card = generators['Joker'](
@@ -362,9 +364,16 @@ export class CardEngineWrapper implements EngineWrapper {
                     card,
                     card === 'Wraith' || card === 'The Soul' ? 'Spectral' : source.cardType
                 );
-                source.cards.push(
-                    generatedCard
-                )
+                if (generatedCard && 'name' in generatedCard) {
+                    // @ts-ignore
+                    source.cards.push( generatedCard )
+                    if(analyzeOptions && analyzeOptions.buys[key]  ){
+                        console.log(generatedCard)
+                        this.engine.lock(generatedCard?.name)
+                    }
+
+                }
+
             }
         }
 

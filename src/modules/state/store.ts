@@ -1,6 +1,6 @@
 import {LOCATIONS, options} from "../const.ts";
 import {create} from "zustand/index";
-import {combine, devtools, persist} from "zustand/middleware";
+import {combine, createJSONStorage, devtools, persist, StateStorage} from "zustand/middleware";
 import {immer} from "zustand/middleware/immer";
 import {BuyMetaData} from "../classes/BuyMetaData.ts";
 
@@ -11,7 +11,6 @@ export interface InitialState {
         deck: string;
         cardsPerAnte: number;
         antes: number;
-        deckType: string;
         stake: string;
         showmanOwned: boolean;
         gameVersion: string;
@@ -42,13 +41,13 @@ export interface InitialState {
         }
     };
 }
+
 const initialState: InitialState = {
     immolateState: {
         seed: '15IBIXCA',
         deck: 'Ghost Deck',
         cardsPerAnte: 50,
         antes: 8,
-        deckType: 'Ghost Deck',
         stake: 'Gold Stake',
         showmanOwned: false,
         gameVersion: '10106',
@@ -91,9 +90,6 @@ const globalSettingsSetters = (set: any) => ({
     setAntes: (antes: number) => set((prev: InitialState) => {
         prev.immolateState.antes = antes
     }, undefined, 'Global/SetAntes'),
-    setDeckType: (deckType: string) => set((prev: InitialState) => {
-        prev.immolateState.deckType = deckType
-    }, undefined, 'Global/SetDeckType'),
     setStake: (stake: string) => set((prev: InitialState) => {
         prev.immolateState.stake = stake
     }, undefined, 'Global/SetStake'),
@@ -155,7 +151,9 @@ const applicationSetters = (set: any) => ({
     }, undefined, 'Global/ToggleOutput'),
 
     // Also update the direct setters to implement the same logic
-    setSettings: (settingsOpen: boolean) => set((prev: { applicationState: { settingsOpen: boolean; asideOpen: boolean; }; }) => {
+    setSettings: (settingsOpen: boolean) => set((prev: {
+        applicationState: { settingsOpen: boolean; asideOpen: boolean; };
+    }) => {
         const isSmallScreen = window.innerWidth < 1660;
 
         // If screen is small and we're opening settings, close aside
@@ -166,7 +164,9 @@ const applicationSetters = (set: any) => ({
         prev.applicationState.settingsOpen = settingsOpen;
     }, undefined, 'Global/SetSettings'),
 
-    setOutput: (asideOpen: boolean) => set((prev: { applicationState: { asideOpen: boolean; settingsOpen: boolean; }; }) => {
+    setOutput: (asideOpen: boolean) => set((prev: {
+        applicationState: { asideOpen: boolean; settingsOpen: boolean; };
+    }) => {
         const isSmallScreen = window.innerWidth < 1660;
 
         // If screen is small and we're opening aside, close settings
@@ -208,31 +208,123 @@ const applicationSetters = (set: any) => ({
         }
 
     }, undefined, 'Global/Search/SetSelectedSearchResult'),
-})
-
-export const useCardStore = create(devtools(persist(immer(combine(initialState,
-                (set, get) => ({
-                    ...globalSettingsSetters(set),
-                    ...applicationSetters(set),
-                    addBuy: (buy: BuyMetaData) => set(prev => {
-                        let key = `${buy.ante}-${buy.location}-${buy.index}`;
-                        prev.shoppingState.buys[key] = buy;
-                    }, undefined, 'Global/AddBuy'),
-                    removeBuy: (buy: BuyMetaData) => set(prev => {
-                        let key = `${buy.ante}-${buy.location}-${buy.index}`;
-                        delete prev.shoppingState.buys[key];
-                    }, undefined, 'Global/RemoveBuy'),
-                    isOwned: (key: string) => {
-                        return key in get().shoppingState.buys;
-                    },
+});
+const shopGetters = (set: any, get: any) => ({
+    addBuy: (buy: BuyMetaData) => set((prev: { shoppingState: { buys: { [x: string]: BuyMetaData; }; }; }) => {
+        let key = `${buy.ante}-${buy.location}-${buy.index}`;
+        prev.shoppingState.buys[key] = buy;
+    }, undefined, 'Global/AddBuy'),
+    removeBuy: (buy: BuyMetaData) => set((prev: { shoppingState: { buys: { [x: string]: any; }; }; }) => {
+        let key = `${buy.ante}-${buy.location}-${buy.index}`;
+        delete prev.shoppingState.buys[key];
+    }, undefined, 'Global/RemoveBuy'),
+    isOwned: (key: string) => {
+        return key in get().shoppingState.buys;
+    },
 
 
-                    reset: () => set(initialState, undefined, 'Global/Reset'),
-                })
-            )),
+    reset: () => set(initialState, undefined, 'Global/Reset'),
+});
+
+// @ts-ignore
+const blueprintStorage: StateStorage = {
+    // @ts-ignore
+    getItem: (key: string): string => {
+        let immolateState = getImmolateStateFromUrl();
+
+
+        let results = {
+            state: {
+                immolateState,
+                applicationState: {
+                    ...initialState.applicationState,
+                    start : !!immolateState?.seed
+                },
+                shoppingState: {
+                    buys: getBuysFromHash(),
+                    sells: {},
+                },
+            }
+        }
+        console.log(results)
+        return JSON.stringify(results)
+    },
+
+    setItem: (_: string, newValue: string): void => {
+        const parsedValue = JSON.parse(newValue);
+        const params = new URLSearchParams(window.location.search);
+        const ignoreKeys = ['selectedOptions','cardsPerAnte','showmanOwned','gameVersion']; // Keys to ignore when updating URL
+        // Update URL with immolateState values
+        Object.entries(parsedValue.state.immolateState).forEach(([key, value]) => {
+            if (!ignoreKeys.includes(key)) { // Don't include selectedOptions in URL
+                params.set(key, String(value));
+            }
+        });
+
+        // Update URL without reloading the page
+        const newUrl = `${window.location.pathname}?${params.toString()}${window.location.hash}`;
+        window.history.replaceState({}, '', newUrl);
+        updateBuysInHash(parsedValue.state.shoppingState.buys);
+    },
+};
+
+// Helper functions to manage immolateState in URL
+function getImmolateStateFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    return {
+        seed: params.get('seed') || initialState.immolateState.seed,
+        deck: params.get('deck') || initialState.immolateState.deck,
+        cardsPerAnte: parseInt(params.get('cardsPerAnte') || initialState.immolateState.cardsPerAnte.toString()),
+        antes: parseInt(params.get('antes') || initialState.immolateState.antes.toString()),
+        stake: params.get('stake') || initialState.immolateState.stake,
+        gameVersion: params.get('gameVersion') || initialState.immolateState.gameVersion,
+        start: !!params?.get('seed')
+
+    };
+}
+
+// Helper functions to manage buys in hash
+function getBuysFromHash() {
+    try {
+        const hash = window.location.hash.substring(1); // Remove the # symbol
+        return hash ? JSON.parse(decodeURIComponent(hash)) : {};
+    } catch (e) {
+        return {};
+    }
+}
+
+function updateBuysInHash(buys: any) {
+    const hashValue = encodeURIComponent(JSON.stringify(buys));
+
+    // Update hash without affecting the URL query params
+    const newUrl = `${window.location.pathname}${window.location.search}#${hashValue}`;
+    window.history.replaceState({}, '', newUrl);
+}
+
+export const useCardStore = create(
+    devtools(
+        persist(
+            immer(
+                combine(initialState,
+                    (set, get) => ({
+                        ...globalSettingsSetters(set),
+                        ...applicationSetters(set),
+                        ...shopGetters(set, get),
+                    })
+                )),
             {
-                name: 'blueprint-store',
-                version: 1,
+                storage: createJSONStorage(() => blueprintStorage),
+                name: 'blueprint-store-v2',
+                version: 2,
+                partialize: (state) => ({
+                    immolateState: state.immolateState,
+                    shoppingState: {
+                        buys: state.shoppingState.buys,
+                        sells: state.shoppingState.sells
+                    },
+                    applicationState: state.applicationState,
+                    searchState: state.searchState
+                }),
             }
         )
     )

@@ -34,7 +34,6 @@ export default function App() {
     const unlocks: boolean[] = useCardStore(state => state.immolateState.selectedOptions);
     //@ts-ignore
     const ImmolateDefined = window?.ImmolateReady
-    console.log(ImmolateDefined)
     const SeedResults = useMemo(() => {
             if (seed.length < 6 || !start || !ImmolateDefined) return null;
             try {

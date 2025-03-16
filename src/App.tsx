@@ -33,19 +33,9 @@ export default function App() {
     const sells = useCardStore(state => state.shoppingState.sells);
     const showCardSpoilers = useCardStore(state => state.applicationState.showCardSpoilers);
     const unlocks: boolean[] = useCardStore(state => state.immolateState.selectedOptions);
-    const engine = useMemo(() => {
-        try{
-            return new ImmolateClassic(seed);
-        }catch (e) {
-            console.error("Error initializing engine", e);
-            return null;
-        }
-    },[seed])
-
-
     const SeedResults = useMemo(() => {
-            if (seed.length < 6 || !start || !engine) return null;
-
+            if (seed.length < 6 || !start) return null;
+            const engine = new ImmolateClassic(seed);
             engine.InstParams(deck, stake, showmanOwned, version);
             engine.initLocks(1, false, true);
             const analyzer: CardEngineWrapper = new CardEngineWrapper(engine);

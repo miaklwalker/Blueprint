@@ -36,23 +36,41 @@ export default function App() {
     const SeedResults = useMemo(() => {
             if (seed.length < 6 || !start) return null;
             // @ts-ignore
-            if( !window?.Immolate ){ return null }else{ console.log("Immolate loaded", window.Immolate); }
-            const engine = new ImmolateClassic(seed);
-            engine.InstParams(deck, stake, showmanOwned, version);
-            engine.initLocks(1, false, true);
-            const analyzer: CardEngineWrapper = new CardEngineWrapper(engine);
-            const transactions = {buys, sells}
+            if( !window?.Immolate ){
+                return null
+            }
+            else{
+                // @ts-ignore
+                console.log("Immolate loaded", window.Immolate);
+            }
+            try{
+                // @ts-ignore
+                new window.Immolate.Instance(seed);
+            }catch (e){
+                console.error("Immolate instance failed to load", e);
+                return null;
+            }
+            try {
+                const engine = new ImmolateClassic(seed);
+                engine.InstParams(deck, stake, showmanOwned, version);
+                engine.initLocks(1, false, true);
+                const analyzer: CardEngineWrapper = new CardEngineWrapper(engine);
+                const transactions = {buys, sells}
 
-            const options: AnalyzeOptions = {
-                showCardSpoilers,
-                unlocks,
-                updates: [],
-                ...transactions
-            };
 
-            let results = analyzer.analyzeSeed(antes, cardsPerAnte, options);
-            engine.delete();
-            return results;
+                const options: AnalyzeOptions = {
+                    showCardSpoilers,
+                    unlocks,
+                    updates: [],
+                    ...transactions
+                };
+
+                let results = analyzer.analyzeSeed(antes, cardsPerAnte, options);
+                engine.delete();
+                return results;
+            }catch (e) {
+                return null
+            }
         },
         [analyzeState, start, buys, showCardSpoilers, unlocks]
     );

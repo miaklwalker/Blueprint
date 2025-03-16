@@ -81,7 +81,7 @@ export class ImmolateClassic implements CardEngine{
             "RiffRaff": this.sources.S_Riff_Raff,
         }
         // @ts-ignore
-        this.instance = new Immolate.Instance(seed);
+        this.instance = new window.Immolate.Instance(seed);
         // @ts-ignore
         this.VOUCHERS = Immolate.VOUCHERS;
     }

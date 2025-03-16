@@ -23,7 +23,6 @@ import {Blueprint} from "./components/blueprint";
 
 
 
-
 export default function App() {
     const analyzeState = useCardStore(state => state.immolateState);
     const {seed, deck, stake, showmanOwned, gameVersion: version, antes, cardsPerAnte} = analyzeState;
@@ -33,16 +32,11 @@ export default function App() {
     const sells = useCardStore(state => state.shoppingState.sells);
     const showCardSpoilers = useCardStore(state => state.applicationState.showCardSpoilers);
     const unlocks: boolean[] = useCardStore(state => state.immolateState.selectedOptions);
+    //@ts-ignore
+    const ImmolateDefined = window?.ImmolateReady
+    console.log(ImmolateDefined)
     const SeedResults = useMemo(() => {
-            if (seed.length < 6 || !start) return null;
-            // @ts-ignore
-            if( !window?.Immolate ){
-                return null
-            }
-            else{
-                // @ts-ignore
-                console.log("Immolate loaded", window.Immolate);
-            }
+            if (seed.length < 6 || !start || !ImmolateDefined) return null;
             try {
                 const engine = new ImmolateClassic(seed);
                 engine.InstParams(deck, stake, showmanOwned, version);
@@ -65,7 +59,7 @@ export default function App() {
                 return null
             }
         },
-        [analyzeState, start, buys, showCardSpoilers, unlocks]
+        [analyzeState, start, buys, showCardSpoilers, unlocks,ImmolateDefined]
     );
 
 

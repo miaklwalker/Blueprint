@@ -246,7 +246,6 @@ const blueprintStorage: StateStorage = {
                 shoppingState: {
                     ...initialState.shoppingState,
                     buys: getBuysFromHash(),
-                    sells: {},
                 },
             }
         }

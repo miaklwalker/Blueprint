@@ -9,8 +9,14 @@
     />
 
     <script>
-        var Immolate = {};
-        // Helper function for vectors
+
+        var Immolate = {
+            onRuntimeInitialized: function() {
+                // This is called when the Immolate module is ready to use
+                console.log("Immolate module initialized");
+                window.ImmolateReady = true;
+            }
+        };
         function asVector(arr) {
             var vectorInt = new Module.VectorStr();
             for (var i = 0; i < arr.length; i++) {

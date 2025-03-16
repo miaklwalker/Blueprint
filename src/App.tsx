@@ -35,6 +35,7 @@ export default function App() {
     const unlocks: boolean[] = useCardStore(state => state.immolateState.selectedOptions);
     const SeedResults = useMemo(() => {
             if (seed.length < 6 || !start) return null;
+            if( !window?.Immolate ){ return null }else{ console.log("Immolate loaded", window.Immolate); }
             const engine = new ImmolateClassic(seed);
             engine.InstParams(deck, stake, showmanOwned, version);
             engine.initLocks(1, false, true);
@@ -52,7 +53,7 @@ export default function App() {
             engine.delete();
             return results;
         },
-        [analyzeState, start, buys, showCardSpoilers, unlocks]
+        [analyzeState, start, buys, showCardSpoilers, unlocks, window?.immolate]
     );
 
 

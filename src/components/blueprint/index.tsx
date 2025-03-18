@@ -58,15 +58,17 @@ function QueueCarousel({queue, tabName}: { queue: any[], tabName: string }) {
                         return (
                             <Carousel.Slide h={190} key={index}>
                                 <BuyWrapper
-                                    metaData={{
+                                    metaData={new BuyMetaData({
                                         location: LOCATIONS.SHOP,
                                         locationType: LOCATIONS.SHOP,
                                         index: index,
                                         ante: tabName,
                                         blind: selectedBlind,
                                         link: `https://balatrogame.fandom.com/wiki/${card.name}`,
-                                        card: card
-                                    }}
+                                        card: card,
+                                        name: card.name
+                                    })
+                                }
                                 >
                                     <GameCard card={card}/>
                                 </BuyWrapper>
@@ -151,7 +153,8 @@ function AntePanel({ante, tabName}: { ante: Ante, tabName: string }) {
                                                                         blind: selectedBlind,
                                                                         itemType: 'card',
                                                                         link: `https://balatrogame.fandom.com/wiki/${card.name}`,
-                                                                        card: card
+                                                                        card: card,
+                                                                        name: card.name
                                                                     })
                                                                 }
                                                             >

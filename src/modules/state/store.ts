@@ -208,6 +208,15 @@ const shopGetters = (set: any, get: any) => ({
     isOwned: (key: string) => {
         return key in get().shoppingState.buys;
     },
+    addSell: (sell: BuyMetaData) => set((prev: { shoppingState: { sells: { [x: string]: BuyMetaData; }; }; }) => {
+        let key = `${sell.ante}-${sell.blind}-${sell.name}`;
+        prev.shoppingState.sells[key] = sell;
+    }, undefined, 'Global/AddSell'),
+    undoSell: (sell: BuyMetaData) => set((prev: { shoppingState: { sells: { [x: string]: any; }; }; }) => {
+        let key = `${sell.ante}-${sell.blind}-${sell.name}`;
+        delete prev.shoppingState.sells[key];
+    }, undefined, 'Global/UndoSell'),
+
 
 
     reset: () => set(initialState, undefined, 'Global/Reset'),

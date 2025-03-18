@@ -6,7 +6,10 @@ import {
     Tarot_Final
 } from "../ImmolateWrapper/CardEngines/Cards.ts";
 
+
+
 export class BuyMetaData {
+    transactionType: 'buy' | 'sell' = 'buy';
     location: string;
     locationType: string;
     index: number;
@@ -22,11 +25,12 @@ export class BuyMetaData {
         index: number,
         ante: string,
         blind: string,
-        itemType: string,
+        itemType?: string,
         link?: string,
         name?: string
         card?: Card_Final | Joker_Final | Spectral_Final | Tarot_Final | Planet_Final
     }) {
+        this.transactionType = 'buy';
         this.location = location;
         this.locationType = locationType;
         this.index = index;

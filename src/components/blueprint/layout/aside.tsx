@@ -11,6 +11,8 @@ export function Aside({SeedResults}: { SeedResults: Seed | null }) {
     const anteData = SeedResults?.antes[selectedAnte];
     const miscSources = anteData?.miscCardSources;
     const buys = useCardStore(state => state.shoppingState.buys);
+    const sells = useCardStore(state => state.shoppingState.sells);
+    const transactionsCount = Object.keys(buys).length + Object.keys(sells).length;
     const theme = useMantineTheme();
 
     const tab = useCardStore(state => state.applicationState.asideTab);
@@ -35,7 +37,7 @@ export function Aside({SeedResults}: { SeedResults: Seed | null }) {
                             leftSection={<IconShoppingCart size={16}/>}
                             rightSection={
                                 <Badge size="xs" circle variant="filled" color={theme.colors.blue[7]}>
-                                    {Object.keys(buys).length}
+                                    {transactionsCount}
                                 </Badge>
                             }
                         >
@@ -56,7 +58,7 @@ export function Aside({SeedResults}: { SeedResults: Seed | null }) {
                         )}
                     </Tabs.Panel>
                     <Tabs.Panel value="purchases">
-                        <PurchaseTimeline buys={buys}/>
+                        <PurchaseTimeline buys={buys} sells={sells}/>
                     </Tabs.Panel>
                 </Tabs>
             </AppShell.Section>

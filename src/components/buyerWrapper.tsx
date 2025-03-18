@@ -149,11 +149,6 @@ export function BuyWrapper({children, bottomOffset, metaData, horizontal = false
                                             Balatro Fandom Page
                                         </Menu.Item>
                                     }
-                                    {/*<Menu.Item*/}
-                                    {/*    leftSection={<IconBookmark size={16} stroke={1.5} color={theme.colors.blue[5]} />}*/}
-                                    {/*>*/}
-                                    {/*    Sell*/}
-                                    {/*</Menu.Item>*/}
                                 </Menu.Dropdown>
                             </Menu>
 

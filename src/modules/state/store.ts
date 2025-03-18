@@ -241,6 +241,7 @@ const blueprintStorage: StateStorage = {
                 },
                 applicationState: {
                     ...initialState.applicationState,
+                    start: !!immolateState.seed
                 },
                 shoppingState: {
                     ...initialState.shoppingState,

@@ -2,6 +2,8 @@ import "@mantine/core/styles.css";
 import '@mantine/code-highlight/styles.css';
 import '@mantine/carousel/styles.css';
 import '@mantine/spotlight/styles.css';
+
+
 import {MantineProvider, Space} from "@mantine/core";
 import {theme} from "./theme.js";
 import {ImmolateClassic} from "./modules/ImmolateWrapper/CardEngines/immolateClassic.ts";
@@ -22,7 +24,6 @@ import {Blueprint} from "./components/blueprint";
 
 
 
-
 export default function App() {
     const analyzeState = useCardStore(state => state.immolateState);
     const {seed, deck, stake, showmanOwned, gameVersion: version, antes, cardsPerAnte} = analyzeState;
@@ -33,18 +34,10 @@ export default function App() {
     const sells = useCardStore(state => state.shoppingState.sells);
     const showCardSpoilers = useCardStore(state => state.applicationState.showCardSpoilers);
     const unlocks: boolean[] = useCardStore(state => state.immolateState.selectedOptions);
-    //@ts-ignore
-    const ImmolateDefined = window?.ImmolateReady
-    // useEffect(() => {
-    //     if(seed && ImmolateDefined && seed.length > 6 && !start) {
-    //         setStart(true);
-    //     }
-    // },[seed]);
-
 
 
     const SeedResults = useMemo(() => {
-            if (seed.length < 6 || !start || !ImmolateDefined) return null;
+            if (seed.length < 6 || !start) return null;
             try {
                 const engine = new ImmolateClassic(seed);
                 engine.InstParams(deck, stake, showmanOwned, version);
@@ -64,10 +57,11 @@ export default function App() {
                 engine.delete();
                 return results;
             }catch (e) {
+                console.error(e);
                 return null
             }
         },
-        [analyzeState, start, buys, showCardSpoilers, unlocks,ImmolateDefined]
+        [analyzeState, start, buys, showCardSpoilers, unlocks]
     );
 
 

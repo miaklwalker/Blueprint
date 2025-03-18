@@ -180,8 +180,10 @@ function AntePanel({ante, tabName}: { ante: Ante, tabName: string }) {
 
 function SeedExplorer({SeedResults}: { SeedResults: Seed  }) {
     const {width} = useViewportSize();
+
     const selectedAnte = useCardStore(state => state.applicationState.selectedAnte);
     const setSelectedAnte = useCardStore(state => state.setSelectedAnte);
+
     const selectedBlind = useCardStore(state => state.applicationState.selectedBlind);
     const setSelectedBlind = useCardStore(state => state.setSelectedBlind);
 
@@ -288,8 +290,6 @@ function SeedExplorer({SeedResults}: { SeedResults: Seed  }) {
     )
 }
 function Main({SeedResults}: { SeedResults: Seed | null }) {
-
-    // @ts-ignore
     return (
         <AppShell.Main>
             { !SeedResults && <HomePage/>}

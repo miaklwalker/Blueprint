@@ -69,7 +69,7 @@ export default function App() {
                     setStart(true);
                     setReady(true);
                 })
-                console.error(e);
+                // console.error(e);
                 return null
             }
         },

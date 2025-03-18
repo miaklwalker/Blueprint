@@ -48,14 +48,14 @@ const initialState: InitialState = {
         deck: 'Ghost Deck',
         cardsPerAnte: 50,
         antes: 8,
-        stake: 'Gold Stake',
+        stake: 'White Stake',
         showmanOwned: false,
         gameVersion: '10106',
         selectedOptions: Array(61).fill(true),
     },
     applicationState: {
         start: false,
-        settingsOpen: false,
+        settingsOpen: true,
         asideOpen: false,
         selectOptionsModalOpen: false,
         showCardSpoilers: false,
@@ -77,9 +77,10 @@ const initialState: InitialState = {
 
 const globalSettingsSetters = (set: any) => ({
     setSeed: (seed: string) => set((prev: InitialState) => {
-        prev.immolateState.seed = seed
+        prev.immolateState.seed = seed?.toUpperCase();
         prev.shoppingState = initialState.shoppingState
-        prev.searchState = initialState.searchState
+        prev.searchState = initialState.searchState;
+        prev.applicationState.start = false;
     }, undefined, 'Global/SetSeed'),
     setDeck: (deck: string) => set((prev: InitialState) => {
         prev.immolateState.deck = deck
@@ -129,24 +130,10 @@ const applicationSetters = (set: any) => ({
     }, undefined, 'Global/SetSelectedBlind'),
 
     toggleSettings: () => set((prev: { applicationState: { settingsOpen: boolean; asideOpen: boolean; }; }) => {
-        const isSmallScreen = window.innerWidth < 1660;
-
-        // If screen is small and we're opening settings, close aside
-        if (isSmallScreen && !prev.applicationState.settingsOpen && prev.applicationState.asideOpen) {
-            prev.applicationState.asideOpen = false;
-        }
-
         prev.applicationState.settingsOpen = !prev.applicationState.settingsOpen;
     }, undefined, 'Global/ToggleSettings'),
 
     toggleOutput: () => set((prev: { applicationState: { asideOpen: boolean; settingsOpen: boolean; }; }) => {
-        const isSmallScreen = window.innerWidth < 1660;
-
-        // If screen is small and we're opening aside, close settings
-        if (isSmallScreen && !prev.applicationState.asideOpen && prev.applicationState.settingsOpen) {
-            prev.applicationState.settingsOpen = false;
-        }
-
         prev.applicationState.asideOpen = !prev.applicationState.asideOpen;
     }, undefined, 'Global/ToggleOutput'),
 

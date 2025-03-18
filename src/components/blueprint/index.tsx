@@ -302,8 +302,6 @@ function Main({SeedResults}: { SeedResults: Seed | null }) {
 export function Blueprint({SeedResults}: { SeedResults: Seed | null }) {
     const settingsOpened = useCardStore(state => state.applicationState.settingsOpen);
     const outputOpened = useCardStore(state => state.applicationState.asideOpen);
-    const {width} = useViewportSize();
-    const isSmallScreen = width < 1280;
 
     return (
         <AppShell
@@ -312,7 +310,7 @@ export function Blueprint({SeedResults}: { SeedResults: Seed | null }) {
                 width: {base: '100%', md: 400, lg: 550},
                 breakpoint: 'md',
                 collapsed: {
-                    desktop: !outputOpened || (isSmallScreen && settingsOpened),
+                    desktop: !outputOpened,
                     mobile: !outputOpened
                 },
             }}
@@ -320,7 +318,7 @@ export function Blueprint({SeedResults}: { SeedResults: Seed | null }) {
                 width: {base: '100%', md: 400, lg: 400},
                 breakpoint: 'sm',
                 collapsed: {
-                    desktop: !settingsOpened || (isSmallScreen && outputOpened),
+                    desktop: !settingsOpened,
                     mobile: !settingsOpened
                 },
             }}

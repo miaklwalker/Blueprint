@@ -15,10 +15,10 @@ import {useCardStore} from "./modules/state/store.ts";
 import {Blueprint} from "./components/blueprint";
 
 //Todo HOME PAGE! WITH FEATURES
-//TODO URL SHARING
-//TODO Add hover to tags and boss popover
 //TODO Add info to those pop overs
 //TODO Allow tags to be included in the buys
+//TODO Add a way to see the seed in the analyze page
+//TODO ADD SELLS
 
 
 export default function App() {
@@ -36,14 +36,11 @@ export default function App() {
 
 
     const SeedResults = useMemo(() => {
-        console.log("Running memo")
             if(!ready) return null;
             if (seed.length < 6 || !start) {
-                console.log("Seed too short")
                 return null;
             }
             try {
-                console.log("Running memo")
                 const engine = new ImmolateClassic(seed);
                 engine.InstParams(deck, stake, showmanOwned, version);
                 engine.initLocks(1, false, true);
@@ -62,14 +59,13 @@ export default function App() {
                 engine.delete();
                 return results;
             } catch (e) {
-                console.debug('Setting Ready to false')
+                console.debug("Blueprint loaded before immolate. Listening for event")
                 setReady(false);
                 document.addEventListener('ImmolateReady', () => {
-                    console.log("Setting ready to true")
+                    console.debug("Immolate loaded, reloading blueprint")
                     setStart(true);
                     setReady(true);
                 })
-                // console.error(e);
                 return null
             }
         },

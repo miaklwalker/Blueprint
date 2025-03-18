@@ -7,7 +7,7 @@ export default function Footer() {
     return (
         <AppShell.Footer p={'xs'}>
             <Center w={'100%'}>
-                <Flex align={'center'} direction={{base: "column", md: "row"}} gap={'sm'}>
+                <Flex align={'center'} direction={{base: "column", sm: "row"}} gap={'sm'}>
                     <Text ta={'center'} fz={'xs'}>
                         Made by Michael Walker with {' '}
                         <Anchor fz={'xs'} href={"https://mantine.dev/"} target={"_blank"}> Mantine </Anchor>,

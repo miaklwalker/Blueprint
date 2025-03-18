@@ -6,7 +6,8 @@
             onRuntimeInitialized: function() {
                 // This is called when the Immolate module is ready to use
                 console.log("Immolate module initialized");
-                window.ImmolateReady = true;
+                console.log("Dispatching build event");
+                document.dispatchEvent(new Event("ImmolateReady"));
             }
         };
         function asVector(arr) {
@@ -30,6 +31,6 @@
 </head>
 <body>
 <div id="root"></div>
-<script defer type="module" src="/src/main.jsx"></script>
+<script type="module" src="/src/main.jsx"></script>
 </body>
 </html>

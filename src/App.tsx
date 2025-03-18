@@ -22,13 +22,19 @@ import {Blueprint} from "./components/blueprint";
 
 
 
-
-
+document.addEventListener('build',()=>{
+    console.log("BUILDING")
+    const setStart = useCardStore(state => state.setStart);
+    console.log("BUILDING")
+    setStart(true);
+})
+let tryCount = 0;
 export default function App() {
     const analyzeState = useCardStore(state => state.immolateState);
     const {seed, deck, stake, showmanOwned, gameVersion: version, antes, cardsPerAnte} = analyzeState;
 
     const start = useCardStore(state => state.applicationState.start);
+    const setStart = useCardStore(state => state.setStart);
     // const setStart = useCardStore(state => state.setStart);
     const buys = useCardStore(state => state.shoppingState.buys);
     const sells = useCardStore(state => state.shoppingState.sells);
@@ -36,8 +42,11 @@ export default function App() {
     const unlocks: boolean[] = useCardStore(state => state.immolateState.selectedOptions);
 
 
+
     const SeedResults = useMemo(() => {
-            if (seed.length < 6 || !start) return null;
+            if (seed.length < 6) {
+                return null;
+            }
             try {
                 const engine = new ImmolateClassic(seed);
                 engine.InstParams(deck, stake, showmanOwned, version);
@@ -57,6 +66,10 @@ export default function App() {
                 engine.delete();
                 return results;
             }catch (e) {
+                document.addEventListener('ImmolateReady',()=>{
+                    console.log("BUILDING")
+                    setStart(true);
+                })
                 console.error(e);
                 return null
             }

@@ -42,10 +42,13 @@ export default function App() {
 
 
     const SeedResults = useMemo(() => {
-            if (seed.length < 6) {
+        console.log("Running memo")
+            if (seed.length < 6 || !start) {
+                console.log("Seed too short")
                 return null;
             }
             try {
+                console.log("Running memo")
                 const engine = new ImmolateClassic(seed);
                 engine.InstParams(deck, stake, showmanOwned, version);
                 engine.initLocks(1, false, true);

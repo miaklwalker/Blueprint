@@ -280,8 +280,6 @@ function getImmolateStateFromUrl() {
         antes: parseInt(params.get('antes') || initialState.immolateState.antes.toString()),
         stake: params.get('stake') || initialState.immolateState.stake,
         gameVersion: params.get('gameVersion') || initialState.immolateState.gameVersion,
-        start: !!params?.get('seed')
-
     };
 }
 

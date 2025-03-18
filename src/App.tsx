@@ -21,14 +21,13 @@ import {Blueprint} from "./components/blueprint";
 //TODO Allow tags to be included in the buys
 
 
-
-document.addEventListener('build',()=>{
+document.addEventListener('build', () => {
     console.log("BUILDING")
     const setStart = useCardStore(state => state.setStart);
     console.log("BUILDING")
     setStart(true);
 })
-let tryCount = 0;
+
 export default function App() {
     const analyzeState = useCardStore(state => state.immolateState);
     const {seed, deck, stake, showmanOwned, gameVersion: version, antes, cardsPerAnte} = analyzeState;
@@ -40,7 +39,6 @@ export default function App() {
     const sells = useCardStore(state => state.shoppingState.sells);
     const showCardSpoilers = useCardStore(state => state.applicationState.showCardSpoilers);
     const unlocks: boolean[] = useCardStore(state => state.immolateState.selectedOptions);
-
 
 
     const SeedResults = useMemo(() => {
@@ -65,8 +63,8 @@ export default function App() {
                 let results = analyzer.analyzeSeed(antes, cardsPerAnte, options);
                 engine.delete();
                 return results;
-            }catch (e) {
-                document.addEventListener('ImmolateReady',()=>{
+            } catch (e) {
+                document.addEventListener('ImmolateReady', () => {
                     console.log("BUILDING")
                     setStart(true);
                 })

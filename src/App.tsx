@@ -10,7 +10,7 @@ import {ImmolateClassic} from "./modules/ImmolateWrapper/CardEngines/immolateCla
 import {CardEngineWrapper} from "./modules/ImmolateWrapper";
 
 import {AnalyzeOptions} from "./modules/const.js"
-import {useMemo} from "react";
+import {useMemo, useState} from "react";
 import {useCardStore} from "./modules/state/store.ts";
 import {Blueprint} from "./components/blueprint";
 
@@ -21,19 +21,13 @@ import {Blueprint} from "./components/blueprint";
 //TODO Allow tags to be included in the buys
 
 
-document.addEventListener('build', () => {
-    console.log("BUILDING")
-    const setStart = useCardStore(state => state.setStart);
-    console.log("BUILDING")
-    setStart(true);
-})
-
 export default function App() {
     const analyzeState = useCardStore(state => state.immolateState);
     const {seed, deck, stake, showmanOwned, gameVersion: version, antes, cardsPerAnte} = analyzeState;
-
+    const [ready, setReady] = useState(true);
     const start = useCardStore(state => state.applicationState.start);
     const setStart = useCardStore(state => state.setStart);
+
     // const setStart = useCardStore(state => state.setStart);
     const buys = useCardStore(state => state.shoppingState.buys);
     const sells = useCardStore(state => state.shoppingState.sells);
@@ -43,6 +37,7 @@ export default function App() {
 
     const SeedResults = useMemo(() => {
         console.log("Running memo")
+            if(!ready) return null;
             if (seed.length < 6 || !start) {
                 console.log("Seed too short")
                 return null;
@@ -67,15 +62,18 @@ export default function App() {
                 engine.delete();
                 return results;
             } catch (e) {
+                console.debug('Setting Ready to false')
+                setReady(false);
                 document.addEventListener('ImmolateReady', () => {
-                    console.log("BUILDING")
+                    console.log("Setting ready to true")
                     setStart(true);
+                    setReady(true);
                 })
                 console.error(e);
                 return null
             }
         },
-        [analyzeState, start, buys, showCardSpoilers, unlocks]
+        [analyzeState, start, buys, showCardSpoilers, unlocks, ready]
     );
 
 

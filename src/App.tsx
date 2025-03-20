@@ -45,14 +45,17 @@ export default function App() {
                 return null;
             }
             try {
+                const engine = new ImmolateClassic(seed);
                 function makeAnalyzer( showman = false ){
-                    const engine = new ImmolateClassic(seed);
                     engine.InstParams(deck, stake, showman, version);
-                    engine.initLocks(1, false, true);
                     const analyzer: CardEngineWrapper = new CardEngineWrapper(engine);
                     return analyzer;
                 }
                 let analyzer = makeAnalyzer(false);
+                function updateAnalyzer(showman = false) {
+                    console.log("Updating analyzer")
+                    engine.InstParams(deck, stake, showman, version);
+                }
                 const transactions = {buys, sells}
 
 
@@ -70,16 +73,17 @@ export default function App() {
                     analyzer.engine.handleSelectedUnlocks(options.unlocks);
                 }
                 for (let ante = 1; ante <= antes; ante++) {
-                    if( analyzer.engine.isLocked("Showman") && !analyzer.engine.instance.params.showman){
-                        console.log("Showman is locked")
-                        analyzer = makeAnalyzer(true);
-                    }
-                    result.antes[ante] = analyzer.analyzeAnte(ante, cardsPerAnte, options);
+                    // if( analyzer.engine.isLocked("Showman") && !analyzer.engine.instance.params.showman){
+                    //     console.log("Showman is locked")
+                    //     analyzer = makeAnalyzer(true);
+                    // }
+                    result.antes[ante] = analyzer.analyzeAnte(ante, cardsPerAnte, options, updateAnalyzer);
                 }
 
                 analyzer.engine.delete();
                 return result;
             } catch (e) {
+                console.error(e);
                 console.debug("Blueprint loaded before immolate. Listening for event")
                 setReady(false);
                 document.addEventListener('ImmolateReady', () => {

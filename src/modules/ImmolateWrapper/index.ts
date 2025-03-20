@@ -96,7 +96,7 @@ export interface EngineWrapper {
     // Card creation and analysis
     makeCard(card: NextShopItem): Joker_Final | StandardCard_Final | Consumables_Final;
 
-    analyzeAnte(ante: number, cardsPerAnte: number): Ante;
+    analyzeAnte(ante: number, cardsPerAnte: number, analyzeOptions: AnalyzeOptions, makeAnalyzer: any): Ante;
 
 }
 
@@ -166,32 +166,48 @@ export class CardEngineWrapper implements EngineWrapper {
         }
         return output
     }
+    findLevelTwoVoucher(key: string){
+        let allVouchers = this.engine.VOUCHERS;
+        for (let i = 0; i < allVouchers.size(); i += 2) {
+            if (allVouchers.get(i) === key) {
+                return allVouchers.get(i + 1);
+            }
+        }
+    }
+    handleBuy(key: string, type: string, analyzeOptions: AnalyzeOptions, makeAnalyzer: any) {
+        if (type === 'Card') {
+            this.engine.lock(key)
+            if(key === 'Showman'){
+                makeAnalyzer(true);
+            }
+        }
+        if (type === 'Voucher') {
+            this.engine.activateVoucher(key)
+            this.engine.lock(key)
+            const isLevelOneVoucher = !options.includes(key);
+            if (isLevelOneVoucher) {
+                let levelTwo = this.findLevelTwoVoucher(key);
+                if (analyzeOptions?.unlocks?.includes(levelTwo)) {
+                    this.engine.unlock(levelTwo);
+                }
+            }
+        }
 
-    analyzeAnte(ante: number, cardsPerAnte: number, analyzeOptions?: AnalyzeOptions): Ante {
+    }
+    analyzeAnte(ante: number, cardsPerAnte: number, analyzeOptions: AnalyzeOptions, makeAnalyzer: unknown): Ante {
         let itemsWithSpoilers: string[] = ["The Soul", "Judgement", "Wraith"];
         let spoilerSources = [this.engine.sources.S_Soul, this.engine.sources.S_Judgement, this.engine.sources.S_Wraith]
         let result = new Ante(ante);
+        this.engine.initLocks(ante, false, true);
         this.engine.initUnlocks(ante, false);
 
         result.boss = this.engine.nextBoss(ante)
         result.voucher = this.engine.nextVoucher(ante);
         let voucherKey = `${ante}-${LOCATIONS.VOUCHER}-0`;
-        if (analyzeOptions && analyzeOptions?.buys && analyzeOptions.buys[voucherKey]) {
+        if ( analyzeOptions?.buys && analyzeOptions.buys[voucherKey]) {
             let name = analyzeOptions.buys[voucherKey].name;
-            let AllVouchers = this.engine.VOUCHERS;
-            let unlocks = analyzeOptions?.unlocks;
-
-            for (let i = 0; i < AllVouchers.size(); i += 2) {
-                // if the user has the level two voucher enabled, then allow it!
-                if (AllVouchers.get(i) === name && name) {
-                    // the user has bought the level one
-                    this.engine.lock(name);
-                    this.engine.activateVoucher(name)
-                    let levelTwo = AllVouchers.get(i + 1);
-                    if (unlocks[i + 1] && options?.includes(levelTwo)) {
-                        this.engine.unlock(levelTwo);
-                    }
-                }
+            if(name){
+                this.handleBuy(name,"Voucher", analyzeOptions, makeAnalyzer)
             }
         }
 
@@ -214,7 +230,7 @@ export class CardEngineWrapper implements EngineWrapper {
                 }
             }
             if (analyzeOptions && analyzeOptions.buys[key]) {
-                this.engine.lock(result.queue[i].name)
+                this.handleBuy(result.queue[i].name, "Card", analyzeOptions, makeAnalyzer)
             }
 
         }
@@ -231,7 +247,7 @@ export class CardEngineWrapper implements EngineWrapper {
                 for (let k = 0; k < packInfo.size; k++) {
                     let key = `${ante}-${packString}-${k}`;
                     if (analyzeOptions && analyzeOptions.buys[key]) {
-                        this.engine.lock(pack.cards[k].name)
+                        this.handleBuy(pack.cards[k].name, "Card", analyzeOptions, makeAnalyzer)
                     }
 
                 }
@@ -418,7 +434,7 @@ export class CardEngineWrapper implements EngineWrapper {
                     // @ts-ignore
                     source.cards.push(generatedCard)
                     if (analyzeOptions && analyzeOptions.buys[key]) {
-                        this.engine.lock(generatedCard?.name)
+                        this.handleBuy(generatedCard.name, "Card", analyzeOptions, makeAnalyzer)
                     }
 
                 }

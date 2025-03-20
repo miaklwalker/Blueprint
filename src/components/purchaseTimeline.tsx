@@ -45,7 +45,6 @@ export default function PurchaseTimeline({buys, sells}: {
                     // Parse the key to extract information
                     const [, , index] = key.split('-');
                     let buyMessage;
-                    console.log(buyData)
                     switch (true) {
                         case buyData.transactionType === 'sell':
                             buyMessage = `Sold ${buyData.name} at Ante ${buyData.ante}`;

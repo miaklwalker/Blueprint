@@ -81,7 +81,6 @@ export default function SearchSeedInput({SeedResults}: { SeedResults: Seed | nul
         })
         return cards
     }, [searchString, searchActive])
-console.log(searchResults.length)
     return (
         <>
             <Spotlight

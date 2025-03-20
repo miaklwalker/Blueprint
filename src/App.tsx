@@ -72,6 +72,7 @@ export default function App() {
                 if (options?.unlocks) {
                     analyzer.engine.handleSelectedUnlocks(options.unlocks);
                 }
+                engine.initLocks(1, false, true);
                 for (let ante = 1; ante <= antes; ante++) {
                     // if( analyzer.engine.isLocked("Showman") && !analyzer.engine.instance.params.showman){
                     //     console.log("Showman is locked")

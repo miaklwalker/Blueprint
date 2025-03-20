@@ -187,7 +187,8 @@ export class CardEngineWrapper implements EngineWrapper {
             const isLevelOneVoucher = !options.includes(key);
             if (isLevelOneVoucher) {
                 let levelTwo = this.findLevelTwoVoucher(key);
-                if (analyzeOptions?.unlocks?.includes(levelTwo)) {
+                let optionIndex = options.indexOf(levelTwo);
+                if (analyzeOptions?.unlocks?.[optionIndex]) {
                     this.engine.unlock(levelTwo);
                 }
             }
@@ -198,7 +199,6 @@ export class CardEngineWrapper implements EngineWrapper {
         let itemsWithSpoilers: string[] = ["The Soul", "Judgement", "Wraith"];
         let spoilerSources = [this.engine.sources.S_Soul, this.engine.sources.S_Judgement, this.engine.sources.S_Wraith]
         let result = new Ante(ante);
-        this.engine.initLocks(ante, false, true);
         this.engine.initUnlocks(ante, false);
 
         result.boss = this.engine.nextBoss(ante)

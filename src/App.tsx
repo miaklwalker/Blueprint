@@ -13,12 +13,16 @@ import {AnalyzeOptions} from "./modules/const.js"
 import {useMemo, useState} from "react";
 import {useCardStore} from "./modules/state/store.ts";
 import {Blueprint} from "./components/blueprint";
+import {Seed} from "./modules/ImmolateWrapper/CardEngines/Cards.ts";
 
 //Todo HOME PAGE! WITH FEATURES
 //TODO Add info to those pop overs
 //TODO Allow tags to be included in the buys
 //TODO Add a way to see the seed in the analyze page
 //TODO ADD SELLS
+
+
+
 
 
 export default function App() {
@@ -41,10 +45,14 @@ export default function App() {
                 return null;
             }
             try {
-                const engine = new ImmolateClassic(seed);
-                engine.InstParams(deck, stake, showmanOwned, version);
-                engine.initLocks(1, false, true);
-                const analyzer: CardEngineWrapper = new CardEngineWrapper(engine);
+                function makeAnalyzer( showman = false ){
+                    const engine = new ImmolateClassic(seed);
+                    engine.InstParams(deck, stake, showman, version);
+                    engine.initLocks(1, false, true);
+                    const analyzer: CardEngineWrapper = new CardEngineWrapper(engine);
+                    return analyzer;
+                }
+                let analyzer = makeAnalyzer(false);
                 const transactions = {buys, sells}
 
 
@@ -55,9 +63,22 @@ export default function App() {
                     ...transactions
                 };
 
-                let results = analyzer.analyzeSeed(antes, cardsPerAnte, options);
-                engine.delete();
-                return results;
+
+                let result = new Seed();
+                analyzer.engine.lockLevelTwoVouchers();
+                if (options?.unlocks) {
+                    analyzer.engine.handleSelectedUnlocks(options.unlocks);
+                }
+                for (let ante = 1; ante <= antes; ante++) {
+                    if( analyzer.engine.isLocked("Showman") && !analyzer.engine.instance.params.showman){
+                        console.log("Showman is locked")
+                        analyzer = makeAnalyzer(true);
+                    }
+                    result.antes[ante] = analyzer.analyzeAnte(ante, cardsPerAnte, options);
+                }
+
+                analyzer.engine.delete();
+                return result;
             } catch (e) {
                 console.debug("Blueprint loaded before immolate. Listening for event")
                 setReady(false);

@@ -7,8 +7,9 @@ export class ImmolateClassic implements CardEngine{
     commonSources: { [key: string]: string };
     instance: any;
     VOUCHERS: Map<any, any>;
-
+seed:string;
     constructor(seed: string) {
+        this.seed = seed;
         this.sources = {
             R_Joker_Common: "Joker1",
             R_Joker_Uncommon: "Joker2",
@@ -76,7 +77,7 @@ export class ImmolateClassic implements CardEngine{
         };
         this.commonSources = {
             "The Soul": this.sources.S_Soul,
-            "Judgment": this.sources.S_Judgement,
+            "Judgement": this.sources.S_Judgement,
             "Wraith": this.sources.S_Wraith,
             "RiffRaff": this.sources.S_Riff_Raff,
         }

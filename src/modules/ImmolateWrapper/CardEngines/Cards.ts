@@ -297,7 +297,7 @@ export class Pack {
     }
 
     init(instance: CardEngine, ante: number, spoilers = true) {
-        let itemsWithSpoilers: string[] = ["The Soul", "Judgment", "Wraith"];
+        let itemsWithSpoilers: string[] = ["The Soul", "Judgement", "Wraith"];
         let cards, cardType;
         switch (this.name) {
             case "Celestial Pack":
@@ -331,6 +331,7 @@ export class Pack {
                 continue;
             }
             if (typeof data === 'string' && itemsWithSpoilers.includes(data) && spoilers) {
+                console.log(data)
                 let joker = instance.nextJoker(instance.commonSources[data], ante, true);
                 let commonCardInterface = {
                     name: joker.joker,

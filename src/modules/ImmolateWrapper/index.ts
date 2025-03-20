@@ -26,6 +26,7 @@ export interface MiscCardSource {
 }
 
 export interface CardEngine {
+    seed: string;
     VOUCHERS: any;
     sources: { [key: string]: string };
     commonSources: { [key: string]: string };
@@ -97,7 +98,6 @@ export interface EngineWrapper {
 
     analyzeAnte(ante: number, cardsPerAnte: number): Ante;
 
-    analyzeSeed(antes: number, cardsPerAnte?: number): Seed;
 }
 
 export class CardEngineWrapper implements EngineWrapper {
@@ -180,14 +180,15 @@ export class CardEngineWrapper implements EngineWrapper {
             let name = analyzeOptions.buys[voucherKey].name;
             let AllVouchers = this.engine.VOUCHERS;
             let unlocks = analyzeOptions?.unlocks;
-            for (let i = 0; i < AllVouchers.size(); i+=2) {
+
+            for (let i = 0; i < AllVouchers.size(); i += 2) {
                 // if the user has the level two voucher enabled, then allow it!
                 if (AllVouchers.get(i) === name && name) {
                     // the user has bought the level one
                     this.engine.lock(name);
                     this.engine.activateVoucher(name)
                     let levelTwo = AllVouchers.get(i + 1);
-                    if(unlocks[i + 1] && options?.includes(levelTwo)) {
+                    if (unlocks[i + 1] && options?.includes(levelTwo)) {
                         this.engine.unlock(levelTwo);
                     }
                 }
@@ -199,7 +200,7 @@ export class CardEngineWrapper implements EngineWrapper {
         for (let i = 0; i < cardsPerAnte; i++) {
             let key = `${ante}-${LOCATIONS.SHOP}-${i}`;
             let item = this.engine.nextShopItem(ante);
-            let card =this.makeCard(
+            let card = this.makeCard(
                 item
             )
             result.queue.push(
@@ -320,6 +321,55 @@ export class CardEngineWrapper implements EngineWrapper {
                 hasStickers: true,
                 cards: []
             },
+            {
+                name: "buffoonPack",
+                cardsToGenerate: maxCards,
+                cardType: "Joker",
+                source: this.engine.sources.S_Buffoon,
+                cards: [],
+                hasStickers: true,
+            },
+            {
+                name: "celestialPack",
+                cardsToGenerate: maxCards,
+                cardType: "Planet",
+                source: this.engine.sources.S_Celestial,
+                cards: []
+            },
+            {
+                name: "standardPack",
+                cardsToGenerate: maxCards,
+                cardType: "Spectral",
+                source: this.engine.sources.S_Standard,
+                cards: [],
+                hasStickers: false,
+            },
+            {
+                name: "superposition",
+                cardsToGenerate: maxCards,
+                cardType: "Tarot",
+                source: this.engine.sources.S_Superposition,
+                cards: [],
+                hasStickers: false,
+            },
+            {
+                name: "seance",
+                cardsToGenerate: maxCards,
+                cardType: "Spectral",
+                source: this.engine.sources.S_Seance,
+                cards: [],
+                soulable: true,
+                hasStickers: false,
+            },
+            {
+                name: "sixthSense",
+                cardsToGenerate: maxCards,
+                cardType: "Spectral",
+                source: this.engine.sources.S_Sixth_Sense,
+                cards: [],
+                soulable: true,
+                hasStickers: false,
+            }
         ]
         const updates = analyzeOptions?.updates;
         if (updates) {
@@ -345,7 +395,7 @@ export class CardEngineWrapper implements EngineWrapper {
         }
         for (let source of miscCardSources) {
             for (let i = 0; i < source.cardsToGenerate; i++) {
-            let key = `${ante}-${source.name}-${i}`;
+                let key = `${ante}-${source.name}-${i}`;
                 let generator = generators[source.cardType];
                 let card: string | PackCard = generator(source.source, ante, source?.soulable ?? source?.hasStickers ?? false);
 
@@ -366,9 +416,8 @@ export class CardEngineWrapper implements EngineWrapper {
                 );
                 if (generatedCard && 'name' in generatedCard) {
                     // @ts-ignore
-                    source.cards.push( generatedCard )
-                    if(analyzeOptions && analyzeOptions.buys[key]  ){
-                        console.log(generatedCard)
+                    source.cards.push(generatedCard)
+                    if (analyzeOptions && analyzeOptions.buys[key]) {
                         this.engine.lock(generatedCard?.name)
                     }
 
@@ -379,18 +428,6 @@ export class CardEngineWrapper implements EngineWrapper {
 
         result.miscCardSources = miscCardSources
 
-        return result
-    }
-
-    analyzeSeed(antes: number, cardsPerAnte: number = 50, options?: AnalyzeOptions): Seed {
-        let result = new Seed();
-        this.engine.lockLevelTwoVouchers();
-        if (options?.unlocks) {
-            this.engine.handleSelectedUnlocks(options.unlocks);
-        }
-        for (let ante = 1; ante <= antes; ante++) {
-            result.antes[ante] = this.analyzeAnte(ante, cardsPerAnte, options);
-        }
         return result
     }
 }

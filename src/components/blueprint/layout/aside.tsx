@@ -5,6 +5,7 @@ import {IconCards, IconShoppingCart} from "@tabler/icons-react";
 import SearchSeedInput from "../../searchInput.tsx";
 import MiscCardSourcesDisplay from "../../miscSourcesDisplay.tsx";
 import PurchaseTimeline from "../../purchaseTimeline.tsx";
+import {useMediaQuery} from "@mantine/hooks";
 
 export function Aside({SeedResults}: { SeedResults: Seed | null }) {
     const selectedAnte = useCardStore(state => state.applicationState.selectedAnte);
@@ -17,12 +18,14 @@ export function Aside({SeedResults}: { SeedResults: Seed | null }) {
 
     const tab = useCardStore(state => state.applicationState.asideTab);
     const setTab = useCardStore(state => state.setAsideTab);
-
+    const media = useMediaQuery("(min-width: 600px)");
     return (
         <AppShell.Aside p="md">
-            <AppShell.Section hiddenFrom={'sm'} mb="md">
-                <SearchSeedInput SeedResults={SeedResults}/>
-            </AppShell.Section>
+            {!media && (
+                <AppShell.Section hiddenFrom={'sm'} mb="md">
+                    <SearchSeedInput SeedResults={SeedResults}/>
+                </AppShell.Section>
+            )}
             <AppShell.Section>
                 <Tabs value={tab} onChange={(e) => setTab(`${e}`)}>
                     <Tabs.List grow mb="md">

@@ -28,7 +28,11 @@ export default function SearchSeedInput({SeedResults}: { SeedResults: Seed | nul
             ante.queue.forEach((card, index) => {
                 const cardString = `${(card?.edition && card.edition !== 'No Edition') ? card.edition : ''} ${card.name}`.trim();
                 if (cardString.toLowerCase().includes(searchString.toLowerCase())) {
+
                     cards.push({
+                        transactionType: "buy",
+                        // @ts-ignore
+                        card: card,
                         location: LOCATIONS.SHOP,
                         locationType: LOCATIONS.SHOP,
                         ante: String(ante.ante),
@@ -44,6 +48,8 @@ export default function SearchSeedInput({SeedResults}: { SeedResults: Seed | nul
                         const cardString = `${card?.edition ?? ''} ${card.name}`.trim();
                         if (cardString.toLowerCase().includes(searchString.toLowerCase())) {
                             cards.push({
+                                transactionType: "buy",
+                                card: card,
                                 location: pack.name,
                                 locationType: LOCATIONS.PACK,
                                 ante: String(ante.ante),
@@ -60,6 +66,8 @@ export default function SearchSeedInput({SeedResults}: { SeedResults: Seed | nul
                     const cardString = `${card?.edition ?? ''} ${card.name}`.trim();
                     if (cardString.toLowerCase().includes(searchString.toLowerCase())) {
                         cards.push({
+                            transactionType: "buy",
+                            card: card,
                             location: source.name,
                             locationType: LOCATIONS.MISC,
                             ante: String(ante.ante),
@@ -73,11 +81,14 @@ export default function SearchSeedInput({SeedResults}: { SeedResults: Seed | nul
         })
         return cards
     }, [searchString, searchActive])
-
+console.log(searchResults.length)
     return (
         <>
             <Spotlight
                 nothingFound="Nothing found..."
+                highlightQuery
+                scrollable
+                maxHeight={450}
                 actions={
                     searchResults.map((result: any, index) => {
                             const name = result.name;

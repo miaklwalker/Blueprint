@@ -93,6 +93,7 @@ export default function PurchaseTimeline({buys, sells}: {
                                         }}> Remove </Button>
                                         {
                                             buyData.transactionType !== 'sell' &&
+                                            buyData.location !== LOCATIONS.VOUCHER &&
                                             <Button
                                                 color={'green'}
                                                 size={'compact-sm'}

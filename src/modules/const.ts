@@ -403,7 +403,7 @@ export interface AnalyzeOptions {
     buys: { [key: string]: BuyMetaData },
     sells: { [key: string]: BuyMetaData },
     updates: { [key: string]: any }[]
-    unlocks: boolean[],
+    unlocks: string[],
 }
 export interface BuyWrapperProps {
     children: ReactNode,
@@ -420,6 +420,61 @@ export enum LOCATIONS {
     VOUCHER = 'VOUCHER'
 }
 
+
+/*
+    lock(Item::Stone_Joker);   // Stone
+    lock(Item::Steel_Joker);   // Steel
+    lock(Item::Glass_Joker);   // Glass
+    lock(Item::Golden_Ticket); // Gold
+    lock(Item::Lucky_Cat);     // Lucky
+
+        // Require hand discoveries
+    lock(Item::Planet_X);
+    lock(Item::Ceres);
+    lock(Item::Eris);
+    lock(Item::Five_of_a_Kind);
+    lock(Item::Flush_House);
+    lock(Item::Flush_Five);
+    lock(Item::Cavendish);
+ */
+export const EVENT_UNLOCKS = [
+    {
+        name: "Stone Joker",
+        condition: "Have at least one stone card in deck",
+    },
+    {
+        name: "Steel Joker",
+        condition: "Have at least one steel card in deck",
+    },
+    {
+        name: "Glass Joker",
+        condition: "Have at least one glass card in deck",
+    },
+    {
+        name: "Golden Ticket",
+        condition: "Have at least one Gold Card in deck",
+    },
+    {
+        name: "Lucky Cat",
+        condition: "Have at least one lucky card in deck",
+    },
+    {
+        name: "Planet X",
+        condition: "Play five of a kind",
+    },
+    {
+        name: "Ceres",
+        condition: "Play flush house",
+    },
+    {
+        name: "Eris",
+        condition: "Play flush five",
+    },
+    {
+        name: "Cavendish",
+        condition: "Gros Michel must go extinct",
+    }
+]
 
 export const tagDescriptions: {[key:string]: string} = {
     "Uncommon Tag": "The next shop will have a free Uncommon Joker.",

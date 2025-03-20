@@ -102,6 +102,7 @@ export default function NavBar() {
                     color="blue"
                     value={cardsPerAnte}
                     onChange={(v) => setCardsPerAnte(Number(v))}
+                    mb={'sm'}
 
                 />
                 <Group>
@@ -117,9 +118,6 @@ export default function NavBar() {
                                 onChange={e => setShowCardSpoilers(e.currentTarget.checked)}
                             />
                         </Tooltip>
-                    </Box>
-                    <Box mb={'sm'}>
-
                     </Box>
                 </Group>
 

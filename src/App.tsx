@@ -27,7 +27,7 @@ import {Seed} from "./modules/ImmolateWrapper/CardEngines/Cards.ts";
 
 export default function App() {
     const analyzeState = useCardStore(state => state.immolateState);
-    const {seed, deck, stake, showmanOwned, gameVersion: version, antes, cardsPerAnte} = analyzeState;
+    const {seed, deck, stake, gameVersion: version, antes, cardsPerAnte} = analyzeState;
     const [ready, setReady] = useState(true);
     const start = useCardStore(state => state.applicationState.start);
     const setStart = useCardStore(state => state.setStart);
@@ -36,7 +36,7 @@ export default function App() {
     const buys = useCardStore(state => state.shoppingState.buys);
     const sells = useCardStore(state => state.shoppingState.sells);
     const showCardSpoilers = useCardStore(state => state.applicationState.showCardSpoilers);
-    const unlocks: boolean[] = useCardStore(state => state.immolateState.selectedOptions);
+    const unlocks: string[] = useCardStore(state => state.immolateState.selectedOptions);
 
 
     const SeedResults = useMemo(() => {
@@ -46,16 +46,6 @@ export default function App() {
             }
             try {
                 const engine = new ImmolateClassic(seed);
-                function makeAnalyzer( showman = false ){
-                    engine.InstParams(deck, stake, showman, version);
-                    const analyzer: CardEngineWrapper = new CardEngineWrapper(engine);
-                    return analyzer;
-                }
-                let analyzer = makeAnalyzer(false);
-                function updateAnalyzer(showman = false) {
-                    console.log("Updating analyzer")
-                    engine.InstParams(deck, stake, showman, version);
-                }
                 const transactions = {buys, sells}
 
 
@@ -65,19 +55,28 @@ export default function App() {
                     updates: [],
                     ...transactions
                 };
+                function makeAnalyzer( showman = false ){
+                    engine.InstParams(deck, stake, showman, version);
+                    engine.initLocks(1, false, true);
+                    // Vouchers included in selected unlocks since players may not have those available
+                    engine.handleSelectedUnlocks(options.unlocks);
+                    engine.lockLevelTwoVouchers()
+                    const analyzer: CardEngineWrapper = new CardEngineWrapper(engine);
+                    return analyzer;
+                }
+                let analyzer = makeAnalyzer(false);
+                function updateAnalyzer(showman = false) {
+                    engine.InstParams(deck, stake, showman, version);
+                }
+
 
 
                 let result = new Seed();
-                analyzer.engine.lockLevelTwoVouchers();
-                if (options?.unlocks) {
-                    analyzer.engine.handleSelectedUnlocks(options.unlocks);
-                }
-                engine.initLocks(1, false, true);
+
+
+
+                // console.log(sells)
                 for (let ante = 1; ante <= antes; ante++) {
-                    // if( analyzer.engine.isLocked("Showman") && !analyzer.engine.instance.params.showman){
-                    //     console.log("Showman is locked")
-                    //     analyzer = makeAnalyzer(true);
-                    // }
                     result.antes[ante] = analyzer.analyzeAnte(ante, cardsPerAnte, options, updateAnalyzer);
                 }
 

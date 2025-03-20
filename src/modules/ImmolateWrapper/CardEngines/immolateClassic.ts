@@ -241,12 +241,13 @@ seed:string;
         this.instance.lock("Palette");
     }
 
-    handleSelectedUnlocks(unlocks: boolean[]): void {
-        options.forEach( (option: string, index: number) => {
-            if(!unlocks[index]){
-                this.instance.lock(option);
+    handleSelectedUnlocks(selectedUnlocks: string[]){
+        options.forEach((option: string) => {
+
+            if(selectedUnlocks.includes(option)){
+                this.unlock(option);
             }else{
-                this.instance.unlock(option);
+                this.lock(option);
             }
         })
     }

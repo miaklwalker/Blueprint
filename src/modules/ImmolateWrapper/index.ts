@@ -86,7 +86,7 @@ export interface CardEngine {
     // Specialized methods
     lockLevelTwoVouchers(): void;
 
-    handleSelectedUnlocks(unlocks: boolean[]): void;
+    handleSelectedUnlocks(unlocks: string[]): void;
 
     // Cleanup
     delete(): void;
@@ -183,26 +183,37 @@ export class CardEngineWrapper implements EngineWrapper {
         }
         if (type === 'Voucher') {
             this.engine.activateVoucher(key)
-            this.engine.lock(key)
             const isLevelOneVoucher = !options.includes(key);
             if (isLevelOneVoucher) {
                 let levelTwo = this.findLevelTwoVoucher(key);
-                let optionIndex = options.indexOf(levelTwo);
-                if (analyzeOptions?.unlocks?.[optionIndex]) {
+                if (analyzeOptions?.unlocks?.includes(levelTwo)) {
                     this.engine.unlock(levelTwo);
+                }else{
+                    this.engine.lock(levelTwo);
                 }
             }
         }
-
     }
-    analyzeAnte(ante: number, cardsPerAnte: number, analyzeOptions: AnalyzeOptions, makeAnalyzer: unknown): Ante {
+    handleSell(key: string, type: string, makeAnalyzer: any) {
+        if (type === 'Card') {
+            this.engine.unlock(key)
+            if(key === 'Showman'){
+                makeAnalyzer(false);
+            }
+        }
+    }
+    analyzeAnte(ante: number, cardsPerAnte: number, analyzeOptions: AnalyzeOptions, makeAnalyzer: any): Ante {
         let itemsWithSpoilers: string[] = ["The Soul", "Judgement", "Wraith"];
         let spoilerSources = [this.engine.sources.S_Soul, this.engine.sources.S_Judgement, this.engine.sources.S_Wraith]
         let result = new Ante(ante);
         this.engine.initUnlocks(ante, false);
 
         result.boss = this.engine.nextBoss(ante)
+        let showmanIsLocked = this.engine.isLocked('Showman');
+        makeAnalyzer(false)
         result.voucher = this.engine.nextVoucher(ante);
+        makeAnalyzer(showmanIsLocked)
+
         let voucherKey = `${ante}-${LOCATIONS.VOUCHER}-0`;
         if ( analyzeOptions?.buys && analyzeOptions.buys[voucherKey]) {
             let name = analyzeOptions.buys[voucherKey].name;
@@ -210,7 +221,36 @@ export class CardEngineWrapper implements EngineWrapper {
                 this.handleBuy(name,"Voucher", analyzeOptions, makeAnalyzer)
             }
         }
+        for (let blind of Object.keys(result.blinds)) {
+            if (ante === 1 && blind === 'smallBlind') {
+                continue;
+            }
+            const sellKey = `${ante}-${blind}`;
+            Object
+                .keys(analyzeOptions?.sells ?? {})
+                .filter((key: string) => key.startsWith(sellKey))
+                .forEach(key => {
+                    let sell = analyzeOptions.sells[key];
+                    if( sell && sell.name){
+                        this.handleSell(sell.name, "Card", makeAnalyzer)
+                    }
+                })
 
+            for (let j = 0; j < 2; j++) {
+                let packString = this.engine.nextPack(ante);
+                let packInfo = this.engine.packInfo(packString);
+                let pack = new Pack(packInfo);
+                pack.init(this.engine, ante, analyzeOptions?.showCardSpoilers ?? false);
+                result.blinds[blind].packs.push(pack)
+                for (let k = 0; k < packInfo.size; k++) {
+                    let key = `${ante}-${packString}-${k}`;
+                    if (analyzeOptions && analyzeOptions.buys[key]) {
+                        this.handleBuy(pack.cards[k].name, "Card", analyzeOptions, makeAnalyzer)
+                    }
+
+                }
+            }
+        }
         result.tags.push(this.engine.nextTag(ante));
         result.tags.push(this.engine.nextTag(ante));
         for (let i = 0; i < cardsPerAnte; i++) {
@@ -234,25 +274,7 @@ export class CardEngineWrapper implements EngineWrapper {
             }
 
         }
-        for (let blind of Object.keys(result.blinds)) {
-            if (ante === 1 && blind === 'smallBlind') {
-                continue;
-            }
-            for (let j = 0; j < 2; j++) {
-                let packString = this.engine.nextPack(ante);
-                let packInfo = this.engine.packInfo(packString);
-                let pack = new Pack(packInfo);
-                pack.init(this.engine, ante, analyzeOptions?.showCardSpoilers ?? false);
-                result.blinds[blind].packs.push(pack)
-                for (let k = 0; k < packInfo.size; k++) {
-                    let key = `${ante}-${packString}-${k}`;
-                    if (analyzeOptions && analyzeOptions.buys[key]) {
-                        this.handleBuy(pack.cards[k].name, "Card", analyzeOptions, makeAnalyzer)
-                    }
 
-                }
-            }
-        }
         const maxCards = 15
         const miscCardSources: MiscCardSource[] = [
             // {

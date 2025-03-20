@@ -14,7 +14,7 @@ export interface InitialState {
         stake: string;
         showmanOwned: boolean;
         gameVersion: string;
-        selectedOptions: boolean[];
+        selectedOptions: string[];
     };
     applicationState: {
         start: boolean;
@@ -51,7 +51,7 @@ const initialState: InitialState = {
         stake: 'White Stake',
         showmanOwned: false,
         gameVersion: '10106',
-        selectedOptions: Array(61).fill(true),
+        selectedOptions: options,
     },
     applicationState: {
         start: false,
@@ -101,7 +101,7 @@ const globalSettingsSetters = (set: any) => ({
         prev.immolateState.gameVersion = gameVersion
     }, undefined, 'Global/SetGameVersion'),
     setSelectedOptions: (selectedOptions: string[]) => set((prev: InitialState) => {
-        prev.immolateState.selectedOptions = options.map((option: string) => selectedOptions.includes(option));
+        prev.immolateState.selectedOptions = selectedOptions
     }, undefined, 'Global/SetSelectedOptions'),
 });
 const applicationSetters = (set: any) => ({

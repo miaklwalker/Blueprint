@@ -16,7 +16,7 @@ export default function UnlocksModal() {
                     label="Unlocked Items "
                     description="Items that you have unlocked by playing the game"
                     withAsterisk
-                    value={options.filter((_: any, i: number) => selectedOptions[i])}
+                    value={selectedOptions}
                     onChange={setSelectedOptions}
                 >
                     <SimpleGrid cols={{base: 2, md: 4, lg: 6}} mb={'lg'} mt={'xs'}>

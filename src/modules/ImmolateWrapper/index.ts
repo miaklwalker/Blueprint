@@ -14,6 +14,7 @@ import {
     Tarot_Final
 } from "./CardEngines/Cards.ts";
 import {AnalyzeOptions, LOCATIONS, options} from "../const.ts";
+import {useCardStore} from "../state/store.ts";
 
 export interface MiscCardSource {
     name: string;
@@ -168,6 +169,7 @@ export class CardEngineWrapper implements EngineWrapper {
     }
 
     analyzeAnte(ante: number, cardsPerAnte: number, analyzeOptions?: AnalyzeOptions): Ante {
+
         let itemsWithSpoilers: string[] = ["The Soul", "Judgement", "Wraith"];
         let spoilerSources = [this.engine.sources.S_Soul, this.engine.sources.S_Judgement, this.engine.sources.S_Wraith]
         let result = new Ante(ante);
@@ -180,14 +182,14 @@ export class CardEngineWrapper implements EngineWrapper {
             let name = analyzeOptions.buys[voucherKey].name;
             let AllVouchers = this.engine.VOUCHERS;
             let unlocks = analyzeOptions?.unlocks;
-            for (let i = 0; i < AllVouchers.size(); i+=2) {
+            for (let i = 0; i < AllVouchers.size(); i += 2) {
                 // if the user has the level two voucher enabled, then allow it!
                 if (AllVouchers.get(i) === name && name) {
                     // the user has bought the level one
                     this.engine.lock(name);
                     this.engine.activateVoucher(name)
                     let levelTwo = AllVouchers.get(i + 1);
-                    if(unlocks[i + 1] && options?.includes(levelTwo)) {
+                    if (unlocks[i + 1] && options?.includes(levelTwo)) {
                         this.engine.unlock(levelTwo);
                     }
                 }
@@ -199,7 +201,7 @@ export class CardEngineWrapper implements EngineWrapper {
         for (let i = 0; i < cardsPerAnte; i++) {
             let key = `${ante}-${LOCATIONS.SHOP}-${i}`;
             let item = this.engine.nextShopItem(ante);
-            let card =this.makeCard(
+            let card = this.makeCard(
                 item
             )
             result.queue.push(
@@ -235,7 +237,18 @@ export class CardEngineWrapper implements EngineWrapper {
 
                 }
             }
+            let sellKeyPrefix = `${ante}-${blind}`;
+            if (analyzeOptions && analyzeOptions?.sells) {
+                for (let sellKey in analyzeOptions.sells) {
+                    if (sellKey.startsWith(sellKeyPrefix)) {
+                        let metaData = analyzeOptions.sells[sellKey];
+                        if (!metaData || !metaData?.name) continue;
+                        this.engine.unlock(metaData.name);
+                    }
+                }
+            }
         }
+
         const maxCards = 15
         const miscCardSources: MiscCardSource[] = [
             // {
@@ -345,7 +358,7 @@ export class CardEngineWrapper implements EngineWrapper {
         }
         for (let source of miscCardSources) {
             for (let i = 0; i < source.cardsToGenerate; i++) {
-            let key = `${ante}-${source.name}-${i}`;
+                let key = `${ante}-${source.name}-${i}`;
                 let generator = generators[source.cardType];
                 let card: string | PackCard = generator(source.source, ante, source?.soulable ?? source?.hasStickers ?? false);
 
@@ -366,9 +379,8 @@ export class CardEngineWrapper implements EngineWrapper {
                 );
                 if (generatedCard && 'name' in generatedCard) {
                     // @ts-ignore
-                    source.cards.push( generatedCard )
-                    if(analyzeOptions && analyzeOptions.buys[key]  ){
-                        console.log(generatedCard)
+                    source.cards.push(generatedCard)
+                    if (analyzeOptions && analyzeOptions.buys[key]) {
                         this.engine.lock(generatedCard?.name)
                     }
 
@@ -376,19 +388,24 @@ export class CardEngineWrapper implements EngineWrapper {
 
             }
         }
-
         result.miscCardSources = miscCardSources
+
 
         return result
     }
 
     analyzeSeed(antes: number, cardsPerAnte: number = 50, options?: AnalyzeOptions): Seed {
+        console.log("starting analyze")
         let result = new Seed();
         this.engine.lockLevelTwoVouchers();
         if (options?.unlocks) {
             this.engine.handleSelectedUnlocks(options.unlocks);
         }
         for (let ante = 1; ante <= antes; ante++) {
+            this.engine.instance.params.showman = this.engine.isLocked('Showman');
+            console.log("Analyzing ante", ante)
+            console.log("Is showman locked?", this.engine.isLocked('Showman'))
+            console.log("Is showman active?", this.engine.instance.params.showman = true)
             result.antes[ante] = this.analyzeAnte(ante, cardsPerAnte, options);
         }
         return result

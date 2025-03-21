@@ -404,6 +404,7 @@ export interface AnalyzeOptions {
     sells: { [key: string]: BuyMetaData },
     updates: { [key: string]: any }[]
     unlocks: string[],
+    events: Event[],
 }
 export interface BuyWrapperProps {
     children: ReactNode,
@@ -437,6 +438,12 @@ export enum LOCATIONS {
     lock(Item::Flush_Five);
     lock(Item::Cavendish);
  */
+
+export interface CardEvent {
+    name: string;
+    ante: number;
+    blind: string;
+}
 export const EVENT_UNLOCKS = [
     {
         name: "Stone Joker",

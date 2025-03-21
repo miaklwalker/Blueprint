@@ -62,6 +62,7 @@ export default function MiscCardSourcesDisplay({miscSources}: { miscSources?: Mi
                                             <Carousel.Slide key={i}>
                                                 <BuyWrapper
                                                     metaData={{
+                                                        transactionType: "buy",
                                                         location: name,
                                                         locationType: LOCATIONS.MISC,
                                                         index: i,

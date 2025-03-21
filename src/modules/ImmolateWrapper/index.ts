@@ -203,6 +203,8 @@ export class CardEngineWrapper implements EngineWrapper {
         }
     }
     analyzeAnte(ante: number, cardsPerAnte: number, analyzeOptions: AnalyzeOptions, makeAnalyzer: any): Ante {
+
+
         let itemsWithSpoilers: string[] = ["The Soul", "Judgement", "Wraith"];
         let spoilerSources = [this.engine.sources.S_Soul, this.engine.sources.S_Judgement, this.engine.sources.S_Wraith]
         let result = new Ante(ante);
@@ -222,6 +224,15 @@ export class CardEngineWrapper implements EngineWrapper {
             }
         }
         for (let blind of Object.keys(result.blinds)) {
+            if(analyzeOptions?.events){
+                console.log("Ante", ante);
+                console.log("Blind", blind);
+                let currentEvents = analyzeOptions.events.filter((event: any) => event.ante === ante && event.blind === blind);
+                currentEvents.forEach((event: any) => {
+                    console.log("Name",event.name)
+                    this.engine.unlock(event.name)
+                })
+            }
             if (ante === 1 && blind === 'smallBlind') {
                 continue;
             }

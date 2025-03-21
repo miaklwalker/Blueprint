@@ -37,7 +37,7 @@ export default function App() {
     const sells = useCardStore(state => state.shoppingState.sells);
     const showCardSpoilers = useCardStore(state => state.applicationState.showCardSpoilers);
     const unlocks: string[] = useCardStore(state => state.immolateState.selectedOptions);
-
+    const events = useCardStore(state => state.eventState.events);
 
     const SeedResults = useMemo(() => {
             if(!ready) return null;
@@ -52,6 +52,7 @@ export default function App() {
                 const options: AnalyzeOptions = {
                     showCardSpoilers,
                     unlocks,
+                    events,
                     updates: [],
                     ...transactions
                 };
@@ -94,7 +95,7 @@ export default function App() {
                 return null
             }
         },
-        [analyzeState, start, buys, showCardSpoilers, unlocks, ready]
+        [analyzeState, start, buys, showCardSpoilers, unlocks, ready,events]
     );
 
 

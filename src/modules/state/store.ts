@@ -40,6 +40,9 @@ export interface InitialState {
             [key: string]: BuyMetaData
         }
     };
+    eventState: {
+        events: any[]
+    }
 }
 
 const initialState: InitialState = {
@@ -72,6 +75,9 @@ const initialState: InitialState = {
     shoppingState: {
         buys: {},
         sells: {},
+    },
+    eventState: {
+        events: []
     }
 }
 
@@ -306,6 +312,15 @@ export const useCardStore = create(
                         ...globalSettingsSetters(set),
                         ...applicationSetters(set),
                         ...shopGetters(set, get),
+                        trackEvent: (event: any) => set((prev: { eventState: { events: any[]; }; }) => {
+                            prev.eventState.events.push(event)
+                        }, undefined, 'Global/TrackEvent'),
+                        clearEvents: () => set((prev: { eventState: { events: any[]; }; }) => {
+                            prev.eventState.events = []
+                        }, undefined, 'Global/ClearEvents'),
+                        removeEvent: (index: number) => set((prev: { eventState: { events: any[]; }; }) => {
+                            prev.eventState.events.splice(index, 1)
+                        }, undefined, 'Global/RemoveEvent'),
                     })
                 )),
             {

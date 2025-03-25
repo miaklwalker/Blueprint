@@ -5,7 +5,9 @@ import {blinds, LOCATION_TYPES, LOCATIONS, tagDescriptions} from "../../modules/
 import {
     Accordion,
     AppShell,
+    Badge,
     Box,
+    Button,
     Fieldset,
     Flex,
     Group,
@@ -14,16 +16,17 @@ import {
     Popover,
     ScrollArea,
     SegmentedControl,
+    Stack,
     Tabs,
     Text
 } from "@mantine/core";
 import {BuyWrapper} from "../buyerWrapper.tsx";
 import {GameCard} from "../Rendering/cards.tsx";
-import {Ante, Pack, Seed} from "../../modules/ImmolateWrapper/CardEngines/Cards.ts";
+import {Ante, Pack, SeedResultsContainer} from "../../modules/ImmolateWrapper/CardEngines/Cards.ts";
 import {BuyMetaData} from "../../modules/classes/BuyMetaData.ts";
 import {Boss, Tag, Voucher} from "../Rendering/gameElements.tsx";
 import {toHeaderCase} from "js-convert-case";
-import {useViewportSize} from "@mantine/hooks";
+import {useDisclosure, useViewportSize} from "@mantine/hooks";
 import Header from "./layout/header.tsx";
 import NavBar from "./layout/navbar.tsx";
 import {Aside} from "./layout/aside.tsx";
@@ -34,13 +37,23 @@ function QueueCarousel({queue, tabName}: { queue: any[], tabName: string }) {
     const selectedBlind = useCardStore(state => state.applicationState.selectedBlind);
     const selectedSearchResult = useCardStore(state => state.searchState.selectedSearchResult);
     const [embla, setEmbla] = useState<Embla | null>(null);
+
     useEffect(() => {
+        if(!embla) return;
+
+
         if (embla && selectedSearchResult) {
             if (selectedSearchResult?.location === LOCATIONS.SHOP && selectedSearchResult?.index) {
                 embla.scrollTo(selectedSearchResult.index - 1)
             }
         }
+
+        return () => {
+
+        }
+
     }, [embla, selectedSearchResult])
+
     return (
         <Paper>
             <Carousel
@@ -68,7 +81,7 @@ function QueueCarousel({queue, tabName}: { queue: any[], tabName: string }) {
                                         card: card,
                                         name: card.name
                                     })
-                                }
+                                    }
                                 >
                                     <GameCard card={card}/>
                                 </BuyWrapper>
@@ -88,12 +101,12 @@ function AntePanel({ante, tabName}: { ante: Ante, tabName: string }) {
     return (
         <Tabs.Panel w={'100%'} value={tabName}>
             <Paper withBorder h={'100%'} p={'sm'}>
-                <Fieldset legend={'Shop'} mb={'sm'}>
-                    <QueueCarousel queue={queue} tabName={tabName}/>
-                </Fieldset>
-                <Flex gap={'md'}>
-                    <Paper h={'100%'} withBorder p={'1rem'}>
-                        <Flex h={'100%'} direction={'column'} align={'space-between'}>
+                <Group preventGrowOverflow mb={'sm'}>
+                    <Fieldset flex={1} legend={'Shop'}>
+                        <QueueCarousel queue={queue} tabName={tabName}/>
+                    </Fieldset>
+                    <Fieldset legend={'Voucher'}>
+                        <Flex h={192} direction={'column'} align={'space-between'}>
                             <Text ta={'center'} c={'dimmed'} fz={'md'}> Voucher </Text>
                             <BuyWrapper
                                 bottomOffset={40}
@@ -115,68 +128,208 @@ function AntePanel({ante, tabName}: { ante: Ante, tabName: string }) {
                             </BuyWrapper>
                             <Text ta={'center'} fz={'md'}>  {ante.voucher} </Text>
                         </Flex>
-                    </Paper>
-                    <Accordion multiple={true} value={packs?.map(({name}: { name: string }) => name) ?? []} w={'100%'}
-                               variant={'separated'}>
-                        {
-                            packs.map((pack: Pack, index: number) => {
-                                return (
-                                    <Accordion.Item key={String(pack.name) + String(index)} value={String(pack.name)}>
-                                        <Accordion.Control w={'100%'}>
-                                            <Group w={'100%'}>
+                    </Fieldset>
+                </Group>
+
+                <Accordion multiple={true} value={packs?.map(({name}: { name: string }) => name) ?? []} w={'100%'}
+                           variant={'separated'}>
+                    {
+                        packs.map((pack: Pack, index: number) => {
+                            return (
+                                <Accordion.Item key={String(pack.name) + String(index)} value={String(pack.name)}>
+                                    <Accordion.Control w={'100%'}>
+                                        <Group justify={'space-between'} pr={'1rem'}>
+                                            <Group>
                                                 <Text fw={500}>{toHeaderCase(String(pack.name))}</Text>
+                                                <Badge color={'blue'}> Cards: {pack.size}</Badge>
                                             </Group>
-                                        </Accordion.Control>
-                                        <Accordion.Panel>
-                                            <Box w={'100%'} key={index}>
-                                                <Carousel
-                                                    type={'container'}
-                                                    slideSize="90px"
-                                                    slideGap={{base: 'xs'}}
-                                                    align="start"
-                                                    withControls={true}
-                                                    height={190}
-                                                    dragFree
-                                                >
-                                                    {pack.cards && pack.cards.map((card: any, cardIndex: number) => (
-                                                        <Carousel.Slide key={cardIndex}>
-                                                            <BuyWrapper
-                                                                key={cardIndex}
-                                                                // bottomOffset={30}
-                                                                // topOffset={30}
-                                                                metaData={
-                                                                    new BuyMetaData({
-                                                                        location: pack.name,
-                                                                        locationType: LOCATION_TYPES.PACK,
-                                                                        index: cardIndex,
-                                                                        ante: tabName,
-                                                                        blind: selectedBlind,
-                                                                        itemType: 'card',
-                                                                        link: `https://balatrogame.fandom.com/wiki/${card.name}`,
-                                                                        card: card,
-                                                                        name: card.name
-                                                                    })
-                                                                }
-                                                            >
-                                                                <GameCard card={card}/>
-                                                            </BuyWrapper>
-                                                        </Carousel.Slide>
-                                                    ))}
-                                                </Carousel>
-                                            </Box>
-                                        </Accordion.Panel>
-                                    </Accordion.Item>
-                                )
-                            })
-                        }
-                    </Accordion>
-                </Flex>
+                                            <Badge>
+                                                Pick: {pack.choices}
+                                            </Badge>
+                                        </Group>
+                                    </Accordion.Control>
+                                    <Accordion.Panel>
+                                        <Box w={'100%'} key={index}>
+                                            <Carousel
+                                                type={'container'}
+                                                slideSize="90px"
+                                                slideGap={{base: 'xs'}}
+                                                align="start"
+                                                withControls={true}
+                                                height={190}
+                                                dragFree
+                                            >
+                                                {pack.cards && pack.cards.map((card: any, cardIndex: number) => (
+                                                    <Carousel.Slide key={cardIndex}>
+                                                        <BuyWrapper
+                                                            key={cardIndex}
+                                                            // bottomOffset={30}
+                                                            // topOffset={30}
+                                                            metaData={
+                                                                new BuyMetaData({
+                                                                    location: pack.name,
+                                                                    locationType: LOCATION_TYPES.PACK,
+                                                                    index: cardIndex,
+                                                                    ante: tabName,
+                                                                    blind: selectedBlind,
+                                                                    itemType: 'card',
+                                                                    link: `https://balatrogame.fandom.com/wiki/${card.name}`,
+                                                                    card: card,
+                                                                    name: card.name
+                                                                })
+                                                            }
+                                                        >
+                                                            <GameCard card={card}/>
+                                                        </BuyWrapper>
+                                                    </Carousel.Slide>
+                                                ))}
+                                            </Carousel>
+                                        </Box>
+                                    </Accordion.Panel>
+                                </Accordion.Item>
+                            )
+                        })
+                    }
+                </Accordion>
             </Paper>
         </Tabs.Panel>
     )
 }
 
-function SeedExplorer({SeedResults}: { SeedResults: Seed  }) {
+const  CustomDetails: {[key: string] : any} = {
+    "Charm Tag" : {
+        renderer: (ante: Ante, navigateToMiscSource: any) => {
+            return (
+                <Stack>
+                    <Text>
+                        {
+                            ante.miscCardSources.find(({name}) => name === 'arcanaPack')?.cards?.slice(0,5).map(({ name }: any) => name).join(', ')
+                        }
+                    </Text>
+                    <Button onClick={()=> navigateToMiscSource('arcanaPack')}>
+                        More Info
+                    </Button>
+                </Stack>
+
+            )
+        }
+    },
+    "Standard Tag" : {
+        renderer: (ante: Ante, navigateToMiscSource: any) => {
+            return (
+                <Stack>
+                    <Text>
+                        {
+                            ante.miscCardSources.find(({name}) => name === 'standardPack')?.cards?.slice(0,5).map(({ name }: any) => name).join(', ')
+                        }
+                    </Text>
+                    <Button onClick={()=> navigateToMiscSource('standardPack')}>
+                        More Info
+                    </Button>
+                </Stack>
+
+            )
+        }
+    },
+    "Meteor Tag" : {
+        renderer: (ante: Ante, navigateToMiscSource: any) => {
+            return (
+                <Stack>
+                    <Text>
+                        {
+                            ante.miscCardSources.find(({name}) => name === 'celestialPack')?.cards?.slice(0,5).map(({ name }: any) => name).join(', ')
+                        }
+                    </Text>
+                    <Button onClick={()=> navigateToMiscSource('celestialPack')}>
+                        More Info
+                    </Button>
+                </Stack>
+
+            )
+        }
+    },
+    "Buffoon Tag": {
+        renderer: (ante: Ante, navigateToMiscSource: any) => {
+            return (
+                <Stack>
+                    <Text>
+                        {
+                            ante.miscCardSources.find(({name}) => name === 'buffoonPack')?.cards?.slice(0,5).map(({ name }: any) => name).join(', ')
+                        }
+                    </Text>
+                    <Button onClick={()=> navigateToMiscSource('buffoonPack')}>
+                        More Info
+                    </Button>
+                </Stack>
+
+            )
+        }
+    },
+    "Uncommon Tag": {
+        renderer: (ante: Ante, navigateToMiscSource: any) => {
+            return (
+                <Stack>
+                    <Text>
+                        {
+                            ante.miscCardSources.find(({name}) => name === 'uncommonTag')?.cards?.slice(0,1).map(({ name }: any) => name).join(', ')
+                        }
+                    </Text>
+                    <Button onClick={()=> navigateToMiscSource('uncommonTag')}>
+                        More Info
+                    </Button>
+                </Stack>
+
+            )
+        }
+    },
+    "Rare Tag": {
+        renderer: (ante: Ante, navigateToMiscSource: any) => {
+            return (
+                <Stack>
+                    <Text>
+                        {
+                            ante.miscCardSources.find(({name}) => name === 'rareTag')?.cards?.slice(0,1).map(({ name }: any) => name).join(', ')
+                        }
+                    </Text>
+                    <Button onClick={()=> navigateToMiscSource('rareTag')}>
+                        More Info
+                    </Button>
+                </Stack>
+
+            )
+        }
+    },
+}
+
+function TagDisplay({ tag, ante }: { tag: string, ante: Ante }) {
+    const [opened, { close, open }] = useDisclosure(false);
+    const navigateToMiscSource = useCardStore(state => state.navigateToMiscSource);
+    return (
+        <Popover opened={opened}>
+            <Popover.Target>
+                <Box onMouseEnter={open} onMouseLeave={close}>
+                    <Tag tagName={tag}/>
+                </Box>
+            </Popover.Target>
+            <Popover.Dropdown>
+                <Box onMouseEnter={open} onMouseLeave={close}>
+                    <Text ta={'center'}>{tag}</Text>
+                    <Text>
+                        {tagDescriptions[tag ?? ''] ?? 'No description available'}
+                    </Text>
+                    {
+                        CustomDetails[tag] &&
+                        CustomDetails[tag]?.renderer(ante, navigateToMiscSource)
+                    }
+                </Box>
+            </Popover.Dropdown>
+        </Popover>
+    )
+
+
+}
+
+function SeedExplorer({SeedResults}: { SeedResults: SeedResultsContainer }) {
     const {width} = useViewportSize();
 
     const selectedAnte = useCardStore(state => state.applicationState.selectedAnte);
@@ -184,7 +337,6 @@ function SeedExplorer({SeedResults}: { SeedResults: Seed  }) {
 
     const selectedBlind = useCardStore(state => state.applicationState.selectedBlind);
     const setSelectedBlind = useCardStore(state => state.setSelectedBlind);
-
 
 
     return (
@@ -212,27 +364,12 @@ function SeedExplorer({SeedResults}: { SeedResults: Seed  }) {
                         label: <Group justify={'center'}>
                             {blind}
                             {i < 2 && (
-                                <Popover >
-                                    <Popover.Target>
-                                        <Box>
-                                            <Tag tagName={SeedResults.antes[selectedAnte]?.tags?.[i]}/>
-                                        </Box>
-                                    </Popover.Target>
-                                    <Popover.Dropdown>
-                                        <Box>
-                                            <Text ta={'center'}>{SeedResults.antes[selectedAnte]?.tags?.[i]}</Text>
-                                            <Text>
-                                                {tagDescriptions[SeedResults.antes[selectedAnte]?.tags?.[i] ?? ''] ?? 'No description available'}
-                                            </Text>
-                                        </Box>
-                                    </Popover.Dropdown>
-                                </Popover>
-
+                                <TagDisplay tag={SeedResults.antes[selectedAnte]?.tags?.[i]} ante={SeedResults.antes[selectedAnte]}/>
                             )
                             }
                             {
                                 i === 2 &&
-                                <Popover >
+                                <Popover>
                                     <Popover.Target>
                                         <Box>
                                             <Boss bossName={SeedResults.antes[selectedAnte]?.boss ?? ''}/>
@@ -288,16 +425,16 @@ function SeedExplorer({SeedResults}: { SeedResults: Seed  }) {
     )
 }
 
-function Main({SeedResults}: { SeedResults: Seed | null }) {
+function Main({SeedResults}: { SeedResults: SeedResultsContainer | null }) {
     return (
         <AppShell.Main>
-            { !SeedResults && <HomePage/>}
-            { SeedResults && <SeedExplorer SeedResults={SeedResults}/> }
+            {!SeedResults && <HomePage/>}
+            {SeedResults && <SeedExplorer SeedResults={SeedResults}/>}
         </AppShell.Main>
     )
 }
 
-export function Blueprint({SeedResults}: { SeedResults: Seed | null }) {
+export function Blueprint({SeedResults}: { SeedResults: SeedResultsContainer | null }) {
     const {width} = useViewportSize();
     const settingsOpened = useCardStore(state => state.applicationState.settingsOpen);
     const outputOpened = useCardStore(state => state.applicationState.asideOpen);

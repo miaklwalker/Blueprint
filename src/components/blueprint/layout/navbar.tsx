@@ -1,10 +1,14 @@
 import {
     AppShell,
-    Box, Button,
+    Box,
+    Button,
     Group,
+    InputLabel,
     NativeSelect,
     NumberInput,
-    ScrollArea, Stack, Switch,
+    ScrollArea,
+    Stack,
+    Switch,
     Text,
     Tooltip,
     useMantineTheme
@@ -14,8 +18,10 @@ import UnlocksModal from "../../unlocksModal.tsx";
 import {IconJoker, IconPlayCard} from "@tabler/icons-react";
 import SeedInputAutoComplete from "../../SeedInputAutoComplete.tsx";
 
+
 export default function NavBar() {
     const theme = useMantineTheme();
+
     const analyzeState = useCardStore(state => state.immolateState);
     const {seed, deck, stake, gameVersion: version, antes, cardsPerAnte} = analyzeState;
     const showCardSpoilers = useCardStore(state => state.applicationState.showCardSpoilers);
@@ -29,10 +35,8 @@ export default function NavBar() {
     const setStart = useCardStore(state => state.setStart);
     const openSelectOptionModal = useCardStore(state => state.openSelectOptionModal);
     const reset = useCardStore(state => state.reset);
+
     const handleAnalyzeClick = () => {
-        if (seed.length < 5) {
-            return;
-        }
         setStart(true);
     }
     return (
@@ -89,23 +93,25 @@ export default function NavBar() {
                     label={'Choose Version'}
                     value={version}
                     onChange={(e) => setVersion(e.currentTarget.value)}
+                    mb={'md'}
                 >
                     <option value="10106">1.0.1f</option>
                     <option value="10103">1.0.1c</option>
                     <option value="10014">1.0.0n</option>
                 </NativeSelect>
-                <NumberInput
-                    min={0}
-                    defaultValue={50}
-                    max={100}
-                    clampBehavior="none"
-                    label={'Cards per ante'}
-                    color="blue"
-                    value={cardsPerAnte}
-                    onChange={(v) => setCardsPerAnte(Number(v))}
-                    mb={'sm'}
-
-                />
+                <InputLabel> Cards per Ante</InputLabel>
+                <Text fz={'xs'} c={'dimmed'}>
+                    It is recommended to keep this number under 200.
+                </Text>
+                <Button.Group w={'100%'} mb={'lg'}>
+                    <Button variant="default" c={'blue'} onClick={()=>setCardsPerAnte(50)}>50</Button>
+                    <Button variant="default" c={'red'} onClick={()=>setCardsPerAnte(cardsPerAnte - 50)}>-50</Button>
+                    <Button.GroupSection flex={1} variant="default" bg="var(--mantine-color-body)" miw={80}>
+                        {cardsPerAnte}
+                    </Button.GroupSection>
+                    <Button variant="default" c={'green'} onClick={()=>setCardsPerAnte(cardsPerAnte + 50)}>+50</Button>
+                    <Button variant="default" c={'blue'} onClick={()=>setCardsPerAnte(1000)} >1000</Button>
+                </Button.Group>
                 <Group>
                     <Box>
                         <Text mb={0} fz={'xs'}>Show Joker Spoilers</Text>

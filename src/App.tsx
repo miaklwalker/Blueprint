@@ -6,28 +6,26 @@ import '@mantine/spotlight/styles.css';
 
 import {MantineProvider, Space} from "@mantine/core";
 import {theme} from "./theme.js";
-import {ImmolateClassic} from "./modules/ImmolateWrapper/CardEngines/immolateClassic.ts";
-import {CardEngineWrapper} from "./modules/ImmolateWrapper";
+import {analyzeSeed} from "./modules/ImmolateWrapper";
 
 import {AnalyzeOptions} from "./modules/const.js"
 import {useMemo, useState} from "react";
 import {useCardStore} from "./modules/state/store.ts";
 import {Blueprint} from "./components/blueprint";
-import {Seed} from "./modules/ImmolateWrapper/CardEngines/Cards.ts";
+import {useDebouncedValue} from "@mantine/hooks";
 
-//Todo HOME PAGE! WITH FEATURES
+
 //TODO Add info to those pop overs
 //TODO Allow tags to be included in the buys
 //TODO Add a way to see the seed in the analyze page
-//TODO ADD SELLS
-
-
-
-
+//TODO VOUCHER PETROGLYPH HIERO GLYPH GENERATION.
+//TODO SHow Pack Names and amounts
+// Maybe make analyzation a tree ? Where we can remove branches that have changed, but keep the rest of the tree
+let retried = false;
 
 export default function App() {
     const analyzeState = useCardStore(state => state.immolateState);
-    const {seed, deck, stake, gameVersion: version, antes, cardsPerAnte} = analyzeState;
+    const [debouncedAnalyzeState] = useDebouncedValue(analyzeState, 1000);
     const [ready, setReady] = useState(true);
     const start = useCardStore(state => state.applicationState.start);
     const setStart = useCardStore(state => state.setStart);
@@ -40,15 +38,9 @@ export default function App() {
     const events = useCardStore(state => state.eventState.events);
 
     const SeedResults = useMemo(() => {
-            if(!ready) return null;
-            if (seed.length < 5 || !start) {
-                return null;
-            }
+            if (!ready || !start) return null;
             try {
-                const engine = new ImmolateClassic(seed);
                 const transactions = {buys, sells}
-
-
                 const options: AnalyzeOptions = {
                     showCardSpoilers,
                     unlocks,
@@ -56,36 +48,21 @@ export default function App() {
                     updates: [],
                     ...transactions
                 };
-                function makeAnalyzer( showman = false ){
-                    engine.InstParams(deck, stake, showman, version);
-                    engine.initLocks(1, false, true);
-                    // Vouchers included in selected unlocks since players may not have those available
-                    engine.handleSelectedUnlocks(options.unlocks);
-                    engine.lockLevelTwoVouchers()
-                    const analyzer: CardEngineWrapper = new CardEngineWrapper(engine);
-                    return analyzer;
+                return analyzeSeed(debouncedAnalyzeState, options)
+            }
+            catch (e: any) {
+                console.log(e.message);
+                let crashMessage = 'Aborted(OOM)';
+                if(e.message.includes(crashMessage) && !retried){
+                    retried = true
+                    console.log("Immolate crashed, reloading blueprint")
+                    console.log("Retrying...")
+
+                    setTimeout(()=>{
+                        window.location.reload();
+                    }, 1000)
+
                 }
-                let analyzer = makeAnalyzer(false);
-                function updateAnalyzer(showman = false) {
-                    engine.InstParams(deck, stake, showman, version);
-                }
-
-
-
-                let result = new Seed();
-
-
-
-                // console.log(sells)
-                for (let ante = 1; ante <= antes; ante++) {
-                    result.antes[ante] = analyzer.analyzeAnte(ante, cardsPerAnte, options, updateAnalyzer);
-                }
-
-                analyzer.engine.delete();
-                return result;
-            } catch (e) {
-                console.error(e);
-                console.debug("Blueprint loaded before immolate. Listening for event")
                 setReady(false);
                 document.addEventListener('ImmolateReady', () => {
                     console.debug("Immolate loaded, reloading blueprint")
@@ -95,13 +72,13 @@ export default function App() {
                 return null
             }
         },
-        [analyzeState, start, buys, showCardSpoilers, unlocks, ready,events]
+        [debouncedAnalyzeState, start, buys, showCardSpoilers, unlocks, ready, events]
     );
 
 
     return (
         <MantineProvider defaultColorScheme={'dark'} theme={theme}>
-            <Blueprint SeedResults={SeedResults}/>
+            <Blueprint SeedResults={SeedResults || null}/>
             <Space my={'xl'}/>
         </MantineProvider>
     );

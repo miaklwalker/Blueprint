@@ -26,6 +26,7 @@ export interface InitialState {
         asideTab: string;
         selectedAnte: number;
         selectedBlind: string;
+        hasSettingsChanged: boolean;
     };
     searchState: {
         searchTerm: string;
@@ -66,6 +67,7 @@ const initialState: InitialState = {
         asideTab: 'sources',
         selectedAnte: 1,
         selectedBlind: 'bigBlind',
+        hasSettingsChanged: false,
     },
     searchState: {
         searchTerm: '',
@@ -80,8 +82,6 @@ const initialState: InitialState = {
         events: []
     }
 }
-
-
 
 
 // @ts-ignore
@@ -169,47 +169,62 @@ export const useCardStore = create(
                             prev.immolateState.seed = seed?.toUpperCase();
                             prev.shoppingState = initialState.shoppingState
                             prev.searchState = initialState.searchState;
-                            prev.applicationState.start = false;
+                            prev.applicationState.hasSettingsChanged = true;
+                            // prev.applicationState.start = false;
                         }, undefined, 'Global/SetSeed'),
                         setDeck: (deck: string) => set((prev: InitialState) => {
                             prev.immolateState.deck = deck
+                            prev.applicationState.hasSettingsChanged = true;
+                            // prev.applicationState.start = false;
                         }, undefined, 'Global/SetDeck'),
                         setCardsPerAnte: (cardsPerAnte: number) => set((prev: InitialState) => {
                             prev.immolateState.cardsPerAnte = cardsPerAnte
+                            prev.applicationState.hasSettingsChanged = true;
+                            // prev.applicationState.start = false;
                         }, undefined, 'Global/SetCardsPerAnte'),
                         setAntes: (antes: number) => set((prev: InitialState) => {
                             prev.immolateState.antes = antes
+                            prev.applicationState.hasSettingsChanged = true;
+                            // prev.applicationState.start = false;
                         }, undefined, 'Global/SetAntes'),
                         setStake: (stake: string) => set((prev: InitialState) => {
                             prev.immolateState.stake = stake
+                            prev.applicationState.hasSettingsChanged = true;
+                            // prev.applicationState.start = false;
                         }, undefined, 'Global/SetStake'),
                         setGameVersion: (gameVersion: string) => set((prev: InitialState) => {
                             prev.immolateState.gameVersion = gameVersion
+                            prev.applicationState.hasSettingsChanged = true;
+                            // prev.applicationState.start = false;
                         }, undefined, 'Global/SetGameVersion'),
                         setSelectedOptions: (selectedOptions: string[]) => set((prev: InitialState) => {
                             prev.immolateState.selectedOptions = selectedOptions
+                            prev.applicationState.hasSettingsChanged = true;
+                            // prev.applicationState.start = false;
                         }, undefined, 'Global/SetSelectedOptions'),
+
                         setStart: (start: boolean) => set((prev: InitialState) => {
                             prev.applicationState.start = start
                             prev.applicationState.settingsOpen = false
                         }, undefined, 'Global/SetStart'),
+
                         setShowCardSpoilers: (showCardSpoilers: boolean) => set((prev: InitialState) => {
                             prev.applicationState.showCardSpoilers = showCardSpoilers
                         }, undefined, 'Global/SetShowCardSpoilers'),
                         openSelectOptionModal: () => set((prev: InitialState) => {
                             prev.applicationState.selectOptionsModalOpen = true
                         }, undefined, 'Global/OpenSelectOptionModal'),
-                        closeSelectOptionModal: () => set((prev:InitialState) => {
+                        closeSelectOptionModal: () => set((prev: InitialState) => {
                             prev.applicationState.selectOptionsModalOpen = false
                         }, undefined, 'Global/CloseSelectOptionModal'),
-                        setSelectedAnte: (selectedAnte: number) => set((prev:InitialState) => {
+                        setSelectedAnte: (selectedAnte: number) => set((prev: InitialState) => {
                             prev.applicationState.selectedAnte = selectedAnte
                             prev.applicationState.selectedBlind = prev.applicationState.selectedAnte === 1 ? 'bigBlind' : 'smallBlind'
                         }, undefined, 'Global/SetSelectedAnte'),
-                        setSelectedBlind: (selectedBlind: string) => set((prev:InitialState) => {
+                        setSelectedBlind: (selectedBlind: string) => set((prev: InitialState) => {
                             prev.applicationState.selectedBlind = selectedBlind
                         }, undefined, 'Global/SetSelectedBlind'),
-                        toggleSettings: () => set((prev:InitialState) => {
+                        toggleSettings: () => set((prev: InitialState) => {
                             prev.applicationState.settingsOpen = !prev.applicationState.settingsOpen;
                         }, undefined, 'Global/ToggleSettings'),
                         toggleOutput: () => set((prev: InitialState) => {
@@ -219,7 +234,7 @@ export const useCardStore = create(
                             prev.applicationState.miscSource = source
 
                         }, undefined, "Global/SetMiscSource"),
-                        setAsideTab: (tab: string) => set((prev:InitialState) => {
+                        setAsideTab: (tab: string) => set((prev: InitialState) => {
                             prev.applicationState.asideTab = tab
                         }, undefined, "Global/SetAsideTab"),
                         setSearchString: (searchString: string) => set((prev: InitialState) => {
@@ -237,12 +252,19 @@ export const useCardStore = create(
                             }
 
                         }, undefined, 'Global/Search/SetSelectedSearchResult'),
+                        navigateToMiscSource: (source: string) => set((prev: InitialState) => {
+                            prev.applicationState.asideOpen = true
+                            prev.applicationState.settingsOpen = false
+                            prev.applicationState.asideTab = 'sources'
+                            prev.applicationState.miscSource = source
+
+                        }, undefined, 'Global/NavigateToMiscSource'),
                         addBuy: (buy: BuyMetaData) => set((prev: InitialState) => {
                             let key = `${buy.ante}-${buy.location}-${buy.index}${buy.locationType === LOCATION_TYPES.PACK ? `-${buy.blind}` : ''}`;
                             prev.shoppingState.buys[key] = buy;
                         }, undefined, 'Global/AddBuy'),
-                        removeBuy: (buy: BuyMetaData) => set((prev:InitialState) => {
-                            let key = `${buy.ante}-${buy.location}-${buy.index}`;
+                        removeBuy: (buy: BuyMetaData) => set((prev: InitialState) => {
+                            let key = `${buy.ante}-${buy.location}-${buy.index}${buy.locationType === LOCATION_TYPES.PACK ? `-${buy.blind}` : ''}`;
                             delete prev.shoppingState.buys[key];
                         }, undefined, 'Global/RemoveBuy'),
                         isOwned: (key: string) => {
@@ -262,9 +284,12 @@ export const useCardStore = create(
                         clearEvents: () => set((prev: InitialState) => {
                             prev.eventState.events = []
                         }, undefined, 'Global/ClearEvents'),
-                        removeEvent: (index: number) => set((prev:InitialState) => {
+                        removeEvent: (index: number) => set((prev: InitialState) => {
                             prev.eventState.events.splice(index, 1)
                         }, undefined, 'Global/RemoveEvent'),
+                        setHasSettingsChanged: (hasSettingsChanged: boolean) => set((prev: InitialState) => {
+                            prev.applicationState.hasSettingsChanged = hasSettingsChanged
+                        }, undefined, 'Global/SetHasSettingsChanged'),
                         reset: () => set(initialState, undefined, 'Global/Reset'),
                     })
                 )),

@@ -331,7 +331,6 @@ export class Pack {
                 continue;
             }
             if (typeof data === 'string' && itemsWithSpoilers.includes(data) && spoilers) {
-                console.log(data)
                 let joker = instance.nextJoker(instance.commonSources[data], ante, true);
                 let commonCardInterface = {
                     name: joker.joker,
@@ -353,11 +352,12 @@ export class Pack {
     }
 }
 
-export class Seed {
+export class SeedResultsContainer {
     antes: { [key: number]: Ante };
-
+    timeTravelAntes: { [key: string]: Ante };
     constructor() {
         this.antes = {}
+        this.timeTravelAntes = {}
     }
 }
 

@@ -1,11 +1,11 @@
-import {Seed} from "../../../modules/ImmolateWrapper/CardEngines/Cards.ts";
+import {SeedResultsContainer} from "../../../modules/ImmolateWrapper/CardEngines/Cards.ts";
 import {useViewportSize} from "@mantine/hooks";
 import {useCardStore} from "../../../modules/state/store.ts";
 import {AppShell, Burger, Button, Center, Container, CopyButton, Group, Title} from "@mantine/core";
 import SearchSeedInput from "../../searchInput.tsx";
 
 
-export default function Header({SeedResults}: { SeedResults: Seed | null }) {
+export default function Header({SeedResults}: { SeedResults: SeedResultsContainer | null }) {
     const {width} = useViewportSize();
     const start = useCardStore(state => state.applicationState.start)
     const settingsOpened = useCardStore(state => state.applicationState.settingsOpen);

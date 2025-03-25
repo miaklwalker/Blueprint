@@ -87,6 +87,12 @@ seed:string;
         this.VOUCHERS = Immolate.VOUCHERS;
     }
 
+    setDeck(deck: string) {
+        this.instance.setDeck(deck);
+    }
+    setStake(stake: string) {
+        this.instance.setStake(stake);
+    }
     InstParams(deck: string, stake: string, showman: boolean = false, version: string) {
         // defaulting the showman to false with double shebang ( !! )
         // @ts-ignore
@@ -172,6 +178,9 @@ seed:string;
     }
     nextSpectral(source: string, ante: number, soulable: boolean = false): PackCard {
         return this.instance.nextSpectral(source, ante, soulable);
+    }
+    nextStandardCard(ante: number): PackCard {
+        return this.instance.nextStandardCard(ante);
     }
 
     /**

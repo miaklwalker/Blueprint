@@ -1,4 +1,4 @@
-import {Seed} from "../../../modules/ImmolateWrapper/CardEngines/Cards.ts";
+import {SeedResultsContainer} from "../../../modules/ImmolateWrapper/CardEngines/Cards.ts";
 import {useCardStore} from "../../../modules/state/store.ts";
 import {
     AppShell,
@@ -160,7 +160,7 @@ export function EventsPanel() {
 }
 
 
-export function Aside({SeedResults}: { SeedResults: Seed | null }) {
+export function Aside({SeedResults}: { SeedResults: SeedResultsContainer | null }) {
     const selectedAnte = useCardStore(state => state.applicationState.selectedAnte);
     const anteData = SeedResults?.antes[selectedAnte];
     const miscSources = anteData?.miscCardSources;

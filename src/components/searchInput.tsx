@@ -1,4 +1,4 @@
-import {Ante, Seed} from "../modules/ImmolateWrapper/CardEngines/Cards.ts";
+import {Ante, SeedResultsContainer} from "../modules/ImmolateWrapper/CardEngines/Cards.ts";
 import {useCardStore} from "../modules/state/store.ts";
 import {useCallback, useMemo, useState} from "react";
 import {closeSpotlight, openSpotlight, Spotlight} from "@mantine/spotlight";
@@ -9,7 +9,7 @@ import {toHeaderCase} from "js-convert-case";
 import {ActionIcon, Group, TextInput} from "@mantine/core";
 import {IconSearch} from "@tabler/icons-react";
 
-export default function SearchSeedInput({SeedResults}: { SeedResults: Seed | null }) {
+export default function SearchSeedInput({SeedResults}: { SeedResults: SeedResultsContainer | null }) {
     const searchString = useCardStore(state => state.searchState.searchTerm);
     const setSearchString = useCardStore(state => state.setSearchString);
     const goToResults = useCardStore(state => state.setSelectedSearchResult);

@@ -30,7 +30,7 @@ export default function NavBar() {
     const openSelectOptionModal = useCardStore(state => state.openSelectOptionModal);
     const reset = useCardStore(state => state.reset);
     const handleAnalyzeClick = () => {
-        if (seed.length < 6) {
+        if (seed.length < 5) {
             return;
         }
         setStart(true);
@@ -97,7 +97,8 @@ export default function NavBar() {
                 <NumberInput
                     min={0}
                     defaultValue={50}
-                    max={300}
+                    max={100}
+                    clampBehavior="none"
                     label={'Cards per ante'}
                     color="blue"
                     value={cardsPerAnte}

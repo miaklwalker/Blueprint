@@ -1,5 +1,5 @@
 import {Autocomplete, Button, Group, NativeSelect, Paper} from "@mantine/core";
-import {SeedsWithLegendary} from "../modules/const.ts";
+import {popularSeeds, SeedsWithLegendary} from "../modules/const.ts";
 import {useCardStore} from "../modules/state/store.ts";
 
 
@@ -54,12 +54,7 @@ export function QuickAnalyze() {
                     data={[
                         {
                             group: 'Popular Seeds',
-                            items: [
-                                '7LB2WVPK',
-                                'PHQ8P93R',
-                                '8Q47WV6K',
-                                'CRNWYUXA'
-                            ]
+                            items: popularSeeds
                         }, {
                             group: 'Generated Seeds With Legendary Jokers',
                             items: SeedsWithLegendary
@@ -71,7 +66,7 @@ export function QuickAnalyze() {
                     rightSection={select}
                     rightSectionWidth={sectionWidth}
                 />
-                <Button onClick={() => setStart(seed.length >= 8)}> Analyze Seed </Button>
+                <Button onClick={() => setStart(seed.length >= 5)}> Analyze Seed </Button>
             </Group>
         </Paper>
     );
@@ -89,12 +84,7 @@ export default function SeedInputAutoComplete({seed, setSeed}: { seed: string, s
             data={[
                 {
                     group: 'Popular Seeds',
-                    items: [
-                        '7LB2WVPK',
-                        'PHQ8P93R',
-                        '8Q47WV6K',
-                        'CRNWYUXA'
-                    ]
+                    items: popularSeeds
                 }, {
                     group: 'Generated Seeds With Legendary Jokers',
                     items: SeedsWithLegendary

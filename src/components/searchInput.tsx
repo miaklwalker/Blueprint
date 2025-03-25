@@ -1,7 +1,7 @@
 import {Ante, Seed} from "../modules/ImmolateWrapper/CardEngines/Cards.ts";
 import {useCardStore} from "../modules/state/store.ts";
 import {useCallback, useMemo, useState} from "react";
-import {openSpotlight, Spotlight} from "@mantine/spotlight";
+import {closeSpotlight, openSpotlight, Spotlight} from "@mantine/spotlight";
 import {BuyMetaData} from "../modules/classes/BuyMetaData.ts";
 import {LOCATIONS} from "../modules/const.ts";
 import {MiscCardSource} from "../modules/ImmolateWrapper";
@@ -111,8 +111,9 @@ export default function SearchSeedInput({SeedResults}: { SeedResults: Seed | nul
                                 id: String(index),
                                 label,
                                 description,
+                                group: result.location,
                                 onClick: () => {
-                                    // closeSpotlight()
+                                    closeSpotlight()
                                     goToResults(result)
                                 }
                             }
@@ -121,21 +122,17 @@ export default function SearchSeedInput({SeedResults}: { SeedResults: Seed | nul
                 searchProps={{
                     value: searchString,
                     onChange: (e) => {
-                        setSearchString(e.currentTarget.value)
+                        let query = e.currentTarget.value;
+                        setSearchActive(query !== '')
+                        setSearchString(query)
                     },
                 }}
             />
             <Group align={'flex-end'}>
                 <TextInput
                     flex={1}
-                    value={searchString}
                     placeholder={'Search for cards'}
-                    onChange={e => setSearchString(e.currentTarget.value)}
-                    onKeyDown={e => {
-                        if (e.key === 'Enter') {
-                            handleSearch()
-                        }
-                    }}
+                    onClick={openSpotlight}
                     rightSection={
                         <ActionIcon onClick={handleSearch}>
                             <IconSearch/>

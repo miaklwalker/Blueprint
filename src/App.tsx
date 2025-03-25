@@ -41,7 +41,7 @@ export default function App() {
 
     const SeedResults = useMemo(() => {
             if(!ready) return null;
-            if (seed.length < 6 || !start) {
+            if (seed.length < 5 || !start) {
                 return null;
             }
             try {

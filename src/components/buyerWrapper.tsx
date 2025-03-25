@@ -14,7 +14,7 @@ import {
     Transition,
     useMantineTheme
 } from "@mantine/core";
-import {BuyWrapperProps} from "../modules/const.ts";
+import {BuyWrapperProps, LOCATION_TYPES} from "../modules/const.ts";
 import {IconChevronDown, IconExternalLink} from "@tabler/icons-react";
 
 export function BuyWrapper({children, bottomOffset, metaData, horizontal = false}: BuyWrapperProps) {
@@ -29,7 +29,7 @@ export function BuyWrapper({children, bottomOffset, metaData, horizontal = false
     const addBuy = useCardStore(state => state.addBuy);
     const removeBuy = useCardStore(state => state.removeBuy);
     const owned = useCardStore(state => state.isOwned);
-    let key = `${metaData?.ante}-${metaData?.location}-${metaData?.index}`;
+    let key = `${metaData?.ante}-${metaData?.location}-${metaData?.index}${metaData?.locationType === LOCATION_TYPES.PACK ? `-${metaData?.blind}` : ''}`;
     const cardIsOwned = owned(key);
     const hasUserAttention = hovered || menuHovered;
     const theme = useMantineTheme()

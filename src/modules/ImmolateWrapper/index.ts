@@ -225,11 +225,8 @@ export class CardEngineWrapper implements EngineWrapper {
         }
         for (let blind of Object.keys(result.blinds)) {
             if(analyzeOptions?.events){
-                console.log("Ante", ante);
-                console.log("Blind", blind);
                 let currentEvents = analyzeOptions.events.filter((event: any) => event.ante === ante && event.blind === blind);
                 currentEvents.forEach((event: any) => {
-                    console.log("Name",event.name)
                     this.engine.unlock(event.name)
                 })
             }
@@ -254,7 +251,7 @@ export class CardEngineWrapper implements EngineWrapper {
                 pack.init(this.engine, ante, analyzeOptions?.showCardSpoilers ?? false);
                 result.blinds[blind].packs.push(pack)
                 for (let k = 0; k < packInfo.size; k++) {
-                    let key = `${ante}-${packString}-${k}`;
+                    let key = `${ante}-${packString}-${k}-${blind}`;
                     if (analyzeOptions && analyzeOptions.buys[key]) {
                         this.handleBuy(pack.cards[k].name, "Card", analyzeOptions, makeAnalyzer)
                     }

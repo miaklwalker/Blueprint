@@ -1,7 +1,7 @@
 import {useCardStore} from "../../modules/state/store.ts";
 import {useEffect, useState} from "react";
 import {Carousel, Embla} from "@mantine/carousel";
-import {blinds, LOCATIONS, tagDescriptions} from "../../modules/const.ts";
+import {blinds, LOCATION_TYPES, LOCATIONS, tagDescriptions} from "../../modules/const.ts";
 import {
     Accordion,
     AppShell,
@@ -60,7 +60,7 @@ function QueueCarousel({queue, tabName}: { queue: any[], tabName: string }) {
                                 <BuyWrapper
                                     metaData={new BuyMetaData({
                                         location: LOCATIONS.SHOP,
-                                        locationType: LOCATIONS.SHOP,
+                                        locationType: LOCATION_TYPES.SHOP,
                                         index: index,
                                         ante: tabName,
                                         blind: selectedBlind,
@@ -101,12 +101,12 @@ function AntePanel({ante, tabName}: { ante: Ante, tabName: string }) {
                                 metaData={
                                     new BuyMetaData({
                                         location: LOCATIONS.VOUCHER,
+                                        locationType: LOCATIONS.VOUCHER,
                                         ante: tabName,
                                         blind: selectedBlind,
                                         itemType: 'voucher',
                                         name: ante?.voucher ?? "",
                                         index: 0,
-                                        locationType: LOCATIONS.VOUCHER,
                                         link: `https://balatrogame.fandom.com/wiki/vouchers`
                                     })
                                 }
@@ -147,7 +147,7 @@ function AntePanel({ante, tabName}: { ante: Ante, tabName: string }) {
                                                                 metaData={
                                                                     new BuyMetaData({
                                                                         location: pack.name,
-                                                                        locationType: LOCATIONS.PACK,
+                                                                        locationType: LOCATION_TYPES.PACK,
                                                                         index: cardIndex,
                                                                         ante: tabName,
                                                                         blind: selectedBlind,
@@ -175,11 +175,6 @@ function AntePanel({ante, tabName}: { ante: Ante, tabName: string }) {
         </Tabs.Panel>
     )
 }
-
-
-
-
-
 
 function SeedExplorer({SeedResults}: { SeedResults: Seed  }) {
     const {width} = useViewportSize();
@@ -292,6 +287,7 @@ function SeedExplorer({SeedResults}: { SeedResults: Seed  }) {
         </>
     )
 }
+
 function Main({SeedResults}: { SeedResults: Seed | null }) {
     return (
         <AppShell.Main>
@@ -301,8 +297,8 @@ function Main({SeedResults}: { SeedResults: Seed | null }) {
     )
 }
 
-
 export function Blueprint({SeedResults}: { SeedResults: Seed | null }) {
+    const {width} = useViewportSize();
     const settingsOpened = useCardStore(state => state.applicationState.settingsOpen);
     const outputOpened = useCardStore(state => state.applicationState.asideOpen);
 
@@ -321,7 +317,7 @@ export function Blueprint({SeedResults}: { SeedResults: Seed | null }) {
                 width: {base: '100%', md: 400, lg: 400},
                 breakpoint: 'sm',
                 collapsed: {
-                    desktop: !settingsOpened,
+                    desktop: !(width > 1000) && !settingsOpened,
                     mobile: !settingsOpened
                 },
             }}

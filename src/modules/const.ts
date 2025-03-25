@@ -397,7 +397,15 @@ export const SeedsWithLegendary: string[] = [
     "CMMBQLP",
     "98EFT57",
 ]
-
+export const popularSeeds: string[] =[
+    "U8RJYV6N",
+    '7LB2WVPK',
+    'PHQ8P93R',
+    '8Q47WV6K',
+    'CRNWYUXA',
+    "2K9H9HN",
+    "ALEEB"
+]
 export interface AnalyzeOptions {
     showCardSpoilers: boolean,
     buys: { [key: string]: BuyMetaData },
@@ -420,6 +428,15 @@ export enum LOCATIONS {
     MISC = 'MISC',
     VOUCHER = 'VOUCHER'
 }
+
+export enum LOCATION_TYPES {
+    SHOP = 'SHOP',
+    PACK = 'PACK',
+    CARD = 'CARD'
+}
+
+
+
 
 
 /*

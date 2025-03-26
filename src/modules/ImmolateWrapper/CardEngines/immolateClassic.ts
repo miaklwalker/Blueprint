@@ -96,7 +96,9 @@ seed:string;
     InstParams(deck: string, stake: string, showman: boolean = false, version: string) {
         // defaulting the showman to false with double shebang ( !! )
         // @ts-ignore
-        this.instance.params = new Immolate.InstParams(deck, stake, showman, version);
+        let params = new Immolate.InstParams(deck, stake, showman, version);
+        this.instance.params = params;
+        return params;
     }
     /**
      * @method initLocks
@@ -225,7 +227,7 @@ seed:string;
     activateVoucher(voucher: string) {
         return this.instance.activateVoucher(voucher);
     }
-    isVoucherActive(voucher: string) {
+    isVoucherActive(voucher: string): boolean {
         return this.instance.isVoucherActive(voucher);
     }
     delete() {

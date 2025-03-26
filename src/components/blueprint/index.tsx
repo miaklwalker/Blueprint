@@ -1,5 +1,5 @@
 import {useCardStore} from "../../modules/state/store.ts";
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {Carousel, Embla} from "@mantine/carousel";
 import {blinds, LOCATION_TYPES, LOCATIONS, tagDescriptions} from "../../modules/const.ts";
 import {
@@ -94,7 +94,7 @@ function QueueCarousel({queue, tabName}: { queue: any[], tabName: string }) {
     )
 }
 
-function AntePanel({ante, tabName}: { ante: Ante, tabName: string }) {
+function AntePanel({ante, tabName, timeTravelVoucherOffset}: { ante: Ante, tabName: string, timeTravelVoucherOffset: number }) {
     const queue = ante.queue;
     const selectedBlind = useCardStore(state => state.applicationState.selectedBlind);
     const packs = ante?.blinds?.[selectedBlind]?.packs;
@@ -115,7 +115,7 @@ function AntePanel({ante, tabName}: { ante: Ante, tabName: string }) {
                                     new BuyMetaData({
                                         location: LOCATIONS.VOUCHER,
                                         locationType: LOCATIONS.VOUCHER,
-                                        ante: tabName,
+                                        ante: String(Number(tabName) - timeTravelVoucherOffset),
                                         blind: selectedBlind,
                                         itemType: 'voucher',
                                         name: ante?.voucher ?? "",
@@ -338,6 +338,31 @@ function SeedExplorer({SeedResults}: { SeedResults: SeedResultsContainer }) {
     const selectedBlind = useCardStore(state => state.applicationState.selectedBlind);
     const setSelectedBlind = useCardStore(state => state.setSelectedBlind);
 
+    // const buys = useCardStore(state => state.shoppingState.buys);
+    const timeTravelVoucherOffset = useMemo(() => {
+        return 0
+        // let keys = Object.keys(buys);
+        // if(keys.length === 0) return 0;
+        // let offset = 0;
+        // for(let i = 0; i < keys.length; i++){
+        //     let buy = buys[keys[i]];
+        //     if(buy.locationType === LOCATIONS.VOUCHER){
+        //
+        //         let sameAnte = String(buy.ante) === String(selectedAnte);
+        //         let sameBlind = blindsCamelCase.indexOf(buy.blind) < blindsCamelCase.indexOf(selectedBlind);
+        //         let offsetNames = ['Hieroglyph', 'Petroglyph'];
+        //         if(sameAnte && sameBlind && offsetNames.includes(buy?.name ?? '')){
+        //             offset++;
+        //         }
+        //     }
+        // }
+        // return offset;
+    },[ /*buys, selectedAnte, selectedBlind */ ]);
+
+
+    let pool:{[key:number|string]: Ante} = SeedResults.antes //timeTravelVoucherOffset === 0 ? SeedResults.antes : SeedResults.timeTravelAntes;
+
+    let itemPool = selectedAnte //timeTravelVoucherOffset === 0 ? selectedAnte : `${selectedAnte-timeTravelVoucherOffset}-${timeTravelVoucherOffset}`;
 
     return (
         <>
@@ -364,7 +389,7 @@ function SeedExplorer({SeedResults}: { SeedResults: SeedResultsContainer }) {
                         label: <Group justify={'center'}>
                             {blind}
                             {i < 2 && (
-                                <TagDisplay tag={SeedResults.antes[selectedAnte]?.tags?.[i]} ante={SeedResults.antes[selectedAnte]}/>
+                                <TagDisplay tag={pool[itemPool]?.tags?.[i]} ante={pool[itemPool]}/>
                             )
                             }
                             {
@@ -372,12 +397,12 @@ function SeedExplorer({SeedResults}: { SeedResults: SeedResultsContainer }) {
                                 <Popover>
                                     <Popover.Target>
                                         <Box>
-                                            <Boss bossName={SeedResults.antes[selectedAnte]?.boss ?? ''}/>
+                                            <Boss bossName={pool[itemPool]?.boss ?? ''}/>
                                         </Box>
                                     </Popover.Target>
                                     <Popover.Dropdown>
                                         <Box>
-                                            <Text>{SeedResults.antes[selectedAnte]?.boss}</Text>
+                                            <Text>{pool[itemPool]?.boss}</Text>
                                         </Box>
                                     </Popover.Dropdown>
                                 </Popover>
@@ -417,8 +442,13 @@ function SeedExplorer({SeedResults}: { SeedResults: SeedResultsContainer }) {
                 </Box>
                 {
                     SeedResults &&
-                    Object.entries(SeedResults.antes).map(([ante, anteData]: [string, Ante], i: number) => (
-                        <AntePanel key={i} tabName={ante} ante={anteData}/>))
+                    Object.entries(SeedResults.antes).map(([ante, anteData]: [string, Ante], i: number) => {
+                        let currentAnte = String(ante) === String(selectedAnte);
+                        let panelData = currentAnte ? pool[itemPool] : anteData;
+                        return (
+                            <AntePanel key={i} tabName={ante} ante={panelData} timeTravelVoucherOffset={timeTravelVoucherOffset}/>
+                        )
+                    })
                 }
             </Tabs>
         </>

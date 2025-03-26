@@ -75,7 +75,7 @@ export default function App() {
         [debouncedAnalyzeState, start, buys, showCardSpoilers, unlocks, ready, events]
     );
 
-
+    console.log(SeedResults)
     return (
         <MantineProvider defaultColorScheme={'dark'} theme={theme}>
             <Blueprint SeedResults={SeedResults || null}/>

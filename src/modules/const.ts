@@ -108,7 +108,8 @@ export const options: any = [
     "Retcon",
     "Palette"
 ]
-export const blinds: any = ['Small Blind', 'Big Blind', 'Boss Blind']
+export const blinds: any = ['Small Blind', 'Big Blind', 'Boss Blind'];
+export const blindsCamelCase = ['smallBlind', 'bigBlind', 'bossBlind'];
 export const SeedsWithLegendary: string[] = [
     "HPR8Q7K",
     "5YVHAEP",

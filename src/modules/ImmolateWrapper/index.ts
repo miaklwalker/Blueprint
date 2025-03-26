@@ -13,7 +13,7 @@ import {
     StandardCard_Final,
     Tarot_Final
 } from "./CardEngines/Cards.ts";
-import { LOCATIONS } from "../const.ts";
+import {LOCATIONS, options} from "../const.ts";
 import {ImmolateClassic} from "./CardEngines/immolateClassic.ts";
 
 
@@ -176,7 +176,7 @@ export class CardEngineWrapper implements EngineWrapper {
         }
     }
 
-    handleBuy(key: string, type: string, makeAnalyzer?: any) {
+    handleBuy(key: string, type: string, makeAnalyzer?: any , analyzeOptions?: AnalyzeOptions) {
         if (type === 'Card') {
             this.engine.lock(key)
             if (key === 'Showman' && makeAnalyzer) {
@@ -185,6 +185,15 @@ export class CardEngineWrapper implements EngineWrapper {
         }
         if (type === 'Voucher') {
             this.engine.activateVoucher(key)
+            const isLevelOneVoucher = !options.includes(key);
+            if (isLevelOneVoucher) {
+                let levelTwo = this.findLevelTwoVoucher(key);
+                if (analyzeOptions?.unlocks?.includes(levelTwo)) {
+                    this.engine.unlock(levelTwo);
+                }else{
+                    this.engine.lock(levelTwo);
+                }
+            }
         }
     }
 
@@ -259,7 +268,7 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
         if (analyzeOptions?.buys && analyzeOptions.buys[voucherKey]) {
             let name = analyzeOptions.buys[voucherKey].name;
             if (name) {
-                engineWrapper.handleBuy(name, "Voucher", analyzeOptions)
+                engineWrapper.handleBuy(name, "Voucher", updateShowmanOwned, analyzeOptions)
             }
         }
         for (let blind of Object.keys(result.blinds)) {
@@ -293,7 +302,7 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
                 for (let k = 0; k < packInfo.size; k++) {
                     let key = `${ante}-${packString}-${k}-${blind}`;
                     if (analyzeOptions && analyzeOptions.buys[key]) {
-                        engineWrapper.handleBuy(pack.cards[k].name, "Card", updateShowmanOwned)
+                        engineWrapper.handleBuy(pack.cards[k].name, "Card", updateShowmanOwned, analyzeOptions)
                     }
                 }
             }
@@ -489,7 +498,7 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
                     // @ts-ignore
                     source.cards.push(generatedCard)
                     if (analyzeOptions && analyzeOptions.buys[key]) {
-                        engineWrapper.handleBuy(generatedCard.name, "Card", updateShowmanOwned)
+                        engineWrapper.handleBuy(generatedCard.name, "Card", updateShowmanOwned, analyzeOptions)
                     }
 
                 }
@@ -513,7 +522,7 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
                 }
             }
             if (analyzeOptions && analyzeOptions.buys[key]) {
-                engineWrapper.handleBuy(result.queue[i].name, "Card", updateShowmanOwned)
+                engineWrapper.handleBuy(result.queue[i].name, "Card", updateShowmanOwned, analyzeOptions)
             }
 
         }
@@ -548,7 +557,7 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
                     for (let k = 0; k < packInfo.size; k++) {
                         let key = `${ante}-${packString}-${k}-${blind}`;
                         if (analyzeOptions && analyzeOptions.buys[key]) {
-                            engineWrapper.handleBuy(pack.cards[k].name, "Card", updateShowmanOwned)
+                            engineWrapper.handleBuy(pack.cards[k].name, "Card", updateShowmanOwned, analyzeOptions)
                         }
                     }
                 }

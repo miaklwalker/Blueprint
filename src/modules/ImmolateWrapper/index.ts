@@ -340,25 +340,12 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
             //     cards: []
             // },
             {
-                name: "judgement",
+                name: "arcanaPack",
                 cardsToGenerate: maxCards,
-                cardType: "Joker",
-                source: engine.sources.S_Judgement,
-                cards: []
-            },
-            {
-                name: "wraith",
-                cardsToGenerate: maxCards,
-                cardType: "Joker",
-                source: engine.sources.S_Wraith,
-                hasStickers: false,
-                cards: []
-            },
-            {
-                name: "highPriestess",
-                cardsToGenerate: maxCards,
-                cardType: "Planet",
-                source: engine.sources.S_High_Priestess,
+                cardType: "Tarot",
+                source: engine.sources.S_Arcana,
+                soulable: true,
+                hasStickers: true,
                 cards: []
             },
             {
@@ -383,12 +370,18 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
                 cards: []
             },
             {
-                name: "arcanaPack",
+                name: "superposition",
                 cardsToGenerate: maxCards,
                 cardType: "Tarot",
-                source: engine.sources.S_Arcana,
-                soulable: true,
-                hasStickers: true,
+                source: engine.sources.S_Superposition,
+                cards: [],
+                hasStickers: false,
+            },
+            {
+                name: "judgement",
+                cardsToGenerate: maxCards,
+                cardType: "Joker",
+                source: engine.sources.S_Judgement,
                 cards: []
             },
             {
@@ -400,27 +393,26 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
                 hasStickers: true,
             },
             {
+                name: "wraith",
+                cardsToGenerate: maxCards,
+                cardType: "Joker",
+                source: engine.sources.S_Wraith,
+                hasStickers: false,
+                cards: []
+            },
+            {
+                name: "highPriestess",
+                cardsToGenerate: maxCards,
+                cardType: "Planet",
+                source: engine.sources.S_High_Priestess,
+                cards: []
+            },
+            {
                 name: "celestialPack",
                 cardsToGenerate: maxCards,
                 cardType: "Planet",
                 source: engine.sources.S_Celestial,
                 cards: []
-            },
-            {
-                name: "standardPack",
-                cardsToGenerate: maxCards,
-                cardType: "Standard",
-                source: engine.sources.R_Standard,
-                cards: [],
-                hasStickers: false,
-            },
-            {
-                name: "superposition",
-                cardsToGenerate: maxCards,
-                cardType: "Tarot",
-                source: engine.sources.S_Superposition,
-                cards: [],
-                hasStickers: false,
             },
             {
                 name: "seance",
@@ -446,7 +438,15 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
                 cardType: "Standard",
                 source: engine.sources.R_Standard_Has_Seal,
                 cards: [],
-            }
+            },
+            {
+                name: "standardPack",
+                cardsToGenerate: maxCards,
+                cardType: "Standard",
+                source: engine.sources.R_Standard,
+                cards: [],
+                hasStickers: false,
+            },
         ];
 
         const updates = analyzeOptions?.updates;

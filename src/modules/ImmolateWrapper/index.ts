@@ -32,7 +32,6 @@ export interface CardEngine {
     VOUCHERS: any;
     sources: { [key: string]: string };
     commonSources: { [key: string]: string };
-
     // Initialization methods
     InstParams(deck: string, stake: string, showman: boolean, version: string): void;
 

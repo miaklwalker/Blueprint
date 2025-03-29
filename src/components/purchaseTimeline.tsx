@@ -1,9 +1,10 @@
 import {BuyMetaData} from "../modules/classes/BuyMetaData.ts";
 import {useCardStore} from "../modules/state/store.ts";
 import {Badge, Button, Group, Paper, Stack, Text, Timeline, Title} from "@mantine/core";
-import {IconJoker} from "@tabler/icons-react";
+import {IconJoker, IconDownload, IconUpload} from "@tabler/icons-react";
 import {LOCATIONS} from "../modules/const.ts";
 import {toHeaderCase} from "js-convert-case";
+import {useRef} from "react";
 
 export default function PurchaseTimeline({buys, sells}: {
     buys: { [key: string]: BuyMetaData },
@@ -11,6 +12,7 @@ export default function PurchaseTimeline({buys, sells}: {
 }) {
     const buyEntries = Object.entries(buys);
     const sellEntries = Object.entries(sells || {});
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const transactions = buyEntries.concat(sellEntries);
     const blindOrder = ['smallBlind', 'bigBlind', 'bossBlind'];
@@ -21,25 +23,125 @@ export default function PurchaseTimeline({buys, sells}: {
         })
 
     const removeBuy = useCardStore(state => state.removeBuy);
+    const setBuys = useCardStore(state => state.setBuys);
+    const setSells = useCardStore(state => state.setSells);
 
     const selectedAnte = useCardStore(state => state.applicationState.selectedAnte);
     const selectedBlind = useCardStore(state => state.applicationState.selectedBlind);
 
-
     const addSell = useCardStore(state => state.addSell);
     const undoSell = useCardStore(state => state.undoSell);
+
+    const exportPurchases = () => {
+        const data = JSON.stringify({ buys, sells }, null, 2);
+        const blob = new Blob([data], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `blueprint-purchases-${new Date().toISOString().slice(0, 10)}.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    };
+
+    const importPurchases = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
+
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const data = JSON.parse(e.target?.result as string);
+
+                // Convert imported data to BuyMetaData instances
+                const importedBuys: { [key: string]: BuyMetaData } = {};
+                const importedSells: { [key: string]: BuyMetaData } = {};
+
+                if (data.buys) {
+                    Object.entries(data.buys).forEach(([key, value]) => {
+                        importedBuys[key] = new BuyMetaData(value as any);
+                    });
+                }
+
+                if (data.sells) {
+                    Object.entries(data.sells).forEach(([key, value]) => {
+                        importedSells[key] = new BuyMetaData(value as any);
+                    });
+                }
+
+                setBuys(importedBuys);
+                setSells(importedSells);
+            } catch (error) {
+                console.error("Failed to import purchases:", error);
+                alert("Invalid purchase history file");
+            }
+        };
+        reader.readAsText(file);
+        event.target.value = ""; // Reset the input
+    };
 
     if (buyEntries.length === 0) {
         return (
             <Paper p="md" withBorder>
-                <Text c="dimmed" size="sm" ta="center">No purchases yet</Text>
+                <Group justify={'space-between'} mb="md">
+                    <Text c="dimmed" size="sm">No purchases yet</Text>
+                    <Button
+                        leftSection={<IconUpload size={16} />}
+                        size="xs"
+                        variant="light"
+                        onClick={importPurchases}
+                    >
+                        Import
+                    </Button>
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        style={{ display: "none" }}
+                        accept=".json"
+                        onChange={handleFileChange}
+                    />
+                </Group>
             </Paper>
         );
     }
 
     return (
         <Paper p="md" withBorder>
-            <Title order={3} mb="md">Purchase History</Title>
+            <Group justify="space-between" mb="md">
+                <Title order={3}>Purchase History</Title>
+                <Group>
+                    <Button
+                        leftSection={<IconUpload size={16} />}
+                        size="xs"
+                        variant="light"
+                        onClick={importPurchases}
+                    >
+                        Import
+                    </Button>
+                    <Button
+                        leftSection={<IconDownload size={16} />}
+                        size="xs"
+                        variant="light"
+                        onClick={exportPurchases}
+                    >
+                        Export
+                    </Button>
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        style={{ display: "none" }}
+                        accept=".json"
+                        onChange={handleFileChange}
+                    />
+                </Group>
+            </Group>
             <Timeline active={transactions.length - 1} bulletSize={24} lineWidth={2}>
                 {transactions.map(([key, buyData]) => {
                     // Parse the key to extract information

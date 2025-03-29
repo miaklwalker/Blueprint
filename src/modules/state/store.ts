@@ -278,6 +278,13 @@ export const useCardStore = create(
                             let key = `${sell.ante}-${sell.blind}-${sell.name}`;
                             delete prev.shoppingState.sells[key];
                         }, undefined, 'Global/UndoSell'),
+                        setBuys: (buys: { [key: string]: BuyMetaData }) => set((prev: InitialState) => {
+                            prev.shoppingState.buys = buys;
+                        }, undefined, 'Global/SetBuys'),
+
+                        setSells: (sells: { [key: string]: BuyMetaData }) => set((prev: InitialState) => {
+                            prev.shoppingState.sells = sells;
+                        }, undefined, 'Global/SetSells'),
                         trackEvent: (event: any) => set((prev: InitialState) => {
                             prev.eventState.events.push(event)
                         }, undefined, 'Global/TrackEvent'),

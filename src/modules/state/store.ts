@@ -103,7 +103,7 @@ const blueprintStorage: StateStorage = {
                 },
                 shoppingState: {
                     ...initialState.shoppingState,
-                    buys: getBuysFromHash(),
+                    // buys: getBuysFromHash(),
                 },
             }
         }
@@ -123,7 +123,7 @@ const blueprintStorage: StateStorage = {
         // Update URL without reloading the page
         const newUrl = `${window.location.pathname}?${params.toString()}${window.location.hash}`;
         window.history.replaceState({}, '', newUrl);
-        updateBuysInHash(parsedValue.state.shoppingState.buys);
+        // updateBuysInHash(parsedValue.state.shoppingState.buys);
     },
 };
 
@@ -141,22 +141,22 @@ function getImmolateStateFromUrl() {
 }
 
 // Helper functions to manage buys in hash
-function getBuysFromHash() {
-    try {
-        const hash = window.location.hash.substring(1); // Remove the # symbol
-        return hash ? JSON.parse(decodeURIComponent(hash)) : {};
-    } catch (e) {
-        return {};
-    }
-}
+// function getBuysFromHash() {
+//     try {
+//         const hash = window.location.hash.substring(1); // Remove the # symbol
+//         return hash ? JSON.parse(decodeURIComponent(hash)) : {};
+//     } catch (e) {
+//         return {};
+//     }
+// }
 
-function updateBuysInHash(buys: any) {
-    const hashValue = encodeURIComponent(JSON.stringify(buys));
-
-    // Update hash without affecting the URL query params
-    const newUrl = `${window.location.pathname}${window.location.search}#${hashValue}`;
-    window.history.replaceState({}, '', newUrl);
-}
+// function updateBuysInHash(buys: any) {
+//     const hashValue = encodeURIComponent(JSON.stringify(buys));
+//
+//     // Update hash without affecting the URL query params
+//     const newUrl = `${window.location.pathname}${window.location.search}#${hashValue}`;
+//     window.history.replaceState({}, '', newUrl);
+// }
 
 export const useCardStore = create(
     devtools(

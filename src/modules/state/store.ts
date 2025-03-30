@@ -100,7 +100,7 @@ const initialState: InitialState = {
 // @ts-ignore
 const blueprintStorage: StateStorage = {
     // @ts-ignore
-    getItem: (key: string): string => {
+    getItem: (): string => {
         let immolateState = getImmolateStateFromUrl();
 
 

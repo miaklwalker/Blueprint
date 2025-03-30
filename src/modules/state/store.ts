@@ -3,6 +3,8 @@ import {create} from "zustand/index";
 import {combine, createJSONStorage, devtools, persist, StateStorage} from "zustand/middleware";
 import {immer} from "zustand/middleware/immer";
 import {BuyMetaData} from "../classes/BuyMetaData.ts";
+import {analyzeSeed} from "../ImmolateWrapper";
+import {SeedResultsContainer} from "../ImmolateWrapper/CardEngines/Cards.ts";
 
 
 export interface InitialState {
@@ -17,6 +19,7 @@ export interface InitialState {
         selectedOptions: string[];
     };
     applicationState: {
+        viewMode: string
         start: boolean;
         settingsOpen: boolean;
         asideOpen: boolean;
@@ -27,6 +30,7 @@ export interface InitialState {
         selectedAnte: number;
         selectedBlind: string;
         hasSettingsChanged: boolean;
+        analyzedResults: SeedResultsContainer | null | undefined;
     };
     searchState: {
         searchTerm: string;
@@ -43,6 +47,9 @@ export interface InitialState {
     };
     eventState: {
         events: any[]
+    },
+    lockState: {
+        lockedCards: Record<string, any>  // Maps card IDs to locked cards
     }
 }
 
@@ -58,6 +65,7 @@ const initialState: InitialState = {
         selectedOptions: options,
     },
     applicationState: {
+        viewMode: 'blueprint',
         start: false,
         settingsOpen: true,
         asideOpen: false,
@@ -68,6 +76,7 @@ const initialState: InitialState = {
         selectedAnte: 1,
         selectedBlind: 'bigBlind',
         hasSettingsChanged: false,
+        analyzedResults: null,
     },
     searchState: {
         searchTerm: '',
@@ -80,7 +89,11 @@ const initialState: InitialState = {
     },
     eventState: {
         events: []
-    }
+    },
+    lockState: {
+        lockedCards: {}
+    },
+
 }
 
 
@@ -164,7 +177,9 @@ export const useCardStore = create(
             immer(
                 combine(initialState,
                     (set, get) => ({
-
+                        setViewMode: (viewMode:string) => set((prev: InitialState) => {
+                            prev.applicationState.viewMode = viewMode;
+                        }, undefined, 'Global/SetViewMode'),
                         setSeed: (seed: string) => set((prev: InitialState) => {
                             prev.immolateState.seed = seed?.toUpperCase();
                             prev.shoppingState = initialState.shoppingState
@@ -297,6 +312,44 @@ export const useCardStore = create(
                         setHasSettingsChanged: (hasSettingsChanged: boolean) => set((prev: InitialState) => {
                             prev.applicationState.hasSettingsChanged = hasSettingsChanged
                         }, undefined, 'Global/SetHasSettingsChanged'),
+                        analyzeSeed: () => set((prev: InitialState) => {
+                            const analyzeState = get().immolateState;
+                            const buys = get().shoppingState.buys;
+                            const sells = get().shoppingState.sells;
+                            const showCardSpoilers = get().applicationState.showCardSpoilers;
+                            const unlocks = get().immolateState.selectedOptions;
+                            const events = get().eventState.events;
+                            const lockedCards = get().lockState.lockedCards;
+
+                            const options = {
+                                showCardSpoilers,
+                                unlocks,
+                                events,
+                                updates: [],
+                                buys,
+                                sells,
+                                lockedCards
+                            }
+                            prev.applicationState.analyzedResults = analyzeSeed(analyzeState, options);
+                            prev.applicationState.hasSettingsChanged = false; // Reset flag after analyzing
+                        }, undefined, 'Global/AnalyzeSeed'),
+                        lockCard: (cardId: string, card: any) => set((prev: InitialState) => {
+                            prev.lockState.lockedCards[cardId] = card;
+                            prev.applicationState.hasSettingsChanged = true;
+                            return prev;
+                        }, undefined, 'Cards/LockCard'),
+
+                        unlockCard: (cardId: string) => set((prev: InitialState) => {
+                            delete prev.lockState.lockedCards[cardId];
+                            prev.applicationState.hasSettingsChanged = true;
+                            return prev;
+                        }, undefined, 'Cards/UnlockCard'),
+
+                        clearLockedCards: () => set((prev: InitialState) => {
+                            prev.lockState.lockedCards = {};
+                            prev.applicationState.hasSettingsChanged = true;
+                            return prev;
+                        }, undefined, 'Cards/ClearLockedCards'),
                         reset: () => set(initialState, undefined, 'Global/Reset'),
                     })
                 )),

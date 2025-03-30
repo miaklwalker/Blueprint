@@ -221,13 +221,14 @@ interface AnalyzeOptions {
     events: Event[];
     updates?: any[],
     maxMiscCardSource?: number
+    lockedCards?: any
 }
 
 
 
 
 export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOptions) {
-
+    console.log("Seed Analysis Started")
     const seed = settings?.seed?.toUpperCase()?.replace(/0/g, 'O');
     if (!seed) return;
     let output = new SeedResultsContainer();
@@ -250,8 +251,8 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
     let engineWrapper = new CardEngineWrapper(engine);
     let itemsWithSpoilers: string[] = ["The Soul", "Judgement", "Wraith"];
     let spoilerSources = [engine.sources.S_Soul, engine.sources.S_Judgement, engine.sources.S_Wraith];
-
-    function generateAnte( ante: number) {
+    const lockedCards = analyzeOptions?.lockedCards || {};
+    function generateAnte( ante: number ) {
         engine.initUnlocks(ante, false);
 
         let result = new Ante(ante);
@@ -506,10 +507,16 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
         }
         for (let i = 0; i < Math.min(settings.cardsPerAnte, 1000); i++) {
             let key = `${ante}-${LOCATIONS.SHOP}-${i}`;
+            const lockCardId = `ante_${ante}_shop_${i}`;
+            if (lockedCards[lockCardId]) {
+                console.log("Locked Card", lockedCards[lockCardId])
+                engine.lock(lockedCards[lockCardId].name);
+            }
             let item = engine.nextShopItem(ante);
             let card = engineWrapper.makeCard(
                 item
             )
+
             result.queue.push(
                 card
             )
@@ -570,6 +577,7 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
     delete output.antes[0];
 
     engine.delete();
+
     return output;
 }
 

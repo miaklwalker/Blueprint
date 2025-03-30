@@ -68,6 +68,71 @@ export function renderImage(
     return cardWidth / cardHeight;
 }
 
+interface SimpleRenderProps {
+    layers: Layer[],
+    invert?: boolean,
+}
+
+
+
+export function SimpleRenderCanvas({ layers, invert = false }: SimpleRenderProps) {
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const [ratio, setRatio] = useState(3 / 4);
+
+    useEffect(() => {
+        if (!canvasRef.current || !layers || layers.length === 0) return;
+
+        const canvas = canvasRef.current;
+        const context = canvas.getContext('2d');
+        if (!context) return;
+
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        layers
+            .sort((a, b) => a.order - b.order)
+            .forEach(layer => {
+                if (globalImageCache.has(layer.source)) {
+                    const image = globalImageCache.get(layer.source) as HTMLImageElement;
+                    const imageRatio = renderImage(canvas, context, image, layer);
+                    if (layer.order === 0) {
+                        setRatio(imageRatio);
+                    }
+                    return;
+                }
+
+                const img = new Image();
+                img.src = layer.source;
+                img.onload = () => {
+                    const imageRatio = renderImage(canvas, context, img, layer);
+                    globalImageCache.set(layer.source, img);
+                    if (layer.order === 0) {
+                        setRatio(imageRatio);
+                    }
+                };
+            });
+
+        if (invert) {
+            canvas.style.filter = 'invert(0.8)';
+        } else {
+            canvas.style.filter = 'none';
+        }
+    }, [layers, invert]);
+
+    return (
+        <AspectRatio ratio={ratio} w="100%">
+            <canvas
+                ref={canvasRef}
+                style={{
+                    borderRadius: '6px',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+                }}
+            />
+        </AspectRatio>
+    );
+}
+
+
+// Advanced card rendering with canvas
 export function RenderImagesWithCanvas({layers, invert = false, spacing = false}: RenderCanvasProps) {
     const canvasRef = useRef(null);
     const containerRef = useRef(null);

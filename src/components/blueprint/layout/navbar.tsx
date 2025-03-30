@@ -7,6 +7,7 @@ import {
     NativeSelect,
     NumberInput,
     ScrollArea,
+    SegmentedControl,
     Stack,
     Switch,
     Text,
@@ -15,12 +16,14 @@ import {
 } from "@mantine/core";
 import {useCardStore} from "../../../modules/state/store.ts";
 import UnlocksModal from "../../unlocksModal.tsx";
-import {IconJoker, IconPlayCard} from "@tabler/icons-react";
+import {IconFileText, IconJoker, IconLayout, IconListSearch, IconPlayCard} from "@tabler/icons-react";
 import SeedInputAutoComplete from "../../SeedInputAutoComplete.tsx";
-
+import {useEffect} from "react";
 
 export default function NavBar() {
     const theme = useMantineTheme();
+    const viewMode = useCardStore(state => state.applicationState.viewMode);
+    const setViewMode = useCardStore(state => state.setViewMode);
 
     const analyzeState = useCardStore(state => state.immolateState);
     const {seed, deck, stake, gameVersion: version, antes, cardsPerAnte} = analyzeState;
@@ -35,15 +38,68 @@ export default function NavBar() {
     const setStart = useCardStore(state => state.setStart);
     const openSelectOptionModal = useCardStore(state => state.openSelectOptionModal);
     const reset = useCardStore(state => state.reset);
+    const hasSettingsChanged = useCardStore((state) => state.applicationState.hasSettingsChanged);
+
+
+    const start = useCardStore(state => state.applicationState.start);
+    const analyzeSeed = useCardStore(state => state.analyzeSeed);
+    const seedResults = useCardStore(state => state.applicationState.analyzedResults);
 
     const handleAnalyzeClick = () => {
         setStart(true);
+        analyzeSeed();
     }
+
+    useEffect(() => {
+        if(start && !seedResults){
+            analyzeSeed()
+        }
+    }, [start,seedResults]);
+
+
     return (
         <AppShell.Navbar p="md">
             <UnlocksModal/>
+            <AppShell.Section>
+                <SegmentedControl
+                    fullWidth
+                    value={viewMode}
+                    onChange={(value: string) => setViewMode(value)}
+                    data={[
+                        {
+                            value: 'blueprint',
+                            label: (
+                                <Group gap="xs">
+                                    <IconLayout size={16}/>
+                                    <Text>Blueprint</Text>
+                                </Group>
+                            )
+                        },
+                        {
+                            value: 'simple',
+                            label: (
+                                <Group gap="xs">
+                                    <IconListSearch size={16}/>
+                                    <Text>Efficiency</Text>
+                                </Group>
+                            )
+                        },
+                        {
+                            value: 'text',
+                            label: (
+                                <Group gap="xs">
+                                    <IconFileText size={16}/>
+                                    <Text>Text</Text>
+                                </Group>
+                            )
+                        }
+                    ]}
+                    mb="sm"
+                />
+            </AppShell.Section>
             <AppShell.Section>Settings</AppShell.Section>
             <AppShell.Section grow my="md" component={ScrollArea} scrollbars={'y'}>
+
                 <SeedInputAutoComplete
                     seed={seed}
                     setSeed={setSeed}
@@ -104,13 +160,14 @@ export default function NavBar() {
                     It is recommended to keep this number under 200.
                 </Text>
                 <Button.Group w={'100%'} mb={'lg'}>
-                    <Button variant="default" c={'blue'} onClick={()=>setCardsPerAnte(50)}>50</Button>
-                    <Button variant="default" c={'red'} onClick={()=>setCardsPerAnte(cardsPerAnte - 50)}>-50</Button>
+                    <Button variant="default" c={'blue'} onClick={() => setCardsPerAnte(50)}>50</Button>
+                    <Button variant="default" c={'red'} onClick={() => setCardsPerAnte(cardsPerAnte - 50)}>-50</Button>
                     <Button.GroupSection flex={1} variant="default" bg="var(--mantine-color-body)" miw={80}>
                         {cardsPerAnte}
                     </Button.GroupSection>
-                    <Button variant="default" c={'green'} onClick={()=>setCardsPerAnte(cardsPerAnte + 50)}>+50</Button>
-                    <Button variant="default" c={'blue'} onClick={()=>setCardsPerAnte(1000)} >1000</Button>
+                    <Button variant="default" c={'green'}
+                            onClick={() => setCardsPerAnte(cardsPerAnte + 50)}>+50</Button>
+                    <Button variant="default" c={'blue'} onClick={() => setCardsPerAnte(1000)}>1000</Button>
                 </Button.Group>
                 <Group>
                     <Box>
@@ -127,7 +184,6 @@ export default function NavBar() {
                         </Tooltip>
                     </Box>
                 </Group>
-
             </AppShell.Section>
             <AppShell.Section my="md">
                 <Stack>
@@ -137,7 +193,12 @@ export default function NavBar() {
                     <Button color={theme.colors.red[9]} variant={'filled'} onClick={() => reset()}>
                         Reset
                     </Button>
-                    <Button color={theme.colors.green[9]} variant={'filled'} onClick={handleAnalyzeClick}>
+                    <Button
+                        onClick={handleAnalyzeClick}
+                        disabled={!hasSettingsChanged}
+                        color={hasSettingsChanged ? "green" : "gray"}
+
+                    >
                         Analyze Seed
                     </Button>
                 </Stack>

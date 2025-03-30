@@ -1,7 +1,7 @@
-import {useCardStore} from "../../modules/state/store.ts";
+import {useCardStore} from "../../../modules/state/store.ts";
 import {useEffect, useMemo, useState} from "react";
 import {Carousel, Embla} from "@mantine/carousel";
-import {blinds, LOCATION_TYPES, LOCATIONS, tagDescriptions} from "../../modules/const.ts";
+import {blinds, LOCATION_TYPES, LOCATIONS, tagDescriptions} from "../../../modules/const.ts";
 import {
     Accordion,
     AppShell,
@@ -20,18 +20,20 @@ import {
     Tabs,
     Text
 } from "@mantine/core";
-import {BuyWrapper} from "../buyerWrapper.tsx";
-import {GameCard} from "../Rendering/cards.tsx";
-import {Ante, Pack, SeedResultsContainer} from "../../modules/ImmolateWrapper/CardEngines/Cards.ts";
-import {BuyMetaData} from "../../modules/classes/BuyMetaData.ts";
-import {Boss, Tag, Voucher} from "../Rendering/gameElements.tsx";
+import {BuyWrapper} from "../../buyerWrapper.tsx";
+import {GameCard} from "../../Rendering/cards.tsx";
+import {Ante, Pack, SeedResultsContainer} from "../../../modules/ImmolateWrapper/CardEngines/Cards.ts";
+import {BuyMetaData} from "../../../modules/classes/BuyMetaData.ts";
+import {Boss, Tag, Voucher} from "../../Rendering/gameElements.tsx";
 import {toHeaderCase} from "js-convert-case";
 import {useDisclosure, useViewportSize} from "@mantine/hooks";
-import Header from "./layout/header.tsx";
-import NavBar from "./layout/navbar.tsx";
-import {Aside} from "./layout/aside.tsx";
-import Footer from "./layout/footer.tsx";
-import HomePage from "./homePage/homepage.tsx";
+import Header from "../layout/header.tsx";
+import NavBar from "../layout/navbar.tsx";
+import {Aside} from "../layout/aside.tsx";
+import Footer from "../layout/footer.tsx";
+import HomePage from "../homePage/homepage.tsx";
+import Index from "../textView";
+import Simple from "../simpleView/simple.tsx";
 
 function QueueCarousel({queue, tabName}: { queue: any[], tabName: string }) {
     const selectedBlind = useCardStore(state => state.applicationState.selectedBlind);
@@ -39,7 +41,7 @@ function QueueCarousel({queue, tabName}: { queue: any[], tabName: string }) {
     const [embla, setEmbla] = useState<Embla | null>(null);
 
     useEffect(() => {
-        if(!embla) return;
+        if (!embla) return;
 
 
         if (embla && selectedSearchResult) {
@@ -94,7 +96,11 @@ function QueueCarousel({queue, tabName}: { queue: any[], tabName: string }) {
     )
 }
 
-function AntePanel({ante, tabName, timeTravelVoucherOffset}: { ante: Ante, tabName: string, timeTravelVoucherOffset: number }) {
+function AntePanel({ante, tabName, timeTravelVoucherOffset}: {
+    ante: Ante,
+    tabName: string,
+    timeTravelVoucherOffset: number
+}) {
     const queue = ante.queue;
     const selectedBlind = useCardStore(state => state.applicationState.selectedBlind);
     const packs = ante?.blinds?.[selectedBlind]?.packs;
@@ -196,17 +202,17 @@ function AntePanel({ante, tabName, timeTravelVoucherOffset}: { ante: Ante, tabNa
     )
 }
 
-const  CustomDetails: {[key: string] : any} = {
-    "Charm Tag" : {
+const CustomDetails: { [key: string]: any } = {
+    "Charm Tag": {
         renderer: (ante: Ante, navigateToMiscSource: any) => {
             return (
                 <Stack>
                     <Text>
                         {
-                            ante.miscCardSources.find(({name}) => name === 'arcanaPack')?.cards?.slice(0,5).map(({ name }: any) => name).join(', ')
+                            ante.miscCardSources.find(({name}) => name === 'arcanaPack')?.cards?.slice(0, 5).map(({name}: any) => name).join(', ')
                         }
                     </Text>
-                    <Button onClick={()=> navigateToMiscSource('arcanaPack')}>
+                    <Button onClick={() => navigateToMiscSource('arcanaPack')}>
                         More Info
                     </Button>
                 </Stack>
@@ -214,16 +220,16 @@ const  CustomDetails: {[key: string] : any} = {
             )
         }
     },
-    "Standard Tag" : {
+    "Standard Tag": {
         renderer: (ante: Ante, navigateToMiscSource: any) => {
             return (
                 <Stack>
                     <Text>
                         {
-                            ante.miscCardSources.find(({name}) => name === 'standardPack')?.cards?.slice(0,5).map(({ name }: any) => name).join(', ')
+                            ante.miscCardSources.find(({name}) => name === 'standardPack')?.cards?.slice(0, 5).map(({name}: any) => name).join(', ')
                         }
                     </Text>
-                    <Button onClick={()=> navigateToMiscSource('standardPack')}>
+                    <Button onClick={() => navigateToMiscSource('standardPack')}>
                         More Info
                     </Button>
                 </Stack>
@@ -231,16 +237,16 @@ const  CustomDetails: {[key: string] : any} = {
             )
         }
     },
-    "Meteor Tag" : {
+    "Meteor Tag": {
         renderer: (ante: Ante, navigateToMiscSource: any) => {
             return (
                 <Stack>
                     <Text>
                         {
-                            ante.miscCardSources.find(({name}) => name === 'celestialPack')?.cards?.slice(0,5).map(({ name }: any) => name).join(', ')
+                            ante.miscCardSources.find(({name}) => name === 'celestialPack')?.cards?.slice(0, 5).map(({name}: any) => name).join(', ')
                         }
                     </Text>
-                    <Button onClick={()=> navigateToMiscSource('celestialPack')}>
+                    <Button onClick={() => navigateToMiscSource('celestialPack')}>
                         More Info
                     </Button>
                 </Stack>
@@ -254,10 +260,10 @@ const  CustomDetails: {[key: string] : any} = {
                 <Stack>
                     <Text>
                         {
-                            ante.miscCardSources.find(({name}) => name === 'buffoonPack')?.cards?.slice(0,5).map(({ name }: any) => name).join(', ')
+                            ante.miscCardSources.find(({name}) => name === 'buffoonPack')?.cards?.slice(0, 5).map(({name}: any) => name).join(', ')
                         }
                     </Text>
-                    <Button onClick={()=> navigateToMiscSource('buffoonPack')}>
+                    <Button onClick={() => navigateToMiscSource('buffoonPack')}>
                         More Info
                     </Button>
                 </Stack>
@@ -271,10 +277,10 @@ const  CustomDetails: {[key: string] : any} = {
                 <Stack>
                     <Text>
                         {
-                            ante.miscCardSources.find(({name}) => name === 'uncommonTag')?.cards?.slice(0,1).map(({ name }: any) => name).join(', ')
+                            ante.miscCardSources.find(({name}) => name === 'uncommonTag')?.cards?.slice(0, 1).map(({name}: any) => name).join(', ')
                         }
                     </Text>
-                    <Button onClick={()=> navigateToMiscSource('uncommonTag')}>
+                    <Button onClick={() => navigateToMiscSource('uncommonTag')}>
                         More Info
                     </Button>
                 </Stack>
@@ -288,10 +294,10 @@ const  CustomDetails: {[key: string] : any} = {
                 <Stack>
                     <Text>
                         {
-                            ante.miscCardSources.find(({name}) => name === 'rareTag')?.cards?.slice(0,1).map(({ name }: any) => name).join(', ')
+                            ante.miscCardSources.find(({name}) => name === 'rareTag')?.cards?.slice(0, 1).map(({name}: any) => name).join(', ')
                         }
                     </Text>
-                    <Button onClick={()=> navigateToMiscSource('rareTag')}>
+                    <Button onClick={() => navigateToMiscSource('rareTag')}>
                         More Info
                     </Button>
                 </Stack>
@@ -301,8 +307,8 @@ const  CustomDetails: {[key: string] : any} = {
     },
 }
 
-function TagDisplay({ tag, ante }: { tag: string, ante: Ante }) {
-    const [opened, { close, open }] = useDisclosure(false);
+function TagDisplay({tag, ante}: { tag: string, ante: Ante }) {
+    const [opened, {close, open}] = useDisclosure(false);
     const navigateToMiscSource = useCardStore(state => state.navigateToMiscSource);
     return (
         <Popover opened={opened}>
@@ -357,10 +363,10 @@ function SeedExplorer({SeedResults}: { SeedResults: SeedResultsContainer }) {
         //     }
         // }
         // return offset;
-    },[ /*buys, selectedAnte, selectedBlind */ ]);
+    }, [ /*buys, selectedAnte, selectedBlind */]);
 
 
-    let pool:{[key:number|string]: Ante} = SeedResults.antes //timeTravelVoucherOffset === 0 ? SeedResults.antes : SeedResults.timeTravelAntes;
+    let pool: { [key: number | string]: Ante } = SeedResults.antes //timeTravelVoucherOffset === 0 ? SeedResults.antes : SeedResults.timeTravelAntes;
 
     let itemPool = selectedAnte //timeTravelVoucherOffset === 0 ? selectedAnte : `${selectedAnte-timeTravelVoucherOffset}-${timeTravelVoucherOffset}`;
 
@@ -446,7 +452,8 @@ function SeedExplorer({SeedResults}: { SeedResults: SeedResultsContainer }) {
                         let currentAnte = String(ante) === String(selectedAnte);
                         let panelData = currentAnte ? pool[itemPool] : anteData;
                         return (
-                            <AntePanel key={i} tabName={ante} ante={panelData} timeTravelVoucherOffset={timeTravelVoucherOffset}/>
+                            <AntePanel key={i} tabName={ante} ante={panelData}
+                                       timeTravelVoucherOffset={timeTravelVoucherOffset}/>
                         )
                     })
                 }
@@ -456,10 +463,13 @@ function SeedExplorer({SeedResults}: { SeedResults: SeedResultsContainer }) {
 }
 
 function Main({SeedResults}: { SeedResults: SeedResultsContainer | null }) {
+    const viewMode = useCardStore(state => state.applicationState.viewMode);
     return (
         <AppShell.Main>
             {!SeedResults && <HomePage/>}
-            {SeedResults && <SeedExplorer SeedResults={SeedResults}/>}
+            {SeedResults && viewMode === 'blueprint' && <SeedExplorer SeedResults={SeedResults}/>}
+            {SeedResults && viewMode === 'text' && <Index seedResults={SeedResults}/>}
+            {SeedResults && viewMode === 'simple' && <Simple SeedResults={SeedResults}/>}
         </AppShell.Main>
     )
 }
@@ -468,6 +478,7 @@ export function Blueprint({SeedResults}: { SeedResults: SeedResultsContainer | n
     const {width} = useViewportSize();
     const settingsOpened = useCardStore(state => state.applicationState.settingsOpen);
     const outputOpened = useCardStore(state => state.applicationState.asideOpen);
+
 
     return (
         <AppShell

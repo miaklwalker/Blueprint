@@ -23,7 +23,7 @@ export function BuyWrapper({children, bottomOffset, metaData, horizontal = false
     let sameAnte = selectedSearchResult?.ante === metaData?.ante;
     let sameIndex = selectedSearchResult?.index === metaData?.index;
     let isSelected = sameAnte && sameIndex && sameLocation;
-
+    const analyzeSeed = useCardStore(state => state.analyzeSeed);
     const {hovered, ref} = useHover();
     const {hovered: menuHovered, ref: menuRef} = useHover();
     const addBuy = useCardStore(state => state.addBuy);
@@ -112,8 +112,10 @@ export function BuyWrapper({children, bottomOffset, metaData, horizontal = false
                                     if (!metaData) return;
                                     if (cardIsOwned) {
                                         removeBuy(metaData);
+                                        analyzeSeed()
                                     } else {
                                         addBuy(metaData);
+                                        analyzeSeed()
                                     }
                                 }}
                             >

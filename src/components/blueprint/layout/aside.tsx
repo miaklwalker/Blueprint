@@ -209,7 +209,7 @@ export function Aside({SeedResults}: { SeedResults: SeedResultsContainer | null 
             </AppShell.Section>
             <AppShell.Section component={ScrollArea} scrollbars="y">
                 <Tabs value={tab}>
-                    <Tabs.Panel value="sources">
+                    <Tabs.Panel value="sources" maw={'100%'}>
                         {SeedResults ? (
                             <MiscCardSourcesDisplay miscSources={miscSources}/>
                         ) : (

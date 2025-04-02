@@ -315,6 +315,8 @@ function Simple({SeedResults}: { SeedResults: SeedResultsContainer }) {
     const containerRef = useRef<HTMLDivElement>(null);
     const [visibleAntes, setVisibleAntes] = useState<number[]>([1]); // Start with first ante visible
     const [loadingNextAnte, setLoadingNextAnte] = useState<number | null>(2); // Track which ante is loading
+    const selectedAnte = useCardStore(state => state.applicationState.selectedAnte);
+    const setSelectedAnte = useCardStore(state => state.setSelectedAnte);
     const lockedCards = useCardStore(state => state.lockState.lockedCards);
     const clearLockedCards = useCardStore(state => state.clearLockedCards);
     const analyzeSeed  = useCardStore(state => state.analyzeSeed)
@@ -337,6 +339,14 @@ function Simple({SeedResults}: { SeedResults: SeedResultsContainer }) {
         useEffect(() => {
             if (entry?.isIntersecting) {
                 // When this ante is visible, make the next one available
+                const currentAnte = anteNumber;
+                console.log(currentAnte)
+                console.log(selectedAnte)
+                if(currentAnte !== selectedAnte){
+                    console.log("Updating selected ante to current visible ante: ", currentAnte);
+                    setSelectedAnte(currentAnte);
+                }
+                 // Set the current ante as selected
                 const nextAnte = anteNumber + 1;
 
                 if (nextAnte <= anteEntries.length && !visibleAntes.includes(nextAnte)) {
@@ -349,7 +359,7 @@ function Simple({SeedResults}: { SeedResults: SeedResultsContainer }) {
                     }, 300);
                 }
             }
-        }, [entry?.isIntersecting, anteNumber]);
+        }, [entry?.isIntersecting, anteNumber, selectedAnte, setSelectedAnte]);
 
         return <div ref={ref} />;
     };

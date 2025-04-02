@@ -20,43 +20,6 @@ import {Blueprint} from "./components/blueprint/standardView";
 
 export default function App() {
     const SeedResults = useCardStore(state => state.applicationState.analyzedResults);
-    //     useMemo(() => {
-    //         if (!ready || !start) return null;
-    //         try {
-    //             const transactions = {buys, sells}
-    //             const options: AnalyzeOptions = {
-    //                 showCardSpoilers,
-    //                 unlocks,
-    //                 events,
-    //                 updates: [],
-    //                 ...transactions
-    //             };
-    //             return analyzeSeed(debouncedAnalyzeState, options)
-    //         }
-    //         catch (e: any) {
-    //             console.log(e.message);
-    //             let crashMessage = 'Aborted(OOM)';
-    //             if(e.message.includes(crashMessage) && !retried){
-    //                 retried = true
-    //                 console.log("Immolate crashed, reloading blueprint")
-    //                 console.log("Retrying...")
-    //
-    //                 setTimeout(()=>{
-    //                     window.location.reload();
-    //                 }, 1000)
-    //
-    //             }
-    //             setReady(false);
-    //             document.addEventListener('ImmolateReady', () => {
-    //                 console.debug("Immolate loaded, reloading blueprint")
-    //                 setStart(true);
-    //                 setReady(true);
-    //             })
-    //             return null
-    //         }
-    //     },
-    //     [debouncedAnalyzeState, start, buys, showCardSpoilers, unlocks, ready, events]
-    // );
 
     return (
         <MantineProvider defaultColorScheme={'dark'} theme={theme}>

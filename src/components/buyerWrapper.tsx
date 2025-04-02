@@ -9,7 +9,7 @@ import {
     Group,
     Indicator,
     Menu,
-    Overlay,
+    Overlay, Text,
     Tooltip,
     Transition,
     useMantineTheme
@@ -54,7 +54,7 @@ export function BuyWrapper({children, bottomOffset, metaData, horizontal = false
                         <Flex align={'center'} justify={'space-between'} gap={4}>
                             {/*// @ts-ignore*/}
                             <Badge autoContrast color={metaData?.card?.rarity ? rarityColorMap[metaData?.card?.rarity] : undefined}>
-                                {metaData?.name ?? metaData?.card?.name ?? 'Unknown'}
+                                <Text span size={'sm'} fw={'bolder'}>{metaData?.index}</Text> {metaData?.name ?? metaData?.card?.name ?? 'Unknown'}
                             </Badge>
                             {
                                 metaData?.card &&

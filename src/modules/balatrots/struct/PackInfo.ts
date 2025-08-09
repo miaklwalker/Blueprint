@@ -1,5 +1,5 @@
 import { PackType, PackTypeItem } from '../enum/packs/PackType';
-import { PackKind, PackKindItem } from '../enum/packs/PackKind';
+import { PackKind } from '../enum/packs/PackKind';
 import { Option } from './Option';
 
 export class PackInfo {

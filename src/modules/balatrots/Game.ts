@@ -28,7 +28,7 @@ import {JokerStickers} from "./struct/JokerStickers";
 import {StakeType} from "./enum/Stake";
 import {JokerImpl} from "./interface/Joker";
 import {ShopInstance} from "./struct/ShopInstance";
-import {Deck, DeckType} from "./enum/Deck";
+import {Deck, deckNames, DeckType} from "./enum/Deck";
 import {ShopItem} from "./struct/ShopItem";
 import {Type} from "./enum/cards/CardType";
 import {PackInfo} from "./struct/PackInfo";
@@ -354,7 +354,8 @@ export class Game extends Lock {
                 return forcedKey;
             }
         }
-        return this.randchoice(`Spectral${source}${ante}`, Game.SPECTRALS);
+
+        return this.randchoice(`${RandomQueueNames.R_Spectral}${source}${ante}`, Game.SPECTRALS);
     }
 
     nextJoker(source: QueueNames, ante: number, hasStickers: boolean): JokerData {
@@ -476,8 +477,7 @@ export class Game extends Lock {
         let planetRate = 4;
         let playingCardRate = 0;
         let spectralRate = 0;
-
-        if (this.params.getDeck().name === DeckType.GHOST_DECK) {
+        if (this.params.getDeck().name === deckNames[DeckType.GHOST_DECK]) {
             spectralRate = 2;
         }
 

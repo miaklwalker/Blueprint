@@ -155,7 +155,7 @@ export class BalatroAnalyzer {
 
         const selectedOptions: boolean[] = new Array(BalatroAnalyzer.OPTIONS.length).fill(true);
         const game = new Game(seed, new InstanceParams(deck, stake, false, version.getVersion()));
-        game.initLocks(1, false, false);
+        game.initLocks(1, true, true);
         game.firstLock();
 
         this.lockOptions(game, selectedOptions);
@@ -183,7 +183,7 @@ export class BalatroAnalyzer {
         game.initUnlocks(ante, false);
 
         const voucher = game.nextVoucher(ante).getName();
-        game.lock(voucher);
+        // game.lock(voucher);
         this.result.addVoucher(voucher);
 
         this.unlockVouchers(game, voucher, selectedOptions);
@@ -441,7 +441,6 @@ export class BalatroAnalyzer {
     }
 
     private processCard(run: Run, packInfo: any, card: any, options: Set<Option>, game: Game): Card | JokerData {
-        console.log(this.result.ante)
         if (packInfo.getKind() === PackKind.BUFFOON) {
             const joker: JokerData = card as JokerData;
             const sticker = BalatroAnalyzer.getSticker(joker);

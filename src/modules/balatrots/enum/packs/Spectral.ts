@@ -1,29 +1,22 @@
 import { ItemImpl } from "../../interface/Item";
 
 export enum Spectral {
-    // Mystical Entities
     FAMILIAR = "Familiar",
     GRIM = "Grim",
-    WRAITH = "Wraith",
-    MEDIUM = "Medium",
-    CRYPTID = "Cryptid",
-
-    // Spiritual Objects
+    INCANTATION = "Incantation",
     TALISMAN = "Talisman",
+    AURA = "Aura",
+    WRAITH = "Wraith",
     SIGIL = "Sigil",
     OUIJA = "Ouija",
-    ANKH = "Ankh",
-
-    // Paranormal Phenomena
-    INCANTATION = "Incantation",
-    AURA = "Aura",
     ECTOPLASM = "Ectoplasm",
     IMMOLATE = "Immolate",
+    ANKH = "Ankh",
     DEJA_VU = "Deja Vu",
     HEX = "Hex",
     TRANCE = "Trance",
-
-    // System
+    MEDIUM = "Medium",
+    CRYPTID = "Cryptid",
     RETRY = "RETRY",
     RETRY2 = "RETRY"
 }

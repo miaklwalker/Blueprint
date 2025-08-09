@@ -44,14 +44,15 @@ export const themeNames = Object.keys(themes) as KnownThemes[];
 
 export default function App() {
     const SeedResults = useCardStore(state => state.applicationState.analyzedResults);
+    const state = useCardStore(state => state.immolateState)
     const [theme, setTheme] = useToggle<KnownThemes>(
         Object.keys(themes) as KnownThemes[],
     );
-
+    console.log(state)
     const analyzer = new BalatroAnalyzer(
         // seed,
-        8,
-        [60, 50, 50, 50, 50, 50, 50, 50],
+        state.antes,
+        Array(state.antes).fill(state.cardsPerAnte),
         new Deck(DeckType.GHOST_DECK),
         new Stake(StakeType.WHITE_STAKE), Version.v_101f,
         {
@@ -66,9 +67,9 @@ export default function App() {
         });
 
     const analysis = analyzer.performAnalysis({
-        seed: "U8RJYV6N",
-        ante: 8,
-        cardsPerAnte: [60, 50, 50, 50, 50, 50, 50, 50],
+        seed: state.seed,
+        ante: state.antes,
+        cardsPerAnte: Array(state.antes).fill(state.cardsPerAnte),
         deck: new Deck(DeckType.GHOST_DECK),
         stake: new Stake(StakeType.WHITE_STAKE),
         version: Version.v_101f

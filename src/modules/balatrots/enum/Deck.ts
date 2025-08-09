@@ -23,7 +23,7 @@ interface DeckProps {
 }
 
 // Map of deck names
-const deckNames: Record<DeckType, string> = {
+export const deckNames: Record<DeckType, string> = {
     [DeckType.RED_DECK]: "Red Deck",
     [DeckType.BLUE_DECK]: "Blue Deck",
     [DeckType.YELLOW_DECK]: "Yellow Deck",
@@ -43,7 +43,7 @@ const deckNames: Record<DeckType, string> = {
 
 export class Deck implements DeckProps {
     private readonly type: DeckType;
-    
+
     constructor(type: DeckType) {
         this.type = type;
     }

@@ -205,7 +205,7 @@ export class CardEngineWrapper implements EngineWrapper {
         }
     }
 }
-interface AnalyzeSettings {
+export interface AnalyzeSettings {
     seed: string;
     deck: string;
     stake: string;
@@ -213,7 +213,7 @@ interface AnalyzeSettings {
     antes: number;
     cardsPerAnte: number;
 }
-interface AnalyzeOptions {
+export interface AnalyzeOptions {
     buys: { [key: string]: any };
     sells: { [key: string]: any };
     showCardSpoilers: boolean;
@@ -228,7 +228,6 @@ interface AnalyzeOptions {
 
 
 export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOptions) {
-    console.log("Seed Analysis Started")
     const seed = settings?.seed?.toUpperCase()?.replace(/0/g, 'O');
     if (!seed) return;
     let output = new SeedResultsContainer();
@@ -415,6 +414,15 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
                 cards: []
             },
             {
+                name: 'spectralPack',
+                cardsToGenerate: maxCards,
+                cardType: "Spectral",
+                source: engine.sources.S_Spectral,
+                cards: [],
+                soulable: true,
+                hasStickers: true,
+            },
+            {
                 name: "seance",
                 cardsToGenerate: maxCards,
                 cardType: "Spectral",
@@ -443,7 +451,7 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
                 name: "standardPack",
                 cardsToGenerate: maxCards,
                 cardType: "Standard",
-                source: engine.sources.R_Standard,
+                source: engine.sources.R_Standard_Edition,
                 cards: [],
                 hasStickers: false,
             },

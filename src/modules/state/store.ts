@@ -25,6 +25,8 @@ export interface InitialState {
         asideOpen: boolean;
         selectOptionsModalOpen: boolean;
         showCardSpoilers: boolean;
+        autoBuyPacks: boolean;
+        autoBuyVouchers: boolean;
         miscSource: string;
         asideTab: string;
         selectedAnte: number;
@@ -71,6 +73,8 @@ const initialState: InitialState = {
         asideOpen: false,
         selectOptionsModalOpen: false,
         showCardSpoilers: false,
+        autoBuyPacks: true,
+        autoBuyVouchers: true,
         miscSource: 'riffRaff',
         asideTab: 'sources',
         selectedAnte: 1,
@@ -153,23 +157,6 @@ function getImmolateStateFromUrl() {
     };
 }
 
-// Helper functions to manage buys in hash
-// function getBuysFromHash() {
-//     try {
-//         const hash = window.location.hash.substring(1); // Remove the # symbol
-//         return hash ? JSON.parse(decodeURIComponent(hash)) : {};
-//     } catch (e) {
-//         return {};
-//     }
-// }
-
-// function updateBuysInHash(buys: any) {
-//     const hashValue = encodeURIComponent(JSON.stringify(buys));
-//
-//     // Update hash without affecting the URL query params
-//     const newUrl = `${window.location.pathname}${window.location.search}#${hashValue}`;
-//     window.history.replaceState({}, '', newUrl);
-// }
 
 export const useCardStore = create(
     devtools(

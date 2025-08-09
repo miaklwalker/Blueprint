@@ -254,7 +254,6 @@ seed:string;
 
     handleSelectedUnlocks(selectedUnlocks: string[]){
         options.forEach((option: string) => {
-
             if(selectedUnlocks.includes(option)){
                 this.unlock(option);
             }else{

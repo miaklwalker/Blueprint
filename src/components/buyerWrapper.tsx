@@ -148,7 +148,7 @@ export function BuyWrapper({children, bottomOffset, metaData, horizontal = false
                                             href={metaData?.link}
                                             target={'_blank'}
                                         >
-                                            Balatro Fandom Page
+                                            Wiki Page
                                         </Menu.Item>
                                     }
                                 </Menu.Dropdown>

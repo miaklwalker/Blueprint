@@ -7,21 +7,31 @@ import {
     NativeSelect,
     NumberInput,
     ScrollArea,
-    SegmentedControl,
+    SegmentedControl, Select,
     Stack,
     Switch,
     Text,
-    Tooltip,
+    Tooltip, useMantineColorScheme,
     useMantineTheme
 } from "@mantine/core";
 import {useCardStore} from "../../../modules/state/store.ts";
 import UnlocksModal from "../../unlocksModal.tsx";
-import {IconFileText, IconJoker, IconLayout, IconListSearch, IconPlayCard} from "@tabler/icons-react";
+import {
+    IconFileText,
+    IconJoker,
+    IconLayout,
+    IconListSearch,
+    IconMoon,
+    IconPlayCard,
+    IconSun
+} from "@tabler/icons-react";
 import SeedInputAutoComplete from "../../SeedInputAutoComplete.tsx";
 import {useEffect} from "react";
+import {themeNames} from "../../../App.tsx";
 
-export default function NavBar() {
+export default function NavBar({ themeName , setTheme }: { themeName: string, setTheme: any }) {
     const theme = useMantineTheme();
+    const colorScheme = useMantineColorScheme()
     const viewMode = useCardStore(state => state.applicationState.viewMode);
     const setViewMode = useCardStore(state => state.setViewMode);
 
@@ -55,6 +65,13 @@ export default function NavBar() {
             analyzeSeed()
         }
     }, [start,seedResults]);
+    useEffect(()=>{
+        if(start && seedResults){
+            console.log(": Re-analyzing seed due to showCardSpoilers change")
+            // If we have results, and the user changes the showCardSpoilers, we need to re-analyze the seed
+            analyzeSeed();
+        }
+    },[showCardSpoilers, deck, stake, version, antes, cardsPerAnte])
 
 
     return (
@@ -96,6 +113,22 @@ export default function NavBar() {
                     ]}
                     mb="sm"
                 />
+                <Group align={'flex-end'}>
+                    <Select
+                        label={'Theme'}
+                        value={themeName}
+                        onChange={setTheme}
+                        data={themeNames}
+                    />
+                    <Switch
+                        size={'xl'}
+                        checked={colorScheme.colorScheme === 'dark'}
+                        thumbIcon={colorScheme.colorScheme === 'dark' ? (<IconSun size={16} color={'var(--mantine-color-teal-6)'}/> ) : ( <IconMoon size={16}/>)}
+
+                        onChange={colorScheme.toggleColorScheme}
+                    />
+                </Group>
+
             </AppShell.Section>
             <AppShell.Section>Settings</AppShell.Section>
             <AppShell.Section grow my="md" component={ScrollArea} scrollbars={'y'}>
@@ -179,7 +212,7 @@ export default function NavBar() {
                                 checked={showCardSpoilers}
                                 thumbIcon={showCardSpoilers ? (<IconJoker color={'black'}/>) : (
                                     <IconPlayCard color={'black'}/>)}
-                                onChange={e => setShowCardSpoilers(e.currentTarget.checked)}
+                                onChange={() => setShowCardSpoilers(!showCardSpoilers)}
                             />
                         </Tooltip>
                     </Box>

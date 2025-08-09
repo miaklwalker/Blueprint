@@ -1,11 +1,16 @@
 import {SeedResultsContainer} from "../../../modules/ImmolateWrapper/CardEngines/Cards.ts";
 import {useViewportSize} from "@mantine/hooks";
 import {useCardStore} from "../../../modules/state/store.ts";
-import {AppShell, Burger, Button, Center, Container, CopyButton, Group, Title} from "@mantine/core";
+import {AppShell, Box, Burger, Button, Center, Container, CopyButton, Group, Title} from "@mantine/core";
 import SearchSeedInput from "../../searchInput.tsx";
 
 
-export default function Header({SeedResults}: { SeedResults: SeedResultsContainer | null }) {
+
+export default function Header({SeedResults}: {
+    SeedResults: SeedResultsContainer | null,
+    theme: string,
+    setTheme: any
+}) {
     const {width} = useViewportSize();
     const start = useCardStore(state => state.applicationState.start)
     const settingsOpened = useCardStore(state => state.applicationState.settingsOpen);
@@ -17,10 +22,14 @@ export default function Header({SeedResults}: { SeedResults: SeedResultsContaine
         <AppShell.Header>
             <Container fluid h={'100%'}>
                 <Group h={'100%'} justify={'space-between'}>
-                    <Group>
+                    <Group flex={1}>
                         <Burger opened={settingsOpened} onClick={toggleSettings} size="sm"/>
                         <Center h={'100%'}>
-                            <Title> Blueprint </Title>
+                            <Group grow>
+                                <Box flex={1}>
+                                    <Title > Blueprint </Title>
+                                </Box>
+                            </Group>
                         </Center>
                     </Group>
 

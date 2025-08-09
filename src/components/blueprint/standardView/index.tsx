@@ -79,7 +79,7 @@ function QueueCarousel({queue, tabName}: { queue: any[], tabName: string }) {
                                         index: index,
                                         ante: tabName,
                                         blind: selectedBlind,
-                                        link: `https://balatrogame.fandom.com/wiki/${card.name}`,
+                                        link: `https://balatrowiki.org/w/${card.name}`,
                                         card: card,
                                         name: card.name
                                     })
@@ -213,6 +213,23 @@ const CustomDetails: { [key: string]: any } = {
                         }
                     </Text>
                     <Button onClick={() => navigateToMiscSource('arcanaPack')}>
+                        More Info
+                    </Button>
+                </Stack>
+
+            )
+        }
+    },
+    "Ethereal Tag": {
+        renderer: (ante: Ante, navigateToMiscSource: any) => {
+            return (
+                <Stack>
+                    <Text>
+                        {
+                            ante.miscCardSources.find(({name}) => name === 'spectralPack')?.cards?.slice(0, 5).map(({name}: any) => name).join(', ')
+                        }
+                    </Text>
+                    <Button onClick={() => navigateToMiscSource('spectralPack')}>
                         More Info
                     </Button>
                 </Stack>
@@ -474,7 +491,7 @@ function Main({SeedResults}: { SeedResults: SeedResultsContainer | null }) {
     )
 }
 
-export function Blueprint({SeedResults}: { SeedResults: SeedResultsContainer | null }) {
+export function Blueprint({SeedResults,theme, setTheme}: { SeedResults: SeedResultsContainer | null, theme: string, setTheme: any }) {
     const {width} = useViewportSize();
     const settingsOpened = useCardStore(state => state.applicationState.settingsOpen);
     const outputOpened = useCardStore(state => state.applicationState.asideOpen);
@@ -501,8 +518,8 @@ export function Blueprint({SeedResults}: { SeedResults: SeedResultsContainer | n
             }}
             padding="md"
         >
-            <Header SeedResults={SeedResults}/>
-            <NavBar/>
+            <Header setTheme={setTheme} theme={theme} SeedResults={SeedResults}/>
+            <NavBar setTheme={setTheme} themeName={theme} />
             <Main SeedResults={SeedResults}/>
             <Aside SeedResults={SeedResults}/>
             <Footer/>

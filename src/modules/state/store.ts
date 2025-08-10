@@ -5,6 +5,10 @@ import {immer} from "zustand/middleware/immer";
 import {BuyMetaData} from "../classes/BuyMetaData.ts";
 import {analyzeSeed} from "../ImmolateWrapper";
 import {SeedResultsContainer} from "../ImmolateWrapper/CardEngines/Cards.ts";
+import {BalatroAnalyzer} from "../balatrots/BalatroAnalyzer.ts";
+import {Deck, DeckType} from "../balatrots/enum/Deck.ts";
+import {Stake, StakeType} from "../balatrots/enum/Stake.ts";
+import {Version} from "../balatrots/enum/Version.ts";
 
 
 export interface InitialState {
@@ -317,6 +321,32 @@ export const useCardStore = create(
                                 sells,
                                 lockedCards
                             }
+                            // const analyzer = new BalatroAnalyzer(
+                            //     // seed,
+                            //     analyzeState.antes,
+                            //     Array(analyzeState.antes).fill(analyzeState.cardsPerAnte),
+                            //     new Deck(DeckType.GHOST_DECK),
+                            //     new Stake(StakeType.WHITE_STAKE), Version.v_101f,
+                            //     {
+                            //         analyzeArcana: true,
+                            //         analyzeBoss: true,
+                            //         analyzeCelestialPacks: true,
+                            //         analyzeJokers: true,
+                            //         analyzeShopQueue: true,
+                            //         analyzeSpectral: true,
+                            //         analyzeStandardPacks: true,
+                            //         analyzeTags: true,
+                            //     });
+                            // const analysis = analyzer.performAnalysis({
+                            //     seed: analyzeState.seed,
+                            //     ante: analyzeState.antes,
+                            //     cardsPerAnte: Array(analyzeState.antes).fill(analyzeState.cardsPerAnte),
+                            //     deck: new Deck(DeckType.GHOST_DECK),
+                            //     stake: new Stake(StakeType.WHITE_STAKE),
+                            //     version: Version.v_101f
+                            // });
+                            // console.log(JSON.parse(JSON.stringify(analyzer.result.getResult)));
+                            // console.log(analyzeSeed(analyzeState, options))
                             prev.applicationState.analyzedResults = analyzeSeed(analyzeState, options);
                             prev.applicationState.hasSettingsChanged = false; // Reset flag after analyzing
                         }, undefined, 'Global/AnalyzeSeed'),

@@ -59,7 +59,7 @@ export class Lock implements ILock {
 
     initLocks(ante: number, freshProfile: boolean, freshRun: boolean): void {
         if (ante < 2) this.lock(Array.from(Lock.ante2Lock));
-        if (ante < 3) this.lock(["The Toot", "The Eye"]);
+        if (ante < 3) this.lock(["The Tooth", "The Eye"]);
         if (ante < 4) this.lock("The Plant");
         if (ante < 5) this.lock("The Serpent");
         if (ante < 6) this.lock("The Ox");

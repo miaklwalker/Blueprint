@@ -1,4 +1,3 @@
-import { ItemImpl } from "../interface/Item";
 
 export enum Edition {
     // Special Editions

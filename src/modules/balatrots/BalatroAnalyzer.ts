@@ -18,6 +18,7 @@ import {JokerData} from "./struct/JokerData";
 import {Option} from "./struct/Option";
 import {RandomQueueNames, RNGSource} from "./enum/QueueName.ts";
 import {MiscCardSource} from "../ImmolateWrapper";
+import {BossBlind} from "./enum/BossBlind.ts";
 
 // @ts-ignore
 interface AnalysisResult {
@@ -129,7 +130,8 @@ export class BalatroAnalyzer {
     version: Version;
     configurations: Configurations;
     result: Result;
-    hasSpoilersMap: {[key: string]: RNGSource};
+    hasSpoilers: boolean;
+    hasSpoilersMap: { [key: string]: RNGSource };
 
 
     constructor(ante: number, cardsPerAnte: number[], deck: Deck, stake: Stake, version: Version, configurations: Configurations) {
@@ -141,10 +143,11 @@ export class BalatroAnalyzer {
         this.version = version;
         this.configurations = configurations;
         this.result = new Result();
+        this.hasSpoilers = true
         this.hasSpoilersMap = {
-            "The Soul" : RNGSource.S_Soul,
-            "Judgement" : RNGSource.S_Judgement,
-            "Wraith" : RNGSource.S_Wraith,
+            "The Soul": RNGSource.S_Soul,
+            "Judgement": RNGSource.S_Judgement,
+            "Wraith": RNGSource.S_Wraith,
         }
     }
 
@@ -174,11 +177,13 @@ export class BalatroAnalyzer {
     private lockOptions(game: Game, selectedOptions: boolean[]): void {
         for (let i = 0; i < BalatroAnalyzer.OPTIONS.length; i++) {
             if (!selectedOptions[i]) {
+                console.log(`Locking option: ${BalatroAnalyzer.OPTIONS[i]}`);
                 game.lock(BalatroAnalyzer.OPTIONS[i]);
             }
         }
     }
 
+    // @ts-ignore
     private processAnte(game: Game, run: Run, ante: number, cardsCount: number, selectedOptions: boolean[]): void {
         game.initUnlocks(ante, false);
 
@@ -186,7 +191,10 @@ export class BalatroAnalyzer {
         // game.lock(voucher);
         this.result.addVoucher(voucher);
 
-        this.unlockVouchers(game, voucher, selectedOptions);
+        const boss = game.nextBoss(ante) as BossBlind
+        this.result.addBoss(boss)
+
+        // this.unlockVouchers(game, voucher, selectedOptions);
 
         if (this.configurations.analyzeShopQueue) {
             for (let i = 0; i < cardsCount; i++) {
@@ -198,9 +206,11 @@ export class BalatroAnalyzer {
         for (let p = 1; p <= numPacks; p++) {
             this.processPack(game, run, ante, p);
         }
-        this.processQueues(game)
+        this.processQueues(game, run)
+
     }
-    private processQueues(game: Game): MiscCardSource[] {
+
+    private processQueues(game: Game, run: Run): MiscCardSource[] {
         let maxCards = 15;
         const miscCardSources: MiscCardSource[] = [
             {
@@ -367,22 +377,28 @@ export class BalatroAnalyzer {
 
         for (let source of miscCardSources) {
             for (let i = 0; i < source.cardsToGenerate; i++) {
-                let card;
-                if (source.hasStickers !== undefined) {
-                    card = generators[source.cardType](source.source, this.ante, source.hasStickers);
-                } else if (source.soulable !== undefined) {
-                    card = generators[source.cardType](source.source, this.ante, source.soulable);
-                } else {
-                    card = generators[source.cardType](source.source, this.ante);
+                let generator = generators[source.cardType];
+                let card = generator(
+                    source.source,
+                    this.result.ante,
+                    source.soulable ?? source.hasStickers ?? false
+                )
+                let spoilerSource = this.hasSpoilersMap[card.name];
+                if( this.hasSpoilers && spoilerSource) {
+                    let joker = game.nextJoker(spoilerSource, this.result.ante, true);
+                    // @ts-ignore
+                    const sticker = BalatroAnalyzer.getSticker(joker);
+                    card = joker
+                    run.addJoker(card.joker.name);
                 }
                 source.cards.push(card);
-                // console.log(`Generated from ${source.name}: ${card.item.getName()}${(card as any).stickers ? ` [stickers: ${JSON.stringify((card as any).stickers)}]` : ""}`);
             }
             this.result.addMiscCardSourcesToQueue([source])
             // console.log(`Generated ${source.cards.length} cards from ${source.name}`);
         }
         return miscCardSources;
     }
+
     private unlockVouchers(game: Game, voucher: string, selectedOptions: boolean[]): void {
         for (let i = 0; i < Game.VOUCHERS.length; i += 2) {
             if (Game.VOUCHERS[i].getName() === voucher) {
@@ -397,14 +413,22 @@ export class BalatroAnalyzer {
         const shopItem = game.nextShopItem(ante);
         // @ts-ignore
         let sticker: Edition | null = null;
-
-        if (shopItem.type === Type.JOKER) {
+        let spoilerSource = this.hasSpoilersMap[shopItem.item.name];
+        if (this.hasSpoilers && spoilerSource) {
+            const joker: JokerData = game.nextJoker(spoilerSource, ante, true);
+            console.log(`Spoiler source for ${shopItem.item.name}: ${spoilerSource}`);
+            run.addJoker(joker.joker.getName());
+            sticker = BalatroAnalyzer.getSticker(joker);
+            this.result.addItemToShopQueue(joker);
+        } else if (shopItem.type === Type.JOKER) {
             run.addJoker(shopItem.jokerData.joker.getName());
             sticker = BalatroAnalyzer.getSticker(shopItem.jokerData);
             this.result.addItemToShopQueue(shopItem.jokerData);
         } else {
             this.result.addItemToShopQueue(shopItem.item as Card);
         }
+
+
         // console.log(` Card ${i + 1}: ${shopItem.item.getName()} ${sticker ? `(${new EditionItem(sticker).getName()})` : ""}`);
     }
 
@@ -447,18 +471,15 @@ export class BalatroAnalyzer {
             run.addJoker(joker.joker.getName());
             options.add(new Option(joker.joker, new ItemImpl(sticker)));
             return joker
-        }
-        else if (packInfo.getKind() === PackKind.STANDARD) {
+        } else if (packInfo.getKind() === PackKind.STANDARD) {
             const cardObj: Card = card as Card;
             const cardName = new CardNameBuilder(cardObj).build();
             options.add(new Option(new AbstractCard(cardName), new ItemImpl(Edition.NO_EDITION)));
             return card;
-        }
-        else {
-            let spoilers = true;
+        } else {
             let item = (card as ItemImpl).getName();
             let spoilerSource = this.hasSpoilersMap[item];
-            if (spoilerSource && spoilers) {
+            if (spoilerSource && this.hasSpoilers) {
                 if (item === "The Soul") {
                     run.hasTheSoul = true;
                 }

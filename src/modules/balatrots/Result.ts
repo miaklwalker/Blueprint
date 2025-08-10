@@ -3,6 +3,7 @@ import { Card } from "./enum/cards/Card";
 import { PackKind } from "./enum/packs/PackKind";
 import { JokerData } from "./struct/JokerData";
 import {MiscCardSource} from "../ImmolateWrapper";
+import {BossBlind} from "./enum/BossBlind.ts";
 
 export interface IResult {
 	ante: number;
@@ -12,6 +13,7 @@ export interface IResult {
 		kind: PackKind;
 		cards: (Card | JokerData)[];
 	}[];
+	boss?: BossBlind
 	miscQueues?: MiscCardSource[];
 }
 
@@ -55,7 +57,14 @@ export class Result {
 		}
 		this.result[this.currentAnte - 1].shop.push(item);
 	}
-
+	addBoss(boss: BossBlind) {
+		if (!this.result[this.currentAnte - 1]?.boss) {
+			this.result[this.currentAnte - 1] = {
+				...this.result[this.currentAnte - 1],
+				boss: boss,
+			};
+		}
+	}
 	addPackToQueue(kind: PackKind, cards: (Card | JokerData)[]) {
 		if (!this.result[this.currentAnte - 1]?.packs) {
 			this.result[this.currentAnte - 1] = {

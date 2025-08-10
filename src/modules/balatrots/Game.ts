@@ -25,7 +25,7 @@ import {Specials, SpecialsItem} from "./enum/cards/Specials";
 import {JokerData} from "./struct/JokerData";
 import {Edition, EditionItem} from "./enum/Edition";
 import {JokerStickers} from "./struct/JokerStickers";
-import {StakeType} from "./enum/Stake";
+import {Stake, StakeType} from "./enum/Stake";
 import {JokerImpl} from "./interface/Joker";
 import {ShopInstance} from "./struct/ShopInstance";
 import {Deck, deckNames, DeckType} from "./enum/Deck";
@@ -273,7 +273,7 @@ export class Game extends Lock {
 
         let item = items[this.randint(id, 0, items.length - 1)];
 
-        if (!this.params.isShowman() && (this.isLocked(item) || item.getName() === "RETRY")) {
+        if ((!this.params.isShowman() && this.isLocked(item)) || item.getName() === "RETRY") {
             let resample = 2;
             while (true) {
                 item = items[this.randint(`${id}_resample${resample}`, 0, items.length - 1)];
@@ -292,7 +292,7 @@ export class Game extends Lock {
         }
 
         let item = items[this.randint(id, 0, items.length - 1)];
-        if (!this.params.isShowman() && (this.isLocked(item) || item.getName() === "RETRY")) {
+        if ((!this.params.isShowman() && this.isLocked(item)) || item.getName() === "RETRY") {
             let resample = 2;
             while (true) {
                 item = items[this.randint(`${id}_resample${resample}`, 0, items.length - 1)];
@@ -321,19 +321,19 @@ export class Game extends Lock {
     nextTarot(source: QueueNames, ante: number, soulable: boolean): ItemImpl {
         if (soulable &&
             (this.params.isShowman() || !this.isLocked(Specials.THE_SOUL)) &&
-            this.random(`soul_Tarot${ante}`) > 0.997) {
+            this.random(`${RandomQueueNames.R_Soul}${RandomQueueNames.R_Tarot}${ante}`) > 0.997) {
             return new SpecialsItem(Specials.THE_SOUL);
         }
-        return this.randchoice<ItemImpl>(`Tarot${source}${ante}`, Game.TAROTS);
+        return this.randchoice<ItemImpl>(`${RandomQueueNames.R_Tarot}${source}${ante}`, Game.TAROTS);
     }
 
     nextPlanet(source: QueueNames, ante: number, soulable: boolean): ItemImpl {
         if (soulable &&
             (this.params.isShowman() || !this.isLocked(Specials.BLACKHOLE)) &&
-            this.random(`soul_Planet${ante}`) > 0.997) {
+            this.random(`${RandomQueueNames.R_Soul}${RandomQueueNames.R_Planet}${ante}`) > 0.997) {
             return new SpecialsItem(Specials.BLACKHOLE);
         }
-        return this.randchoice(`Planet${source}${ante}`, Game.PLANETS);
+        return this.randchoice(`${RandomQueueNames.R_Planet}${source}${ante}`, Game.PLANETS);
     }
 
     nextSpectral(source: QueueNames, ante: number, soulable: boolean): ItemImpl {
@@ -341,12 +341,12 @@ export class Game extends Lock {
             let forcedKey: ItemImpl | null = null;
 
             if ((this.params.isShowman() || !this.isLocked(Specials.THE_SOUL)) &&
-                this.random(`soul_Spectral${ante}`) > 0.997) {
+                this.random(`${RandomQueueNames.R_Soul}${RandomQueueNames.R_Spectral}${ante}`) > 0.997) {
                 forcedKey = new SpecialsItem(Specials.THE_SOUL);
             }
 
             if ((this.params.isShowman() || !this.isLocked(Specials.BLACKHOLE)) &&
-                this.random(`soul_Spectral${ante}`) > 0.997) {
+                this.random(`${RandomQueueNames.R_Soul}${RandomQueueNames.R_Spectral}${ante}`) > 0.997) {
                 forcedKey = new SpecialsItem(Specials.BLACKHOLE);
             }
 
@@ -502,7 +502,7 @@ export class Game extends Lock {
 
     nextShopItem(ante: number): ShopItem {
         const shop = this.getShopInstance();
-        let cdtPoll = this.random(`cdt${ante}`) * (shop.getTotalRate());
+        let cdtPoll = this.random(`${RandomQueueNames.R_Card_Type}${ante}`) * (shop.getTotalRate());
         let type: Type;
 
         // Determine card type based on rates
@@ -545,7 +545,7 @@ export class Game extends Lock {
             this.cache.setGeneratedFirstPack(true);
             return new PackTypeItem(PackType.BUFFOON_PACK, PackTypeItem.VALUES[PackType.BUFFOON_PACK]);
         }
-        return this.randweightedchoice(`shop_pack${ante}`, Game.PACKS);
+        return this.randweightedchoice(`${RandomQueueNames.R_Shop_Pack}${ante}`, Game.PACKS);
     }
 
     packInfo(pack: PackTypeItem): PackInfo {
@@ -588,6 +588,10 @@ export class Game extends Lock {
         }
     }
 
+    setStake(stake: Stake): void {
+        this.params.setStake(stake)
+    }
+
     activateVoucher(voucher: Voucher): void {
         this.params.getVouchers().add(voucher);
         this.lock(voucher);
@@ -607,41 +611,38 @@ export class Game extends Lock {
     }
 
     nextVoucher(ante: number) {
-        return this.randchoice(`Voucher${ante}`, Game.VOUCHERS);
+        return this.randchoice(`${RandomQueueNames.R_Voucher}${ante}`, Game.VOUCHERS);
     }
 
     nextTag(ante: number) {
-        return this.randchoice(`Tag${ante}`, Game.TAGS);
+        return this.randchoice(`${RandomQueueNames.R_Tags}${ante}`, Game.TAGS);
     }
 
     nextBoss(ante: number): ItemImpl {
         const bossPool: BossBlind[] = [];
         let numBosses = 0;
 
-        // First pass: Try to find unlocked bosses
-        for (const boss of Game.BOSSES) {
-            if (!this.isLocked(boss.getName())) {
-                if ((ante % 8 === 0 && boss.getName().charAt(0) !== 'T') ||
-                    (ante % 8 !== 0 && boss.getName().charAt(0) === 'T')) {
-                    bossPool.push(boss);
-                    numBosses++;
+        for( let i = 0; i < Game.BOSSES.length; i++ ) {
+            if(!this.isLocked(Game.BOSSES[i])) {
+                if ((ante % 8 === 0 && Game.BOSSES[i].getName().charAt(0) !== 'T') ||
+                    (ante % 8 !== 0 && Game.BOSSES[i].getName().charAt(0) === 'T')) {
+                    bossPool[numBosses++] = Game.BOSSES[i];
                 }
             }
         }
 
-        // If no bosses found, unlock appropriate bosses and try again
-        if (numBosses === 0) {
-            for (const boss of Game.BOSSES) {
-                if ((ante % 8 === 0 && boss.getName().charAt(0) !== 'T') ||
-                    (ante % 8 !== 0 && boss.getName().charAt(0) === 'T')) {
-                    this.unlock(boss.getName());
+        if( numBosses === 0 ) {
+            for( let i = 0; i < Game.BOSSES.length; i++ ) {
+                if ((ante % 8 === 0 && Game.BOSSES[i].getName().charAt(0) !== 'T') ||
+                    (ante % 8 !== 0 && Game.BOSSES[i].getName().charAt(0) === 'T')) {
+                    this.unlock(Game.BOSSES[i].getName());
                 }
             }
             return this.nextBoss(ante);
         }
 
-        const chosenBoss = this.randchoice(`boss`, bossPool);
-        this.lock(chosenBoss);
+        const chosenBoss = this.randchoice(RandomQueueNames.R_Boss, bossPool);
+        this.lock(chosenBoss.getName());
         return chosenBoss;
     }
 
@@ -651,15 +652,15 @@ export class Game extends Lock {
         if(isFromCertificate){
             enhancement = "No Enhancement";
         }
-        else if (this.random(`stdset${ante}`) <= 0.6) {
+        else if (this.random(`${RandomQueueNames.R_Standard_Has_Enhancement}${ante}`) <= 0.6) {
             enhancement = "No Enhancement";
         } else {
-            enhancement = this.randchoice(`Enhancedsta${ante}`, Game.ENHANCEMENTS).getName();
+            enhancement = this.randchoice(`${RandomQueueNames.R_Enhancement}${RNGSource.S_Standard}${ante}`, Game.ENHANCEMENTS).getName();
         }
 
         let edition = Edition.NO_EDITION;
 
-        const editionPoll = this.random(`standard_edition${ante}`);
+        const editionPoll = this.random(`${RandomQueueNames.R_Standard_Edition}${ante}`);
 
         if (editionPoll > 0.988 || editionPoll > 0.96) {
             edition = Edition.POLYCHROME;
@@ -669,8 +670,8 @@ export class Game extends Lock {
 
         let seal = Seal.NO_SEAL;
 
-        if (this.random(`stdseal${ante}`) > 0.8 || isFromCertificate) {
-            const sealPoll = this.random(`stdsealtype${ante}`);
+        if (this.random(`${RandomQueueNames.R_Standard_Has_Seal}${ante}`) > 0.8 || isFromCertificate) {
+            const sealPoll = this.random(`${RandomQueueNames.R_Standard_Seal}${ante}`);
             if (sealPoll > 0.75) {
                 seal = Seal.RED_SEAL;
             } else if (sealPoll > 0.5) {
@@ -682,7 +683,7 @@ export class Game extends Lock {
             }
         }
 
-        const base = this.randchoice(`frontsta${ante}`, Game.CARDS);
+        const base = this.randchoice(`${RandomQueueNames.R_Card}${RNGSource.S_Standard}${ante}`, Game.CARDS);
 
         return new Card(base.getName() as PlayingCard, enhancement, new EditionItem(edition), new SealItem(seal));
     }
@@ -763,7 +764,7 @@ export class Game extends Lock {
         const pack: JokerData[] = new Array(size);
 
         for (let i = 0; i < size; i++) {
-            const joker = this.nextJoker(RNGSource.S_Spectral, ante, true);
+            const joker = this.nextJoker(RNGSource.S_Buffoon, ante, true);
             pack[i] = joker;
 
             if (!this.params.isShowman()) {

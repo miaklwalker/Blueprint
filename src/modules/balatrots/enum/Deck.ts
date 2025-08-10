@@ -23,6 +23,23 @@ interface DeckProps {
 }
 
 // Map of deck names
+export const deckMap: Record<string, DeckType> = {
+    "Red Deck": DeckType.RED_DECK,
+    "Blue Deck": DeckType.BLUE_DECK,
+    "Yellow Deck": DeckType.YELLOW_DECK,
+    "Green Deck": DeckType.GREEN_DECK,
+    "Black Deck": DeckType.BLACK_DECK,
+    "Magic Deck": DeckType.MAGIC_DECK,
+    "Nebula Deck": DeckType.NEBULA_DECK,
+    "Ghost Deck": DeckType.GHOST_DECK,
+    "Abandoned Deck": DeckType.ABANDONED_DECK,
+    "Checkered Deck": DeckType.CHECKERED_DECK,
+    "Zodiac Deck": DeckType.ZODIAC_DECK,
+    "Painted Deck": DeckType.PAINTED_DECK,
+    "Anaglyph Deck": DeckType.ANAGLYPH_DECK,
+    "Plasma Deck": DeckType.PLASMA_DECK,
+    "Erratic Deck": DeckType.ERRATIC_DECK
+}
 export const deckNames: Record<DeckType, string> = {
     [DeckType.RED_DECK]: "Red Deck",
     [DeckType.BLUE_DECK]: "Blue Deck",

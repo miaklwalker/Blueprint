@@ -1,6 +1,5 @@
-import { Filter } from "../interface/Filter";
-import { ItemImpl } from "../interface/Item";
-import { Run } from "../interface/Run";
+import {ItemImpl} from "../interface/Item";
+import {Run} from "../interface/Run";
 
 export enum BossBlindEnum {
     THE_ARM = "The Arm",

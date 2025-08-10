@@ -15,6 +15,10 @@ import {
 } from "./CardEngines/Cards.ts";
 import {LOCATIONS, options} from "../const.ts";
 import {ImmolateClassic} from "./CardEngines/immolateClassic.ts";
+import {Game} from "../balatrots/Game.ts";
+import {InstanceParams} from "../balatrots/struct/InstanceParams.ts";
+import {deckMap} from "../balatrots/enum/Deck.ts";
+import {Stake, StakeType} from "../balatrots/enum/Stake.ts";
 
 
 export interface MiscCardSource {

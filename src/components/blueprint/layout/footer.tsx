@@ -1,9 +1,18 @@
-import {Anchor, AppShell, Button, Center, Flex, Text} from "@mantine/core";
-import {IconCoffee} from "@tabler/icons-react";
+import {
+    Anchor,
+    AppShell,
+    Button,
+    Center,
+    Flex,
+    HoverCard,
+    HoverCardDropdown,
+    HoverCardTarget,
+    Text
+} from "@mantine/core";
+import {IconCoffee, IconHeart} from "@tabler/icons-react";
 
 
-export default function Footer() {
-    //
+export default function Footer({ supporters } :{ supporters?: {name:string}[] }) {
     return (
         <AppShell.Footer p={'xs'}>
             <Center w={'100%'}>
@@ -26,6 +35,18 @@ export default function Footer() {
                     >
                         Buy me a coffee
                     </Button>
+                    <HoverCard >
+                        <HoverCardTarget>
+                            <Text ta={'center'} fz={'xs'}>
+                             <IconHeart size={'11'}/> Supporters
+                            </Text>
+                        </HoverCardTarget>
+                        <HoverCardDropdown>
+                            {supporters?.length ? supporters.map((s, i) => (
+                                <Text key={i} fz={'xs'}>{s.name}</Text>
+                            )) : <Text fz={'xs'}>No supporters yet</Text>}
+                        </HoverCardDropdown>
+                    </HoverCard >
                 </Flex>
 
             </Center>

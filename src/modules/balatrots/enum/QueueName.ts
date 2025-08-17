@@ -17,6 +17,8 @@ export enum RandomQueueNames {
     R_Standard_Has_Enhancement = "stdset",
     R_Enhancement = "Enhanced",
     R_Card = "front",
+    R_Cert = "certsl",
+    R_Cert_Seal = "cert_fr",
     R_Standard_Edition = "standard_edition",
     R_Standard_Has_Seal = "stdseal",
     R_Standard_Seal = "stdsealtype",
@@ -60,6 +62,7 @@ export enum RNGSource {
     S_Buffoon = "buf",
     S_Vagabond = "vag",
     S_Superposition = "sup",
+
     S_8_Ball = "8ba",
     S_Seance = "sea",
     S_Sixth_Sense = "sixth",

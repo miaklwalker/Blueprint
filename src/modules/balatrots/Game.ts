@@ -182,6 +182,7 @@ export class Game extends Lock {
         }
         return this._bossBlind;
     }
+
     static readonly OPTIONS: ReadonlyArray<string> = [
         // Tags
         "Negative Tag",
@@ -395,8 +396,9 @@ export class Game extends Lock {
     //     return randchoice(inst, (__private ntype[]){N_Type}, (__private int[]){rngType}, 1, items);
     // }
     randchoice_simple<T extends ItemImpl>(id: string, items: T[]): ItemImpl {
-       return this.randchoice<T>(id, items);
+        return this.randchoice<T>(id, items);
     }
+
     private randchoiceJoker<T extends JokerImpl>(id: string, items: T[]): JokerImpl {
         if (!items || items.length === 0) {
             throw new Error('Items array cannot be empty');
@@ -724,7 +726,8 @@ export class Game extends Lock {
     nextVoucher(ante: number) {
         return this.randchoice(`${RandomQueueNames.R_Voucher}${ante}`, Game.VOUCHERS);
     }
-    nextVoucherSimple(){
+
+    nextVoucherSimple() {
         return this.randchoice_simple(RandomQueueNames.R_Voucher_Tag, Game.VOUCHERS);
     }
 
@@ -736,8 +739,8 @@ export class Game extends Lock {
         const bossPool: BossBlind[] = [];
         let numBosses = 0;
 
-        for( let i = 0; i < Game.BOSSES.length; i++ ) {
-            if(!this.isLocked(Game.BOSSES[i])) {
+        for (let i = 0; i < Game.BOSSES.length; i++) {
+            if (!this.isLocked(Game.BOSSES[i])) {
                 if ((ante % 8 === 0 && Game.BOSSES[i].getName().charAt(0) !== 'T') ||
                     (ante % 8 !== 0 && Game.BOSSES[i].getName().charAt(0) === 'T')) {
                     bossPool[numBosses++] = Game.BOSSES[i];
@@ -745,8 +748,8 @@ export class Game extends Lock {
             }
         }
 
-        if( numBosses === 0 ) {
-            for( let i = 0; i < Game.BOSSES.length; i++ ) {
+        if (numBosses === 0) {
+            for (let i = 0; i < Game.BOSSES.length; i++) {
                 if ((ante % 8 === 0 && Game.BOSSES[i].getName().charAt(0) !== 'T') ||
                     (ante % 8 !== 0 && Game.BOSSES[i].getName().charAt(0) === 'T')) {
                     this.unlock(Game.BOSSES[i].getName());
@@ -760,13 +763,49 @@ export class Game extends Lock {
         return chosenBoss;
     }
 
-    nextStandardCard(ante: number, source?:string): Card {
-        let enhancement;
-        let isFromCertificate = source === RandomQueueNames.R_Standard_Has_Seal;
-        if(isFromCertificate){
-            enhancement = "No Enhancement";
+    // if self.ability.name == 'Certificate' then
+    //                 G.E_MANAGER:add_event(Event({
+    //                     func = function()
+    //                         local _card = create_playing_card({
+    //                             front = pseudorandom_element(G.P_CARDS, pseudoseed('cert_fr')),
+    //                             center = G.P_CENTERS.c_base}, G.hand, nil, nil, {G.C.SECONDARY_SET.Enhanced})
+    //                         local seal_type = pseudorandom(pseudoseed('certsl'))
+    //                         if seal_type > 0.75 then _card:set_seal('Red', true)
+    //                         elseif seal_type > 0.5 then _card:set_seal('Blue', true)
+    //                         elseif seal_type > 0.25 then _card:set_seal('Gold', true)
+    //                         else _card:set_seal('Purple', true)
+    //                         end
+    //                         G.GAME.blind:debuff_card(_card)
+    //                         G.hand:sort()
+    //                         if context.blueprint_card then context.blueprint_card:juice_up() else self:juice_up() end
+    //                         return true
+    //                     end}))
+    nextCertificateStandardCard() {
+        let enhancement = "No Enhancement";
+        let edition = Edition.NO_EDITION;
+        let seal;
+        const base = this.randchoice(`${RandomQueueNames.R_Cert_Seal}`, Game.CARDS);
+        const sealPoll = this.random(`${RandomQueueNames.R_Cert}`);
+        if (sealPoll > 0.75) {
+            seal = Seal.RED_SEAL;
+        } else if (sealPoll > 0.5) {
+            seal = Seal.BLUE_SEAL;
+        } else if (sealPoll > 0.25) {
+            seal = Seal.GOLD_SEAL;
+        } else {
+            seal = Seal.PURPLE_SEAL;
         }
-        else if (this.random(`${RandomQueueNames.R_Standard_Has_Enhancement}${ante}`) <= 0.6) {
+        return new Card(base.getName() as PlayingCard, enhancement, new EditionItem(edition), new SealItem(seal));
+    }
+
+    nextStandardCard(ante: number, source?: string): Card {
+        let enhancement;
+        let isFromCertificate = source === RandomQueueNames.R_Cert;
+        if(isFromCertificate){
+            return this.nextCertificateStandardCard()
+        }
+
+         if (this.random(`${RandomQueueNames.R_Standard_Has_Enhancement}${ante}`) <= 0.6) {
             enhancement = "No Enhancement";
         } else {
             enhancement = this.randchoice(`${RandomQueueNames.R_Enhancement}${RNGSource.S_Standard}${ante}`, Game.ENHANCEMENTS).getName();
@@ -784,7 +823,7 @@ export class Game extends Lock {
 
         let seal = Seal.NO_SEAL;
 
-        if (this.random(`${RandomQueueNames.R_Standard_Has_Seal}${ante}`) > 0.8 || isFromCertificate) {
+        if (this.random(`${RandomQueueNames.R_Standard_Has_Seal}${ante}`) > 0.8 ) {
             const sealPoll = this.random(`${RandomQueueNames.R_Standard_Seal}${ante}`);
             if (sealPoll > 0.75) {
                 seal = Seal.RED_SEAL;
@@ -898,6 +937,7 @@ export class Game extends Lock {
     updateShowman(owned: boolean) {
         this.params.setShowman(owned);
     }
+
     lockLevelTwoVouchers() {
         this.lock("Overstock Plus");
         this.lock("Liquidation");
@@ -916,16 +956,18 @@ export class Game extends Lock {
         this.lock("Retcon");
         this.lock("Palette");
     }
-    handleSelectedUnlocks(selectedUnlocks: string[]){
+
+    handleSelectedUnlocks(selectedUnlocks: string[]) {
         options.forEach((option: string) => {
-            if(selectedUnlocks.includes(option)){
+            if (selectedUnlocks.includes(option)) {
                 this.unlock(option);
-            }else{
+            } else {
                 this.lock(option);
             }
         })
     }
-    processPackCards(packInfo: PackInfo, card: any, ante: number){
+
+    processPackCards(packInfo: PackInfo, card: any, ante: number) {
         if (packInfo.getKind() === PackKind.BUFFOON) {
             return card as JokerData
         } else {
@@ -937,6 +979,7 @@ export class Game extends Lock {
             return card as Card;
         }
     }
+
     generatePack(packInfo: PackInfo, ante: number) {
         let cards;
         switch (packInfo.getKind()) {

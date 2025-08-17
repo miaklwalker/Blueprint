@@ -538,7 +538,7 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
                 name: "certificate",
                 cardsToGenerate: maxCards,
                 cardType: "Standard",
-                source: RandomQueueNames.R_Standard_Has_Seal,
+                source: RandomQueueNames.R_Cert,
                 cards: [],
             },
             {

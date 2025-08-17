@@ -164,6 +164,9 @@ export function Aside({SeedResults}: { SeedResults: SeedResultsContainer | null 
     const selectedAnte = useCardStore(state => state.applicationState.selectedAnte);
     const anteData = SeedResults?.antes[selectedAnte];
     const miscSources = anteData?.miscCardSources;
+    const voucherQueue = anteData?.voucherQueue;
+    const tagsQueue = anteData?.tagsQueue;
+    const bossesQueue = anteData?.bossQueue;
     const buys = useCardStore(state => state.shoppingState.buys);
     const sells = useCardStore(state => state.shoppingState.sells);
     const transactionsCount = Object.keys(buys).length + Object.keys(sells).length;
@@ -211,7 +214,13 @@ export function Aside({SeedResults}: { SeedResults: SeedResultsContainer | null 
                 <Tabs value={tab}>
                     <Tabs.Panel value="sources" maw={'100%'}>
                         {SeedResults ? (
-                            <MiscCardSourcesDisplay miscSources={miscSources}/>
+                            <MiscCardSourcesDisplay
+                                miscSources={miscSources}
+                                bossQueue={bossesQueue}
+                                tagQueue={tagsQueue}
+                                voucherQueue={voucherQueue}
+
+                            />
                         ) : (
                             <Center h={200}>
                                 <Text c="dimmed">Select a seed to view card sources</Text>

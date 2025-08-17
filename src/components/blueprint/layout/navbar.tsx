@@ -34,7 +34,7 @@ export default function NavBar({ themeName , setTheme }: { themeName: string, se
     const colorScheme = useMantineColorScheme()
     const viewMode = useCardStore(state => state.applicationState.viewMode);
     const setViewMode = useCardStore(state => state.setViewMode);
-
+    const events = useCardStore(state => state.eventState.events);
     const analyzeState = useCardStore(state => state.immolateState);
     const {seed, deck, stake, gameVersion: version, antes, cardsPerAnte} = analyzeState;
     const showCardSpoilers = useCardStore(state => state.applicationState.showCardSpoilers);
@@ -71,7 +71,7 @@ export default function NavBar({ themeName , setTheme }: { themeName: string, se
             // If we have results, and the user changes the showCardSpoilers, we need to re-analyze the seed
             analyzeSeed();
         }
-    },[showCardSpoilers, deck, stake, version, antes, cardsPerAnte])
+    },[showCardSpoilers, deck, stake, version, antes, cardsPerAnte, events])
 
 
     return (

@@ -1,5 +1,4 @@
-import { ItemImpl } from "../interface/Item";
-import { Filter } from "../interface/Filter";
+import {ItemImpl} from "../interface/Item";
 
 export enum Voucher {
     // Sales & Discounts

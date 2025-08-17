@@ -68,7 +68,8 @@ export class Lock implements ILock {
             this.lock([
                 // First set
                 "Negative Tag", "Foil Tag", "Holographic Tag", "Polychrome Tag",
-                "Rare Tag", "Golden Ticket", "Mr. Bones", "Acrobat",
+                "Rare Tag",
+                "Golden Ticket", "Mr. Bones", "Acrobat",
                 "Sock and Buskin", "Swashbuckler", "Troubadour", "Certificate",
                 "Smeared Joker", "Throwback", "Hanging Chad", "Rough Gem",
                 "Bloodstone", "Arrowhead", "Onyx Agate", "Glass Joker",
@@ -79,8 +80,9 @@ export class Lock implements ILock {
                 "The Trio", "The Family", "The Order", "The Tribe",
                 "Stuntman", "Invisible Joker", "Brainstorm", "Satellite",
                 "Shoot the Moon", "Driver's License", "Cartomancer",
-                "Astronomer", "Burnt Joker", "Bootstraps", "Overstock Plus",
-                "Liquidation", "Glow Up", "Reroll Glut", "Omen Globe",
+                "Astronomer", "Burnt Joker", "Bootstraps",
+                "Overstock Plus", "Liquidation", "Glow Up", "Reroll Glut",
+                "Omen Globe",
                 // Third set
                 "Observatory", "Nacho Tong", "Recyclomancy", "Tarot Tycoon",
                 "Planet Tycoon", "Money Tree", "Antimatter", "Illusion",
@@ -89,7 +91,13 @@ export class Lock implements ILock {
         }
 
         if (freshRun) {
-            this.lock(["Planet X", "Ceres", "Eris", "Five of a Kind", "Flush House", "Flush Five", "Stone Joker", "Steel Joker", "Glass Joker", "Golden Ticket", "Lucky Cat", "Cavendish", "Overstock Plus", "Liquidation", "Glow Up", "Reroll Glut", "Omen Globe", "Observatory", "Nacho Tong", "Recyclomancy", "Tarot Tycoon", "Planet Tycoon", "Money Tree", "Antimatter", "Illusion", "Petroglyph", "Retcon", "Palette"]);
+            this.lock([
+                "Planet X", "Ceres", "Eris", "Five of a Kind", "Flush House", "Flush Five",
+                "Stone Joker", "Steel Joker", "Glass Joker", "Golden Ticket", "Lucky Cat",
+                "Cavendish", "Overstock Plus", "Liquidation", "Glow Up", "Reroll Glut", "Omen Globe", "Observatory",
+                "Nacho Tong", "Recyclomancy", "Tarot Tycoon", "Planet Tycoon", "Money Tree", "Antimatter",
+                "Illusion", "Petroglyph", "Retcon", "Palette"
+            ]);
         }
     }
 

@@ -23,7 +23,7 @@ export default function Header({SeedResults}: {
             <Container fluid h={'100%'}>
                 <Group h={'100%'} justify={'space-between'}>
                     <Group flex={1}>
-                        <Burger opened={settingsOpened} onClick={toggleSettings} size="sm"/>
+                        <Burger opened={settingsOpened} onClick={toggleSettings} hiddenFrom={'md'} size="sm"/>
                         <Center h={'100%'}>
                             <Group grow>
                                 <Box flex={1}>

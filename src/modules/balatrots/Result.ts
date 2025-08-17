@@ -13,6 +13,7 @@ export interface IResult {
 		kind: PackKind;
 		cards: (Card | JokerData)[];
 	}[];
+	tags?: string[];
 	boss?: BossBlind
 	miscQueues?: MiscCardSource[];
 }
@@ -63,6 +64,17 @@ export class Result {
 				...this.result[this.currentAnte - 1],
 				boss: boss,
 			};
+		}
+	}
+	addTag(tag: string) {
+		if (!this.result[this.currentAnte - 1]?.tags) {
+			this.result[this.currentAnte - 1] = {
+				...this.result[this.currentAnte - 1],
+				tags: [],
+			};
+		}
+		if (!this.result[this.currentAnte - 1].tags!.includes(tag)) {
+			this.result[this.currentAnte - 1].tags!.push(tag);
 		}
 	}
 	addPackToQueue(kind: PackKind, cards: (Card | JokerData)[]) {

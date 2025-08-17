@@ -1,24 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-N6TEKWHNJ3"></script>
     <script>
-        var Immolate = {
-            onRuntimeInitialized: function() {
-                // This is called when the Immolate module is ready to use
-                console.log("Immolate module initialized");
-                console.log("Dispatching build event");
-                document.dispatchEvent(new Event("ImmolateReady"));
-            }
-        };
-        function asVector(arr) {
-            var vectorInt = new Module.VectorStr();
-            for (var i = 0; i < arr.length; i++) {
-                vectorInt.push_back(arr[i]);
-            }
-            return vectorInt;
-        }
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-N6TEKWHNJ3');
     </script>
-    <script src="/immolate.js"></script>
     <meta charset="UTF-8"/>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
     <meta

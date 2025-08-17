@@ -36,17 +36,17 @@ export class ItemImpl implements Item {
         return this.getName() === value;
     }
 
-    inPack(ante?: number): Filter {
+    inPack(_ante?: number): Filter {
         // Implement your logic here
         return {} as Filter; // Replace with actual implementation
     }
 
-    inShop(ante?: number): Filter {
+    inShop(_ante?: number): Filter {
         // Implement your logic here
         return {} as Filter; // Replace with actual implementation
     }
 
-    inSpectral(ante?: number): Filter {
+    inSpectral(_ante?: number): Filter {
         // Implement your logic here
         return {} as Filter; // Replace with actual implementation
     }

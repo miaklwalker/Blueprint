@@ -1,6 +1,6 @@
-import { ItemImpl } from "../../interface/Item";
-import { Edition, EditionItem } from "../Edition";
-import { SealItem } from "../Seal";
+import {ItemImpl} from "../../interface/Item";
+import {EditionItem} from "../Edition";
+import {SealItem} from "../Seal";
 
 export enum PlayingCard {
     // Clubs

@@ -26,13 +26,11 @@ import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 const queryClient = new QueryClient()
 export type KnownThemes = "Vivillan" |
     "Murkrow" |
-    // "Goomy" |
     "Mantine" |
     "Sylveon";
 const themes = {
     Vivillan: VivillanThemeFile,
     Murkrow: MurkrowThemeFile,
-    // Goomy: GoomyThemeFile,
     Mantine: MantineThemeFile,
     Sylveon: SylveonThemeFile,
 };

@@ -1,5 +1,5 @@
 import {MiscCardSource} from "../modules/ImmolateWrapper";
-import {Accordion, Box, Group, Paper, Text, Title} from "@mantine/core";
+import {Accordion, Box, Center, Group, Paper, Text, Title} from "@mantine/core";
 import {useCardStore} from "../modules/state/store.ts";
 import {useEffect, useState} from "react";
 import {Carousel, Embla} from "@mantine/carousel";
@@ -7,8 +7,16 @@ import {LOCATIONS} from "../modules/const.ts";
 import {toHeaderCase} from "js-convert-case";
 import {BuyWrapper} from "./buyerWrapper.tsx";
 import {GameCard} from "./Rendering/cards.tsx";
+import {Voucher} from "./Rendering/gameElements.tsx";
+import {Boss} from "./Rendering/gameElements.tsx";
+import {Tag} from "./Rendering/gameElements.tsx";
 
-export default function MiscCardSourcesDisplay({miscSources}: { miscSources?: MiscCardSource[] }) {
+export default function MiscCardSourcesDisplay({miscSources, bossQueue, tagQueue, voucherQueue}: {
+    miscSources?: MiscCardSource[],
+    bossQueue?: any[],
+    tagQueue?: any[],
+    voucherQueue?: any[]
+}) {
     if (!miscSources || Object.keys(miscSources).length === 0) {
         return (
             <Paper p="md" withBorder mb="md">
@@ -69,7 +77,7 @@ export default function MiscCardSourcesDisplay({miscSources}: { miscSources?: Mi
                                                         ante: String(currentAnte),
                                                         blind: "smallBlind",
                                                         name: card?.name,
-                                                        link: `https://balatrogame.fandom.com/wiki/${card.name}`,
+                                                        link: `https://balatrowiki.org/w/${card.name}`,
                                                         card: card
                                                     }}
                                                 >
@@ -85,6 +93,118 @@ export default function MiscCardSourcesDisplay({miscSources}: { miscSources?: Mi
                         </Accordion.Panel>
                     </Accordion.Item>
                 ))}
+                {/*    Voucher Queue */}
+                <Accordion.Item key={"Vouchers"} value={"Vouchers"}>
+                    <Accordion.Control>
+                        <Group>
+                            <Text fw={500}>Vouchers</Text>
+                        </Group>
+                    </Accordion.Control>
+                    <Accordion.Panel>
+                        {
+                            "Vouchers" === currentSource &&
+                            <Box>
+                                <Carousel
+                                    getEmblaApi={setEmbla}
+                                    type={'container'}
+                                    slideSize="90px"
+                                    slideGap={{base: 'xs'}}
+                                    align="start"
+                                    withControls={false}
+                                    height={190}
+                                    dragFree
+                                >
+                                    {voucherQueue?.map((voucher: any, i: number) => (
+                                        <Carousel.Slide key={i}>
+                                            <BuyWrapper
+                                                metaData={{
+                                                    transactionType: "buy",
+                                                    location: "Vouchers",
+                                                    locationType: LOCATIONS.MISC,
+                                                    index: i,
+                                                    ante: String(currentAnte),
+                                                    blind: "smallBlind",
+                                                    name: voucher,
+                                                    link: `https://balatrowiki.org/w/${voucher}`,
+                                                    card: voucher
+                                                }}
+                                            >
+                                                <Voucher voucherName={voucher}/>
+                                            </BuyWrapper>
+
+                                        </Carousel.Slide>
+                                    ))}
+                                </Carousel>
+                            </Box>
+                        }
+                    </Accordion.Panel>
+                </Accordion.Item>
+                {/*    Boss Queue */}
+                <Accordion.Item key={"Bosses"} value={"Bosses"}>
+                    <Accordion.Control>
+                        <Group>
+                            <Text fw={500}>Bosses</Text>
+                        </Group>
+                    </Accordion.Control>
+                    <Accordion.Panel>
+                        {
+                            "Bosses" === currentSource &&
+                            <Box>
+                                <Carousel
+                                    getEmblaApi={setEmbla}
+                                    type={'container'}
+                                    slideSize="90px"
+                                    slideGap={{base: 'xs'}}
+                                    align="start"
+                                    withControls={false}
+                                    height={70}
+                                    dragFree
+                                >
+                                    {bossQueue?.map((boss: any, i: number) => (
+                                        <Carousel.Slide key={i}>
+                                            <Center w={'100%'} h={'50'}>
+                                                <Boss bossName={boss}/>
+                                            </Center>
+                                        </Carousel.Slide>
+                                    ))}
+                                </Carousel>
+                            </Box>
+                        }
+                    </Accordion.Panel>
+                </Accordion.Item>
+                {/*    Tag Queue */}
+                <Accordion.Item key={"Tags"} value={"Tags"}>
+                    <Accordion.Control>
+                        <Group>
+                            <Text fw={500}>Tags</Text>
+                        </Group>
+                    </Accordion.Control>
+                    <Accordion.Panel>
+                        {
+                            "Tags" === currentSource &&
+                            <Box>
+                                <Carousel
+                                    getEmblaApi={setEmbla}
+                                    type={'container'}
+                                    slideSize="90px"
+                                    slideGap={{base: 'xs'}}
+                                    align="start"
+                                    withControls={false}
+                                    height={70}
+                                    dragFree
+                                >
+                                    {tagQueue?.map((tag: any, i: number) => (
+                                        <Carousel.Slide key={i}>
+                                            <Center w={'100%'} h={'50'}>
+                                                <Tag tagName={tag}/>
+                                            </Center>
+                                        </Carousel.Slide>
+                                    ))}
+                                </Carousel>
+                            </Box>
+                        }
+                    </Accordion.Panel>
+                </Accordion.Item>
             </Accordion>
         </Paper>
     );

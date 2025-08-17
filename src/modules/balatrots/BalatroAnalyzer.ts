@@ -21,15 +21,8 @@ import {MiscCardSource} from "../ImmolateWrapper";
 import {BossBlind} from "./enum/BossBlind.ts";
 
 // @ts-ignore
-interface AnalysisResult {
-    antes: AnteResult[];
-}
 
-interface AnteResult {
-    ante: number;
-    cards: Card[];
-    options: Option[];
-}
+
 
 export class BalatroAnalyzer {
     static readonly OPTIONS: ReadonlyArray<string> = [
@@ -158,7 +151,7 @@ export class BalatroAnalyzer {
 
         const selectedOptions: boolean[] = new Array(BalatroAnalyzer.OPTIONS.length).fill(true);
         const game = new Game(seed, new InstanceParams(deck, stake, false, version.getVersion()));
-        game.initLocks(1, true, true);
+        game.initLocks(1, true, false);
         game.firstLock();
 
         this.lockOptions(game, selectedOptions);
@@ -177,8 +170,9 @@ export class BalatroAnalyzer {
     private lockOptions(game: Game, selectedOptions: boolean[]): void {
         for (let i = 0; i < BalatroAnalyzer.OPTIONS.length; i++) {
             if (!selectedOptions[i]) {
-                console.log(`Locking option: ${BalatroAnalyzer.OPTIONS[i]}`);
                 game.lock(BalatroAnalyzer.OPTIONS[i]);
+            }else{
+                game.unlock(BalatroAnalyzer.OPTIONS[i]);
             }
         }
     }
@@ -187,9 +181,15 @@ export class BalatroAnalyzer {
     private processAnte(game: Game, run: Run, ante: number, cardsCount: number, selectedOptions: boolean[]): void {
         game.initUnlocks(ante, false);
 
+
+
+
         const voucher = game.nextVoucher(ante).getName();
         // game.lock(voucher);
         this.result.addVoucher(voucher);
+
+        this.result.addTag(game.nextTag(ante).name)
+        this.result.addTag(game.nextTag(ante).name)
 
         const boss = game.nextBoss(ante) as BossBlind
         this.result.addBoss(boss)
@@ -207,6 +207,7 @@ export class BalatroAnalyzer {
             this.processPack(game, run, ante, p);
         }
         this.processQueues(game, run)
+
 
     }
 
@@ -387,7 +388,7 @@ export class BalatroAnalyzer {
                 if( this.hasSpoilers && spoilerSource) {
                     let joker = game.nextJoker(spoilerSource, this.result.ante, true);
                     // @ts-ignore
-                    const sticker = BalatroAnalyzer.getSticker(joker);
+                    BalatroAnalyzer.getSticker(joker);
                     card = joker
                     run.addJoker(card.joker.name);
                 }
@@ -399,15 +400,15 @@ export class BalatroAnalyzer {
         return miscCardSources;
     }
 
-    private unlockVouchers(game: Game, voucher: string, selectedOptions: boolean[]): void {
-        for (let i = 0; i < Game.VOUCHERS.length; i += 2) {
-            if (Game.VOUCHERS[i].getName() === voucher) {
-                if (selectedOptions[BalatroAnalyzer.OPTIONS.indexOf(Game.VOUCHERS[i + 1].getName())]) {
-                    game.unlock(Game.VOUCHERS[i + 1].getName());
-                }
-            }
-        }
-    }
+    // private unlockVouchers(game: Game, voucher: string, selectedOptions: boolean[]): void {
+    //     for (let i = 0; i < Game.VOUCHERS.length; i += 2) {
+    //         if (Game.VOUCHERS[i].getName() === voucher) {
+    //             if (selectedOptions[BalatroAnalyzer.OPTIONS.indexOf(Game.VOUCHERS[i + 1].getName())]) {
+    //                 game.unlock(Game.VOUCHERS[i + 1].getName());
+    //             }
+    //         }
+    //     }
+    // }
 
     private processShopItem(game: Game, run: Run, ante: number): void {
         const shopItem = game.nextShopItem(ante);
@@ -416,7 +417,6 @@ export class BalatroAnalyzer {
         let spoilerSource = this.hasSpoilersMap[shopItem.item.name];
         if (this.hasSpoilers && spoilerSource) {
             const joker: JokerData = game.nextJoker(spoilerSource, ante, true);
-            console.log(`Spoiler source for ${shopItem.item.name}: ${spoilerSource}`);
             run.addJoker(joker.joker.getName());
             sticker = BalatroAnalyzer.getSticker(joker);
             this.result.addItemToShopQueue(joker);
@@ -496,7 +496,7 @@ export class BalatroAnalyzer {
 
     }
 
-    private static getSticker(joker: JokerData): Edition {
+    static getSticker(joker: JokerData): Edition {
         if (joker.stickers.eternal) return Edition.ETERNAL;
         if (joker.stickers.perishable) return Edition.PERISHABLE;
         if (joker.stickers.rental) return Edition.RENTAL;

@@ -24,7 +24,8 @@ import {BuyWrapper} from "../../buyerWrapper.tsx";
 import {GameCard} from "../../Rendering/cards.tsx";
 import {Ante, Pack, SeedResultsContainer} from "../../../modules/ImmolateWrapper/CardEngines/Cards.ts";
 import {BuyMetaData} from "../../../modules/classes/BuyMetaData.ts";
-import {Boss, Tag, Voucher} from "../../Rendering/gameElements.tsx";
+import {Boss, Tag as RenderTag, Voucher} from "../../Rendering/gameElements.tsx";
+import {Tag}  from "../../../modules/balatrots/enum/Tag.ts";
 import {toHeaderCase} from "js-convert-case";
 import {useDisclosure, useViewportSize} from "@mantine/hooks";
 import Header from "../layout/header.tsx";
@@ -127,7 +128,7 @@ function AntePanel({ante, tabName, timeTravelVoucherOffset}: {
                                         itemType: 'voucher',
                                         name: ante?.voucher ?? "",
                                         index: 0,
-                                        link: `https://balatrogame.fandom.com/wiki/vouchers`
+                                        link: `https://balatrowiki.org/w/vouchers`
                                     })
                                 }
                             >
@@ -180,7 +181,7 @@ function AntePanel({ante, tabName, timeTravelVoucherOffset}: {
                                                                     ante: tabName,
                                                                     blind: selectedBlind,
                                                                     itemType: 'card',
-                                                                    link: `https://balatrogame.fandom.com/wiki/${card.name}`,
+                                                                    link: `https://balatrowiki.org/w/${card.name}`,
                                                                     card: card,
                                                                     name: card.name
                                                                 })
@@ -202,8 +203,44 @@ function AntePanel({ante, tabName, timeTravelVoucherOffset}: {
         </Tabs.Panel>
     )
 }
+type CustomDetailsType = {
+    [K in Tag]?: any;
+};
+const CustomDetails: CustomDetailsType  = {
+    "Uncommon Tag": {
+        renderer: (ante: Ante, navigateToMiscSource: any) => {
+            return (
+                <Stack>
+                    <Text>
+                        {
+                            ante.miscCardSources.find(({name}) => name === 'uncommonTag')?.cards?.slice(0, 1).map(({name}: any) => name).join(', ')
+                        }
+                    </Text>
+                    <Button onClick={() => navigateToMiscSource('uncommonTag')}>
+                        More Info
+                    </Button>
+                </Stack>
 
-const CustomDetails: { [key: string]: any } = {
+            )
+        }
+    },
+    "Rare Tag": {
+        renderer: (ante: Ante, navigateToMiscSource: any) => {
+            return (
+                <Stack>
+                    <Text>
+                        {
+                            ante.miscCardSources.find(({name}) => name === 'rareTag')?.cards?.slice(0, 1).map(({name}: any) => name).join(', ')
+                        }
+                    </Text>
+                    <Button onClick={() => navigateToMiscSource('rareTag')}>
+                        More Info
+                    </Button>
+                </Stack>
+
+            )
+        }
+    },
     "Charm Tag": {
         renderer: (ante: Ante, navigateToMiscSource: any) => {
             return (
@@ -214,6 +251,51 @@ const CustomDetails: { [key: string]: any } = {
                         }
                     </Text>
                     <Button onClick={() => navigateToMiscSource('arcanaPack')}>
+                        More Info
+                    </Button>
+                </Stack>
+
+            )
+        }
+    },
+    "Boss Tag": {
+        renderer: (ante: Ante) => {
+            return (
+                <Stack>
+                    <Text>
+                        {
+                            ante.bossQueue[0]
+                        }
+                    </Text>
+                </Stack>
+
+            )
+        }
+    },
+    "Voucher Tag": {
+        renderer: (ante: Ante) => {
+            return (
+                <Stack>
+                    <Text>
+                        {
+                            ante.voucherQueue[0]
+                        }
+                    </Text>
+                </Stack>
+
+            )
+        }
+    },
+    "Top-up Tag": {
+        renderer: (ante: Ante, navigateToMiscSource: any) => {
+            return (
+                <Stack>
+                    <Text>
+                        {
+                            ante.miscCardSources.find(({name}) => name === 'topUpTag')?.cards?.slice(0, 5).map(({name}: any) => name).join(', ')
+                        }
+                    </Text>
+                    <Button onClick={() => navigateToMiscSource('topUpTag')}>
                         More Info
                     </Button>
                 </Stack>
@@ -289,50 +371,16 @@ const CustomDetails: { [key: string]: any } = {
             )
         }
     },
-    "Uncommon Tag": {
-        renderer: (ante: Ante, navigateToMiscSource: any) => {
-            return (
-                <Stack>
-                    <Text>
-                        {
-                            ante.miscCardSources.find(({name}) => name === 'uncommonTag')?.cards?.slice(0, 1).map(({name}: any) => name).join(', ')
-                        }
-                    </Text>
-                    <Button onClick={() => navigateToMiscSource('uncommonTag')}>
-                        More Info
-                    </Button>
-                </Stack>
-
-            )
-        }
-    },
-    "Rare Tag": {
-        renderer: (ante: Ante, navigateToMiscSource: any) => {
-            return (
-                <Stack>
-                    <Text>
-                        {
-                            ante.miscCardSources.find(({name}) => name === 'rareTag')?.cards?.slice(0, 1).map(({name}: any) => name).join(', ')
-                        }
-                    </Text>
-                    <Button onClick={() => navigateToMiscSource('rareTag')}>
-                        More Info
-                    </Button>
-                </Stack>
-
-            )
-        }
-    },
 }
 
-function TagDisplay({tag, ante}: { tag: string, ante: Ante }) {
+function TagDisplay({tag, ante}: { tag: Tag, ante: Ante }) {
     const [opened, {close, open}] = useDisclosure(false);
     const navigateToMiscSource = useCardStore(state => state.navigateToMiscSource);
     return (
         <Popover opened={opened}>
             <Popover.Target>
                 <Box onMouseEnter={open} onMouseLeave={close}>
-                    <Tag tagName={tag}/>
+                    <RenderTag tagName={tag}/>
                 </Box>
             </Popover.Target>
             <Popover.Dropdown>
@@ -342,8 +390,8 @@ function TagDisplay({tag, ante}: { tag: string, ante: Ante }) {
                         {tagDescriptions[tag ?? ''] ?? 'No description available'}
                     </Text>
                     {
-                        CustomDetails[tag] &&
-                        CustomDetails[tag]?.renderer(ante, navigateToMiscSource)
+                        CustomDetails[tag as Tag] &&
+                        CustomDetails[tag as Tag]?.renderer(ante, navigateToMiscSource)
                     }
                 </Box>
             </Popover.Dropdown>
@@ -413,7 +461,7 @@ function SeedExplorer({SeedResults}: { SeedResults: SeedResultsContainer }) {
                         label: <Group justify={'center'}>
                             {blind}
                             {i < 2 && (
-                                <TagDisplay tag={pool[itemPool]?.tags?.[i]} ante={pool[itemPool]}/>
+                                <TagDisplay tag={pool[itemPool]?.tags?.[i] as Tag} ante={pool[itemPool]}/>
                             )
                             }
                             {

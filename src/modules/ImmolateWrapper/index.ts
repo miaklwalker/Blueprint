@@ -13,12 +13,21 @@ import {
     StandardCard_Final,
     Tarot_Final
 } from "./CardEngines/Cards.ts";
-import {LOCATIONS, options} from "../const.ts";
-import {ImmolateClassic} from "./CardEngines/immolateClassic.ts";
+import {EVENT_UNLOCKS, LOCATIONS, options} from "../const.ts";
+import {RandomQueueNames, RNGSource} from "../balatrots/enum/QueueName.ts";
+import {Deck, deckMap, DeckType} from "../balatrots/enum/Deck.ts";
+import {Stake, StakeType} from "../balatrots/enum/Stake.ts";
 import {Game} from "../balatrots/Game.ts";
 import {InstanceParams} from "../balatrots/struct/InstanceParams.ts";
-import {deckMap} from "../balatrots/enum/Deck.ts";
-import {Stake, StakeType} from "../balatrots/enum/Stake.ts";
+import {JokerData} from "../balatrots/struct/JokerData.ts";
+import {Type} from "../balatrots/enum/cards/CardType.ts";
+import {Card} from "../balatrots/enum/cards/Card.ts";
+import {Voucher} from "../balatrots/enum/Voucher.ts";
+import {PlanetItem} from "../balatrots/enum/cards/Planet.ts";
+import {Tarot} from "../balatrots/enum/cards/Tarot.ts";
+import {SpectralItem} from "../balatrots/enum/packs/Spectral.ts";
+import {SpecialsItem} from "../balatrots/enum/cards/Specials.ts";
+import {BalatroAnalyzer} from "../balatrots/BalatroAnalyzer.ts";
 
 
 export interface MiscCardSource {
@@ -104,12 +113,60 @@ export interface EngineWrapper {
 
 
 export class CardEngineWrapper implements EngineWrapper {
-    engine: CardEngine;
+    engine: CardEngine | Game;
 
-    constructor(engine: CardEngine) {
+    constructor(engine: CardEngine | Game) {
         this.engine = engine;
     }
-
+    makeGameCard(card: any): Joker_Final | StandardCard_Final | Consumables_Final {
+        let instanceOfJoker = card instanceof JokerData;
+        let instanceOfTarot = card instanceof Tarot;
+        let instanceOfPlanet = card instanceof PlanetItem;
+        let instanceOfSpectral = card instanceof SpectralItem || card instanceof SpecialsItem;
+        let instanceofStandard = card instanceof Card;
+        switch (true)  {
+            case instanceOfJoker:
+                BalatroAnalyzer.getSticker(card);
+                return new Joker_Final({
+                    name: card.name,
+                    type: 'Joker',
+                    edition: card.edition,
+                    rarity: card.rarity,
+                    isEternal: card.stickers.eternal,
+                    isPerishable: card.stickers.perishable,
+                    isRental: card.stickers.rental,
+                } as Card_Final)
+            case instanceOfTarot:
+                return new Tarot_Final({
+                    name: card.name,
+                    type: 'Tarot'
+                } as Card_Final)
+            case instanceOfPlanet:
+                return new Planet_Final({
+                    name: card.name,
+                    type: 'Planet',
+                } as Card_Final)
+            case instanceOfSpectral:
+                return new Spectral_Final({
+                    name: card.name,
+                    type: 'Spectral',
+                } as Card_Final)
+            case instanceofStandard:
+                return new StandardCard_Final({
+                    base: [
+                        card.name.split('_')[0],
+                        "_",
+                        card.name.split('_')[1]
+                    ],
+                    seal: card._seal?.name,
+                    edition: card._edition?.name,
+                    enhancements: card._enhancement ,
+                    type: 'Standard',
+                } as unknown as Card_Final)
+            default:
+                throw new Error("Unknown card type");
+        }
+    }
     makeCard(card: NextShopItem): Joker_Final | StandardCard_Final | Consumables_Final {
         let cardType = card.type;
         if (cardType === 'Joker') {
@@ -171,12 +228,24 @@ export class CardEngineWrapper implements EngineWrapper {
     }
 
     findLevelTwoVoucher(key: string) {
-        let allVouchers = this.engine.VOUCHERS;
-        for (let i = 0; i < allVouchers.size(); i += 2) {
-            if (allVouchers.get(i) === key) {
-                return allVouchers.get(i + 1);
+        let allVouchers
+        if (!(this.engine instanceof Game)) {
+            allVouchers = this.engine?.VOUCHERS;
+            for (let i = 0; i < allVouchers.size(); i += 2) {
+                if (allVouchers.get(i) === key) {
+                    return allVouchers.get(i + 1);
+                }
+            }
+        }else{
+            allVouchers = Game.VOUCHERS;
+            for (let i = 0; i < Game.VOUCHERS.length; i += 2) {
+                if (Game.VOUCHERS[i].getName() === key) {
+                    return Game.VOUCHERS[i + 1].getName()
+
+                }
             }
         }
+
     }
 
     handleBuy(key: string, type: string, makeAnalyzer?: any , analyzeOptions?: AnalyzeOptions) {
@@ -187,7 +256,7 @@ export class CardEngineWrapper implements EngineWrapper {
             }
         }
         if (type === 'Voucher') {
-            this.engine.activateVoucher(key)
+            this.engine.activateVoucher(key as Voucher)
             const isLevelOneVoucher = !options.includes(key);
             if (isLevelOneVoucher) {
                 let levelTwo = this.findLevelTwoVoucher(key);
@@ -228,43 +297,54 @@ export interface AnalyzeOptions {
     lockedCards?: any
 }
 
-
-
-
 export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOptions) {
     const seed = settings?.seed?.toUpperCase()?.replace(/0/g, 'O');
     if (!seed) return;
     let output = new SeedResultsContainer();
-    // Initialize the engine
-    const engine = new ImmolateClassic(seed);
-    // Start with showman false by default.
-    let params = engine.InstParams(settings.deck, settings.stake, false, settings.gameVersion);
-
+    const deck = new Deck(deckMap[settings.deck] as DeckType )
+    const stake = new Stake(settings.stake as StakeType)
+    const version = Number(settings.gameVersion)
+    let params = new InstanceParams(deck, stake, false, version)
+    const engine = new Game(
+        seed,
+        params
+    );
+    engine.hasSpoilers = analyzeOptions.showCardSpoilers;
+    engine.initLocks(1, true, true);
+    engine.handleSelectedUnlocks(analyzeOptions.unlocks);
+    engine.lockLevelTwoVouchers()
+    engine.setDeck(deck);
+    EVENT_UNLOCKS.forEach(item => {
+        engine.lock(item.name)
+    })
     function updateShowmanOwned(showman: boolean) {
-        params.showman = showman;
-        engine.instance.params = params;
+        engine.updateShowman(showman)
     }
 
 
-    engine.initLocks(1, true, true);
-    engine.lockLevelTwoVouchers();
-    engine.handleSelectedUnlocks(analyzeOptions.unlocks);
-    engine.setStake(settings.stake);
-    engine.setDeck(settings.deck);
+
+
     let engineWrapper = new CardEngineWrapper(engine);
+
     let itemsWithSpoilers: string[] = ["The Soul", "Judgement", "Wraith"];
-    let spoilerSources = [engine.sources.S_Soul, engine.sources.S_Judgement, engine.sources.S_Wraith];
+    let spoilerSources = [RNGSource.S_Soul, RNGSource.S_Judgement, RNGSource.S_Wraith];
     const lockedCards = analyzeOptions?.lockedCards || {};
     function generateAnte( ante: number ) {
         engine.initUnlocks(ante, false);
-
+        let burnerInstance = new Game(
+            seed,
+            params
+        );
+        burnerInstance.initLocks(1, true, true);
+        burnerInstance.initUnlocks(ante, false)
+        let burnerWrapper = new CardEngineWrapper(burnerInstance);
         let result = new Ante(ante);
         let showmanIsLocked = engine.isLocked('Showman');
         updateShowmanOwned(false);
-        result.boss = engine.nextBoss(ante)
-        result.voucher = engine.nextVoucher(ante);
-        result.tags.push(engine.nextTag(ante));
-        result.tags.push(engine.nextTag(ante));
+        result.boss = engine.nextBoss(ante).name
+        result.voucher = engine.nextVoucher(ante).name;
+        result.tags.push(engine.nextTag(ante).name);
+        result.tags.push(engine.nextTag(ante).name);
         updateShowmanOwned(showmanIsLocked);
 
         let voucherKey = `${ante}-${LOCATIONS.VOUCHER}-0`;
@@ -272,13 +352,15 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
             let name = analyzeOptions.buys[voucherKey].name;
             if (name) {
                 engineWrapper.handleBuy(name, "Voucher", updateShowmanOwned, analyzeOptions)
+                burnerWrapper.handleBuy(name, "Voucher", updateShowmanOwned, analyzeOptions)
             }
         }
         for (let blind of Object.keys(result.blinds)) {
             if (analyzeOptions?.events) {
                 let currentEvents = analyzeOptions.events.filter((event: any) => event.ante === ante && event.blind === blind);
+
                 currentEvents.forEach((event: any) => {
-                    console.log("Found Event", event)
+
                     engine.unlock(event.name)
                 })
             }
@@ -299,10 +381,17 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
             for (let j = 0; j < 2; j++) {
                 let packString = engine.nextPack(ante);
                 let packInfo = engine.packInfo(packString);
-                let pack = new Pack(packInfo);
-                pack.init(engine, ante, analyzeOptions?.showCardSpoilers ?? false);
+                let pack = {
+                    name: packInfo.getKind(),
+                    choices: packInfo.getChoices(),
+                    size: packInfo.getSize(),
+                    cards: engine.generatePack(
+                        packInfo,
+                        ante
+                    ).map(engineWrapper.makeGameCard)
+                }
                 result.blinds[blind].packs.push(pack)
-                for (let k = 0; k < packInfo.size; k++) {
+                for (let k = 0; k < pack.size; k++) {
                     let key = `${ante}-${packString}-${k}-${blind}`;
                     if (analyzeOptions && analyzeOptions.buys[key]) {
                         engineWrapper.handleBuy(pack.cards[k].name, "Card", updateShowmanOwned, analyzeOptions)
@@ -312,41 +401,42 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
         }
         const maxCards = analyzeOptions?.maxMiscCardSource ?? 15
         const miscCardSources: MiscCardSource[] = [
-            // {
-            //     name: "riffRaff",
-            //     cardsToGenerate: 6,
-            //     cardType: "Joker",
-            //     source: this.engine.sources.S_Riff_Raff,
-            //     hasStickers: false,
-            //     cards: []
-            // },
+            {
+                name: "riffRaff",
+                cardsToGenerate: 6,
+                cardType: "Joker",
+                source: RNGSource.S_Riff_Raff,
+                hasStickers: false,
+                soulable: false,
+                cards: []
+            },
             {
                 name: "uncommonTag",
                 cardsToGenerate: maxCards,
                 cardType: "Joker",
-                source: engine.sources.S_Uncommon_Tag,
+                source: RNGSource.S_Uncommon_Tag,
                 cards: []
             },
             {
                 name: "rareTag",
                 cardsToGenerate: maxCards,
                 cardType: "Joker",
-                source: engine.sources.S_Rare_Tag,
+                source: RNGSource.S_Rare_Tag,
                 cards: []
             },
-            // {
-            //     name: "topUpTag",
-            //     cardsToGenerate: maxCards,
-            //     cardType: "Joker",
-            //     source: engine.sources.S_Top_Up,
-            //     hasStickers: false,
-            //     cards: []
-            // },
+            {
+                name: "topUpTag",
+                cardsToGenerate: maxCards,
+                cardType: "Joker",
+                source: RNGSource.S_Top_Up,
+                hasStickers: false,
+                cards: []
+            },
             {
                 name: "arcanaPack",
                 cardsToGenerate: maxCards,
                 cardType: "Tarot",
-                source: engine.sources.S_Arcana,
+                source: RNGSource.S_Arcana,
                 soulable: true,
                 hasStickers: true,
                 cards: []
@@ -355,28 +445,28 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
                 name: "emperor",
                 cardsToGenerate: maxCards,
                 cardType: "Tarot",
-                source: engine.sources.S_Emperor,
+                source: RNGSource.S_Emperor,
                 cards: []
             },
             {
                 name: "vagabond",
                 cardsToGenerate: maxCards,
                 cardType: "Tarot",
-                source: engine.sources.S_Vagabond,
+                source: RNGSource.S_Vagabond,
                 cards: []
             },
             {
                 name: "purpleSeal and 8 Ball",
                 cardsToGenerate: maxCards,
                 cardType: "Tarot",
-                source: engine.sources.S_Purple_Seal,
+                source: RNGSource.S_Purple_Seal,
                 cards: []
             },
             {
                 name: "superposition",
                 cardsToGenerate: maxCards,
                 cardType: "Tarot",
-                source: engine.sources.S_Superposition,
+                source: RNGSource.S_Superposition,
                 cards: [],
                 hasStickers: false,
             },
@@ -384,14 +474,14 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
                 name: "judgement",
                 cardsToGenerate: maxCards,
                 cardType: "Joker",
-                source: engine.sources.S_Judgement,
+                source: RNGSource.S_Judgement,
                 cards: []
             },
             {
                 name: "buffoonPack",
                 cardsToGenerate: maxCards,
                 cardType: "Joker",
-                source: engine.sources.S_Buffoon,
+                source: RNGSource.S_Buffoon,
                 cards: [],
                 hasStickers: true,
             },
@@ -399,7 +489,7 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
                 name: "wraith",
                 cardsToGenerate: maxCards,
                 cardType: "Joker",
-                source: engine.sources.S_Wraith,
+                source: RNGSource.S_Wraith,
                 hasStickers: false,
                 cards: []
             },
@@ -407,21 +497,21 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
                 name: "highPriestess",
                 cardsToGenerate: maxCards,
                 cardType: "Planet",
-                source: engine.sources.S_High_Priestess,
+                source: RNGSource.S_High_Priestess,
                 cards: []
             },
             {
                 name: "celestialPack",
                 cardsToGenerate: maxCards,
                 cardType: "Planet",
-                source: engine.sources.S_Celestial,
+                source: RNGSource.S_Celestial,
                 cards: []
             },
             {
                 name: 'spectralPack',
                 cardsToGenerate: maxCards,
                 cardType: "Spectral",
-                source: engine.sources.S_Spectral,
+                source: RNGSource.S_Spectral,
                 cards: [],
                 soulable: true,
                 hasStickers: true,
@@ -430,32 +520,32 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
                 name: "seance",
                 cardsToGenerate: maxCards,
                 cardType: "Spectral",
-                source: engine.sources.S_Seance,
+                source: RNGSource.S_Seance,
                 cards: [],
-                soulable: true,
+                soulable: false,
                 hasStickers: false,
             },
             {
                 name: "sixthSense",
                 cardsToGenerate: maxCards,
                 cardType: "Spectral",
-                source: engine.sources.S_Sixth_Sense,
+                source: RNGSource.S_Sixth_Sense,
                 cards: [],
-                soulable: true,
+                soulable: false,
                 hasStickers: false,
             },
             {
                 name: "certificate",
                 cardsToGenerate: maxCards,
                 cardType: "Standard",
-                source: engine.sources.R_Standard_Has_Seal,
+                source: RandomQueueNames.R_Standard_Has_Seal,
                 cards: [],
             },
             {
                 name: "standardPack",
                 cardsToGenerate: maxCards,
                 cardType: "Standard",
-                source: engine.sources.R_Standard_Edition,
+                source: RandomQueueNames.R_Standard_Edition,
                 cards: [],
                 hasStickers: false,
             },
@@ -483,56 +573,79 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
             // @ts-ignore
             "Spectral": (...args: any) => engine.nextSpectral(...args),
             // @ts-ignore
-            "Standard": (_, ante) => engine.nextStandardCard(ante),
+            "Standard": (source, ante) => engine.nextStandardCard(ante, source),
         }
         for (let source of miscCardSources) {
             for (let i = 0; i < source.cardsToGenerate; i++) {
                 let key = `${ante}-${source.name}-${i}`;
                 let generator = generators[source.cardType];
-                let card: string | PackCard = generator(source.source, ante, source?.soulable ?? source?.hasStickers ?? false);
-
-                if (typeof card === 'string') {
-                    let canBeSpoiled = itemsWithSpoilers.indexOf(card)
-                    if (canBeSpoiled !== -1 && analyzeOptions?.showCardSpoilers) {
-                        card = generators['Joker'](
-                            spoilerSources[canBeSpoiled],
-                            ante,
-                            true
-                        )
-                    }
-                }
-
-                let generatedCard = Pack.PackCardToCard(
-                    card,
-                    card === 'Wraith' || card === 'The Soul' ? 'Spectral' : source.cardType
-                );
-                if (generatedCard && 'name' in generatedCard) {
+                let card = generator(
+                    source.source,
+                    ante,
+                    source.soulable ?? source.hasStickers ?? false
+                )
+                let spoilerSource = engine.hasSpoilersMap[card.name];
+                if( engine.hasSpoilers && spoilerSource) {
+                    let joker = engine.nextJoker(spoilerSource, ante, true);
                     // @ts-ignore
-                    source.cards.push(generatedCard)
-                    if (analyzeOptions && analyzeOptions.buys[key]) {
-                        engineWrapper.handleBuy(generatedCard.name, "Card", updateShowmanOwned, analyzeOptions)
-                    }
-
+                    BalatroAnalyzer.getSticker(joker);
+                    card = joker
                 }
+
+                engineWrapper.makeGameCard(card);
+
+
+                let generatedCard = engineWrapper.makeGameCard(card);
+                if (analyzeOptions && analyzeOptions.buys[key]) {
+                    engineWrapper.handleBuy(generatedCard.name, "Card", updateShowmanOwned, analyzeOptions)
+                }
+                source.cards.push(generatedCard as unknown as PackCard);
 
             }
         }
+        // result.voucherQueue = [];
+        // result.bossQueue = [];
+        // result.tagsQueue = [];
+
+
+        // voucher queue
+        let queueDepth = 5
+        // burnerInstance.nextVoucher(ante)
+        result.voucherQueue = Array(queueDepth).fill(null).map(() => burnerInstance.nextVoucherSimple().name)
+        for(let i = 1; i < ante ; i++) {
+            burnerInstance.nextBoss(ante)
+        }
+        burnerInstance.nextBoss(ante)
+        result.bossQueue = Array(queueDepth).fill(null).map(() => burnerInstance.nextBoss(ante).name)
+        burnerInstance.nextTag(ante)
+        burnerInstance.nextTag(ante);
+        result.tagsQueue = Array(queueDepth).fill(null).map(() => burnerInstance.nextTag(ante).name)
+
+
+
         for (let i = 0; i < Math.min(settings.cardsPerAnte, 1000); i++) {
             let key = `${ante}-${LOCATIONS.SHOP}-${i}`;
             const lockCardId = `ante_${ante}_shop_${i}`;
             if (lockedCards[lockCardId]) {
-                console.log("Locked Card", lockedCards[lockCardId])
                 engine.lock(lockedCards[lockCardId].name);
             }
-            let item = engine.nextShopItem(ante);
-            let card = engineWrapper.makeCard(
-                item
-            )
-
-            result.queue.push(
-                card
-            )
-            item.delete()
+            let shopItem = engine.nextShopItem(ante);
+            let spoilerSource = engine.hasSpoilersMap[shopItem.item.name];
+            if (engine.hasSpoilers && spoilerSource) {
+                const joker: JokerData = engine.nextJoker(spoilerSource, ante, true);
+                result.queue.push(
+                    engineWrapper.makeGameCard(joker)
+                )
+            } else if (shopItem.type === Type.JOKER) {
+                result.queue.push(
+                    engineWrapper.makeGameCard(shopItem.jokerData)
+                )
+            } else {
+                result.queue.push(
+                    engineWrapper.makeGameCard(shopItem.item)
+                    // shopItem.item as Card
+                )
+            }
             if (analyzeOptions && analyzeOptions?.showCardSpoilers) {
                 if (itemsWithSpoilers.includes(result.queue[i].name)) {
                     // @ts-ignore
@@ -544,51 +657,13 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
             }
 
         }
-
-
-
         result.miscCardSources = miscCardSources
         return result;
     }
-
     for (let ante = 1; ante <= settings.antes; ante++) {
         output.antes[ante] = generateAnte(ante);
 
     }
-    output.antes[0] = generateAnte(0);
-    for(let [key, result] of Object.entries(output.antes)){
-        let ante = Number(key);
-        ante = Number(ante);
-        for ( let timeTravel = 0; timeTravel < 2; timeTravel++) {
-            let timeTravelAnte = new Ante(ante);
-            timeTravelAnte.boss = engine.nextBoss(ante)
-            timeTravelAnte.voucher = engine.nextVoucher(ante);
-            timeTravelAnte.tags.push(engine.nextTag(ante));
-            timeTravelAnte.tags.push(engine.nextTag(ante));
-            for (let blind of Object.keys(timeTravelAnte.blinds)) {
-                for (let j = 0; j < 2; j++) {
-                    let packString = engine.nextPack(ante);
-                    let packInfo = engine.packInfo(packString);
-                    let pack = new Pack(packInfo);
-                    pack.init(engine, ante, analyzeOptions?.showCardSpoilers ?? false);
-                    timeTravelAnte.blinds[blind].packs.push(pack)
-                    for (let k = 0; k < packInfo.size; k++) {
-                        let key = `${ante}-${packString}-${k}-${blind}`;
-                        if (analyzeOptions && analyzeOptions.buys[key]) {
-                            engineWrapper.handleBuy(pack.cards[k].name, "Card", updateShowmanOwned, analyzeOptions)
-                        }
-                    }
-                }
-            }
-            timeTravelAnte.queue = result.queue;
-            timeTravelAnte.miscCardSources = result.miscCardSources;
-            output.timeTravelAntes[`${ante}-${timeTravel + 1}`] = timeTravelAnte;
-
-        }
-    }
-    delete output.antes[0];
-
-    engine.delete();
 
     return output;
 }

@@ -34,6 +34,8 @@ import {Type} from "./enum/cards/CardType";
 import {PackInfo} from "./struct/PackInfo";
 import {Seal, SealItem} from "./enum/Seal";
 import {QueueNames, RandomQueueNames, RNGSource} from "./enum/QueueName.ts";
+import {PackKind} from "./enum/packs/PackKind.ts";
+import {options} from "../const.ts";
 
 export class Game extends Lock {
     private static _tarots: Tarot[] | null = null;
@@ -180,7 +182,96 @@ export class Game extends Lock {
         }
         return this._bossBlind;
     }
+    static readonly OPTIONS: ReadonlyArray<string> = [
+        // Tags
+        "Negative Tag",
+        "Foil Tag",
+        "Holographic Tag",
+        "Polychrome Tag",
+        "Rare Tag",
 
+        // Special Cards
+        "Golden Ticket",
+
+        // Characters
+        "Mr. Bones",
+        "Acrobat",
+        "Sock and Buskin",
+        "Swashbuckler",
+        "Troubadour",
+
+        // Items & Certificates
+        "Certificate",
+        "Smeared Joker",
+        "Throwback",
+        "Hanging Chad",
+
+        // Gems & Materials
+        "Rough Gem",
+        "Bloodstone",
+        "Arrowhead",
+        "Onyx Agate",
+        "Glass Joker",
+
+        // Performance & Entertainment
+        "Showman",
+        "Flower Pot",
+        "Blueprint",
+        "Wee Joker",
+        "Merry Andy",
+
+        // Special Effects
+        "Oops! All 6s",
+        "The Idol",
+        "Seeing Double",
+        "Matador",
+        "Hit the Road",
+
+        // Card Sets
+        "The Duo",
+        "The Trio",
+        "The Family",
+        "The Order",
+        "The Tribe",
+
+        // Special Characters
+        "Stuntman",
+        "Invisible Joker",
+        "Brainstorm",
+        "Satellite",
+        "Shoot the Moon",
+
+        // Licenses & Professions
+        "Driver's License",
+        "Cartomancer",
+        "Astronomer",
+        "Burnt Joker",
+        "Bootstraps",
+
+        // Shop & Economy
+        "Overstock Plus",
+        "Liquidation",
+        "Glow Up",
+        "Reroll Glut",
+        "Omen Globe",
+
+        // Tools & Equipment
+        "Observatory",
+        "Nacho Tong",
+        "Recyclomancy",
+
+        // Merchants
+        "Tarot Tycoon",
+        "Planet Tycoon",
+
+        // Special Items
+        "Money Tree",
+        "Antimatter",
+        "Illusion",
+        "Petroglyph",
+        "Retcon",
+        "Palette"
+    ] as const;
     static readonly SET_A: ReadonlySet<string> = new Set([
         // Food & Drink
         "Gros Michel",
@@ -232,6 +323,8 @@ export class Game extends Lock {
     private cache: Cache;
     public seed: string;
     public hashedSeed: number;
+    public hasSpoilersMap: Record<string, RNGSource>;
+    public hasSpoilers: boolean;
 
     constructor(seed: string, params: InstanceParams) {
         super();
@@ -239,6 +332,12 @@ export class Game extends Lock {
         this.params = params;
         this.cache = new Cache();
         this.hashedSeed = pseudohash(seed);
+        this.hasSpoilersMap = {
+            "The Soul": RNGSource.S_Soul,
+            "Judgement": RNGSource.S_Judgement,
+            "Wraith": RNGSource.S_Wraith,
+        }
+        this.hasSpoilers = false;
     }
 
     private getNode(id: string) {
@@ -266,6 +365,12 @@ export class Game extends Lock {
         return rng.randint(min, max);
     }
 
+    //item randchoice(instance* inst, ntype nts[], int ids[], int num, __constant item items[]) {//, size_t item_size) { not needed, we'll have element 1 give us the size
+    //     if (num > 0) {
+    //         inst->rng = randomseed(get_node_child(inst, nts, ids, num));
+    //     }
+    //     return items[l_randint(&(inst->rng), 1, items[0])];
+    // }
     randchoice<T extends ItemImpl>(id: string, items: T[]): ItemImpl {
         if (!items || items.length === 0) {
             throw new Error('Items array cannot be empty');
@@ -286,6 +391,12 @@ export class Game extends Lock {
         return item;
     }
 
+    //item randchoice_simple(instance* inst, rtype rngType, __constant item items[]) {
+    //     return randchoice(inst, (__private ntype[]){N_Type}, (__private int[]){rngType}, 1, items);
+    // }
+    randchoice_simple<T extends ItemImpl>(id: string, items: T[]): ItemImpl {
+       return this.randchoice<T>(id, items);
+    }
     private randchoiceJoker<T extends JokerImpl>(id: string, items: T[]): JokerImpl {
         if (!items || items.length === 0) {
             throw new Error('Items array cannot be empty');
@@ -613,6 +724,9 @@ export class Game extends Lock {
     nextVoucher(ante: number) {
         return this.randchoice(`${RandomQueueNames.R_Voucher}${ante}`, Game.VOUCHERS);
     }
+    nextVoucherSimple(){
+        return this.randchoice_simple(RandomQueueNames.R_Voucher_Tag, Game.VOUCHERS);
+    }
 
     nextTag(ante: number) {
         return this.randchoice(`${RandomQueueNames.R_Tags}${ante}`, Game.TAGS);
@@ -772,7 +886,7 @@ export class Game extends Lock {
             }
         }
 
-        if (this.params.isShowman()) return pack;
+        // if (this.params.isShowman()) return pack;
 
         for (let i = 0; i < size; i++) {
             this.unlock(pack[i].joker.name);
@@ -783,6 +897,69 @@ export class Game extends Lock {
 
     updateShowman(owned: boolean) {
         this.params.setShowman(owned);
+    }
+    lockLevelTwoVouchers() {
+        this.lock("Overstock Plus");
+        this.lock("Liquidation");
+        this.lock("Glow Up");
+        this.lock("Reroll Glut");
+        this.lock("Omen Globe");
+        this.lock("Observatory");
+        this.lock("Nacho Tong");
+        this.lock("Recyclomancy");
+        this.lock("Tarot Tycoon");
+        this.lock("Planet Tycoon");
+        this.lock("Money Tree");
+        this.lock("Antimatter");
+        this.lock("Illusion");
+        this.lock("Petroglyph");
+        this.lock("Retcon");
+        this.lock("Palette");
+    }
+    handleSelectedUnlocks(selectedUnlocks: string[]){
+        options.forEach((option: string) => {
+            if(selectedUnlocks.includes(option)){
+                this.unlock(option);
+            }else{
+                this.lock(option);
+            }
+        })
+    }
+    processPackCards(packInfo: PackInfo, card: any, ante: number){
+        if (packInfo.getKind() === PackKind.BUFFOON) {
+            return card as JokerData
+        } else {
+            let item = (card as ItemImpl).getName();
+            let spoilerSource = this.hasSpoilersMap[item];
+            if (spoilerSource && this.hasSpoilers) {
+                return this.nextJoker(spoilerSource, ante, true)
+            }
+            return card as Card;
+        }
+    }
+    generatePack(packInfo: PackInfo, ante: number) {
+        let cards;
+        switch (packInfo.getKind()) {
+            case PackKind.CELESTIAL:
+                cards = this.nextCelestialPack(packInfo.getSize(), ante);
+                break;
+            case PackKind.ARCANA:
+                cards = this.nextArcanaPack(packInfo.getSize(), ante);
+                break;
+            case PackKind.SPECTRAL:
+                cards = this.nextSpectralPack(packInfo.getSize(), ante);
+                break;
+            case PackKind.BUFFOON:
+                cards = this.nextBuffoonPack(packInfo.getSize(), ante);
+                break;
+            case PackKind.STANDARD:
+                cards = this.nextStandardPack(packInfo.getSize(), ante);
+                break;
+        }
+        for (let c = 0; c < packInfo.getSize(); c++) {
+            cards[c] = this.processPackCards(packInfo, cards[c], ante);
+        }
+        return cards;
     }
 
 }

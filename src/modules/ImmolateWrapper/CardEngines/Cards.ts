@@ -354,10 +354,8 @@ export class Pack {
 
 export class SeedResultsContainer {
     antes: { [key: number]: Ante };
-    timeTravelAntes: { [key: string]: Ante };
     constructor() {
         this.antes = {}
-        this.timeTravelAntes = {}
     }
 }
 
@@ -369,6 +367,9 @@ export class Ante {
     tags: string[];
     blinds: { [key: string]: { [key: string]: any[] } }
     miscCardSources: MiscCardSource[]
+    voucherQueue: string[] = [];
+    bossQueue: string[] = [];
+    tagsQueue: string[] = [];
 
     constructor(ante: number) {
         this.ante = ante;

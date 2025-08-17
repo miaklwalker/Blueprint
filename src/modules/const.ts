@@ -522,7 +522,7 @@ export const tagDescriptions: {[key:string]: string} = {
     "Double Tag": "Gives a copy of the next Tag selected (excluding Double Tags).",
     "Juggle Tag": "+3 Hand Size for the next round only.",
     "D6 Tag": "In the next Shop, Rerolls start at $0.",
-    "Top Tag-up": "Create up to 2 Common Jokers (if you have space).",
+    "Top-up Tag": "Create up to 2 Common Jokers (if you have space).",
     "Speed Tag": "Gives $5 for each Blind you've skipped this run.",
     "Orbital Tag": "Upgrades a specified random Poker Hand by three levels.",
     "Economy Tag": "Doubles your money (adds a maximum of $40).",

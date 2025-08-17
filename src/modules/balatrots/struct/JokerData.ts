@@ -1,8 +1,7 @@
-import { ItemImpl } from '../interface/Item';
-import { CommonJokerCard, CommonJoker } from '../enum/cards/CommonJoker';
-import { Edition } from '../enum/Edition';
-import { JokerStickers } from './JokerStickers';
-import { JokerImpl } from '../interface/Joker';
+import {CommonJoker, CommonJokerCard} from '../enum/cards/CommonJoker';
+import {Edition} from '../enum/Edition';
+import {JokerStickers} from './JokerStickers';
+import {JokerImpl} from '../interface/Joker';
 
 export class JokerData {
     constructor(
@@ -11,7 +10,9 @@ export class JokerData {
         private _edition: Edition = Edition.NO_EDITION,
         private _stickers: JokerStickers = new JokerStickers()
     ) { }
-
+    get name() {
+        return this.joker.getName()
+    }
     get joker(): JokerImpl {
         return this._joker;
     }

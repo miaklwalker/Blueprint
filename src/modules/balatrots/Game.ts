@@ -28,7 +28,7 @@ import {JokerStickers} from "./struct/JokerStickers";
 import {Stake, StakeType} from "./enum/Stake";
 import {JokerImpl} from "./interface/Joker";
 import {ShopInstance} from "./struct/ShopInstance";
-import {Deck, deckNames, DeckType} from "./enum/Deck";
+import {Deck, deckMap, deckNames, DeckType} from "./enum/Deck";
 import {ShopItem} from "./struct/ShopItem";
 import {Type} from "./enum/cards/CardType";
 import {PackInfo} from "./struct/PackInfo";
@@ -680,13 +680,14 @@ export class Game extends Lock {
 
     setDeck(deck: Deck): void {
         this.params.setDeck(deck);
-
-        switch (deck.name) {
+        let name = deckMap[deck.name]
+        switch (name) {
             case DeckType.MAGIC_DECK:
                 this.activateVoucher(Voucher.CRYSTAL_BALL);
                 break;
 
             case DeckType.NEBULA_DECK:
+                console.log("Activating NEBULA_DECK vouchers");
                 this.activateVoucher(Voucher.TELESCOPE);
                 break;
 

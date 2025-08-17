@@ -130,7 +130,6 @@ export default function NavBar({ themeName , setTheme }: { themeName: string, se
                 </Group>
 
             </AppShell.Section>
-            <AppShell.Section>Settings</AppShell.Section>
             <AppShell.Section grow my="md" component={ScrollArea} scrollbars={'y'}>
 
                 <SeedInputAutoComplete

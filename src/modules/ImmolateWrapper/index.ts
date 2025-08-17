@@ -38,6 +38,7 @@ export interface MiscCardSource {
     hasStickers?: boolean,
     soulable?: boolean,
     cards: PackCard[]
+    usesAnte?: boolean | undefined | null;
 }
 
 export interface CardEngine {
@@ -536,10 +537,11 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
             },
             {
                 name: "certificate",
-                cardsToGenerate: maxCards,
+                cardsToGenerate: maxCards * 3,
                 cardType: "Standard",
                 source: RandomQueueNames.R_Cert,
                 cards: [],
+                usesAnte: false,
             },
             {
                 name: "standardPack",
@@ -576,6 +578,13 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
             "Standard": (source, ante) => engine.nextStandardCard(ante, source),
         }
         for (let source of miscCardSources) {
+            if(source.usesAnte === false && ante !== 1) {
+                const savedResults = output.antes[1].miscCardSources.find(s => s.name === source.name);
+                if (savedResults) {
+                    source.cards = savedResults.cards;
+                }
+                continue;
+            }
             for (let i = 0; i < source.cardsToGenerate; i++) {
                 let key = `${ante}-${source.name}-${i}`;
                 let generator = generators[source.cardType];
@@ -586,15 +595,8 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
                 )
                 let spoilerSource = engine.hasSpoilersMap[card.name];
                 if( engine.hasSpoilers && spoilerSource) {
-                    let joker = engine.nextJoker(spoilerSource, ante, true);
-                    // @ts-ignore
-                    BalatroAnalyzer.getSticker(joker);
-                    card = joker
+                    card = engine.nextJoker(spoilerSource, ante, true)
                 }
-
-                engineWrapper.makeGameCard(card);
-
-
                 let generatedCard = engineWrapper.makeGameCard(card);
                 if (analyzeOptions && analyzeOptions.buys[key]) {
                     engineWrapper.handleBuy(generatedCard.name, "Card", updateShowmanOwned, analyzeOptions)

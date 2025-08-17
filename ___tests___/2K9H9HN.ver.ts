@@ -2110,10 +2110,500 @@ const verifiedResults = {
                 },
                 {
                     "name": "certificate",
-                    "cardsToGenerate": 15,
+                    "cardsToGenerate": 45,
                     "cardType": "Standard",
-                    "source": "stdseal",
+                    "source": "certsl",
                     "cards": [
+                        {
+                            "name": "Red Seal King of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "King",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "K"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 9 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "9",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "9"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 10 of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "10",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "T"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 8 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "8",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "8"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal Queen of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "Queen",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal King of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "King",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "K"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 6 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "6",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "6"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 2 of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "2",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "2"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 6 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "6",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "6"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal Queen of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "Queen",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 4 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "4",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "4"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal Ace of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "Ace",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "A"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 10 of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "10",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "T"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal Queen of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "Queen",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 4 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "4",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "4"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal Ace of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "Ace",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "A"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal Ace of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "Ace",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "A"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 7 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "7",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "7"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 3 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "3",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "3"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 5 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "5",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "5"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 8 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "8",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "8"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal Jack of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "Jack",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "J"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 5 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "5",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "5"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 6 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "6",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "6"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 7 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "7",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "7"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal Queen of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "Queen",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 9 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "9",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "9"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 9 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "9",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "9"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal Queen of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "Queen",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 9 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "9",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "9"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 8 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "8",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "8"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 6 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "6",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "6"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 7 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "7",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "7"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 4 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "4",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "4"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal King of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "King",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "K"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
                         {
                             "name": "Purple Seal Queen of Diamonds",
                             "type": "Standard",
@@ -2129,10 +2619,80 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Red Seal Foil 8 of Clubs",
+                            "name": "Gold Seal Queen of Hearts",
                             "type": "Standard",
-                            "edition": "Foil",
-                            "seal": "Red Seal",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "Queen",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 7 of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "7",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "7"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 2 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "2",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "2"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 5 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "5",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "5"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 4 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "4",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "4"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 8 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
                             "rank": "8",
                             "suit": "Clubs",
                             "base": [
@@ -2143,10 +2703,38 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Red Seal 2 of Hearts",
+                            "name": "Purple Seal 6 of Clubs",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Red Seal",
+                            "seal": "Purple Seal",
+                            "rank": "6",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "6"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal Jack of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "Jack",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "J"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 2 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
                             "rank": "2",
                             "suit": "Hearts",
                             "base": [
@@ -2155,12 +2743,63 @@ const verifiedResults = {
                                 "2"
                             ],
                             "enhancements": "No Enhancement"
+                        }
+                    ],
+                    "usesAnte": false
+                },
+                {
+                    "name": "standardPack",
+                    "cardsToGenerate": 15,
+                    "cardType": "Standard",
+                    "source": "standard_edition",
+                    "cards": [
+                        {
+                            "name": "Queen of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "Queen",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Blue Seal Polychrome 10 of Clubs",
+                            "name": "Foil 8 of Clubs",
+                            "type": "Standard",
+                            "edition": "Foil",
+                            "seal": "No Seal",
+                            "rank": "8",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "8"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Steel 2 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "2",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "2"
+                            ],
+                            "enhancements": "Steel"
+                        },
+                        {
+                            "name": "Polychrome Wild 10 of Clubs",
                             "type": "Standard",
                             "edition": "Polychrome",
-                            "seal": "Blue Seal",
+                            "seal": "No Seal",
                             "rank": "10",
                             "suit": "Clubs",
                             "base": [
@@ -2168,13 +2807,13 @@ const verifiedResults = {
                                 "_",
                                 "T"
                             ],
-                            "enhancements": "No Enhancement"
+                            "enhancements": "Wild"
                         },
                         {
-                            "name": "Red Seal Polychrome 7 of Hearts",
+                            "name": "Polychrome 7 of Hearts",
                             "type": "Standard",
                             "edition": "Polychrome",
-                            "seal": "Red Seal",
+                            "seal": "No Seal",
                             "rank": "7",
                             "suit": "Hearts",
                             "base": [
@@ -2185,10 +2824,10 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Purple Seal King of Diamonds",
+                            "name": "King of Diamonds",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Purple Seal",
+                            "seal": "No Seal",
                             "rank": "King",
                             "suit": "Diamonds",
                             "base": [
@@ -2199,10 +2838,10 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Gold Seal 2 of Diamonds",
+                            "name": "Stone 2 of Diamonds",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Gold Seal",
+                            "seal": "No Seal",
                             "rank": "2",
                             "suit": "Diamonds",
                             "base": [
@@ -2210,13 +2849,13 @@ const verifiedResults = {
                                 "_",
                                 "2"
                             ],
-                            "enhancements": "No Enhancement"
+                            "enhancements": "Stone"
                         },
                         {
-                            "name": "Gold Seal 7 of Spades",
+                            "name": "7 of Spades",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Gold Seal",
+                            "seal": "No Seal",
                             "rank": "7",
                             "suit": "Spades",
                             "base": [
@@ -2227,10 +2866,10 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Purple Seal 6 of Hearts",
+                            "name": "6 of Hearts",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Purple Seal",
+                            "seal": "No Seal",
                             "rank": "6",
                             "suit": "Hearts",
                             "base": [
@@ -2241,10 +2880,10 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Blue Seal 3 of Hearts",
+                            "name": "3 of Hearts",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Blue Seal",
+                            "seal": "No Seal",
                             "rank": "3",
                             "suit": "Hearts",
                             "base": [
@@ -2283,262 +2922,44 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Blue Seal Queen of Clubs",
+                            "name": "Gold Queen of Clubs",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Blue Seal",
+                            "seal": "No Seal",
                             "rank": "Queen",
                             "suit": "Clubs",
                             "base": [
                                 "C",
                                 "_",
                                 "Q"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Gold Seal Jack of Hearts",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Gold Seal",
-                            "rank": "Jack",
-                            "suit": "Hearts",
-                            "base": [
-                                "H",
-                                "_",
-                                "J"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Gold Seal Queen of Diamonds",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Gold Seal",
-                            "rank": "Queen",
-                            "suit": "Diamonds",
-                            "base": [
-                                "D",
-                                "_",
-                                "Q"
-                            ],
-                            "enhancements": "No Enhancement"
-                        }
-                    ]
-                },
-                {
-                    "name": "standardPack",
-                    "cardsToGenerate": 15,
-                    "cardType": "Standard",
-                    "source": "standard_edition",
-                    "cards": [
-                        {
-                            "name": "Blue Seal 9 of Diamonds",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Blue Seal",
-                            "rank": "9",
-                            "suit": "Diamonds",
-                            "base": [
-                                "D",
-                                "_",
-                                "9"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Gold Seal 2 of Spades",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Gold Seal",
-                            "rank": "2",
-                            "suit": "Spades",
-                            "base": [
-                                "S",
-                                "_",
-                                "2"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Steel Jack of Diamonds",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "Jack",
-                            "suit": "Diamonds",
-                            "base": [
-                                "D",
-                                "_",
-                                "J"
-                            ],
-                            "enhancements": "Steel"
-                        },
-                        {
-                            "name": "Wild 6 of Spades",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "6",
-                            "suit": "Spades",
-                            "base": [
-                                "S",
-                                "_",
-                                "6"
-                            ],
-                            "enhancements": "Wild"
-                        },
-                        {
-                            "name": "Polychrome 2 of Spades",
-                            "type": "Standard",
-                            "edition": "Polychrome",
-                            "seal": "No Seal",
-                            "rank": "2",
-                            "suit": "Spades",
-                            "base": [
-                                "S",
-                                "_",
-                                "2"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "5 of Hearts",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "5",
-                            "suit": "Hearts",
-                            "base": [
-                                "H",
-                                "_",
-                                "5"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Stone Queen of Spades",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "Queen",
-                            "suit": "Spades",
-                            "base": [
-                                "S",
-                                "_",
-                                "Q"
-                            ],
-                            "enhancements": "Stone"
-                        },
-                        {
-                            "name": "Polychrome King of Clubs",
-                            "type": "Standard",
-                            "edition": "Polychrome",
-                            "seal": "No Seal",
-                            "rank": "King",
-                            "suit": "Clubs",
-                            "base": [
-                                "C",
-                                "_",
-                                "K"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Ace of Clubs",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "Ace",
-                            "suit": "Clubs",
-                            "base": [
-                                "C",
-                                "_",
-                                "A"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "10 of Hearts",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "10",
-                            "suit": "Hearts",
-                            "base": [
-                                "H",
-                                "_",
-                                "T"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "9 of Hearts",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "9",
-                            "suit": "Hearts",
-                            "base": [
-                                "H",
-                                "_",
-                                "9"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "3 of Clubs",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "3",
-                            "suit": "Clubs",
-                            "base": [
-                                "C",
-                                "_",
-                                "3"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Gold King of Diamonds",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "King",
-                            "suit": "Diamonds",
-                            "base": [
-                                "D",
-                                "_",
-                                "K"
                             ],
                             "enhancements": "Gold"
                         },
                         {
-                            "name": "Lucky 4 of Hearts",
+                            "name": "Lucky Jack of Hearts",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "No Seal",
-                            "rank": "4",
+                            "rank": "Jack",
                             "suit": "Hearts",
                             "base": [
                                 "H",
                                 "_",
-                                "4"
+                                "J"
                             ],
                             "enhancements": "Lucky"
                         },
                         {
-                            "name": "Mult 7 of Hearts",
+                            "name": "Mult Queen of Diamonds",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "No Seal",
-                            "rank": "7",
-                            "suit": "Hearts",
+                            "rank": "Queen",
+                            "suit": "Diamonds",
                             "base": [
-                                "H",
+                                "D",
                                 "_",
-                                "7"
+                                "Q"
                             ],
                             "enhancements": "Mult"
                         }
@@ -4744,21 +5165,35 @@ const verifiedResults = {
                 },
                 {
                     "name": "certificate",
-                    "cardsToGenerate": 15,
+                    "cardsToGenerate": 45,
                     "cardType": "Standard",
-                    "source": "stdseal",
+                    "source": "certsl",
                     "cards": [
                         {
-                            "name": "Red Seal King of Hearts",
+                            "name": "Red Seal King of Clubs",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "Red Seal",
                             "rank": "King",
-                            "suit": "Hearts",
+                            "suit": "Clubs",
                             "base": [
-                                "H",
+                                "C",
                                 "_",
                                 "K"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 9 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "9",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "9"
                             ],
                             "enhancements": "No Enhancement"
                         },
@@ -4777,374 +5212,16 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Red Seal 5 of Spades",
+                            "name": "Red Seal 8 of Clubs",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "Red Seal",
-                            "rank": "5",
-                            "suit": "Spades",
-                            "base": [
-                                "S",
-                                "_",
-                                "5"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Gold Seal Ace of Diamonds",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Gold Seal",
-                            "rank": "Ace",
-                            "suit": "Diamonds",
-                            "base": [
-                                "D",
-                                "_",
-                                "A"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Red Seal Jack of Hearts",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Red Seal",
-                            "rank": "Jack",
-                            "suit": "Hearts",
-                            "base": [
-                                "H",
-                                "_",
-                                "J"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Purple Seal 7 of Clubs",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Purple Seal",
-                            "rank": "7",
-                            "suit": "Clubs",
-                            "base": [
-                                "C",
-                                "_",
-                                "7"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Gold Seal Queen of Clubs",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Gold Seal",
-                            "rank": "Queen",
-                            "suit": "Clubs",
-                            "base": [
-                                "C",
-                                "_",
-                                "Q"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Purple Seal Ace of Hearts",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Purple Seal",
-                            "rank": "Ace",
-                            "suit": "Hearts",
-                            "base": [
-                                "H",
-                                "_",
-                                "A"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Purple Seal 7 of Clubs",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Purple Seal",
-                            "rank": "7",
-                            "suit": "Clubs",
-                            "base": [
-                                "C",
-                                "_",
-                                "7"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Purple Seal 8 of Clubs",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Purple Seal",
                             "rank": "8",
                             "suit": "Clubs",
                             "base": [
                                 "C",
                                 "_",
                                 "8"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Purple Seal 4 of Diamonds",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Purple Seal",
-                            "rank": "4",
-                            "suit": "Diamonds",
-                            "base": [
-                                "D",
-                                "_",
-                                "4"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Purple Seal Foil 3 of Spades",
-                            "type": "Standard",
-                            "edition": "Foil",
-                            "seal": "Purple Seal",
-                            "rank": "3",
-                            "suit": "Spades",
-                            "base": [
-                                "S",
-                                "_",
-                                "3"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Gold Seal 5 of Hearts",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Gold Seal",
-                            "rank": "5",
-                            "suit": "Hearts",
-                            "base": [
-                                "H",
-                                "_",
-                                "5"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Gold Seal 4 of Clubs",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Gold Seal",
-                            "rank": "4",
-                            "suit": "Clubs",
-                            "base": [
-                                "C",
-                                "_",
-                                "4"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Red Seal 3 of Spades",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Red Seal",
-                            "rank": "3",
-                            "suit": "Spades",
-                            "base": [
-                                "S",
-                                "_",
-                                "3"
-                            ],
-                            "enhancements": "No Enhancement"
-                        }
-                    ]
-                },
-                {
-                    "name": "standardPack",
-                    "cardsToGenerate": 15,
-                    "cardType": "Standard",
-                    "source": "standard_edition",
-                    "cards": [
-                        {
-                            "name": "Wild 8 of Diamonds",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "8",
-                            "suit": "Diamonds",
-                            "base": [
-                                "D",
-                                "_",
-                                "8"
-                            ],
-                            "enhancements": "Wild"
-                        },
-                        {
-                            "name": "Wild 4 of Clubs",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "4",
-                            "suit": "Clubs",
-                            "base": [
-                                "C",
-                                "_",
-                                "4"
-                            ],
-                            "enhancements": "Wild"
-                        },
-                        {
-                            "name": "Jack of Spades",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "Jack",
-                            "suit": "Spades",
-                            "base": [
-                                "S",
-                                "_",
-                                "J"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "3 of Hearts",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "3",
-                            "suit": "Hearts",
-                            "base": [
-                                "H",
-                                "_",
-                                "3"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "3 of Spades",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "3",
-                            "suit": "Spades",
-                            "base": [
-                                "S",
-                                "_",
-                                "3"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "6 of Diamonds",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "6",
-                            "suit": "Diamonds",
-                            "base": [
-                                "D",
-                                "_",
-                                "6"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Steel 9 of Hearts",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "9",
-                            "suit": "Hearts",
-                            "base": [
-                                "H",
-                                "_",
-                                "9"
-                            ],
-                            "enhancements": "Steel"
-                        },
-                        {
-                            "name": "8 of Diamonds",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "8",
-                            "suit": "Diamonds",
-                            "base": [
-                                "D",
-                                "_",
-                                "8"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Polychrome 5 of Clubs",
-                            "type": "Standard",
-                            "edition": "Polychrome",
-                            "seal": "No Seal",
-                            "rank": "5",
-                            "suit": "Clubs",
-                            "base": [
-                                "C",
-                                "_",
-                                "5"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Gold 5 of Diamonds",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "5",
-                            "suit": "Diamonds",
-                            "base": [
-                                "D",
-                                "_",
-                                "5"
-                            ],
-                            "enhancements": "Gold"
-                        },
-                        {
-                            "name": "Stone 5 of Hearts",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "5",
-                            "suit": "Hearts",
-                            "base": [
-                                "H",
-                                "_",
-                                "5"
-                            ],
-                            "enhancements": "Stone"
-                        },
-                        {
-                            "name": "Queen of Diamonds",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "Queen",
-                            "suit": "Diamonds",
-                            "base": [
-                                "D",
-                                "_",
-                                "Q"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Red Seal Queen of Clubs",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Red Seal",
-                            "rank": "Queen",
-                            "suit": "Clubs",
-                            "base": [
-                                "C",
-                                "_",
-                                "Q"
                             ],
                             "enhancements": "No Enhancement"
                         },
@@ -5163,7 +5240,702 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Steel 8 of Clubs",
+                            "name": "Red Seal King of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "King",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "K"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 6 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "6",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "6"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 2 of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "2",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "2"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 6 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "6",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "6"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal Queen of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "Queen",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 4 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "4",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "4"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal Ace of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "Ace",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "A"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 10 of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "10",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "T"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal Queen of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "Queen",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 4 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "4",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "4"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal Ace of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "Ace",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "A"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal Ace of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "Ace",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "A"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 7 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "7",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "7"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 3 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "3",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "3"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 5 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "5",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "5"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 8 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "8",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "8"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal Jack of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "Jack",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "J"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 5 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "5",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "5"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 6 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "6",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "6"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 7 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "7",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "7"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal Queen of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "Queen",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 9 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "9",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "9"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 9 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "9",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "9"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal Queen of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "Queen",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 9 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "9",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "9"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 8 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "8",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "8"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 6 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "6",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "6"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 7 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "7",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "7"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 4 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "4",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "4"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal King of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "King",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "K"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal Queen of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "Queen",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal Queen of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "Queen",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 7 of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "7",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "7"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 2 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "2",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "2"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 5 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "5",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "5"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 4 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "4",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "4"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 8 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "8",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "8"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 6 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "6",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "6"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal Jack of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "Jack",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "J"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 2 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "2",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "2"
+                            ],
+                            "enhancements": "No Enhancement"
+                        }
+                    ],
+                    "usesAnte": false
+                },
+                {
+                    "name": "standardPack",
+                    "cardsToGenerate": 15,
+                    "cardType": "Standard",
+                    "source": "standard_edition",
+                    "cards": [
+                        {
+                            "name": "Wild King of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "King",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "K"
+                            ],
+                            "enhancements": "Wild"
+                        },
+                        {
+                            "name": "Red Seal Wild 10 of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "10",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "T"
+                            ],
+                            "enhancements": "Wild"
+                        },
+                        {
+                            "name": "5 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "5",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "5"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Ace of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "Ace",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "A"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Jack of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "Jack",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "J"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "7 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "7",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "7"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Steel Queen of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "Queen",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "Steel"
+                        },
+                        {
+                            "name": "Ace of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "Ace",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "A"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "7 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "7",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "7"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold 8 of Clubs",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "No Seal",
@@ -5173,6 +5945,76 @@ const verifiedResults = {
                                 "C",
                                 "_",
                                 "8"
+                            ],
+                            "enhancements": "Gold"
+                        },
+                        {
+                            "name": "Stone 4 of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "4",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "4"
+                            ],
+                            "enhancements": "Stone"
+                        },
+                        {
+                            "name": "Foil 3 of Spades",
+                            "type": "Standard",
+                            "edition": "Foil",
+                            "seal": "No Seal",
+                            "rank": "3",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "3"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "5 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "5",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "5"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "4 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "4",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "4"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Steel 3 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "3",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "3"
                             ],
                             "enhancements": "Steel"
                         }
@@ -7338,63 +8180,77 @@ const verifiedResults = {
                 },
                 {
                     "name": "certificate",
-                    "cardsToGenerate": 15,
+                    "cardsToGenerate": 45,
                     "cardType": "Standard",
-                    "source": "stdseal",
+                    "source": "certsl",
                     "cards": [
                         {
-                            "name": "Purple Seal 10 of Hearts",
+                            "name": "Red Seal King of Clubs",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Purple Seal",
-                            "rank": "10",
-                            "suit": "Hearts",
+                            "seal": "Red Seal",
+                            "rank": "King",
+                            "suit": "Clubs",
                             "base": [
-                                "H",
+                                "C",
+                                "_",
+                                "K"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 9 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "9",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "9"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 10 of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "10",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
                                 "_",
                                 "T"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Purple Seal Queen of Spades",
+                            "name": "Red Seal 8 of Clubs",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Purple Seal",
-                            "rank": "Queen",
-                            "suit": "Spades",
+                            "seal": "Red Seal",
+                            "rank": "8",
+                            "suit": "Clubs",
                             "base": [
-                                "S",
+                                "C",
                                 "_",
-                                "Q"
+                                "8"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Purple Seal 7 of Diamonds",
+                            "name": "Red Seal Queen of Diamonds",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Purple Seal",
-                            "rank": "7",
+                            "seal": "Red Seal",
+                            "rank": "Queen",
                             "suit": "Diamonds",
                             "base": [
                                 "D",
                                 "_",
-                                "7"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Gold Seal Foil 4 of Hearts",
-                            "type": "Standard",
-                            "edition": "Foil",
-                            "seal": "Gold Seal",
-                            "rank": "4",
-                            "suit": "Hearts",
-                            "base": [
-                                "H",
-                                "_",
-                                "4"
+                                "Q"
                             ],
                             "enhancements": "No Enhancement"
                         },
@@ -7413,44 +8269,212 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Blue Seal 7 of Diamonds",
+                            "name": "Blue Seal 6 of Clubs",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "Blue Seal",
-                            "rank": "7",
-                            "suit": "Diamonds",
+                            "rank": "6",
+                            "suit": "Clubs",
                             "base": [
-                                "D",
+                                "C",
                                 "_",
-                                "7"
+                                "6"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Gold Seal 2 of Hearts",
+                            "name": "Purple Seal 2 of Diamonds",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Gold Seal",
+                            "seal": "Purple Seal",
                             "rank": "2",
-                            "suit": "Hearts",
+                            "suit": "Diamonds",
                             "base": [
-                                "H",
+                                "D",
                                 "_",
                                 "2"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Purple Seal Jack of Diamonds",
+                            "name": "Purple Seal 6 of Spades",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "Purple Seal",
-                            "rank": "Jack",
+                            "rank": "6",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "6"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal Queen of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "Queen",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 4 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "4",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "4"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal Ace of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "Ace",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "A"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 10 of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "10",
                             "suit": "Diamonds",
                             "base": [
                                 "D",
                                 "_",
-                                "J"
+                                "T"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal Queen of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "Queen",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 4 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "4",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "4"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal Ace of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "Ace",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "A"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal Ace of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "Ace",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "A"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 7 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "7",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "7"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 3 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "3",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "3"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 5 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "5",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "5"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 8 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "8",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "8"
                             ],
                             "enhancements": "No Enhancement"
                         },
@@ -7469,130 +8493,52 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Red Seal Ace of Diamonds",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Red Seal",
-                            "rank": "Ace",
-                            "suit": "Diamonds",
-                            "base": [
-                                "D",
-                                "_",
-                                "A"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Red Seal Foil 4 of Hearts",
-                            "type": "Standard",
-                            "edition": "Foil",
-                            "seal": "Red Seal",
-                            "rank": "4",
-                            "suit": "Hearts",
-                            "base": [
-                                "H",
-                                "_",
-                                "4"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Gold Seal Jack of Diamonds",
+                            "name": "Gold Seal 5 of Clubs",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "Gold Seal",
-                            "rank": "Jack",
-                            "suit": "Diamonds",
-                            "base": [
-                                "D",
-                                "_",
-                                "J"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Red Seal 10 of Spades",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Red Seal",
-                            "rank": "10",
-                            "suit": "Spades",
-                            "base": [
-                                "S",
-                                "_",
-                                "T"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Red Seal Jack of Diamonds",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Red Seal",
-                            "rank": "Jack",
-                            "suit": "Diamonds",
-                            "base": [
-                                "D",
-                                "_",
-                                "J"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Red Seal 8 of Clubs",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Red Seal",
-                            "rank": "8",
+                            "rank": "5",
                             "suit": "Clubs",
                             "base": [
                                 "C",
                                 "_",
-                                "8"
+                                "5"
                             ],
                             "enhancements": "No Enhancement"
-                        }
-                    ]
-                },
-                {
-                    "name": "standardPack",
-                    "cardsToGenerate": 15,
-                    "cardType": "Standard",
-                    "source": "standard_edition",
-                    "cards": [
+                        },
                         {
-                            "name": "Bonus 3 of Clubs",
+                            "name": "Purple Seal 6 of Clubs",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "3",
+                            "seal": "Purple Seal",
+                            "rank": "6",
                             "suit": "Clubs",
                             "base": [
                                 "C",
                                 "_",
-                                "3"
-                            ],
-                            "enhancements": "Bonus"
-                        },
-                        {
-                            "name": "3 of Hearts",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "3",
-                            "suit": "Hearts",
-                            "base": [
-                                "H",
-                                "_",
-                                "3"
+                                "6"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Queen of Clubs",
+                            "name": "Red Seal 7 of Clubs",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "No Seal",
+                            "seal": "Red Seal",
+                            "rank": "7",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "7"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal Queen of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
                             "rank": "Queen",
                             "suit": "Clubs",
                             "base": [
@@ -7603,66 +8549,178 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Bonus 5 of Spades",
+                            "name": "Purple Seal 9 of Hearts",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "5",
-                            "suit": "Spades",
+                            "seal": "Purple Seal",
+                            "rank": "9",
+                            "suit": "Hearts",
                             "base": [
-                                "S",
+                                "H",
                                 "_",
-                                "5"
-                            ],
-                            "enhancements": "Bonus"
-                        },
-                        {
-                            "name": "Ace of Spades",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "Ace",
-                            "suit": "Spades",
-                            "base": [
-                                "S",
-                                "_",
-                                "A"
+                                "9"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "6 of Clubs",
+                            "name": "Red Seal 9 of Spades",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "6",
-                            "suit": "Clubs",
+                            "seal": "Red Seal",
+                            "rank": "9",
+                            "suit": "Spades",
                             "base": [
-                                "C",
+                                "S",
+                                "_",
+                                "9"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal Queen of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "Queen",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 9 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "9",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "9"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 8 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "8",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "8"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 6 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "6",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
                                 "_",
                                 "6"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "King of Diamonds",
+                            "name": "Red Seal 7 of Hearts",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "King",
-                            "suit": "Diamonds",
+                            "seal": "Red Seal",
+                            "rank": "7",
+                            "suit": "Hearts",
                             "base": [
-                                "D",
+                                "H",
+                                "_",
+                                "7"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 4 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "4",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "4"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal King of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "King",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
                                 "_",
                                 "K"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "2 of Hearts",
+                            "name": "Purple Seal Queen of Diamonds",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "No Seal",
+                            "seal": "Purple Seal",
+                            "rank": "Queen",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal Queen of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "Queen",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 7 of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "7",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "7"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 2 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
                             "rank": "2",
                             "suit": "Hearts",
                             "base": [
@@ -7673,65 +8731,200 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Blue Seal Gold 8 of Spades",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Blue Seal",
-                            "rank": "8",
-                            "suit": "Spades",
-                            "base": [
-                                "S",
-                                "_",
-                                "8"
-                            ],
-                            "enhancements": "Gold"
-                        },
-                        {
-                            "name": "Gold King of Clubs",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "King",
-                            "suit": "Clubs",
-                            "base": [
-                                "C",
-                                "_",
-                                "K"
-                            ],
-                            "enhancements": "Gold"
-                        },
-                        {
-                            "name": "Purple Seal Wild 10 of Clubs",
+                            "name": "Purple Seal 5 of Clubs",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "Purple Seal",
-                            "rank": "10",
+                            "rank": "5",
                             "suit": "Clubs",
                             "base": [
                                 "C",
                                 "_",
-                                "T"
-                            ],
-                            "enhancements": "Wild"
-                        },
-                        {
-                            "name": "3 of Clubs",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "3",
-                            "suit": "Clubs",
-                            "base": [
-                                "C",
-                                "_",
-                                "3"
+                                "5"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Polychrome Mult Jack of Diamonds",
+                            "name": "Gold Seal 4 of Hearts",
                             "type": "Standard",
-                            "edition": "Polychrome",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "4",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "4"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 8 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "8",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "8"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 6 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "6",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "6"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal Jack of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "Jack",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "J"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 2 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "2",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "2"
+                            ],
+                            "enhancements": "No Enhancement"
+                        }
+                    ],
+                    "usesAnte": false
+                },
+                {
+                    "name": "standardPack",
+                    "cardsToGenerate": 15,
+                    "cardType": "Standard",
+                    "source": "standard_edition",
+                    "cards": [
+                        {
+                            "name": "Bonus 10 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "10",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "T"
+                            ],
+                            "enhancements": "Bonus"
+                        },
+                        {
+                            "name": "Queen of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "Queen",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "7 of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "7",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "7"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Foil Bonus 4 of Hearts",
+                            "type": "Standard",
+                            "edition": "Foil",
+                            "seal": "No Seal",
+                            "rank": "4",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "4"
+                            ],
+                            "enhancements": "Bonus"
+                        },
+                        {
+                            "name": "Purple Seal King of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "King",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "K"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 7 of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "7",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "7"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 2 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "2",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "2"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Jack of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
                             "seal": "No Seal",
                             "rank": "Jack",
                             "suit": "Diamonds",
@@ -7740,33 +8933,103 @@ const verifiedResults = {
                                 "_",
                                 "J"
                             ],
-                            "enhancements": "Mult"
+                            "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Stone 6 of Clubs",
+                            "name": "Gold Jack of Hearts",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "No Seal",
-                            "rank": "6",
-                            "suit": "Clubs",
+                            "rank": "Jack",
+                            "suit": "Hearts",
                             "base": [
-                                "C",
+                                "H",
                                 "_",
-                                "6"
+                                "J"
+                            ],
+                            "enhancements": "Gold"
+                        },
+                        {
+                            "name": "Gold Ace of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "Ace",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "A"
+                            ],
+                            "enhancements": "Gold"
+                        },
+                        {
+                            "name": "Gold Seal Foil Wild 4 of Hearts",
+                            "type": "Standard",
+                            "edition": "Foil",
+                            "seal": "Gold Seal",
+                            "rank": "4",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "4"
+                            ],
+                            "enhancements": "Wild"
+                        },
+                        {
+                            "name": "Jack of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "Jack",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "J"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Mult 10 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "10",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "T"
+                            ],
+                            "enhancements": "Mult"
+                        },
+                        {
+                            "name": "Stone Jack of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "Jack",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "J"
                             ],
                             "enhancements": "Stone"
                         },
                         {
-                            "name": "Gold Seal 4 of Clubs",
+                            "name": "8 of Clubs",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Gold Seal",
-                            "rank": "4",
+                            "seal": "No Seal",
+                            "rank": "8",
                             "suit": "Clubs",
                             "base": [
                                 "C",
                                 "_",
-                                "4"
+                                "8"
                             ],
                             "enhancements": "No Enhancement"
                         }
@@ -10033,21 +11296,245 @@ const verifiedResults = {
                 },
                 {
                     "name": "certificate",
-                    "cardsToGenerate": 15,
+                    "cardsToGenerate": 45,
                     "cardType": "Standard",
-                    "source": "stdseal",
+                    "source": "certsl",
                     "cards": [
                         {
-                            "name": "Gold Seal Foil 3 of Spades",
+                            "name": "Red Seal King of Clubs",
                             "type": "Standard",
-                            "edition": "Foil",
-                            "seal": "Gold Seal",
-                            "rank": "3",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "King",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "K"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 9 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "9",
                             "suit": "Spades",
                             "base": [
                                 "S",
                                 "_",
-                                "3"
+                                "9"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 10 of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "10",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "T"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 8 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "8",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "8"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal Queen of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "Queen",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal King of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "King",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "K"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 6 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "6",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "6"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 2 of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "2",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "2"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 6 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "6",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "6"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal Queen of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "Queen",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 4 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "4",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "4"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal Ace of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "Ace",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "A"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 10 of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "10",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "T"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal Queen of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "Queen",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 4 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "4",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "4"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal Ace of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "Ace",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "A"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal Ace of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "Ace",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "A"
                             ],
                             "enhancements": "No Enhancement"
                         },
@@ -10066,10 +11553,10 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Gold Seal 3 of Hearts",
+                            "name": "Purple Seal 3 of Hearts",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Gold Seal",
+                            "seal": "Purple Seal",
                             "rank": "3",
                             "suit": "Hearts",
                             "base": [
@@ -10080,10 +11567,80 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Gold Seal 7 of Clubs",
+                            "name": "Blue Seal 5 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "5",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "5"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 8 of Spades",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "Gold Seal",
+                            "rank": "8",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "8"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal Jack of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "Jack",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "J"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 5 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "5",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "5"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 6 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "6",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "6"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 7 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
                             "rank": "7",
                             "suit": "Clubs",
                             "base": [
@@ -10094,38 +11651,136 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Blue Seal 2 of Spades",
+                            "name": "Blue Seal Queen of Clubs",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "Blue Seal",
-                            "rank": "2",
-                            "suit": "Spades",
+                            "rank": "Queen",
+                            "suit": "Clubs",
                             "base": [
-                                "S",
+                                "C",
                                 "_",
-                                "2"
+                                "Q"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Gold Seal Polychrome 6 of Spades",
+                            "name": "Purple Seal 9 of Hearts",
                             "type": "Standard",
-                            "edition": "Polychrome",
-                            "seal": "Gold Seal",
-                            "rank": "6",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "9",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "9"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 9 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "9",
                             "suit": "Spades",
                             "base": [
                                 "S",
+                                "_",
+                                "9"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal Queen of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "Queen",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 9 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "9",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "9"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 8 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "8",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "8"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 6 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "6",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
                                 "_",
                                 "6"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Gold Seal King of Hearts",
+                            "name": "Red Seal 7 of Hearts",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Gold Seal",
+                            "seal": "Red Seal",
+                            "rank": "7",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "7"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 4 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "4",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "4"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal King of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
                             "rank": "King",
                             "suit": "Hearts",
                             "base": [
@@ -10136,66 +11791,24 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Purple Seal 4 of Hearts",
+                            "name": "Purple Seal Queen of Diamonds",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "Purple Seal",
-                            "rank": "4",
-                            "suit": "Hearts",
-                            "base": [
-                                "H",
-                                "_",
-                                "4"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Purple Seal 8 of Diamonds",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Purple Seal",
-                            "rank": "8",
+                            "rank": "Queen",
                             "suit": "Diamonds",
                             "base": [
                                 "D",
                                 "_",
-                                "8"
+                                "Q"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Purple Seal 7 of Diamonds",
+                            "name": "Gold Seal Queen of Hearts",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Purple Seal",
-                            "rank": "7",
-                            "suit": "Diamonds",
-                            "base": [
-                                "D",
-                                "_",
-                                "7"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Gold Seal Foil 9 of Diamonds",
-                            "type": "Standard",
-                            "edition": "Foil",
                             "seal": "Gold Seal",
-                            "rank": "9",
-                            "suit": "Diamonds",
-                            "base": [
-                                "D",
-                                "_",
-                                "9"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Blue Seal Queen of Hearts",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Blue Seal",
                             "rank": "Queen",
                             "suit": "Hearts",
                             "base": [
@@ -10206,130 +11819,94 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Gold Seal 10 of Clubs",
+                            "name": "Blue Seal 7 of Diamonds",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Gold Seal",
-                            "rank": "10",
-                            "suit": "Clubs",
+                            "seal": "Blue Seal",
+                            "rank": "7",
+                            "suit": "Diamonds",
                             "base": [
-                                "C",
+                                "D",
                                 "_",
-                                "T"
+                                "7"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Red Seal 2 of Spades",
+                            "name": "Blue Seal 2 of Hearts",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Red Seal",
+                            "seal": "Blue Seal",
                             "rank": "2",
-                            "suit": "Spades",
+                            "suit": "Hearts",
                             "base": [
-                                "S",
+                                "H",
                                 "_",
                                 "2"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Blue Seal 3 of Hearts",
+                            "name": "Purple Seal 5 of Clubs",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Blue Seal",
-                            "rank": "3",
+                            "seal": "Purple Seal",
+                            "rank": "5",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "5"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 4 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "4",
                             "suit": "Hearts",
                             "base": [
                                 "H",
-                                "_",
-                                "3"
-                            ],
-                            "enhancements": "No Enhancement"
-                        }
-                    ]
-                },
-                {
-                    "name": "standardPack",
-                    "cardsToGenerate": 15,
-                    "cardType": "Standard",
-                    "source": "standard_edition",
-                    "cards": [
-                        {
-                            "name": "Bonus 7 of Clubs",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "7",
-                            "suit": "Clubs",
-                            "base": [
-                                "C",
-                                "_",
-                                "7"
-                            ],
-                            "enhancements": "Bonus"
-                        },
-                        {
-                            "name": "Glass 4 of Clubs",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "4",
-                            "suit": "Clubs",
-                            "base": [
-                                "C",
                                 "_",
                                 "4"
                             ],
-                            "enhancements": "Glass"
+                            "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "8 of Hearts",
+                            "name": "Blue Seal 8 of Clubs",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "No Seal",
+                            "seal": "Blue Seal",
                             "rank": "8",
-                            "suit": "Hearts",
+                            "suit": "Clubs",
                             "base": [
-                                "H",
+                                "C",
                                 "_",
                                 "8"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Glass 8 of Spades",
+                            "name": "Purple Seal 6 of Clubs",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "8",
-                            "suit": "Spades",
+                            "seal": "Purple Seal",
+                            "rank": "6",
+                            "suit": "Clubs",
                             "base": [
-                                "S",
+                                "C",
                                 "_",
-                                "8"
-                            ],
-                            "enhancements": "Glass"
-                        },
-                        {
-                            "name": "10 of Diamonds",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "10",
-                            "suit": "Diamonds",
-                            "base": [
-                                "D",
-                                "_",
-                                "T"
+                                "6"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Jack of Spades",
+                            "name": "Gold Seal Jack of Spades",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "No Seal",
+                            "seal": "Gold Seal",
                             "rank": "Jack",
                             "suit": "Spades",
                             "base": [
@@ -10340,16 +11917,123 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Steel Ace of Hearts",
+                            "name": "Blue Seal 2 of Hearts",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "Ace",
+                            "seal": "Blue Seal",
+                            "rank": "2",
                             "suit": "Hearts",
                             "base": [
                                 "H",
                                 "_",
-                                "A"
+                                "2"
+                            ],
+                            "enhancements": "No Enhancement"
+                        }
+                    ],
+                    "usesAnte": false
+                },
+                {
+                    "name": "standardPack",
+                    "cardsToGenerate": 15,
+                    "cardType": "Standard",
+                    "source": "standard_edition",
+                    "cards": [
+                        {
+                            "name": "Foil Bonus 3 of Spades",
+                            "type": "Standard",
+                            "edition": "Foil",
+                            "seal": "No Seal",
+                            "rank": "3",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "3"
+                            ],
+                            "enhancements": "Bonus"
+                        },
+                        {
+                            "name": "Glass 7 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "7",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "7"
+                            ],
+                            "enhancements": "Glass"
+                        },
+                        {
+                            "name": "3 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "3",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "3"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Glass 7 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "7",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "7"
+                            ],
+                            "enhancements": "Glass"
+                        },
+                        {
+                            "name": "2 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "2",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "2"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Polychrome 6 of Spades",
+                            "type": "Standard",
+                            "edition": "Polychrome",
+                            "seal": "No Seal",
+                            "rank": "6",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "6"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Steel King of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "King",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "K"
                             ],
                             "enhancements": "Steel"
                         },
@@ -10368,60 +12052,46 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "King of Clubs",
+                            "name": "8 of Diamonds",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "No Seal",
-                            "rank": "King",
-                            "suit": "Clubs",
+                            "rank": "8",
+                            "suit": "Diamonds",
                             "base": [
-                                "C",
+                                "D",
                                 "_",
-                                "K"
+                                "8"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Wild 6 of Spades",
+                            "name": "Wild 7 of Diamonds",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "No Seal",
-                            "rank": "6",
-                            "suit": "Spades",
+                            "rank": "7",
+                            "suit": "Diamonds",
                             "base": [
-                                "S",
+                                "D",
                                 "_",
-                                "6"
+                                "7"
                             ],
                             "enhancements": "Wild"
                         },
                         {
-                            "name": "Purple Seal Lucky 4 of Clubs",
+                            "name": "Foil Lucky 9 of Diamonds",
                             "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Purple Seal",
-                            "rank": "4",
-                            "suit": "Clubs",
-                            "base": [
-                                "C",
-                                "_",
-                                "4"
-                            ],
-                            "enhancements": "Lucky"
-                        },
-                        {
-                            "name": "9 of Hearts",
-                            "type": "Standard",
-                            "edition": "No Edition",
+                            "edition": "Foil",
                             "seal": "No Seal",
                             "rank": "9",
-                            "suit": "Hearts",
+                            "suit": "Diamonds",
                             "base": [
-                                "H",
+                                "D",
                                 "_",
                                 "9"
                             ],
-                            "enhancements": "No Enhancement"
+                            "enhancements": "Lucky"
                         },
                         {
                             "name": "Queen of Hearts",
@@ -10438,30 +12108,44 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Bonus 7 of Spades",
+                            "name": "10 of Clubs",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "No Seal",
-                            "rank": "7",
-                            "suit": "Spades",
-                            "base": [
-                                "S",
-                                "_",
-                                "7"
-                            ],
-                            "enhancements": "Bonus"
-                        },
-                        {
-                            "name": "Ace of Clubs",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "Ace",
+                            "rank": "10",
                             "suit": "Clubs",
                             "base": [
                                 "C",
                                 "_",
-                                "A"
+                                "T"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Bonus 2 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "2",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "2"
+                            ],
+                            "enhancements": "Bonus"
+                        },
+                        {
+                            "name": "Gold Seal 3 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "3",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "3"
                             ],
                             "enhancements": "No Enhancement"
                         }
@@ -12733,35 +14417,35 @@ const verifiedResults = {
                 },
                 {
                     "name": "certificate",
-                    "cardsToGenerate": 15,
+                    "cardsToGenerate": 45,
                     "cardType": "Standard",
-                    "source": "stdseal",
+                    "source": "certsl",
                     "cards": [
                         {
-                            "name": "Purple Seal 9 of Spades",
+                            "name": "Red Seal King of Clubs",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Purple Seal",
+                            "seal": "Red Seal",
+                            "rank": "King",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "K"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 9 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
                             "rank": "9",
                             "suit": "Spades",
                             "base": [
                                 "S",
                                 "_",
                                 "9"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Gold Seal Ace of Spades",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Gold Seal",
-                            "rank": "Ace",
-                            "suit": "Spades",
-                            "base": [
-                                "S",
-                                "_",
-                                "A"
                             ],
                             "enhancements": "No Enhancement"
                         },
@@ -12780,30 +14464,408 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Red Seal Ace of Clubs",
+                            "name": "Red Seal 8 of Clubs",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "Red Seal",
-                            "rank": "Ace",
+                            "rank": "8",
                             "suit": "Clubs",
                             "base": [
                                 "C",
+                                "_",
+                                "8"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal Queen of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "Queen",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal King of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "King",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "K"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 6 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "6",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "6"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 2 of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "2",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "2"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 6 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "6",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "6"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal Queen of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "Queen",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 4 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "4",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "4"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal Ace of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "Ace",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
                                 "_",
                                 "A"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Gold Seal Foil King of Clubs",
+                            "name": "Purple Seal 10 of Diamonds",
                             "type": "Standard",
-                            "edition": "Foil",
-                            "seal": "Gold Seal",
-                            "rank": "King",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "10",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "T"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal Queen of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "Queen",
                             "suit": "Clubs",
                             "base": [
                                 "C",
                                 "_",
-                                "K"
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 4 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "4",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "4"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal Ace of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "Ace",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "A"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal Ace of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "Ace",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "A"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 7 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "7",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "7"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 3 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "3",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "3"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 5 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "5",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "5"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 8 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "8",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "8"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal Jack of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "Jack",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "J"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 5 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "5",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "5"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 6 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "6",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "6"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 7 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "7",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "7"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal Queen of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "Queen",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 9 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "9",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "9"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 9 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "9",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "9"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal Queen of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "Queen",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 9 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "9",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "9"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 8 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "8",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "8"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 6 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "6",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "6"
                             ],
                             "enhancements": "No Enhancement"
                         },
@@ -12822,24 +14884,10 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Purple Seal Queen of Spades",
+                            "name": "Purple Seal 4 of Spades",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "Purple Seal",
-                            "rank": "Queen",
-                            "suit": "Spades",
-                            "base": [
-                                "S",
-                                "_",
-                                "Q"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Gold Seal 4 of Spades",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Gold Seal",
                             "rank": "4",
                             "suit": "Spades",
                             "base": [
@@ -12850,104 +14898,161 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Red Seal 9 of Clubs",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Red Seal",
-                            "rank": "9",
-                            "suit": "Clubs",
-                            "base": [
-                                "C",
-                                "_",
-                                "9"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Purple Seal 10 of Clubs",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Purple Seal",
-                            "rank": "10",
-                            "suit": "Clubs",
-                            "base": [
-                                "C",
-                                "_",
-                                "T"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Gold Seal 8 of Diamonds",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Gold Seal",
-                            "rank": "8",
-                            "suit": "Diamonds",
-                            "base": [
-                                "D",
-                                "_",
-                                "8"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Blue Seal 5 of Hearts",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Blue Seal",
-                            "rank": "5",
-                            "suit": "Hearts",
-                            "base": [
-                                "H",
-                                "_",
-                                "5"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Purple Seal King of Clubs",
+                            "name": "Purple Seal King of Hearts",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "Purple Seal",
                             "rank": "King",
-                            "suit": "Clubs",
+                            "suit": "Hearts",
                             "base": [
-                                "C",
+                                "H",
                                 "_",
                                 "K"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Gold Seal 2 of Spades",
+                            "name": "Purple Seal Queen of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "Queen",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal Queen of Hearts",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "Gold Seal",
-                            "rank": "2",
-                            "suit": "Spades",
+                            "rank": "Queen",
+                            "suit": "Hearts",
                             "base": [
-                                "S",
+                                "H",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 7 of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "7",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "7"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 2 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "2",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
                                 "_",
                                 "2"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Red Seal Jack of Diamonds",
+                            "name": "Purple Seal 5 of Clubs",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Red Seal",
-                            "rank": "Jack",
-                            "suit": "Diamonds",
+                            "seal": "Purple Seal",
+                            "rank": "5",
+                            "suit": "Clubs",
                             "base": [
-                                "D",
+                                "C",
+                                "_",
+                                "5"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 4 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "4",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "4"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 8 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "8",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "8"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 6 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "6",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "6"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal Jack of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "Jack",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
                                 "_",
                                 "J"
                             ],
                             "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 2 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "2",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "2"
+                            ],
+                            "enhancements": "No Enhancement"
                         }
-                    ]
+                    ],
+                    "usesAnte": false
                 },
                 {
                     "name": "standardPack",
@@ -12955,6 +15060,34 @@ const verifiedResults = {
                     "cardType": "Standard",
                     "source": "standard_edition",
                     "cards": [
+                        {
+                            "name": "9 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "9",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "9"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Ace of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "Ace",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "A"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
                         {
                             "name": "10 of Diamonds",
                             "type": "Standard",
@@ -12970,46 +15103,60 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Queen of Clubs",
+                            "name": "Ace of Clubs",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "No Seal",
-                            "rank": "Queen",
+                            "rank": "Ace",
                             "suit": "Clubs",
                             "base": [
                                 "C",
                                 "_",
-                                "Q"
+                                "A"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Jack of Hearts",
+                            "name": "Purple Seal Foil Glass King of Clubs",
+                            "type": "Standard",
+                            "edition": "Foil",
+                            "seal": "Purple Seal",
+                            "rank": "King",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "K"
+                            ],
+                            "enhancements": "Glass"
+                        },
+                        {
+                            "name": "Gold Seal Mult 7 of Hearts",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "Jack",
+                            "seal": "Gold Seal",
+                            "rank": "7",
                             "suit": "Hearts",
                             "base": [
                                 "H",
                                 "_",
-                                "J"
+                                "7"
                             ],
-                            "enhancements": "No Enhancement"
+                            "enhancements": "Mult"
                         },
                         {
-                            "name": "Foil 10 of Diamonds",
+                            "name": "Glass Queen of Spades",
                             "type": "Standard",
-                            "edition": "Foil",
+                            "edition": "No Edition",
                             "seal": "No Seal",
-                            "rank": "10",
-                            "suit": "Diamonds",
+                            "rank": "Queen",
+                            "suit": "Spades",
                             "base": [
-                                "D",
+                                "S",
                                 "_",
-                                "T"
+                                "Q"
                             ],
-                            "enhancements": "No Enhancement"
+                            "enhancements": "Glass"
                         },
                         {
                             "name": "Glass 4 of Spades",
@@ -13026,142 +15173,100 @@ const verifiedResults = {
                             "enhancements": "Glass"
                         },
                         {
-                            "name": "Polychrome Mult 8 of Hearts",
-                            "type": "Standard",
-                            "edition": "Polychrome",
-                            "seal": "No Seal",
-                            "rank": "8",
-                            "suit": "Hearts",
-                            "base": [
-                                "H",
-                                "_",
-                                "8"
-                            ],
-                            "enhancements": "Mult"
-                        },
-                        {
-                            "name": "Glass 3 of Clubs",
+                            "name": "9 of Clubs",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "No Seal",
-                            "rank": "3",
+                            "rank": "9",
                             "suit": "Clubs",
                             "base": [
                                 "C",
                                 "_",
-                                "3"
-                            ],
-                            "enhancements": "Glass"
-                        },
-                        {
-                            "name": "Polychrome Glass King of Hearts",
-                            "type": "Standard",
-                            "edition": "Polychrome",
-                            "seal": "No Seal",
-                            "rank": "King",
-                            "suit": "Hearts",
-                            "base": [
-                                "H",
-                                "_",
-                                "K"
-                            ],
-                            "enhancements": "Glass"
-                        },
-                        {
-                            "name": "Purple Seal Jack of Clubs",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Purple Seal",
-                            "rank": "Jack",
-                            "suit": "Clubs",
-                            "base": [
-                                "C",
-                                "_",
-                                "J"
+                                "9"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Stone 7 of Clubs",
+                            "name": "Stone 10 of Clubs",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "No Seal",
-                            "rank": "7",
+                            "rank": "10",
                             "suit": "Clubs",
                             "base": [
                                 "C",
                                 "_",
-                                "7"
+                                "T"
                             ],
                             "enhancements": "Stone"
                         },
                         {
-                            "name": "5 of Clubs",
+                            "name": "8 of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "8",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "8"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "5 of Hearts",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "No Seal",
                             "rank": "5",
-                            "suit": "Clubs",
+                            "suit": "Hearts",
                             "base": [
-                                "C",
+                                "H",
                                 "_",
                                 "5"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "3 of Clubs",
+                            "name": "King of Clubs",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "No Seal",
-                            "rank": "3",
+                            "rank": "King",
                             "suit": "Clubs",
                             "base": [
                                 "C",
                                 "_",
-                                "3"
+                                "K"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Jack of Hearts",
+                            "name": "2 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "2",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "2"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Jack of Diamonds",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "No Seal",
                             "rank": "Jack",
-                            "suit": "Hearts",
+                            "suit": "Diamonds",
                             "base": [
-                                "H",
+                                "D",
                                 "_",
                                 "J"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "6 of Spades",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "6",
-                            "suit": "Spades",
-                            "base": [
-                                "S",
-                                "_",
-                                "6"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Blue Seal Gold 3 of Spades",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Blue Seal",
-                            "rank": "3",
-                            "suit": "Spades",
-                            "base": [
-                                "S",
-                                "_",
-                                "3"
                             ],
                             "enhancements": "Gold"
                         }
@@ -15334,29 +17439,15 @@ const verifiedResults = {
                 },
                 {
                     "name": "certificate",
-                    "cardsToGenerate": 15,
+                    "cardsToGenerate": 45,
                     "cardType": "Standard",
-                    "source": "stdseal",
+                    "source": "certsl",
                     "cards": [
                         {
-                            "name": "Purple Seal 6 of Diamonds",
+                            "name": "Red Seal King of Clubs",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Purple Seal",
-                            "rank": "6",
-                            "suit": "Diamonds",
-                            "base": [
-                                "D",
-                                "_",
-                                "6"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Gold Seal King of Clubs",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Gold Seal",
+                            "seal": "Red Seal",
                             "rank": "King",
                             "suit": "Clubs",
                             "base": [
@@ -15367,38 +17458,276 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Blue Seal Polychrome 7 of Spades",
+                            "name": "Red Seal 9 of Spades",
                             "type": "Standard",
-                            "edition": "Polychrome",
-                            "seal": "Blue Seal",
-                            "rank": "7",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "9",
                             "suit": "Spades",
                             "base": [
                                 "S",
+                                "_",
+                                "9"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 10 of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "10",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "T"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 8 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "8",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "8"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal Queen of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "Queen",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal King of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "King",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "K"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 6 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "6",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "6"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 2 of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "2",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "2"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 6 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "6",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "6"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal Queen of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "Queen",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 4 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "4",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "4"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal Ace of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "Ace",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "A"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 10 of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "10",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "T"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal Queen of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "Queen",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 4 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "4",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "4"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal Ace of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "Ace",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "A"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal Ace of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "Ace",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "A"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 7 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "7",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
                                 "_",
                                 "7"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Blue Seal Jack of Clubs",
+                            "name": "Purple Seal 3 of Hearts",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Blue Seal",
-                            "rank": "Jack",
-                            "suit": "Clubs",
+                            "seal": "Purple Seal",
+                            "rank": "3",
+                            "suit": "Hearts",
                             "base": [
-                                "C",
+                                "H",
                                 "_",
-                                "J"
+                                "3"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Blue Seal 8 of Spades",
+                            "name": "Blue Seal 5 of Spades",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "Blue Seal",
+                            "rank": "5",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "5"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 8 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
                             "rank": "8",
                             "suit": "Spades",
                             "base": [
@@ -15409,10 +17738,425 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Blue Seal 5 of Diamonds",
+                            "name": "Red Seal Jack of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "Jack",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "J"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 5 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "5",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "5"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 6 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "6",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "6"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 7 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "7",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "7"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal Queen of Clubs",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "Blue Seal",
+                            "rank": "Queen",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 9 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "9",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "9"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 9 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "9",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "9"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal Queen of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "Queen",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 9 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "9",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "9"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 8 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "8",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "8"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 6 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "6",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "6"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 7 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "7",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "7"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 4 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "4",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "4"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal King of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "King",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "K"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal Queen of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "Queen",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal Queen of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "Queen",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 7 of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "7",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "7"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 2 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "2",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "2"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 5 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "5",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "5"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 4 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "4",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "4"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 8 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "8",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "8"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 6 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "6",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "6"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal Jack of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "Jack",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "J"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 2 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "2",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "2"
+                            ],
+                            "enhancements": "No Enhancement"
+                        }
+                    ],
+                    "usesAnte": false
+                },
+                {
+                    "name": "standardPack",
+                    "cardsToGenerate": 15,
+                    "cardType": "Standard",
+                    "source": "standard_edition",
+                    "cards": [
+                        {
+                            "name": "6 of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "6",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "6"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Lucky King of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "King",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "K"
+                            ],
+                            "enhancements": "Lucky"
+                        },
+                        {
+                            "name": "Polychrome 7 of Spades",
+                            "type": "Standard",
+                            "edition": "Polychrome",
+                            "seal": "No Seal",
+                            "rank": "7",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "7"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal Jack of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "Jack",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "J"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Glass 8 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "8",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "8"
+                            ],
+                            "enhancements": "Glass"
+                        },
+                        {
+                            "name": "5 of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
                             "rank": "5",
                             "suit": "Diamonds",
                             "base": [
@@ -15423,10 +18167,10 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Blue Seal King of Diamonds",
+                            "name": "King of Diamonds",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Blue Seal",
+                            "seal": "No Seal",
                             "rank": "King",
                             "suit": "Diamonds",
                             "base": [
@@ -15451,10 +18195,10 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Red Seal 4 of Spades",
+                            "name": "Wild 4 of Spades",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Red Seal",
+                            "seal": "No Seal",
                             "rank": "4",
                             "suit": "Spades",
                             "base": [
@@ -15462,13 +18206,13 @@ const verifiedResults = {
                                 "_",
                                 "4"
                             ],
-                            "enhancements": "No Enhancement"
+                            "enhancements": "Wild"
                         },
                         {
-                            "name": "Red Seal 6 of Spades",
+                            "name": "Blue Seal 6 of Spades",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Red Seal",
+                            "seal": "Blue Seal",
                             "rank": "6",
                             "suit": "Spades",
                             "base": [
@@ -15479,10 +18223,10 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Purple Seal Jack of Hearts",
+                            "name": "Jack of Hearts",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Purple Seal",
+                            "seal": "No Seal",
                             "rank": "Jack",
                             "suit": "Hearts",
                             "base": [
@@ -15493,10 +18237,10 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Blue Seal 7 of Diamonds",
+                            "name": "7 of Diamonds",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Blue Seal",
+                            "seal": "No Seal",
                             "rank": "7",
                             "suit": "Diamonds",
                             "base": [
@@ -15507,10 +18251,10 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Gold Seal 2 of Clubs",
+                            "name": "2 of Clubs",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Gold Seal",
+                            "seal": "No Seal",
                             "rank": "2",
                             "suit": "Clubs",
                             "base": [
@@ -15521,10 +18265,10 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Blue Seal Queen of Hearts",
+                            "name": "Stone Queen of Hearts",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Blue Seal",
+                            "seal": "No Seal",
                             "rank": "Queen",
                             "suit": "Hearts",
                             "base": [
@@ -15532,237 +18276,19 @@ const verifiedResults = {
                                 "_",
                                 "Q"
                             ],
-                            "enhancements": "No Enhancement"
+                            "enhancements": "Stone"
                         },
                         {
-                            "name": "Red Seal King of Diamonds",
+                            "name": "King of Diamonds",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Red Seal",
+                            "seal": "No Seal",
                             "rank": "King",
                             "suit": "Diamonds",
                             "base": [
                                 "D",
                                 "_",
                                 "K"
-                            ],
-                            "enhancements": "No Enhancement"
-                        }
-                    ]
-                },
-                {
-                    "name": "standardPack",
-                    "cardsToGenerate": 15,
-                    "cardType": "Standard",
-                    "source": "standard_edition",
-                    "cards": [
-                        {
-                            "name": "5 of Spades",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "5",
-                            "suit": "Spades",
-                            "base": [
-                                "S",
-                                "_",
-                                "5"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Lucky 8 of Diamonds",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "8",
-                            "suit": "Diamonds",
-                            "base": [
-                                "D",
-                                "_",
-                                "8"
-                            ],
-                            "enhancements": "Lucky"
-                        },
-                        {
-                            "name": "4 of Spades",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "4",
-                            "suit": "Spades",
-                            "base": [
-                                "S",
-                                "_",
-                                "4"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "7 of Clubs",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "7",
-                            "suit": "Clubs",
-                            "base": [
-                                "C",
-                                "_",
-                                "7"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Glass 2 of Spades",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "2",
-                            "suit": "Spades",
-                            "base": [
-                                "S",
-                                "_",
-                                "2"
-                            ],
-                            "enhancements": "Glass"
-                        },
-                        {
-                            "name": "9 of Hearts",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "9",
-                            "suit": "Hearts",
-                            "base": [
-                                "H",
-                                "_",
-                                "9"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "7 of Spades",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "7",
-                            "suit": "Spades",
-                            "base": [
-                                "S",
-                                "_",
-                                "7"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "3 of Spades",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "3",
-                            "suit": "Spades",
-                            "base": [
-                                "S",
-                                "_",
-                                "3"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Wild 2 of Diamonds",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "2",
-                            "suit": "Diamonds",
-                            "base": [
-                                "D",
-                                "_",
-                                "2"
-                            ],
-                            "enhancements": "Wild"
-                        },
-                        {
-                            "name": "Foil Jack of Hearts",
-                            "type": "Standard",
-                            "edition": "Foil",
-                            "seal": "No Seal",
-                            "rank": "Jack",
-                            "suit": "Hearts",
-                            "base": [
-                                "H",
-                                "_",
-                                "J"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Jack of Clubs",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "Jack",
-                            "suit": "Clubs",
-                            "base": [
-                                "C",
-                                "_",
-                                "J"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Gold Seal 8 of Hearts",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Gold Seal",
-                            "rank": "8",
-                            "suit": "Hearts",
-                            "base": [
-                                "H",
-                                "_",
-                                "8"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "6 of Diamonds",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "6",
-                            "suit": "Diamonds",
-                            "base": [
-                                "D",
-                                "_",
-                                "6"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Foil Stone Jack of Diamonds",
-                            "type": "Standard",
-                            "edition": "Foil",
-                            "seal": "No Seal",
-                            "rank": "Jack",
-                            "suit": "Diamonds",
-                            "base": [
-                                "D",
-                                "_",
-                                "J"
-                            ],
-                            "enhancements": "Stone"
-                        },
-                        {
-                            "name": "8 of Clubs",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "8",
-                            "suit": "Clubs",
-                            "base": [
-                                "C",
-                                "_",
-                                "8"
                             ],
                             "enhancements": "No Enhancement"
                         }
@@ -18017,71 +20543,141 @@ const verifiedResults = {
                 },
                 {
                     "name": "certificate",
-                    "cardsToGenerate": 15,
+                    "cardsToGenerate": 45,
                     "cardType": "Standard",
-                    "source": "stdseal",
+                    "source": "certsl",
                     "cards": [
                         {
-                            "name": "Gold Seal Ace of Diamonds",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Gold Seal",
-                            "rank": "Ace",
-                            "suit": "Diamonds",
-                            "base": [
-                                "D",
-                                "_",
-                                "A"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Red Seal Queen of Hearts",
+                            "name": "Red Seal King of Clubs",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "Red Seal",
-                            "rank": "Queen",
-                            "suit": "Hearts",
+                            "rank": "King",
+                            "suit": "Clubs",
                             "base": [
-                                "H",
+                                "C",
                                 "_",
-                                "Q"
+                                "K"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Red Seal Foil Ace of Diamonds",
-                            "type": "Standard",
-                            "edition": "Foil",
-                            "seal": "Red Seal",
-                            "rank": "Ace",
-                            "suit": "Diamonds",
-                            "base": [
-                                "D",
-                                "_",
-                                "A"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Gold Seal Jack of Spades",
+                            "name": "Red Seal 9 of Spades",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Gold Seal",
-                            "rank": "Jack",
+                            "seal": "Red Seal",
+                            "rank": "9",
                             "suit": "Spades",
                             "base": [
                                 "S",
                                 "_",
-                                "J"
+                                "9"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Red Seal Queen of Clubs",
+                            "name": "Blue Seal 10 of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "10",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "T"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 8 of Clubs",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "Red Seal",
+                            "rank": "8",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "8"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal Queen of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "Queen",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal King of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "King",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "K"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 6 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "6",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "6"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 2 of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "2",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "2"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 6 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "6",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "6"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal Queen of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
                             "rank": "Queen",
                             "suit": "Clubs",
                             "base": [
@@ -18092,44 +20688,16 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Blue Seal Jack of Clubs",
+                            "name": "Red Seal 4 of Hearts",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Blue Seal",
-                            "rank": "Jack",
-                            "suit": "Clubs",
+                            "seal": "Red Seal",
+                            "rank": "4",
+                            "suit": "Hearts",
                             "base": [
-                                "C",
+                                "H",
                                 "_",
-                                "J"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Gold Seal Foil 10 of Clubs",
-                            "type": "Standard",
-                            "edition": "Foil",
-                            "seal": "Gold Seal",
-                            "rank": "10",
-                            "suit": "Clubs",
-                            "base": [
-                                "C",
-                                "_",
-                                "T"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Gold Seal 10 of Diamonds",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Gold Seal",
-                            "rank": "10",
-                            "suit": "Diamonds",
-                            "base": [
-                                "D",
-                                "_",
-                                "T"
+                                "4"
                             ],
                             "enhancements": "No Enhancement"
                         },
@@ -18148,10 +20716,290 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Blue Seal 7 of Hearts",
+                            "name": "Purple Seal 10 of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "10",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "T"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal Queen of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "Queen",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 4 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "4",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "4"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal Ace of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "Ace",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "A"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal Ace of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "Ace",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "A"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 7 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "7",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "7"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 3 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "3",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "3"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 5 of Spades",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "Blue Seal",
+                            "rank": "5",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "5"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 8 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "8",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "8"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal Jack of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "Jack",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "J"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 5 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "5",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "5"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 6 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "6",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "6"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 7 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "7",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "7"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal Queen of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "Queen",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 9 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "9",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "9"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 9 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "9",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "9"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal Queen of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "Queen",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 9 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "9",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "9"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 8 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "8",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "8"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 6 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "6",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "6"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 7 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
                             "rank": "7",
                             "suit": "Hearts",
                             "base": [
@@ -18162,76 +21010,175 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Blue Seal King of Clubs",
+                            "name": "Purple Seal 4 of Spades",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Blue Seal",
-                            "rank": "King",
-                            "suit": "Clubs",
+                            "seal": "Purple Seal",
+                            "rank": "4",
+                            "suit": "Spades",
                             "base": [
-                                "C",
+                                "S",
+                                "_",
+                                "4"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal King of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "King",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
                                 "_",
                                 "K"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Purple Seal Jack of Diamonds",
+                            "name": "Purple Seal Queen of Diamonds",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "Purple Seal",
-                            "rank": "Jack",
+                            "rank": "Queen",
                             "suit": "Diamonds",
                             "base": [
                                 "D",
                                 "_",
-                                "J"
+                                "Q"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Blue Seal Jack of Hearts",
+                            "name": "Gold Seal Queen of Hearts",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Blue Seal",
-                            "rank": "Jack",
+                            "seal": "Gold Seal",
+                            "rank": "Queen",
                             "suit": "Hearts",
                             "base": [
                                 "H",
                                 "_",
-                                "J"
+                                "Q"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Red Seal 8 of Diamonds",
+                            "name": "Blue Seal 7 of Diamonds",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Red Seal",
-                            "rank": "8",
+                            "seal": "Blue Seal",
+                            "rank": "7",
                             "suit": "Diamonds",
                             "base": [
                                 "D",
+                                "_",
+                                "7"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 2 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "2",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "2"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 5 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "5",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "5"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 4 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "4",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "4"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 8 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "8",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
                                 "_",
                                 "8"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Gold Seal 4 of Diamonds",
+                            "name": "Purple Seal 6 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "6",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "6"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal Jack of Spades",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "Gold Seal",
-                            "rank": "4",
-                            "suit": "Diamonds",
+                            "rank": "Jack",
+                            "suit": "Spades",
                             "base": [
-                                "D",
+                                "S",
                                 "_",
-                                "4"
+                                "J"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 2 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "2",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "2"
                             ],
                             "enhancements": "No Enhancement"
                         }
-                    ]
+                    ],
+                    "usesAnte": false
                 },
                 {
                     "name": "standardPack",
@@ -18240,10 +21187,80 @@ const verifiedResults = {
                     "source": "standard_edition",
                     "cards": [
                         {
-                            "name": "Steel Jack of Clubs",
+                            "name": "Steel Ace of Diamonds",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "No Seal",
+                            "rank": "Ace",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "A"
+                            ],
+                            "enhancements": "Steel"
+                        },
+                        {
+                            "name": "Lucky Queen of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "Queen",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "Lucky"
+                        },
+                        {
+                            "name": "Foil Ace of Diamonds",
+                            "type": "Standard",
+                            "edition": "Foil",
+                            "seal": "No Seal",
+                            "rank": "Ace",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "A"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Jack of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "Jack",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "J"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Queen of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "Queen",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal Jack of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
                             "rank": "Jack",
                             "suit": "Clubs",
                             "base": [
@@ -18251,10 +21268,52 @@ const verifiedResults = {
                                 "_",
                                 "J"
                             ],
-                            "enhancements": "Steel"
+                            "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Lucky 7 of Hearts",
+                            "name": "Foil Stone 10 of Clubs",
+                            "type": "Standard",
+                            "edition": "Foil",
+                            "seal": "No Seal",
+                            "rank": "10",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "T"
+                            ],
+                            "enhancements": "Stone"
+                        },
+                        {
+                            "name": "Wild 10 of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "10",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "T"
+                            ],
+                            "enhancements": "Wild"
+                        },
+                        {
+                            "name": "Ace of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "Ace",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "A"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Wild 7 of Hearts",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "No Seal",
@@ -18264,90 +21323,6 @@ const verifiedResults = {
                                 "H",
                                 "_",
                                 "7"
-                            ],
-                            "enhancements": "Lucky"
-                        },
-                        {
-                            "name": "Blue Seal 9 of Spades",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Blue Seal",
-                            "rank": "9",
-                            "suit": "Spades",
-                            "base": [
-                                "S",
-                                "_",
-                                "9"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "9 of Spades",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "9",
-                            "suit": "Spades",
-                            "base": [
-                                "S",
-                                "_",
-                                "9"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "4 of Diamonds",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "4",
-                            "suit": "Diamonds",
-                            "base": [
-                                "D",
-                                "_",
-                                "4"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Foil 4 of Hearts",
-                            "type": "Standard",
-                            "edition": "Foil",
-                            "seal": "No Seal",
-                            "rank": "4",
-                            "suit": "Hearts",
-                            "base": [
-                                "H",
-                                "_",
-                                "4"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Stone King of Hearts",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "King",
-                            "suit": "Hearts",
-                            "base": [
-                                "H",
-                                "_",
-                                "K"
-                            ],
-                            "enhancements": "Stone"
-                        },
-                        {
-                            "name": "Wild Jack of Hearts",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "Jack",
-                            "suit": "Hearts",
-                            "base": [
-                                "H",
-                                "_",
-                                "J"
                             ],
                             "enhancements": "Wild"
                         },
@@ -18366,86 +21341,58 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Wild Queen of Clubs",
+                            "name": "Red Seal Glass Jack of Diamonds",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "Queen",
-                            "suit": "Clubs",
-                            "base": [
-                                "C",
-                                "_",
-                                "Q"
-                            ],
-                            "enhancements": "Wild"
-                        },
-                        {
-                            "name": "10 of Clubs",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "10",
-                            "suit": "Clubs",
-                            "base": [
-                                "C",
-                                "_",
-                                "T"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Glass 5 of Hearts",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "5",
-                            "suit": "Hearts",
-                            "base": [
-                                "H",
-                                "_",
-                                "5"
-                            ],
-                            "enhancements": "Glass"
-                        },
-                        {
-                            "name": "Gold Seal 4 of Hearts",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Gold Seal",
-                            "rank": "4",
-                            "suit": "Hearts",
-                            "base": [
-                                "H",
-                                "_",
-                                "4"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Lucky 6 of Diamonds",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "6",
+                            "seal": "Red Seal",
+                            "rank": "Jack",
                             "suit": "Diamonds",
                             "base": [
                                 "D",
                                 "_",
-                                "6"
+                                "J"
+                            ],
+                            "enhancements": "Glass"
+                        },
+                        {
+                            "name": "Red Seal Jack of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "Jack",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "J"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Lucky 8 of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "8",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "8"
                             ],
                             "enhancements": "Lucky"
                         },
                         {
-                            "name": "Purple Seal Mult 2 of Clubs",
+                            "name": "Mult 4 of Diamonds",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Purple Seal",
-                            "rank": "2",
-                            "suit": "Clubs",
+                            "seal": "No Seal",
+                            "rank": "4",
+                            "suit": "Diamonds",
                             "base": [
-                                "C",
+                                "D",
                                 "_",
-                                "2"
+                                "4"
                             ],
                             "enhancements": "Mult"
                         }
@@ -20641,57 +23588,29 @@ const verifiedResults = {
                 },
                 {
                     "name": "certificate",
-                    "cardsToGenerate": 15,
+                    "cardsToGenerate": 45,
                     "cardType": "Standard",
-                    "source": "stdseal",
+                    "source": "certsl",
                     "cards": [
                         {
-                            "name": "Gold Seal 6 of Hearts",
+                            "name": "Red Seal King of Clubs",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Gold Seal",
-                            "rank": "6",
-                            "suit": "Hearts",
-                            "base": [
-                                "H",
-                                "_",
-                                "6"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Purple Seal 7 of Spades",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Purple Seal",
-                            "rank": "7",
-                            "suit": "Spades",
-                            "base": [
-                                "S",
-                                "_",
-                                "7"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Gold Seal 6 of Clubs",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Gold Seal",
-                            "rank": "6",
+                            "seal": "Red Seal",
+                            "rank": "King",
                             "suit": "Clubs",
                             "base": [
                                 "C",
                                 "_",
-                                "6"
+                                "K"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Gold Seal 9 of Spades",
+                            "name": "Red Seal 9 of Spades",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Gold Seal",
+                            "seal": "Red Seal",
                             "rank": "9",
                             "suit": "Spades",
                             "base": [
@@ -20702,10 +23621,38 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Purple Seal Queen of Diamonds",
+                            "name": "Blue Seal 10 of Diamonds",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Purple Seal",
+                            "seal": "Blue Seal",
+                            "rank": "10",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "T"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 8 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "8",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "8"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal Queen of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
                             "rank": "Queen",
                             "suit": "Diamonds",
                             "base": [
@@ -20716,44 +23663,72 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Blue Seal Jack of Hearts",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Blue Seal",
-                            "rank": "Jack",
-                            "suit": "Hearts",
-                            "base": [
-                                "H",
-                                "_",
-                                "J"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Red Seal 7 of Clubs",
+                            "name": "Red Seal King of Diamonds",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "Red Seal",
-                            "rank": "7",
-                            "suit": "Clubs",
-                            "base": [
-                                "C",
-                                "_",
-                                "7"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Red Seal 10 of Diamonds",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "Red Seal",
-                            "rank": "10",
+                            "rank": "King",
                             "suit": "Diamonds",
                             "base": [
                                 "D",
                                 "_",
-                                "T"
+                                "K"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 6 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "6",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "6"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 2 of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "2",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "2"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 6 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "6",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "6"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal Queen of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "Queen",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "Q"
                             ],
                             "enhancements": "No Enhancement"
                         },
@@ -20772,52 +23747,94 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Gold Seal King of Hearts",
+                            "name": "Blue Seal Ace of Hearts",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Gold Seal",
-                            "rank": "King",
+                            "seal": "Blue Seal",
+                            "rank": "Ace",
                             "suit": "Hearts",
                             "base": [
                                 "H",
                                 "_",
-                                "K"
+                                "A"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Gold Seal 10 of Clubs",
+                            "name": "Purple Seal 10 of Diamonds",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Gold Seal",
+                            "seal": "Purple Seal",
                             "rank": "10",
-                            "suit": "Clubs",
+                            "suit": "Diamonds",
                             "base": [
-                                "C",
+                                "D",
                                 "_",
                                 "T"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Red Seal 3 of Spades",
+                            "name": "Purple Seal Queen of Clubs",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Red Seal",
-                            "rank": "3",
-                            "suit": "Spades",
+                            "seal": "Purple Seal",
+                            "rank": "Queen",
+                            "suit": "Clubs",
                             "base": [
-                                "S",
+                                "C",
                                 "_",
-                                "3"
+                                "Q"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Blue Seal 7 of Clubs",
+                            "name": "Gold Seal 4 of Hearts",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Blue Seal",
+                            "seal": "Gold Seal",
+                            "rank": "4",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "4"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal Ace of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "Ace",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "A"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal Ace of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "Ace",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "A"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 7 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
                             "rank": "7",
                             "suit": "Clubs",
                             "base": [
@@ -20828,34 +23845,385 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Blue Seal 5 of Diamonds",
+                            "name": "Purple Seal 3 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "3",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "3"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 5 of Spades",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "Blue Seal",
                             "rank": "5",
-                            "suit": "Diamonds",
+                            "suit": "Spades",
                             "base": [
-                                "D",
+                                "S",
                                 "_",
                                 "5"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Gold Seal 4 of Diamonds",
+                            "name": "Gold Seal 8 of Spades",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "Gold Seal",
-                            "rank": "4",
-                            "suit": "Diamonds",
+                            "rank": "8",
+                            "suit": "Spades",
                             "base": [
-                                "D",
+                                "S",
+                                "_",
+                                "8"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal Jack of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "Jack",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "J"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 5 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "5",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "5"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 6 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "6",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "6"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 7 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "7",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "7"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal Queen of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "Queen",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 9 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "9",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "9"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 9 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "9",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "9"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal Queen of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "Queen",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 9 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "9",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "9"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 8 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "8",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "8"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 6 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "6",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "6"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Red Seal 7 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Red Seal",
+                            "rank": "7",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "7"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 4 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "4",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
                                 "_",
                                 "4"
                             ],
                             "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal King of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "King",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "K"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal Queen of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "Queen",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal Queen of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "Queen",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "Q"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 7 of Diamonds",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "7",
+                            "suit": "Diamonds",
+                            "base": [
+                                "D",
+                                "_",
+                                "7"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 2 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "2",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "2"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 5 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "5",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "5"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal 4 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "4",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "4"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 8 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "8",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "8"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Purple Seal 6 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "6",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "6"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Gold Seal Jack of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "Jack",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "J"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Blue Seal 2 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Blue Seal",
+                            "rank": "2",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "2"
+                            ],
+                            "enhancements": "No Enhancement"
                         }
-                    ]
+                    ],
+                    "usesAnte": false
                 },
                 {
                     "name": "standardPack",
@@ -20864,32 +24232,46 @@ const verifiedResults = {
                     "source": "standard_edition",
                     "cards": [
                         {
-                            "name": "8 of Diamonds",
+                            "name": "6 of Hearts",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "No Seal",
-                            "rank": "8",
-                            "suit": "Diamonds",
-                            "base": [
-                                "D",
-                                "_",
-                                "8"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Bonus Jack of Hearts",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "Jack",
+                            "rank": "6",
                             "suit": "Hearts",
                             "base": [
                                 "H",
                                 "_",
-                                "J"
+                                "6"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Bonus 7 of Spades",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "7",
+                            "suit": "Spades",
+                            "base": [
+                                "S",
+                                "_",
+                                "7"
                             ],
                             "enhancements": "Bonus"
+                        },
+                        {
+                            "name": "6 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "6",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "6"
+                            ],
+                            "enhancements": "No Enhancement"
                         },
                         {
                             "name": "9 of Spades",
@@ -20906,38 +24288,24 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "4 of Clubs",
+                            "name": "Stone Queen of Diamonds",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "No Seal",
-                            "rank": "4",
-                            "suit": "Clubs",
+                            "rank": "Queen",
+                            "suit": "Diamonds",
                             "base": [
-                                "C",
+                                "D",
                                 "_",
-                                "4"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Stone 4 of Hearts",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "4",
-                            "suit": "Hearts",
-                            "base": [
-                                "H",
-                                "_",
-                                "4"
+                                "Q"
                             ],
                             "enhancements": "Stone"
                         },
                         {
-                            "name": "Blue Seal Jack of Hearts",
+                            "name": "Jack of Hearts",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Blue Seal",
+                            "seal": "No Seal",
                             "rank": "Jack",
                             "suit": "Hearts",
                             "base": [
@@ -20948,35 +24316,77 @@ const verifiedResults = {
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "10 of Spades",
+                            "name": "7 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "7",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
+                                "_",
+                                "7"
+                            ],
+                            "enhancements": "No Enhancement"
+                        },
+                        {
+                            "name": "Bonus 10 of Diamonds",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "No Seal",
                             "rank": "10",
-                            "suit": "Spades",
+                            "suit": "Diamonds",
                             "base": [
-                                "S",
+                                "D",
+                                "_",
+                                "T"
+                            ],
+                            "enhancements": "Bonus"
+                        },
+                        {
+                            "name": "Gold Seal Steel 4 of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Gold Seal",
+                            "rank": "4",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "4"
+                            ],
+                            "enhancements": "Steel"
+                        },
+                        {
+                            "name": "Stone King of Hearts",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "No Seal",
+                            "rank": "King",
+                            "suit": "Hearts",
+                            "base": [
+                                "H",
+                                "_",
+                                "K"
+                            ],
+                            "enhancements": "Stone"
+                        },
+                        {
+                            "name": "Purple Seal 10 of Clubs",
+                            "type": "Standard",
+                            "edition": "No Edition",
+                            "seal": "Purple Seal",
+                            "rank": "10",
+                            "suit": "Clubs",
+                            "base": [
+                                "C",
                                 "_",
                                 "T"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Bonus 7 of Hearts",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "7",
-                            "suit": "Hearts",
-                            "base": [
-                                "H",
-                                "_",
-                                "7"
-                            ],
-                            "enhancements": "Bonus"
-                        },
-                        {
-                            "name": "Steel 3 of Spades",
+                            "name": "3 of Spades",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "No Seal",
@@ -20987,89 +24397,47 @@ const verifiedResults = {
                                 "_",
                                 "3"
                             ],
-                            "enhancements": "Steel"
+                            "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "Purple Seal Stone Jack of Hearts",
+                            "name": "Gold Seal 7 of Clubs",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "Purple Seal",
-                            "rank": "Jack",
-                            "suit": "Hearts",
-                            "base": [
-                                "H",
-                                "_",
-                                "J"
-                            ],
-                            "enhancements": "Stone"
-                        },
-                        {
-                            "name": "7 of Spades",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
+                            "seal": "Gold Seal",
                             "rank": "7",
-                            "suit": "Spades",
+                            "suit": "Clubs",
                             "base": [
-                                "S",
+                                "C",
                                 "_",
                                 "7"
                             ],
                             "enhancements": "No Enhancement"
                         },
                         {
-                            "name": "2 of Clubs",
+                            "name": "Wild 5 of Diamonds",
                             "type": "Standard",
                             "edition": "No Edition",
                             "seal": "No Seal",
-                            "rank": "2",
-                            "suit": "Clubs",
-                            "base": [
-                                "C",
-                                "_",
-                                "2"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "8 of Diamonds",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "8",
+                            "rank": "5",
                             "suit": "Diamonds",
                             "base": [
                                 "D",
                                 "_",
-                                "8"
-                            ],
-                            "enhancements": "No Enhancement"
-                        },
-                        {
-                            "name": "Wild 7 of Clubs",
-                            "type": "Standard",
-                            "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "7",
-                            "suit": "Clubs",
-                            "base": [
-                                "C",
-                                "_",
-                                "7"
+                                "5"
                             ],
                             "enhancements": "Wild"
                         },
                         {
-                            "name": "Ace of Hearts",
+                            "name": "Gold Seal 4 of Diamonds",
                             "type": "Standard",
                             "edition": "No Edition",
-                            "seal": "No Seal",
-                            "rank": "Ace",
-                            "suit": "Hearts",
+                            "seal": "Gold Seal",
+                            "rank": "4",
+                            "suit": "Diamonds",
                             "base": [
-                                "H",
+                                "D",
                                 "_",
-                                "A"
+                                "4"
                             ],
                             "enhancements": "No Enhancement"
                         }

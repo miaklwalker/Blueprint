@@ -39,10 +39,10 @@ suite("Accuracy Panel", () => {
         describe("Antes should match" ,() => {
             const verifiedAntes = Object.values(verifiedResults.antes);
             const generatedAntes = Object.values(results.antes);
-            const tests = verifiedAntes.map((verified: Ante, index: number) => [verified, generatedAntes[index]])
+            const tests = verifiedAntes.map((verified: Ante, index: number) => ({verified:verified, generated:generatedAntes[index]}))
             describe
                 .each(tests)
-                ("Verified Ante %$ should match generated Ante", (verified: Ante, generated: Ante) => {
+                ("Verified Ante %$ should match generated Ante", ({verified, generated}) => {
                     test("bosses should match", () => {
                         expect(generated.boss).toEqual(verified.boss);
                     })
@@ -52,9 +52,9 @@ suite("Accuracy Panel", () => {
                     test("Shop Queue should match", () => {
                         expect(generated.queue).toMatchObject(verified.queue);
                     })
-                    const miscQueues = verified.miscCardSources.map(( source, index) => [source, generated.miscCardSources[index]]);
+                    const miscQueues = verified.miscCardSources.map(( source, index) => ({v:source, g:generated.miscCardSources[index]}));
                     describe.each(miscQueues)
-                    ("Misc Queue %v.name should match", (v, g) => {
+                    ("Misc Queue $v.name should match", ({v, g}) => {
                         test("cards should match", () => {
                             expect(g.cards).toMatchObject(v.cards);
                         })

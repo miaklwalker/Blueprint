@@ -29,9 +29,9 @@ export type KnownThemes = "Vivillan" |
     "Mantine" |
     "Sylveon";
 const themes = {
+    Mantine: MantineThemeFile,
     Vivillan: VivillanThemeFile,
     Murkrow: MurkrowThemeFile,
-    Mantine: MantineThemeFile,
     Sylveon: SylveonThemeFile,
 };
 export const themeNames = Object.keys(themes) as KnownThemes[];

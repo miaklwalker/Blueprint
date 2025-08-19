@@ -300,7 +300,8 @@ export interface AnalyzeOptions {
 }
 
 export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOptions) {
-    const seed = settings?.seed?.toUpperCase()?.replace(/0/g, 'O');
+    const seed = settings?.seed?.toUpperCase()?.replace(/0/g, 'O')?.trim();
+
     if (!seed) return;
     let output = new SeedResultsContainer();
     const deck = new Deck(deckMap[settings.deck] as DeckType )

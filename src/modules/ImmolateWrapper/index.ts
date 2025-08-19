@@ -28,6 +28,7 @@ import {Tarot} from "../balatrots/enum/cards/Tarot.ts";
 import {SpectralItem} from "../balatrots/enum/packs/Spectral.ts";
 import {SpecialsItem} from "../balatrots/enum/cards/Specials.ts";
 import {BalatroAnalyzer} from "../balatrots/BalatroAnalyzer.ts";
+import {Lock} from "../balatrots/Lock.ts"
 
 
 export interface MiscCardSource {
@@ -314,6 +315,7 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
     engine.initLocks(1, true, true);
     engine.handleSelectedUnlocks(analyzeOptions.unlocks);
     engine.lockLevelTwoVouchers()
+    engine.lock(Array.from(Lock.ante2Lock))
     engine.setDeck(deck);
     console.log(engine)
     EVENT_UNLOCKS.forEach(item => {

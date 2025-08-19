@@ -5,12 +5,13 @@ import {Ante, SeedResultsContainer} from "../src/modules/ImmolateWrapper/CardEng
 import ResultsU8RJYV6N from "./U8RJYV6N.ver";
 import Results2K9H9HN from "./2K9H9HN.ver"
 import Results7LB2WVPK from "./7LB2WVPK.ver"
-
+import ResultsVNOMH111 from "./VNOMH111.ver"
 suite("Accuracy Panel", () => {
     suite.each([
         ["U8RJYV6N", ResultsU8RJYV6N],
         ["2K9H9HN", Results2K9H9HN],
-        ["7LB2WVPK", Results7LB2WVPK]
+        ["7LB2WVPK", Results7LB2WVPK],
+        ["VNOMH111",ResultsVNOMH111]
     ])("Seed: %s", (seed, verifiedResults) => {
         const SEED = seed;
         const MaxAnte = 8;
@@ -51,6 +52,9 @@ suite("Accuracy Panel", () => {
                     })
                     test("Shop Queue should match", () => {
                         expect(generated.queue).toMatchObject(verified.queue);
+                    })
+                    test("tags should match", () => {
+                        expect(generated.tags).toMatchObject(verified.tags);
                     })
                     const miscQueues = verified.miscCardSources.map(( source, index) => ({v:source, g:generated.miscCardSources[index]}));
                     describe.each(miscQueues)

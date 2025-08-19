@@ -340,8 +340,6 @@ function Simple({SeedResults}: { SeedResults: SeedResultsContainer }) {
             if (entry?.isIntersecting) {
                 // When this ante is visible, make the next one available
                 const currentAnte = anteNumber;
-                console.log(currentAnte)
-                console.log(selectedAnte)
                 if(currentAnte !== selectedAnte){
                     console.log("Updating selected ante to current visible ante: ", currentAnte);
                     setSelectedAnte(currentAnte);

@@ -10,6 +10,18 @@ interface RenderCanvasProps {
     spacing?: boolean,
     animated?: boolean
 }
+
+
+function loadImage(url:string): Promise<HTMLImageElement> {
+    return new Promise(resolve=>{
+        const image = new Image();
+        image.addEventListener('load',()=>{
+            resolve(image);
+        });
+        image.src=url;
+    })
+}
+
 export function renderImage(
     canvas: HTMLCanvasElement,
     context: CanvasRenderingContext2D,
@@ -99,16 +111,14 @@ export function SimpleRenderCanvas({ layers, invert = false }: SimpleRenderProps
                     }
                     return;
                 }
-
-                const img = new Image();
-                img.src = layer.source;
-                img.onload = () => {
-                    const imageRatio = renderImage(canvas, context, img, layer);
-                    globalImageCache.set(layer.source, img);
-                    if (layer.order === 0) {
-                        setRatio(imageRatio);
-                    }
-                };
+                loadImage(layer.source)
+                    .then((img: HTMLImageElement) => {
+                        const imageRatio = renderImage(canvas, context, img, layer);
+                        globalImageCache.set(layer.source, img);
+                        if (layer.order === 0) {
+                            setRatio(imageRatio);
+                        }
+                    })
             });
 
         if (invert) {
@@ -185,16 +195,14 @@ export function RenderImagesWithCanvas({layers, invert = false, spacing = false}
                     }
                     return;
                 }
-
-                const img = new Image();
-                img.src = layer.source;
-                img.onload = () => {
-                    const imageRatio = renderImage(canvas, context, img, layer, hasAnimatedLayer ? elapsed : undefined);
-                    globalImageCache.set(layer.source, img);
-                    if (layer.order === 0) {
-                        setRatio(imageRatio);
-                    }
-                }
+                loadImage(layer.source)
+                    .then((img: HTMLImageElement) => {
+                        const imageRatio = renderImage(canvas, context, img, layer, hasAnimatedLayer ? elapsed : undefined);
+                        globalImageCache.set(layer.source, img);
+                        if (layer.order === 0) {
+                            setRatio(imageRatio);
+                        }
+                    })
             }))
 
         if (invert) {

@@ -396,6 +396,8 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
                 }
                 result.blinds[blind].packs.push(pack)
                 for (let k = 0; k < pack.size; k++) {
+                    //`ante_${key}_${blindName}_pack_${packIndex}_card_${cardIndex}`
+                    //todo implment the lock for packs here
                     let key = `${ante}-${packString}-${k}-${blind}`;
                     if (analyzeOptions && analyzeOptions.buys[key]) {
                         engineWrapper.handleBuy(pack.cards[k].name, "Card", updateShowmanOwned, analyzeOptions)

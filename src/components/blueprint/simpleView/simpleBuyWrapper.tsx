@@ -20,17 +20,13 @@ export function SimpleBuyerWrapper({card, cardId, children}: SimpleBuyerWrapperP
 
     const handleContextMenu = (e: React.MouseEvent) => {
         e.preventDefault();
-        console.log("Right-clicked on card:", cardId);
         if (isLocked) {
-            console.log("Locking card:", cardId);
             unlockCard(cardId);
             analyzeSeed();
         } else {
-            console.log("Unlocking card:", cardId);
             lockCard(cardId, card);
             analyzeSeed();
         }
-        console.log("Locked cards:", lockedCards);
     };
 
     return (

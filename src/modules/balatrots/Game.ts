@@ -687,7 +687,6 @@ export class Game extends Lock {
                 break;
 
             case DeckType.NEBULA_DECK:
-                console.log("Activating NEBULA_DECK vouchers");
                 this.activateVoucher(Voucher.TELESCOPE);
                 break;
 

@@ -318,9 +318,8 @@ export const useCardStore = create(
                                 lockedCards
                             }
 
-                            const immolateResults = analyzeSeed(analyzeState, options)
-                            console.log(immolateResults)
-                            prev.applicationState.analyzedResults = immolateResults;
+                            // console.log(immolateResults)
+                            prev.applicationState.analyzedResults = analyzeSeed(analyzeState, options);
                             prev.applicationState.hasSettingsChanged = false; // Reset flag after analyzing
                         }, undefined, 'Global/AnalyzeSeed'),
                         lockCard: (cardId: string, card: any) => set((prev: InitialState) => {

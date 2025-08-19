@@ -67,7 +67,6 @@ export default function NavBar({ themeName , setTheme }: { themeName: string, se
     }, [start,seedResults]);
     useEffect(()=>{
         if(start && seedResults){
-            console.log(": Re-analyzing seed due to showCardSpoilers change")
             // If we have results, and the user changes the showCardSpoilers, we need to re-analyze the seed
             analyzeSeed();
         }

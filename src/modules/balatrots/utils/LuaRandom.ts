@@ -125,14 +125,14 @@ function debugBitOperation(z: bigint) {
     const step4 = step3 << 18n & MASK_64;
     const final = step2 ^ step4;
 
-    console.log({
-        original: z.toString(16),
-        step1: step1.toString(16),
-        step2: step2.toString(16),
-        step3: step3.toString(16),
-        step4: step4.toString(16),
-        final: final.toString(16)
-    });
+    // console.log({
+    //     original: z.toString(16),
+    //     step1: step1.toString(16),
+    //     step2: step2.toString(16),
+    //     step3: step3.toString(16),
+    //     step4: step4.toString(16),
+    //     final: final.toString(16)
+    // });
 
     return final;
 }

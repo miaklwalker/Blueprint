@@ -318,7 +318,6 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
     engine.lockLevelTwoVouchers()
     engine.lock(Array.from(Lock.ante2Lock))
     engine.setDeck(deck);
-    console.log(engine)
     EVENT_UNLOCKS.forEach(item => {
         engine.lock(item.name)
     })

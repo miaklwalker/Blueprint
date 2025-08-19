@@ -1,6 +1,6 @@
 import {Layer} from "../../modules/classes/Layer.ts";
 import {useEffect, useRef, useState} from "react";
-import {useHover, useMergedRef, useMouse, useResizeObserver} from "@mantine/hooks";
+import {useForceUpdate, useHover, useMergedRef, useMouse, useResizeObserver} from "@mantine/hooks";
 import {AspectRatio} from "@mantine/core";
 
 const globalImageCache = new Map<string, HTMLImageElement>();
@@ -22,6 +22,28 @@ function loadImage(url:string): Promise<HTMLImageElement> {
     })
 }
 
+async function loadAllImagesIntoCache(){
+    const urls = [
+        "images/8BitDeck.png",
+        "images/BlindChips.png",
+        "images/Editions.png",
+        "images/Enhancers.png",
+        "images/Jokers.png",
+        "images/stickers.png",
+        "images/tags.png",
+        "images/Tarots.png",
+        "images/Vouchers.png",
+    ];
+    const promises = urls.map(url => loadImage(url));
+    const images = await Promise.all(promises);
+    images.forEach((image, index) => {
+        globalImageCache.set(urls[index], image);
+    });
+
+}
+
+loadAllImagesIntoCache()
+    .catch(err=>{console.log(err)});
 export function renderImage(
     canvas: HTMLCanvasElement,
     context: CanvasRenderingContext2D,
@@ -90,10 +112,9 @@ interface SimpleRenderProps {
 export function SimpleRenderCanvas({ layers, invert = false }: SimpleRenderProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [ratio, setRatio] = useState(3 / 4);
-
+    const forceUpdate = useForceUpdate();
     useEffect(() => {
         if (!canvasRef.current || !layers || layers.length === 0) return;
-
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
         if (!context) return;
@@ -118,6 +139,7 @@ export function SimpleRenderCanvas({ layers, invert = false }: SimpleRenderProps
                         if (layer.order === 0) {
                             setRatio(imageRatio);
                         }
+                        forceUpdate()
                     })
             });
 
@@ -150,6 +172,7 @@ export function RenderImagesWithCanvas({layers, invert = false, spacing = false}
     const [transform, setTransform] = useState('');
     const animationFrameRef = useRef<number | null>(null);
     const [elapsed, setElapsed] = useState(0);
+    const forceUpdate = useForceUpdate();
 
     const hasAnimatedLayer = layers?.some(layer => layer.animated);
 
@@ -177,7 +200,6 @@ export function RenderImagesWithCanvas({layers, invert = false, spacing = false}
     useEffect(() => {
         if (!canvasRef.current) return;
         if (!layers) return;
-
         const canvas: HTMLCanvasElement = canvasRef.current;
         const context: CanvasRenderingContext2D | null = canvas.getContext('2d');
         if (!context) return;
@@ -202,13 +224,14 @@ export function RenderImagesWithCanvas({layers, invert = false, spacing = false}
                         if (layer.order === 0) {
                             setRatio(imageRatio);
                         }
+                        forceUpdate();
                     })
             }))
 
         if (invert) {
             canvas.style.filter = 'invert(0.8)';
         }
-    }, [layers, elapsed]);
+    }, [layers, elapsed, forceUpdate]);
 
     const {hovered, ref: hoverRef} = useHover();
     const {ref: mouseRef, x: mouseX, y: mouseY} = useMouse();

@@ -9,6 +9,7 @@ import ResultsVNOMH111 from "./VNOMH111.ver"
 suite("Accuracy Panel", () => {
     suite.each([
         ["U8RJYV6N", ResultsU8RJYV6N],
+        ["U8RJYV6N ", ResultsU8RJYV6N],
         ["2K9H9HN", Results2K9H9HN],
         ["7LB2WVPK", Results7LB2WVPK],
         ["VNOMH111",ResultsVNOMH111]
@@ -55,6 +56,9 @@ suite("Accuracy Panel", () => {
                     })
                     test("tags should match", () => {
                         expect(generated.tags).toMatchObject(verified.tags);
+                    })
+                    test("Packs should match", () => {
+                        expect(generated.blinds).toMatchObject(verified.blinds);
                     })
                     const miscQueues = verified.miscCardSources.map(( source, index) => ({v:source, g:generated.miscCardSources[index]}));
                     describe.each(miscQueues)

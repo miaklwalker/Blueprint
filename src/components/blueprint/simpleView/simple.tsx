@@ -341,7 +341,6 @@ function Simple({SeedResults}: { SeedResults: SeedResultsContainer }) {
                 // When this ante is visible, make the next one available
                 const currentAnte = anteNumber;
                 if(currentAnte !== selectedAnte){
-                    console.log("Updating selected ante to current visible ante: ", currentAnte);
                     setSelectedAnte(currentAnte);
                 }
                  // Set the current ante as selected

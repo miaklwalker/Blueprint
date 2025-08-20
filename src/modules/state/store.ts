@@ -267,10 +267,7 @@ export const useCardStore = create(
                         }, undefined, 'Global/AddBuy'),
                         removeBuy: (buy: BuyMetaData) => set((prev: InitialState) => {
                             let key = `${buy.ante}-${buy.location}-${buy.index}${buy.locationType === LOCATION_TYPES.PACK ? `-${buy.blind}` : ''}`;
-                            let buys = {...prev.shoppingState.buys}
-                            delete buys[key]
-                            prev.shoppingState.buys = buys;
-                            console.log(buys)
+                            delete prev.shoppingState.buys[key];
                         }, undefined, 'Global/RemoveBuy'),
                         isOwned: (key: string) => {
                             return key in get().shoppingState.buys;

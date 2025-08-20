@@ -400,7 +400,18 @@ function Simple({SeedResults}: { SeedResults: SeedResultsContainer }) {
                 return (
                     <Paper w={'100%'} withBorder shadow={'xl'} mb={'xl'} p={'md'} key={key}>
                         <Title order={3} mb={'lg'}>Ante {key}</Title>
-
+                        <Group align={'flex-start'} justify={'space-between'} mb={'sm'}>
+                            <Group align={'flex-start'}>
+                                <SimpleVoucher voucherName={value.voucher}/>
+                                <Stack align={'flex-start'}>
+                                    <Group align={'flex-start'}>
+                                        <SimpleTag tagName={value.tags[0]}/>
+                                        <SimpleTag tagName={value.tags[1]}/>
+                                    </Group>
+                                    <SimpleBoss bossName={value.boss || ''}/>
+                                </Stack>
+                            </Group>
+                        </Group>
                         {/* Shop section */}
                         <Title order={4} mb={'sm'}>Shop</Title>
                         <DragScroll>
@@ -457,18 +468,7 @@ function Simple({SeedResults}: { SeedResults: SeedResultsContainer }) {
                             </Box>
                         ))}
 
-                        <Group align={'flex-start'} justify={'space-between'} p={'md'}>
-                            <Group align={'flex-start'}>
-                                <SimpleVoucher voucherName={value.voucher}/>
-                                <Stack align={'flex-start'}>
-                                    <Group align={'flex-start'}>
-                                        <SimpleTag tagName={value.tags[0]}/>
-                                        <SimpleTag tagName={value.tags[1]}/>
-                                    </Group>
-                                    <SimpleBoss bossName={value.boss || ''}/>
-                                </Stack>
-                            </Group>
-                        </Group>
+
 
                         {/* Observer at the bottom of each rendered ante to detect when it's visible */}
                         <AnteObserver anteNumber={anteNumber} />

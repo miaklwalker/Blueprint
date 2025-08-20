@@ -190,6 +190,7 @@ export default function PurchaseTimeline({buys, sells}: {
                                             if (buyData.transactionType === 'sell') {
                                                 undoSell(buyData);
                                             } else {
+                                                console.log('Removing buy:', buyData);
                                                 removeBuy(buyData);
                                             }
                                         }}> Remove </Button>

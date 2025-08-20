@@ -366,12 +366,7 @@ export class Game extends Lock {
         return rng.randint(min, max);
     }
 
-    //item randchoice(instance* inst, ntype nts[], int ids[], int num, __constant item items[]) {//, size_t item_size) { not needed, we'll have element 1 give us the size
-    //     if (num > 0) {
-    //         inst->rng = randomseed(get_node_child(inst, nts, ids, num));
-    //     }
-    //     return items[l_randint(&(inst->rng), 1, items[0])];
-    // }
+
     randchoice<T extends ItemImpl>(id: string, items: T[]): ItemImpl {
         if (!items || items.length === 0) {
             throw new Error('Items array cannot be empty');
@@ -392,9 +387,6 @@ export class Game extends Lock {
         return item;
     }
 
-    //item randchoice_simple(instance* inst, rtype rngType, __constant item items[]) {
-    //     return randchoice(inst, (__private ntype[]){N_Type}, (__private int[]){rngType}, 1, items);
-    // }
     randchoice_simple<T extends ItemImpl>(id: string, items: T[]): ItemImpl {
         return this.randchoice<T>(id, items);
     }

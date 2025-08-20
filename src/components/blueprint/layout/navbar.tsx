@@ -54,7 +54,7 @@ export default function NavBar({ themeName , setTheme }: { themeName: string, se
     const start = useCardStore(state => state.applicationState.start);
     const analyzeSeed = useCardStore(state => state.analyzeSeed);
     const seedResults = useCardStore(state => state.applicationState.analyzedResults);
-
+    const buys = useCardStore(state => state.shoppingState.buys);
     const handleAnalyzeClick = () => {
         setStart(true);
         analyzeSeed();
@@ -67,11 +67,10 @@ export default function NavBar({ themeName , setTheme }: { themeName: string, se
     }, [start,seedResults]);
     useEffect(()=>{
         if(start && seedResults){
-            console.log(": Re-analyzing seed due to showCardSpoilers change")
             // If we have results, and the user changes the showCardSpoilers, we need to re-analyze the seed
             analyzeSeed();
         }
-    },[showCardSpoilers, deck, stake, version, antes, cardsPerAnte, events])
+    },[showCardSpoilers, deck, stake, version, antes, cardsPerAnte, events, buys])
 
 
     return (

@@ -253,6 +253,7 @@ export class CardEngineWrapper implements EngineWrapper {
     handleBuy(key: string, type: string, makeAnalyzer?: any , analyzeOptions?: AnalyzeOptions) {
         if (type === 'Card') {
             this.engine.lock(key)
+            console.log("Card bought: ", key)
             if (key === 'Showman' && makeAnalyzer) {
                 makeAnalyzer(true);
             }
@@ -306,7 +307,8 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
     const deck = new Deck(deckMap[settings.deck] as DeckType )
     const stake = new Stake(settings.stake as StakeType)
     const version = Number(settings.gameVersion)
-    let params = new InstanceParams(deck, stake, false, version)
+    let params = new InstanceParams(deck, stake, false, version);
+    console.log("New instance")
     const engine = new Game(
         seed,
         params
@@ -317,7 +319,6 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
     engine.lockLevelTwoVouchers()
     engine.lock(Array.from(Lock.ante2Lock))
     engine.setDeck(deck);
-    console.log(engine)
     EVENT_UNLOCKS.forEach(item => {
         engine.lock(item.name)
     })
@@ -350,7 +351,6 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
         result.tags.push(engine.nextTag(ante).name);
         result.tags.push(engine.nextTag(ante).name);
         updateShowmanOwned(showmanIsLocked);
-
         let voucherKey = `${ante}-${LOCATIONS.VOUCHER}-0`;
         if (analyzeOptions?.buys && analyzeOptions.buys[voucherKey]) {
             let name = analyzeOptions.buys[voucherKey].name;
@@ -364,7 +364,6 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
                 let currentEvents = analyzeOptions.events.filter((event: any) => event.ante === ante && event.blind === blind);
 
                 currentEvents.forEach((event: any) => {
-
                     engine.unlock(event.name)
                 })
             }
@@ -398,8 +397,9 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
                 for (let k = 0; k < pack.size; k++) {
                     //`ante_${key}_${blindName}_pack_${packIndex}_card_${cardIndex}`
                     //todo implment the lock for packs here
-                    let key = `${ante}-${packString}-${k}-${blind}`;
+                    let key = `${ante}-${packInfo.getKind()}-${k}-${blind}`;
                     if (analyzeOptions && analyzeOptions.buys[key]) {
+                        console.log("Buying from pack: ", key, pack.cards[k].name)
                         engineWrapper.handleBuy(pack.cards[k].name, "Card", updateShowmanOwned, analyzeOptions)
                     }
                 }
@@ -610,9 +610,6 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
 
             }
         }
-        // result.voucherQueue = [];
-        // result.bossQueue = [];
-        // result.tagsQueue = [];
 
 
         // voucher queue
@@ -669,7 +666,6 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
     }
     for (let ante = 1; ante <= settings.antes; ante++) {
         output.antes[ante] = generateAnte(ante);
-
     }
 
     return output;

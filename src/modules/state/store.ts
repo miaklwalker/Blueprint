@@ -267,7 +267,10 @@ export const useCardStore = create(
                         }, undefined, 'Global/AddBuy'),
                         removeBuy: (buy: BuyMetaData) => set((prev: InitialState) => {
                             let key = `${buy.ante}-${buy.location}-${buy.index}${buy.locationType === LOCATION_TYPES.PACK ? `-${buy.blind}` : ''}`;
-                            delete prev.shoppingState.buys[key];
+                            let buys = {...prev.shoppingState.buys}
+                            delete buys[key]
+                            prev.shoppingState.buys = buys;
+                            console.log(buys)
                         }, undefined, 'Global/RemoveBuy'),
                         isOwned: (key: string) => {
                             return key in get().shoppingState.buys;
@@ -319,7 +322,7 @@ export const useCardStore = create(
                             }
 
                             const immolateResults = analyzeSeed(analyzeState, options)
-                            console.log(immolateResults)
+                            console.debug(immolateResults)
                             prev.applicationState.analyzedResults = immolateResults;
                             prev.applicationState.hasSettingsChanged = false; // Reset flag after analyzing
                         }, undefined, 'Global/AnalyzeSeed'),

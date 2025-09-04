@@ -980,4 +980,57 @@ export class Game extends Lock {
         return cards;
     }
 
+    nextWheelOfFortuneEdition(): Edition {
+        let version = this.params.version;
+        let rate = version === 10106 ? 5 : 4;
+        const poll = this.random(RandomQueueNames.R_Wheel_of_Fortune);
+        if (poll < 1.0 / rate) {
+            // Burn function call
+            this.random(RandomQueueNames.R_Wheel_of_Fortune);
+            // Actual poll
+            const editionPoll = this.random(RandomQueueNames.R_Wheel_of_Fortune);
+            if (editionPoll > 0.85) return Edition.POLYCHROME;
+            if (editionPoll > 0.5) return Edition.HOLOGRAPHIC;
+            return Edition.FOIL;
+        } else {
+            return Edition.NO_EDITION;
+        }
+    }
+
+    // nextOrbitalTag(unlockedHands){
+    //     const handsWithEvents = [
+    //         POKER_HANDS.FLUSH_FIVE,
+    //         POKER_HANDS.FIVE_OF_A_KIND,
+    //         POKER_HANDS.FLUSH_HOUSE
+    //     ];
+    //
+    //
+    // }
+
+    /*
+#if V_AT_MOST(0,9,3,12)
+item wheel_of_fortune_edition(instance* inst) {
+    if (random_simple(inst, R_Wheel_of_Fortune) < 1.0/5) {
+        random_simple(inst, R_Wheel_of_Fortune); //Burn function call
+        double poll = random_simple(inst, R_Wheel_of_Fortune);
+        if (poll > 0.85) return Polychrome;
+        if (poll > 0.5) return Holographic;
+        return Foil;
+    } else return No_Edition;
+}
+#else
+//Wheel of Fortune buffed in 0.9.3n
+item wheel_of_fortune_edition(instance* inst) {
+    if (random_simple(inst, R_Wheel_of_Fortune) < 1.0/4) {
+        random_simple(inst, R_Wheel_of_Fortune); //Burn function call
+        double poll = random_simple(inst, R_Wheel_of_Fortune);
+        if (poll > 0.85) return Polychrome;
+        if (poll > 0.5) return Holographic;
+        return Foil;
+    } else return No_Edition;
+}
+#endif
+
+    */
+
 }

@@ -669,7 +669,23 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
         burnerInstance.nextTag(ante);
         result.tagsQueue = Array(queueDepth).fill(null).map(() => burnerInstance.nextTag(ante).name)
 
-
+        result.wheelQueue = Array(queueDepth).fill(null).map(() => {
+            return {
+                "name": "King of Clubs",
+                "type": "Standard",
+                "edition": engine.nextWheelOfFortuneEdition(),
+                "seal": "No Seal",
+                "rank": "King",
+                "suit": "Clubs",
+                "base": [
+                    "C",
+                    "_",
+                    "K"
+                ],
+                "enhancements": "No Enhancement"
+            };
+        })
+        console.log(result.wheelQueue)
 
         result.miscCardSources = miscCardSources
         return result;

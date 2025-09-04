@@ -167,6 +167,7 @@ export function Aside({SeedResults}: { SeedResults: SeedResultsContainer | null 
     const voucherQueue = anteData?.voucherQueue;
     const tagsQueue = anteData?.tagsQueue;
     const bossesQueue = anteData?.bossQueue;
+    const wheelQueue = anteData?.wheelQueue;
     const buys = useCardStore(state => state.shoppingState.buys);
     const sells = useCardStore(state => state.shoppingState.sells);
     const transactionsCount = Object.keys(buys).length + Object.keys(sells).length;
@@ -219,6 +220,7 @@ export function Aside({SeedResults}: { SeedResults: SeedResultsContainer | null 
                                 bossQueue={bossesQueue}
                                 tagQueue={tagsQueue}
                                 voucherQueue={voucherQueue}
+                                wheelQueue={wheelQueue}
 
                             />
                         ) : (

@@ -1,0 +1,16 @@
+export const POKER_HANDS = {
+    "13": "RETRY",
+    "12": "12",
+    FLUSH_FIVE: 'Flush Five',
+    FLUSH_HOUSE: 'Flush House',
+    FIVE_OF_A_KIND: 'Five of a Kind',
+    STRAIGHT_FLUSH: 'Straight Flush',
+    FOUR_OF_A_KIND: 'Four of a Kind',
+    FULL_HOUSE: 'Full House',
+    FLUSH: 'Flush',
+    STRAIGHT: 'Straight',
+    THREE_OF_A_KIND: 'Three of a Kind',
+    TWO_PAIR: 'Two Pair',
+    PAIR: 'PAIR',
+    HIGH_CARD: 'High Card',
+}

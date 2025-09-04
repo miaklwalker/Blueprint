@@ -370,6 +370,7 @@ export class Ante {
     voucherQueue: string[] = [];
     bossQueue: string[] = [];
     tagsQueue: string[] = [];
+    wheelQueue: Stringifies[] = [];
 
     constructor(ante: number) {
         this.ante = ante;

@@ -118,7 +118,7 @@ export function round13(x: number) {
     return tentative;
 }
 
-function debugBitOperation(z: bigint) {
+export function debugBitOperation(z: bigint) {
     const step1 = (z << 31n & MASK_64) ^ z;
     const step2 = step1 >> 45n & MASK_64;
     const step3 = z & (MAX_UINT64 << 1n & MASK_64);

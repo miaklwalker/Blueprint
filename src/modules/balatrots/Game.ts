@@ -755,23 +755,6 @@ export class Game extends Lock {
         return chosenBoss;
     }
 
-    // if self.ability.name == 'Certificate' then
-    //                 G.E_MANAGER:add_event(Event({
-    //                     func = function()
-    //                         local _card = create_playing_card({
-    //                             front = pseudorandom_element(G.P_CARDS, pseudoseed('cert_fr')),
-    //                             center = G.P_CENTERS.c_base}, G.hand, nil, nil, {G.C.SECONDARY_SET.Enhanced})
-    //                         local seal_type = pseudorandom(pseudoseed('certsl'))
-    //                         if seal_type > 0.75 then _card:set_seal('Red', true)
-    //                         elseif seal_type > 0.5 then _card:set_seal('Blue', true)
-    //                         elseif seal_type > 0.25 then _card:set_seal('Gold', true)
-    //                         else _card:set_seal('Purple', true)
-    //                         end
-    //                         G.GAME.blind:debuff_card(_card)
-    //                         G.hand:sort()
-    //                         if context.blueprint_card then context.blueprint_card:juice_up() else self:juice_up() end
-    //                         return true
-    //                     end}))
     nextCertificateStandardCard() {
         let enhancement = "No Enhancement";
         let edition = Edition.NO_EDITION;
@@ -966,7 +949,7 @@ export class Game extends Lock {
             let item = (card as ItemImpl).getName();
             let spoilerSource = this.hasSpoilersMap[item];
             if (spoilerSource && this.hasSpoilers) {
-                return this.nextJoker(spoilerSource, ante, true)
+                return this.nextJoker(spoilerSource, ante, false)
             }
             return card as Card;
         }

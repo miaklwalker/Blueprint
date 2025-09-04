@@ -2,7 +2,8 @@ import {MiscCardSource} from "../modules/ImmolateWrapper";
 import {Accordion, Box, Center, Group, Paper, Text, Title} from "@mantine/core";
 import {useCardStore} from "../modules/state/store.ts";
 import {useEffect, useState} from "react";
-import {Carousel, Embla} from "@mantine/carousel";
+import { EmblaCarouselType } from 'embla-carousel';
+import {Carousel} from "@mantine/carousel";
 import {LOCATIONS} from "../modules/const.ts";
 import {toHeaderCase} from "js-convert-case";
 import {BuyWrapper} from "./buyerWrapper.tsx";
@@ -28,7 +29,7 @@ export default function MiscCardSourcesDisplay({miscSources, bossQueue, tagQueue
     const currentSource = useCardStore(state => state.applicationState.miscSource);
     const setCurrentSource = useCardStore(state => state.setMiscSource);
     const currentAnte = useCardStore(state => state.applicationState.selectedAnte);
-    const [embla, setEmbla] = useState<Embla | null>(null);
+    const [embla, setEmbla] = useState<EmblaCarouselType | null>(null);
     useEffect(() => {
         if (!embla) return;
         embla.reInit()
@@ -61,10 +62,13 @@ export default function MiscCardSourcesDisplay({miscSources, bossQueue, tagQueue
                                         type={'container'}
                                         slideSize="90px"
                                         slideGap={{base: 'xs'}}
-                                        align="start"
                                         withControls={false}
                                         height={190}
-                                        dragFree
+                                        emblaOptions={{
+                                            dragFree: true,
+                                            align:'start'
+                                        }}
+
                                     >
                                         {cards?.map((card: any, i: number) => (
                                             <Carousel.Slide key={i}>
@@ -109,10 +113,12 @@ export default function MiscCardSourcesDisplay({miscSources, bossQueue, tagQueue
                                     type={'container'}
                                     slideSize="90px"
                                     slideGap={{base: 'xs'}}
-                                    align="start"
                                     withControls={false}
                                     height={190}
-                                    dragFree
+                                    emblaOptions={{
+                                        dragFree: true,
+                                        align:'start'
+                                    }}
                                 >
                                     {voucherQueue?.map((voucher: any, i: number) => (
                                         <Carousel.Slide key={i}>
@@ -155,10 +161,12 @@ export default function MiscCardSourcesDisplay({miscSources, bossQueue, tagQueue
                                     type={'container'}
                                     slideSize="90px"
                                     slideGap={{base: 'xs'}}
-                                    align="start"
                                     withControls={false}
                                     height={70}
-                                    dragFree
+                                    emblaOptions={{
+                                        dragFree: true,
+                                        align:'start'
+                                    }}
                                 >
                                     {bossQueue?.map((boss: any, i: number) => (
                                         <Carousel.Slide key={i}>
@@ -188,10 +196,12 @@ export default function MiscCardSourcesDisplay({miscSources, bossQueue, tagQueue
                                     type={'container'}
                                     slideSize="90px"
                                     slideGap={{base: 'xs'}}
-                                    align="start"
                                     withControls={false}
                                     height={70}
-                                    dragFree
+                                    emblaOptions={{
+                                        dragFree: true,
+                                        align:'start'
+                                    }}
                                 >
                                     {tagQueue?.map((tag: any, i: number) => (
                                         <Carousel.Slide key={i}>

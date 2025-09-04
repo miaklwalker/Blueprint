@@ -1,6 +1,7 @@
 import {useCardStore} from "../../../modules/state/store.ts";
 import {useEffect, useMemo, useState} from "react";
-import {Carousel, Embla} from "@mantine/carousel";
+import { EmblaCarouselType } from 'embla-carousel';
+import {Carousel} from "@mantine/carousel";
 import {blinds, LOCATION_TYPES, LOCATIONS, tagDescriptions} from "../../../modules/const.ts";
 import {
     Accordion,
@@ -40,7 +41,7 @@ import {useQuery} from "@tanstack/react-query";
 function QueueCarousel({queue, tabName}: { queue: any[], tabName: string }) {
     const selectedBlind = useCardStore(state => state.applicationState.selectedBlind);
     const selectedSearchResult = useCardStore(state => state.searchState.selectedSearchResult);
-    const [embla, setEmbla] = useState<Embla | null>(null);
+    const [embla, setEmbla] = useState<EmblaCarouselType | null>(null);
 
     useEffect(() => {
         if (!embla) return;
@@ -62,12 +63,11 @@ function QueueCarousel({queue, tabName}: { queue: any[], tabName: string }) {
         <Paper>
             <Carousel
                 getEmblaApi={setEmbla}
-                containScroll={'keepSnaps'}
                 slideGap={{base: 'sm'}}
                 slideSize={{base: 90}}
                 withControls={false}
                 height={190}
-                dragFree
+                emblaOptions={{dragFree: true, containScroll: "keepSnaps"}}
                 type={'container'}
             >
                 {
@@ -162,10 +162,13 @@ function AntePanel({ante, tabName, timeTravelVoucherOffset}: {
                                                 type={'container'}
                                                 slideSize="90px"
                                                 slideGap={{base: 'xs'}}
-                                                align="start"
                                                 withControls={true}
                                                 height={190}
-                                                dragFree
+                                                emblaOptions={{
+                                                    dragFree: true,
+                                                    containScroll: "keepSnaps",
+                                                    align:'start'
+                                            }}
                                             >
                                                 {pack.cards && pack.cards.map((card: any, cardIndex: number) => (
                                                     <Carousel.Slide key={cardIndex}>

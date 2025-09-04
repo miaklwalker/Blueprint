@@ -2,6 +2,7 @@
 import React from "react";
 import {IconLock} from "@tabler/icons-react";
 import {ActionIcon, Tooltip, Box} from "@mantine/core";
+import {useLongPress} from "@mantine/hooks"
 import {useCardStore} from "../../../modules/state/store.ts";
 
 
@@ -18,6 +19,16 @@ export function SimpleBuyerWrapper({card, cardId, children}: SimpleBuyerWrapperP
     const analyzeSeed = useCardStore(state => state.analyzeSeed);
     const isLocked = cardId in lockedCards;
 
+    const handlers = useLongPress(()=>{
+        if (isLocked) {
+            unlockCard(cardId);
+            analyzeSeed();
+        } else {
+            lockCard(cardId, card);
+            analyzeSeed();
+        }
+    });
+
     const handleContextMenu = (e: React.MouseEvent) => {
         e.preventDefault();
         if (isLocked) {
@@ -32,6 +43,7 @@ export function SimpleBuyerWrapper({card, cardId, children}: SimpleBuyerWrapperP
     return (
         <Box
             onContextMenu={handleContextMenu}
+            {...handlers}
             style={{
                 position: 'relative',
                 cursor: 'context-menu',

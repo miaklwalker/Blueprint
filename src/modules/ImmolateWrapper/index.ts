@@ -30,7 +30,7 @@ import {SpecialsItem} from "../balatrots/enum/cards/Specials.ts";
 import {BalatroAnalyzer} from "../balatrots/BalatroAnalyzer.ts";
 import {Lock} from "../balatrots/Lock.ts"
 
-
+// implement a third engine to handle the literal unlocks ( user selected )
 export interface MiscCardSource {
     name: string;
     cardsToGenerate: number;
@@ -47,6 +47,7 @@ export interface CardEngine {
     VOUCHERS: any;
     sources: { [key: string]: string };
     commonSources: { [key: string]: string };
+
     // Initialization methods
     InstParams(deck: string, stake: string, showman: boolean, version: string): void;
 
@@ -120,13 +121,14 @@ export class CardEngineWrapper implements EngineWrapper {
     constructor(engine: CardEngine | Game) {
         this.engine = engine;
     }
+
     makeGameCard(card: any): Joker_Final | StandardCard_Final | Consumables_Final {
         let instanceOfJoker = card instanceof JokerData;
         let instanceOfTarot = card instanceof Tarot;
         let instanceOfPlanet = card instanceof PlanetItem;
         let instanceOfSpectral = card instanceof SpectralItem || card instanceof SpecialsItem;
         let instanceofStandard = card instanceof Card;
-        switch (true)  {
+        switch (true) {
             case instanceOfJoker:
                 BalatroAnalyzer.getSticker(card);
                 return new Joker_Final({
@@ -162,13 +164,14 @@ export class CardEngineWrapper implements EngineWrapper {
                     ],
                     seal: card._seal?.name,
                     edition: card._edition?.name,
-                    enhancements: card._enhancement ,
+                    enhancements: card._enhancement,
                     type: 'Standard',
                 } as unknown as Card_Final)
             default:
                 throw new Error("Unknown card type");
         }
     }
+
     makeCard(card: NextShopItem): Joker_Final | StandardCard_Final | Consumables_Final {
         let cardType = card.type;
         if (cardType === 'Joker') {
@@ -238,7 +241,7 @@ export class CardEngineWrapper implements EngineWrapper {
                     return allVouchers.get(i + 1);
                 }
             }
-        }else{
+        } else {
             allVouchers = Game.VOUCHERS;
             for (let i = 0; i < Game.VOUCHERS.length; i += 2) {
                 if (Game.VOUCHERS[i].getName() === key) {
@@ -250,7 +253,7 @@ export class CardEngineWrapper implements EngineWrapper {
 
     }
 
-    handleBuy(key: string, type: string, makeAnalyzer?: any , analyzeOptions?: AnalyzeOptions) {
+    handleBuy(key: string, type: string, makeAnalyzer?: any, analyzeOptions?: AnalyzeOptions) {
         if (type === 'Card') {
             this.engine.lock(key)
             console.log("Card bought: ", key)
@@ -265,7 +268,7 @@ export class CardEngineWrapper implements EngineWrapper {
                 let levelTwo = this.findLevelTwoVoucher(key);
                 if (analyzeOptions?.unlocks?.includes(levelTwo)) {
                     this.engine.unlock(levelTwo);
-                }else{
+                } else {
                     this.engine.lock(levelTwo);
                 }
             }
@@ -281,6 +284,7 @@ export class CardEngineWrapper implements EngineWrapper {
         }
     }
 }
+
 export interface AnalyzeSettings {
     seed: string;
     deck: string;
@@ -289,6 +293,7 @@ export interface AnalyzeSettings {
     antes: number;
     cardsPerAnte: number;
 }
+
 export interface AnalyzeOptions {
     buys: { [key: string]: any };
     sells: { [key: string]: any };
@@ -305,11 +310,10 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
 
     if (!seed) return;
     let output = new SeedResultsContainer();
-    const deck = new Deck(deckMap[settings.deck] as DeckType )
+    const deck = new Deck(deckMap[settings.deck] as DeckType)
     const stake = new Stake(settings.stake as StakeType)
     const version = Number(settings.gameVersion)
     let params = new InstanceParams(deck, stake, false, version);
-    console.log("New instance")
     const engine = new Game(
         seed,
         params
@@ -318,16 +322,17 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
     engine.initLocks(1, true, true);
     engine.handleSelectedUnlocks(analyzeOptions.unlocks);
     engine.lockLevelTwoVouchers()
+    engine.lock(Array.from(Lock.firstLock))
     engine.lock(Array.from(Lock.ante2Lock))
     engine.setDeck(deck);
-    EVENT_UNLOCKS.forEach(item => {
-        engine.lock(item.name)
-    })
+    EVENT_UNLOCKS
+        .forEach(item => {
+            engine.lock(item.name)
+        })
+
     function updateShowmanOwned(showman: boolean) {
         engine.updateShowman(showman)
     }
-
-
 
 
     let engineWrapper = new CardEngineWrapper(engine);
@@ -335,7 +340,8 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
     let itemsWithSpoilers: string[] = ["The Soul", "Judgement", "Wraith"];
     let spoilerSources = [RNGSource.S_Soul, RNGSource.S_Judgement, RNGSource.S_Wraith];
     const lockedCards = analyzeOptions?.lockedCards || {};
-    function generateAnte( ante: number ) {
+
+    function generateAnte(ante: number) {
         engine.initUnlocks(ante, false);
         let burnerInstance = new Game(
             seed,
@@ -352,6 +358,42 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
         result.tags.push(engine.nextTag(ante).name);
         result.tags.push(engine.nextTag(ante).name);
         updateShowmanOwned(showmanIsLocked);
+
+        for (let i = 0; i < Math.min(settings.cardsPerAnte, 1000); i++) {
+            let key = `${ante}-${LOCATIONS.SHOP}-${i}`;
+            const lockCardId = `ante_${ante}_shop_${i}`;
+            if (lockedCards[lockCardId]) {
+                engine.lock(lockedCards[lockCardId].name);
+            }
+            let shopItem = engine.nextShopItem(ante);
+            let spoilerSource = engine.hasSpoilersMap[shopItem.item.name];
+            if (engine.hasSpoilers && spoilerSource) {
+                const joker: JokerData = engine.nextJoker(spoilerSource, ante, true);
+                result.queue.push(
+                    engineWrapper.makeGameCard(joker)
+                )
+            } else if (shopItem.type === Type.JOKER) {
+                result.queue.push(
+                    engineWrapper.makeGameCard(shopItem.jokerData)
+                )
+            } else {
+                result.queue.push(
+                    engineWrapper.makeGameCard(shopItem.item)
+                    // shopItem.item as Card
+                )
+            }
+            if (analyzeOptions && analyzeOptions?.showCardSpoilers) {
+                if (itemsWithSpoilers.includes(result.queue[i].name)) {
+                    // @ts-ignore
+                    result.queue[i] = Pack.PackCardToCard(engine.nextJoker(spoilerSources[itemsWithSpoilers.indexOf(result.queue[i].name)], ante, false), 'Joker')
+                }
+            }
+            if (analyzeOptions && analyzeOptions.buys[key]) {
+                engineWrapper.handleBuy(result.queue[i].name, "Card", updateShowmanOwned, analyzeOptions)
+            }
+
+        }
+
         let voucherKey = `${ante}-${LOCATIONS.VOUCHER}-0`;
         if (analyzeOptions?.buys && analyzeOptions.buys[voucherKey]) {
             let name = analyzeOptions.buys[voucherKey].name;
@@ -360,6 +402,7 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
                 burnerWrapper.handleBuy(name, "Voucher", updateShowmanOwned, analyzeOptions)
             }
         }
+
         for (let blind of Object.keys(result.blinds)) {
             if (analyzeOptions?.events) {
                 let currentEvents = analyzeOptions.events.filter((event: any) => event.ante === ante && event.blind === blind);
@@ -482,7 +525,8 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
                 cardsToGenerate: maxCards,
                 cardType: "Joker",
                 source: RNGSource.S_Judgement,
-                cards: []
+                cards: [],
+                hasStickers: false,
             },
             {
                 name: "buffoonPack",
@@ -584,7 +628,7 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
             "Standard": (source, ante) => engine.nextStandardCard(ante, source),
         }
         for (let source of miscCardSources) {
-            if(source.usesAnte === false && ante !== 1) {
+            if (source.usesAnte === false && ante !== 1) {
                 const savedResults = output.antes[1].miscCardSources.find(s => s.name === source.name);
                 if (savedResults) {
                     source.cards = savedResults.cards;
@@ -600,7 +644,7 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
                     source.soulable ?? source.hasStickers ?? false
                 )
                 let spoilerSource = engine.hasSpoilersMap[card.name];
-                if( engine.hasSpoilers && spoilerSource) {
+                if (engine.hasSpoilers && spoilerSource) {
                     card = engine.nextJoker(spoilerSource, ante, true)
                 }
                 let generatedCard = engineWrapper.makeGameCard(card);
@@ -614,13 +658,12 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
 
 
         // voucher queue
-        let queueDepth = 5
+        let queueDepth = 20
         // burnerInstance.nextVoucher(ante)
         result.voucherQueue = Array(queueDepth).fill(null).map(() => burnerInstance.nextVoucherSimple().name)
-        for(let i = 1; i < ante ; i++) {
+        for (let i = 1; i <= ante; i++) {
             burnerInstance.nextBoss(ante)
         }
-        burnerInstance.nextBoss(ante)
         result.bossQueue = Array(queueDepth).fill(null).map(() => burnerInstance.nextBoss(ante).name)
         burnerInstance.nextTag(ante)
         burnerInstance.nextTag(ante);
@@ -628,43 +671,10 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
 
 
 
-        for (let i = 0; i < Math.min(settings.cardsPerAnte, 1000); i++) {
-            let key = `${ante}-${LOCATIONS.SHOP}-${i}`;
-            const lockCardId = `ante_${ante}_shop_${i}`;
-            if (lockedCards[lockCardId]) {
-                engine.lock(lockedCards[lockCardId].name);
-            }
-            let shopItem = engine.nextShopItem(ante);
-            let spoilerSource = engine.hasSpoilersMap[shopItem.item.name];
-            if (engine.hasSpoilers && spoilerSource) {
-                const joker: JokerData = engine.nextJoker(spoilerSource, ante, true);
-                result.queue.push(
-                    engineWrapper.makeGameCard(joker)
-                )
-            } else if (shopItem.type === Type.JOKER) {
-                result.queue.push(
-                    engineWrapper.makeGameCard(shopItem.jokerData)
-                )
-            } else {
-                result.queue.push(
-                    engineWrapper.makeGameCard(shopItem.item)
-                    // shopItem.item as Card
-                )
-            }
-            if (analyzeOptions && analyzeOptions?.showCardSpoilers) {
-                if (itemsWithSpoilers.includes(result.queue[i].name)) {
-                    // @ts-ignore
-                    result.queue[i] = Pack.PackCardToCard(engine.nextJoker(spoilerSources[itemsWithSpoilers.indexOf(result.queue[i].name)], ante, false), 'Joker')
-                }
-            }
-            if (analyzeOptions && analyzeOptions.buys[key]) {
-                engineWrapper.handleBuy(result.queue[i].name, "Card", updateShowmanOwned, analyzeOptions)
-            }
-
-        }
         result.miscCardSources = miscCardSources
         return result;
     }
+
     for (let ante = 1; ante <= settings.antes; ante++) {
         output.antes[ante] = generateAnte(ante);
     }

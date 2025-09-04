@@ -1,25 +1,38 @@
-import {describe, test, expect, suite} from "vitest";
+import {describe, expect, suite, test} from "vitest";
 import {analyzeSeed} from "../src/modules/ImmolateWrapper";
-import {Game} from "../src/modules/balatrots/Game";
 import {Ante, SeedResultsContainer} from "../src/modules/ImmolateWrapper/CardEngines/Cards";
-import ResultsU8RJYV6N from "./U8RJYV6N.ver";
-import Results2K9H9HN from "./2K9H9HN.ver"
-import Results7LB2WVPK from "./7LB2WVPK.ver"
-import ResultsVNOMH111 from "./VNOMH111.ver"
+
+interface JSONSeedTest {
+    analyzeState: any;
+    options: any;
+    immolateResults: SeedResultsContainer;
+}
+function loadJSONFiles(){
+    // ./seedJson/*.json
+    // @ts-ignore
+    const files = import.meta.glob('./seedJson/*.json', {eager: true});
+    const tests: JSONSeedTest[] = [];
+    for (const path in files) {
+        const fileName = path.split('/').pop()?.replace('.json', '');
+        if (fileName) {
+            let temp = (files[path] as { default: JSONSeedTest }).default;
+            tests.push(temp);
+        }
+    }
+    return tests;
+}
+
+const files = loadJSONFiles()
+
 suite("Accuracy Panel", () => {
-    suite.each([
-        ["U8RJYV6N", ResultsU8RJYV6N],
-        ["U8RJYV6N ", ResultsU8RJYV6N],
-        ["2K9H9HN", Results2K9H9HN],
-        ["7LB2WVPK", Results7LB2WVPK],
-        ["VNOMH111",ResultsVNOMH111]
-    ])("Seed: %s", (seed, verifiedResults) => {
-        const SEED = seed;
-        const MaxAnte = 8;
-        const Deck = "Ghost Deck";
-        const Stake = "White Stake";
-        const Version = "10106";
-        const cardsPerAnte = 50;
+    suite.each(files)("Seed: $analyzeState.seed", ({analyzeState, immolateResults, options}: JSONSeedTest) => {
+        const SEED = analyzeState.seed;
+        const MaxAnte = analyzeState.antes;
+        const verifiedResults = immolateResults;
+        const Deck = analyzeState.deck;
+        const Stake = analyzeState.stake;
+        const Version = analyzeState.gameVersion;
+        const cardsPerAnte = analyzeState.cardsPerAnte;
         const results = analyzeSeed(
             {
                 seed: SEED,
@@ -29,22 +42,15 @@ suite("Accuracy Panel", () => {
                 antes: MaxAnte,
                 cardsPerAnte: cardsPerAnte
             },
-            {
-                buys: {},
-                sells: {},
-                showCardSpoilers: false,
-                unlocks: [...Game.OPTIONS],
-                events: [],
-                updates: []
-            }
+            options
         ) as SeedResultsContainer;
-        describe("Antes should match" ,() => {
+        describe("Ante Suite" ,() => {
             const verifiedAntes = Object.values(verifiedResults.antes);
             const generatedAntes = Object.values(results.antes);
             const tests = verifiedAntes.map((verified: Ante, index: number) => ({verified:verified, generated:generatedAntes[index]}))
             describe
                 .each(tests)
-                ("Verified Ante %$ should match generated Ante", ({verified, generated}) => {
+                ("Verified Ante %$ Antes should match %$ should match generated Ante", ({verified, generated}) => {
                     test("bosses should match", () => {
                         expect(generated.boss).toEqual(verified.boss);
                     })
@@ -60,6 +66,7 @@ suite("Accuracy Panel", () => {
                     test("Packs should match", () => {
                         expect(generated.blinds).toMatchObject(verified.blinds);
                     })
+
                     const miscQueues = verified.miscCardSources.map(( source, index) => ({v:source, g:generated.miscCardSources[index]}));
                     describe.each(miscQueues)
                     ("Misc Queue $v.name should match", ({v, g}) => {

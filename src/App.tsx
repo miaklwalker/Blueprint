@@ -14,6 +14,7 @@ import {useCardStore} from "./modules/state/store.ts";
 import {Blueprint} from "./components/blueprint/standardView";
 import {useToggle} from "@mantine/hooks";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
+import {useEffect} from "react";
 
 
 //TODO Add info to those pop overs
@@ -38,9 +39,22 @@ export const themeNames = Object.keys(themes) as KnownThemes[];
 
 export default function App() {
     const SeedResults = useCardStore(state => state.applicationState.analyzedResults);
+    const saveSeedDebug = useCardStore(state => state.downloadImmolateResults)
+
     const [theme, setTheme] = useToggle<KnownThemes>(
         Object.keys(themes) as KnownThemes[],
     );
+    useEffect(() => {
+        if(typeof window !== 'undefined'){
+            // @ts-ignore
+            if(!window.saveSeedDebug){
+                // @ts-ignore
+                window.saveSeedDebug = saveSeedDebug;
+            }
+        }
+    }, []);
+
+
     return (
         <MantineProvider defaultColorScheme={'dark'} theme={themes[theme]}>
             <QueryClientProvider client={queryClient}>

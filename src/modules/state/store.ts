@@ -222,6 +222,7 @@ export const useCardStore = create(
                         setSelectedAnte: (selectedAnte: number) => set((prev: InitialState) => {
                             prev.applicationState.selectedAnte = selectedAnte
                             prev.applicationState.selectedBlind = prev.applicationState.selectedAnte === 1 ? 'bigBlind' : 'smallBlind'
+                            prev.searchState.selectedSearchResult = null;
                         }, undefined, 'Global/SetSelectedAnte'),
                         setSelectedBlind: (selectedBlind: string) => set((prev: InitialState) => {
                             prev.applicationState.selectedBlind = selectedBlind
@@ -317,10 +318,7 @@ export const useCardStore = create(
                                 sells,
                                 lockedCards
                             }
-
-                            const immolateResults = analyzeSeed(analyzeState, options)
-                            console.debug(immolateResults)
-                            prev.applicationState.analyzedResults = immolateResults;
+                            prev.applicationState.analyzedResults = analyzeSeed(analyzeState, options);
                             prev.applicationState.hasSettingsChanged = false; // Reset flag after analyzing
                         }, undefined, 'Global/AnalyzeSeed'),
                         lockCard: (cardId: string, card: any) => set((prev: InitialState) => {
@@ -328,6 +326,40 @@ export const useCardStore = create(
                             prev.applicationState.hasSettingsChanged = true;
                             return prev;
                         }, undefined, 'Cards/LockCard'),
+
+                        downloadImmolateResults: () => {
+                            const analyzeState = get().immolateState;
+                            const buys = get().shoppingState.buys;
+                            const sells = get().shoppingState.sells;
+                            const showCardSpoilers = get().applicationState.showCardSpoilers;
+                            const unlocks = get().immolateState.selectedOptions;
+                            const events = get().eventState.events;
+                            const lockedCards = get().lockState.lockedCards;
+
+                            const options = {
+                                showCardSpoilers,
+                                unlocks,
+                                events,
+                                updates: [],
+                                buys,
+                                sells,
+                                lockedCards
+                            }
+                            const immolateResults = analyzeSeed(analyzeState, options)
+                            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify
+                                ({
+                                    analyzeState,
+                                    options,
+                                    immolateResults
+                                }, null, 2));
+                            const downloadAnchorNode = document.createElement('a');
+                            downloadAnchorNode.setAttribute("href", dataStr);
+                            const fileName = `${analyzeState.seed}.json`;
+                            downloadAnchorNode.setAttribute("download", fileName);
+                            document.body.appendChild(downloadAnchorNode); // required for firefox
+                            downloadAnchorNode.click();
+                            downloadAnchorNode.remove();
+                        },
 
                         unlockCard: (cardId: string) => set((prev: InitialState) => {
                             delete prev.lockState.lockedCards[cardId];

@@ -980,21 +980,33 @@ export class Game extends Lock {
         return cards;
     }
 
-    nextWheelOfFortuneEdition(): Edition {
+    nextEdition(source: string): Edition {
         let version = this.params.version;
         let rate = version === 10106 ? 5 : 4;
-        const poll = this.random(RandomQueueNames.R_Wheel_of_Fortune);
+        const poll = this.random(source);
         if (poll < 1.0 / rate) {
             // Burn function call
-            this.random(RandomQueueNames.R_Wheel_of_Fortune);
+            this.random(source);
             // Actual poll
-            const editionPoll = this.random(RandomQueueNames.R_Wheel_of_Fortune);
+            const editionPoll = this.random(source);
             if (editionPoll > 0.85) return Edition.POLYCHROME;
             if (editionPoll > 0.5) return Edition.HOLOGRAPHIC;
             return Edition.FOIL;
         } else {
             return Edition.NO_EDITION;
         }
+    }
+
+
+    pollEdition( source:string, mod )
+
+
+
+    nextWheelOfFortuneEdition(): Edition {
+        return this.nextEdition(RandomQueueNames.R_Wheel_of_Fortune);
+    }
+    nextAuraEdition(): Edition {
+        return this.nextEdition(RandomQueueNames.R_Aura);
     }
 
     // nextOrbitalTag(unlockedHands){

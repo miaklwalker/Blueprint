@@ -34,6 +34,7 @@ export enum RandomQueueNames {
     R_Sigil = "sigil",
     R_Ouija = "ouija",
     R_Wheel_of_Fortune = "wheel_of_fortune",
+    R_Aura = "aura",
     R_Gros_Michel = "gros_michel",
     R_Cavendish = "cavendish",
     R_Voucher = "Voucher",

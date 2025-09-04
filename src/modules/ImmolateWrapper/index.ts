@@ -684,8 +684,23 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
                 ],
                 "enhancements": "No Enhancement"
             };
-        })
-        console.log(result.wheelQueue)
+        });
+        result.auraQueue = Array(queueDepth).fill(null).map(() => {
+            return {
+                "name": "King of Clubs",
+                "type": "Standard",
+                "edition": engine.nextAuraEdition(),
+                "seal": "No Seal",
+                "rank": "King",
+                "suit": "Clubs",
+                "base": [
+                    "C",
+                    "_",
+                    "K"
+                ],
+                "enhancements": "No Enhancement",
+            }
+        });
 
         result.miscCardSources = miscCardSources
         return result;

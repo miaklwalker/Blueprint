@@ -371,6 +371,7 @@ export class Ante {
     bossQueue: string[] = [];
     tagsQueue: string[] = [];
     wheelQueue: Stringifies[] = [];
+    auraQueue: Stringifies[] = [];
 
     constructor(ante: number) {
         this.ante = ante;

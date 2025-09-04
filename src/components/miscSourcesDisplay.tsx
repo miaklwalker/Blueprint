@@ -11,14 +11,15 @@ import {GameCard} from "./Rendering/cards.tsx";
 import {Voucher} from "./Rendering/gameElements.tsx";
 import {Boss} from "./Rendering/gameElements.tsx";
 import {Tag} from "./Rendering/gameElements.tsx";
-import {Joker_Final} from "../modules/ImmolateWrapper/CardEngines/Cards.ts";
+import {Joker_Final, StandardCard_Final} from "../modules/ImmolateWrapper/CardEngines/Cards.ts";
 
-export default function MiscCardSourcesDisplay({miscSources, bossQueue, tagQueue, voucherQueue, wheelQueue }: {
+export default function MiscCardSourcesDisplay({miscSources, bossQueue, tagQueue, voucherQueue, wheelQueue, auraQueue }: {
     miscSources?: MiscCardSource[],
     bossQueue?: any[],
     tagQueue?: any[],
     voucherQueue?: any[]
     wheelQueue?: any[]
+    auraQueue?: any[]
 }) {
     if (!miscSources || Object.keys(miscSources).length === 0) {
         return (
@@ -254,7 +255,46 @@ export default function MiscCardSourcesDisplay({miscSources, bossQueue, tagQueue
                                         ))}
                                     </Carousel>
                                 </Box>
+                            )
+                        }
+                    </Accordion.Panel>
+                </Accordion.Item>
+                {/*    Wheel Queue*/}
+                <Accordion.Item key={'aura'} value={'aura'}>
+                    <Accordion.Control>
+                        <Group>
+                            <Text fw={500}>Aura</Text>
+                        </Group>
+                    </Accordion.Control>
+                    <Accordion.Panel>
+                        {
+                            "aura" === currentSource &&(
+                                <Box>
+                                    <Carousel
+                                        getEmblaApi={setEmbla}
+                                        type={'container'}
+                                        slideSize="90px"
+                                        slideGap={{base: 'xs'}}
+                                        withControls={false}
+                                        height={190}
+                                        emblaOptions={{
+                                            dragFree: true,
+                                            align:'start'
+                                        }}
 
+                                    >
+                                        {auraQueue?.map((card: any, i: number) => (
+                                            <Carousel.Slide key={i}>
+                                                <GameCard card={
+                                                    new StandardCard_Final({
+                                                        ...card,
+                                                        type: "Standard",
+                                                    })
+                                                }/>
+                                            </Carousel.Slide>
+                                        ))}
+                                    </Carousel>
+                                </Box>
                             )
                         }
                     </Accordion.Panel>

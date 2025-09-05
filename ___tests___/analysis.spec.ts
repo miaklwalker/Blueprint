@@ -74,6 +74,33 @@ suite("Accuracy Panel", () => {
                             expect(g.cards).toMatchObject(v.cards);
                         })
                     })
+                    describe("Wheel of Fortune", () => {
+                        const generatedQueue = generated.wheelQueue || [];
+                        const verifiedQueue = verified.wheelQueue || generatedQueue || [];
+                        const editions =
+                            generatedQueue.map(( item, index ) => ({g:item.edition, v:verifiedQueue[index].edition}))
+                        describe
+                            .each(editions)
+                            ("Wheel of fortune should edition should match", ({g,v}) => {
+                                test("edition should match", () => {
+                                    expect(g).toEqual(v);
+                                })
+                            })
+                    })
+                    describe("Aura", () => {
+                        const generatedQueue = generated.auraQueue || [];
+                        const verifiedQueue = verified.auraQueue || generatedQueue || [];
+                        const editions =
+                            generatedQueue.map(( item, index ) => ({g:item.edition, v:verifiedQueue[index].edition}))
+                        describe
+                            .each(editions)
+                            ("Aura should edition should match", ({g,v}) => {
+                                test("edition should match", () => {
+                                    expect(g).toEqual(v);
+                                })
+                            })
+                    })
+
                 })
         })
 

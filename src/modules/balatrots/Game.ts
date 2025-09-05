@@ -366,7 +366,6 @@ export class Game extends Lock {
         return rng.randint(min, max);
     }
 
-
     randchoice<T extends ItemImpl>(id: string, items: T[]): ItemImpl {
         if (!items || items.length === 0) {
             throw new Error('Items array cannot be empty');
@@ -421,6 +420,81 @@ export class Game extends Lock {
         }
 
         return items[idx - 1];
+    }
+
+    //function poll_edition(_key, _mod, _no_neg, _guaranteed)
+    //     _mod = _mod or 1
+    //     local edition_poll = pseudorandom(pseudoseed(_key or 'edition_generic'))
+    //     if _guaranteed then
+    //         if edition_poll > 1 - 0.003*25 and not _no_neg then
+    //             return {negative = true}
+    //         elseif edition_poll > 1 - 0.006*25 then
+    //             return {polychrome = true}
+    //         elseif edition_poll > 1 - 0.02*25 then
+    //             return {holo = true}
+    //         elseif edition_poll > 1 - 0.04*25 then
+    //             return {foil = true}
+    //         end
+    //     else
+    //         if edition_poll > 1 - 0.003*_mod and not _no_neg then
+    //             return {negative = true}
+    //         elseif edition_poll > 1 - 0.006*G.GAME.edition_rate*_mod then
+    //             return {polychrome = true}
+    //         elseif edition_poll > 1 - 0.02*G.GAME.edition_rate*_mod then
+    //             return {holo = true}
+    //         elseif edition_poll > 1 - 0.04*G.GAME.edition_rate*_mod then
+    //             return {foil = true}
+    //         end
+    //     end
+    //     return nil
+    // end
+
+
+    poll_edition(source: string, mod:number=1, noNeg: boolean=true, guaranteed: boolean = false): EditionItem{
+        let edition
+        const editionPoll = this.random(`${source}`);
+        const editionRate = this.isVoucherActive(Voucher.GLOW_UP) ? 4
+            : this.isVoucherActive(Voucher.HONE) ? 2 : 1;
+        if(guaranteed){
+            switch (true) {
+                case (editionPoll > 1 - 0.003*25 && !noNeg):
+                    edition = Edition.NEGATIVE;
+                    break;
+                case (editionPoll > 1 - 0.006*25):
+                    edition = Edition.POLYCHROME;
+                    break;
+                case (editionPoll > 1 - 0.02*25):
+                    edition = Edition.HOLOGRAPHIC;
+                    break;
+                case (editionPoll > 1 - 0.04*25):
+                    edition = Edition.FOIL;
+                    break;
+                default:
+                    edition = Edition.NO_EDITION;
+                    break;
+            }
+        }
+        else {
+            switch (true) {
+                case (editionPoll > 0.997 && !noNeg):
+                    edition = Edition.NEGATIVE;
+                    break;
+                case (editionPoll > 1 - 0.006 * editionRate * mod):
+                    edition = Edition.POLYCHROME;
+                    break;
+                case (editionPoll > 1 - 0.02 * editionRate * mod):
+                    edition = Edition.HOLOGRAPHIC;
+                    break;
+                case (editionPoll > 1 - 0.04 * editionRate * mod):
+                    edition = Edition.FOIL;
+                    break;
+                default:
+                    edition = Edition.NO_EDITION;
+                    break;
+            }
+        }
+        return new EditionItem(edition);
+
     }
 
     nextTarot(source: QueueNames, ante: number, soulable: boolean): ItemImpl {
@@ -488,14 +562,12 @@ export class Game extends Lock {
         }
 
         // Edition calculation
-        const editionRate = this.isVoucherActive(Voucher.GLOW_UP) ? 4
-            : this.isVoucherActive(Voucher.HONE) ? 2 : 1;
-        const editionPoll = this.random(`${RandomQueueNames.R_Joker_Edition}${source}${ante}`);
-        const edition = editionPoll > 0.997 ? Edition.NEGATIVE
-            : editionPoll > 1 - 0.006 * editionRate ? Edition.POLYCHROME
-                : editionPoll > 1 - 0.02 * editionRate ? Edition.HOLOGRAPHIC
-                    : editionPoll > 1 - 0.04 * editionRate ? Edition.FOIL
-                        : Edition.NO_EDITION;
+        const edition = this.poll_edition(
+            `${RandomQueueNames.R_Joker_Edition}${source}${ante}`,
+            1,
+            false,
+            false
+        ).name
 
         // Joker selection based on rarity and version
         let joker: JokerImpl;
@@ -980,33 +1052,29 @@ export class Game extends Lock {
         return cards;
     }
 
-    nextEdition(source: string): Edition {
+    nextEdition(source: string, guaranteed = false ): Edition {
         let version = this.params.version;
-        let rate = version === 10106 ? 5 : 4;
-        const poll = this.random(source);
-        if (poll < 1.0 / rate) {
-            // Burn function call
+        let rate = version !== 10106 ? 5 : 4;
+        if(this.random(source) < 1/rate || guaranteed){
             this.random(source);
-            // Actual poll
-            const editionPoll = this.random(source);
-            if (editionPoll > 0.85) return Edition.POLYCHROME;
-            if (editionPoll > 0.5) return Edition.HOLOGRAPHIC;
+            const poll = this.random(source);
+            if(poll > 0.85) return Edition.POLYCHROME;
+            if(poll > 0.5) return Edition.HOLOGRAPHIC;
             return Edition.FOIL;
-        } else {
-            return Edition.NO_EDITION;
         }
+        return Edition.NO_EDITION
     }
-
-
-    pollEdition( source:string, mod )
-
-
 
     nextWheelOfFortuneEdition(): Edition {
         return this.nextEdition(RandomQueueNames.R_Wheel_of_Fortune);
     }
     nextAuraEdition(): Edition {
-        return this.nextEdition(RandomQueueNames.R_Aura);
+        return this.poll_edition(
+            RandomQueueNames.R_Aura,
+            0,
+            true,
+            true
+        ).name
     }
 
     // nextOrbitalTag(unlockedHands){

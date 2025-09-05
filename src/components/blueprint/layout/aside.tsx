@@ -169,7 +169,6 @@ export function Aside({SeedResults}: { SeedResults: SeedResultsContainer | null 
     const bossesQueue = anteData?.bossQueue;
     const wheelQueue = anteData?.wheelQueue;
     const auraQueue = anteData?.auraQueue;
-    console.log(auraQueue)
     const buys = useCardStore(state => state.shoppingState.buys);
     const sells = useCardStore(state => state.shoppingState.sells);
     const transactionsCount = Object.keys(buys).length + Object.keys(sells).length;

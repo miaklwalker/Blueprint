@@ -341,6 +341,8 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
     let spoilerSources = [RNGSource.S_Soul, RNGSource.S_Judgement, RNGSource.S_Wraith];
     const lockedCards = analyzeOptions?.lockedCards || {};
 
+    let staticAnteQueues: {[key: string]: any[]} = {};
+
     function generateAnte(ante: number) {
         engine.initUnlocks(ante, false);
         let burnerInstance = new Game(
@@ -668,39 +670,67 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
         burnerInstance.nextTag(ante)
         burnerInstance.nextTag(ante);
         result.tagsQueue = Array(queueDepth).fill(null).map(() => burnerInstance.nextTag(ante).name)
+        if(staticAnteQueues["Wheel"]){
+            result.wheelQueue = staticAnteQueues["Wheel"];
+        }else{
+            result.wheelQueue = Array(queueDepth).fill(null).map(() => {
+                return {
+                    "name": "King of Clubs",
+                    "type": "Standard",
+                    "edition": engine.nextWheelOfFortuneEdition(ante),
+                    "seal": "No Seal",
+                    "rank": "King",
+                    "suit": "Clubs",
+                    "base": [
+                        "C",
+                        "_",
+                        "K"
+                    ],
+                    "enhancements": "No Enhancement"
+                };
+            });
+            staticAnteQueues["Wheel"] = result.wheelQueue;
+        }
 
-        result.wheelQueue = Array(queueDepth).fill(null).map(() => {
-            return {
-                "name": "King of Clubs",
-                "type": "Standard",
-                "edition": engine.nextWheelOfFortuneEdition(),
-                "seal": "No Seal",
-                "rank": "King",
-                "suit": "Clubs",
-                "base": [
-                    "C",
-                    "_",
-                    "K"
-                ],
-                "enhancements": "No Enhancement"
-            };
-        });
-        result.auraQueue = Array(queueDepth).fill(null).map(() => {
-            return {
-                "name": "King of Clubs",
-                "type": "Standard",
-                "edition": engine.nextAuraEdition(),
-                "seal": "No Seal",
-                "rank": "King",
-                "suit": "Clubs",
-                "base": [
-                    "C",
-                    "_",
-                    "K"
-                ],
-                "enhancements": "No Enhancement",
-            }
-        });
+        if(staticAnteQueues["Aura"]){
+            result.auraQueue = staticAnteQueues["Aura"];
+        } else{
+            result.auraQueue = Array(queueDepth).fill(null).map(() => {
+                return {
+                    "name": "King of Clubs",
+                    "type": "Standard",
+                    "edition": engine.nextAuraEdition(),
+                    "seal": "No Seal",
+                    "rank": "King",
+                    "suit": "Clubs",
+                    "base": [
+                        "C",
+                        "_",
+                        "K"
+                    ],
+                    "enhancements": "No Enhancement",
+                }
+            });
+            staticAnteQueues["Aura"] = result.auraQueue;
+        }
+
+        // result.auraQueue = Array(queueDepth).fill(null).map(() => {
+        //     return {
+        //         "name": "King of Clubs",
+        //         "type": "Standard",
+        //         "edition": engine.nextAuraEdition(ante),
+        //         "seal": "No Seal",
+        //         "rank": "King",
+        //         "suit": "Clubs",
+        //         "base": [
+        //             "C",
+        //             "_",
+        //             "K"
+        //         ],
+        //         "enhancements": "No Enhancement",
+        //     }
+        // });
+
 
         result.miscCardSources = miscCardSources
         return result;
@@ -709,6 +739,8 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
     for (let ante = 1; ante <= settings.antes; ante++) {
         output.antes[ante] = generateAnte(ante);
     }
+
+    console.log("Final Analysis: ", output);
 
     return output;
 }

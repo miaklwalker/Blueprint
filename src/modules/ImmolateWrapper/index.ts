@@ -304,7 +304,158 @@ export interface AnalyzeOptions {
     maxMiscCardSource?: number
     lockedCards?: any
 }
-
+const getMiscCardSources: (maxCards: number)=>MiscCardSource[] = (maxCards: number) => ([
+    {
+        name: "riffRaff",
+        cardsToGenerate: 6,
+        cardType: "Joker",
+        source: RNGSource.S_Riff_Raff,
+        hasStickers: false,
+        soulable: false,
+        cards: []
+    },
+    {
+        name: "uncommonTag",
+        cardsToGenerate: maxCards,
+        cardType: "Joker",
+        source: RNGSource.S_Uncommon_Tag,
+        cards: []
+    },
+    {
+        name: "rareTag",
+        cardsToGenerate: maxCards,
+        cardType: "Joker",
+        source: RNGSource.S_Rare_Tag,
+        cards: []
+    },
+    {
+        name: "topUpTag",
+        cardsToGenerate: maxCards,
+        cardType: "Joker",
+        source: RNGSource.S_Top_Up,
+        hasStickers: false,
+        cards: []
+    },
+    {
+        name: "arcanaPack",
+        cardsToGenerate: maxCards,
+        cardType: "Tarot",
+        source: RNGSource.S_Arcana,
+        soulable: true,
+        hasStickers: true,
+        cards: []
+    },
+    {
+        name: "emperor",
+        cardsToGenerate: maxCards,
+        cardType: "Tarot",
+        source: RNGSource.S_Emperor,
+        cards: []
+    },
+    {
+        name: "vagabond",
+        cardsToGenerate: maxCards,
+        cardType: "Tarot",
+        source: RNGSource.S_Vagabond,
+        cards: []
+    },
+    {
+        name: "purpleSeal and 8 Ball",
+        cardsToGenerate: maxCards,
+        cardType: "Tarot",
+        source: RNGSource.S_Purple_Seal,
+        cards: []
+    },
+    {
+        name: "superposition",
+        cardsToGenerate: maxCards,
+        cardType: "Tarot",
+        source: RNGSource.S_Superposition,
+        cards: [],
+        hasStickers: false,
+    },
+    {
+        name: "judgement",
+        cardsToGenerate: maxCards,
+        cardType: "Joker",
+        source: RNGSource.S_Judgement,
+        cards: [],
+        hasStickers: false,
+    },
+    {
+        name: "buffoonPack",
+        cardsToGenerate: maxCards,
+        cardType: "Joker",
+        source: RNGSource.S_Buffoon,
+        cards: [],
+        hasStickers: true,
+    },
+    {
+        name: "wraith",
+        cardsToGenerate: maxCards,
+        cardType: "Joker",
+        source: RNGSource.S_Wraith,
+        hasStickers: false,
+        cards: []
+    },
+    {
+        name: "highPriestess",
+        cardsToGenerate: maxCards,
+        cardType: "Planet",
+        source: RNGSource.S_High_Priestess,
+        cards: []
+    },
+    {
+        name: "celestialPack",
+        cardsToGenerate: maxCards,
+        cardType: "Planet",
+        source: RNGSource.S_Celestial,
+        cards: []
+    },
+    {
+        name: 'spectralPack',
+        cardsToGenerate: maxCards,
+        cardType: "Spectral",
+        source: RNGSource.S_Spectral,
+        cards: [],
+        soulable: true,
+        hasStickers: true,
+    },
+    {
+        name: "seance",
+        cardsToGenerate: maxCards,
+        cardType: "Spectral",
+        source: RNGSource.S_Seance,
+        cards: [],
+        soulable: false,
+        hasStickers: false,
+    },
+    {
+        name: "sixthSense",
+        cardsToGenerate: maxCards,
+        cardType: "Spectral",
+        source: RNGSource.S_Sixth_Sense,
+        cards: [],
+        soulable: false,
+        hasStickers: false,
+    },
+    {
+        name: "certificate",
+        cardsToGenerate: maxCards * 3,
+        cardType: "Standard",
+        source: RandomQueueNames.R_Cert,
+        cards: [],
+        usesAnte: false,
+    },
+    {
+        name: "standardPack",
+        cardsToGenerate: maxCards,
+        cardType: "Standard",
+        source: RandomQueueNames.R_Standard_Edition,
+        cards: [],
+        hasStickers: false,
+    },
+]);
 export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOptions) {
     const seed = settings?.seed?.toUpperCase()?.replace(/0/g, 'O')?.trim();
 
@@ -452,158 +603,7 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
             }
         }
         const maxCards = analyzeOptions?.maxMiscCardSource ?? 15
-        const miscCardSources: MiscCardSource[] = [
-            {
-                name: "riffRaff",
-                cardsToGenerate: 6,
-                cardType: "Joker",
-                source: RNGSource.S_Riff_Raff,
-                hasStickers: false,
-                soulable: false,
-                cards: []
-            },
-            {
-                name: "uncommonTag",
-                cardsToGenerate: maxCards,
-                cardType: "Joker",
-                source: RNGSource.S_Uncommon_Tag,
-                cards: []
-            },
-            {
-                name: "rareTag",
-                cardsToGenerate: maxCards,
-                cardType: "Joker",
-                source: RNGSource.S_Rare_Tag,
-                cards: []
-            },
-            {
-                name: "topUpTag",
-                cardsToGenerate: maxCards,
-                cardType: "Joker",
-                source: RNGSource.S_Top_Up,
-                hasStickers: false,
-                cards: []
-            },
-            {
-                name: "arcanaPack",
-                cardsToGenerate: maxCards,
-                cardType: "Tarot",
-                source: RNGSource.S_Arcana,
-                soulable: true,
-                hasStickers: true,
-                cards: []
-            },
-            {
-                name: "emperor",
-                cardsToGenerate: maxCards,
-                cardType: "Tarot",
-                source: RNGSource.S_Emperor,
-                cards: []
-            },
-            {
-                name: "vagabond",
-                cardsToGenerate: maxCards,
-                cardType: "Tarot",
-                source: RNGSource.S_Vagabond,
-                cards: []
-            },
-            {
-                name: "purpleSeal and 8 Ball",
-                cardsToGenerate: maxCards,
-                cardType: "Tarot",
-                source: RNGSource.S_Purple_Seal,
-                cards: []
-            },
-            {
-                name: "superposition",
-                cardsToGenerate: maxCards,
-                cardType: "Tarot",
-                source: RNGSource.S_Superposition,
-                cards: [],
-                hasStickers: false,
-            },
-            {
-                name: "judgement",
-                cardsToGenerate: maxCards,
-                cardType: "Joker",
-                source: RNGSource.S_Judgement,
-                cards: [],
-                hasStickers: false,
-            },
-            {
-                name: "buffoonPack",
-                cardsToGenerate: maxCards,
-                cardType: "Joker",
-                source: RNGSource.S_Buffoon,
-                cards: [],
-                hasStickers: true,
-            },
-            {
-                name: "wraith",
-                cardsToGenerate: maxCards,
-                cardType: "Joker",
-                source: RNGSource.S_Wraith,
-                hasStickers: false,
-                cards: []
-            },
-            {
-                name: "highPriestess",
-                cardsToGenerate: maxCards,
-                cardType: "Planet",
-                source: RNGSource.S_High_Priestess,
-                cards: []
-            },
-            {
-                name: "celestialPack",
-                cardsToGenerate: maxCards,
-                cardType: "Planet",
-                source: RNGSource.S_Celestial,
-                cards: []
-            },
-            {
-                name: 'spectralPack',
-                cardsToGenerate: maxCards,
-                cardType: "Spectral",
-                source: RNGSource.S_Spectral,
-                cards: [],
-                soulable: true,
-                hasStickers: true,
-            },
-            {
-                name: "seance",
-                cardsToGenerate: maxCards,
-                cardType: "Spectral",
-                source: RNGSource.S_Seance,
-                cards: [],
-                soulable: false,
-                hasStickers: false,
-            },
-            {
-                name: "sixthSense",
-                cardsToGenerate: maxCards,
-                cardType: "Spectral",
-                source: RNGSource.S_Sixth_Sense,
-                cards: [],
-                soulable: false,
-                hasStickers: false,
-            },
-            {
-                name: "certificate",
-                cardsToGenerate: maxCards * 3,
-                cardType: "Standard",
-                source: RandomQueueNames.R_Cert,
-                cards: [],
-                usesAnte: false,
-            },
-            {
-                name: "standardPack",
-                cardsToGenerate: maxCards,
-                cardType: "Standard",
-                source: RandomQueueNames.R_Standard_Edition,
-                cards: [],
-                hasStickers: false,
-            },
-        ];
+        const miscCardSources = getMiscCardSources(maxCards);
 
         const updates = analyzeOptions?.updates;
         if (updates) {
@@ -672,12 +672,13 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
         result.tagsQueue = Array(queueDepth).fill(null).map(() => burnerInstance.nextTag(ante).name)
         if(staticAnteQueues["Wheel"]){
             result.wheelQueue = staticAnteQueues["Wheel"];
-        }else{
+        }
+        else{
             result.wheelQueue = Array(queueDepth).fill(null).map(() => {
                 return {
                     "name": "King of Clubs",
                     "type": "Standard",
-                    "edition": engine.nextWheelOfFortuneEdition(ante),
+                    "edition": engine.nextWheelOfFortuneEdition(),
                     "seal": "No Seal",
                     "rank": "King",
                     "suit": "Clubs",
@@ -694,7 +695,8 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
 
         if(staticAnteQueues["Aura"]){
             result.auraQueue = staticAnteQueues["Aura"];
-        } else{
+        }
+        else{
             result.auraQueue = Array(queueDepth).fill(null).map(() => {
                 return {
                     "name": "King of Clubs",
@@ -713,25 +715,6 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
             });
             staticAnteQueues["Aura"] = result.auraQueue;
         }
-
-        // result.auraQueue = Array(queueDepth).fill(null).map(() => {
-        //     return {
-        //         "name": "King of Clubs",
-        //         "type": "Standard",
-        //         "edition": engine.nextAuraEdition(ante),
-        //         "seal": "No Seal",
-        //         "rank": "King",
-        //         "suit": "Clubs",
-        //         "base": [
-        //             "C",
-        //             "_",
-        //             "K"
-        //         ],
-        //         "enhancements": "No Enhancement",
-        //     }
-        // });
-
-
         result.miscCardSources = miscCardSources
         return result;
     }

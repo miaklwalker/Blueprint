@@ -363,7 +363,7 @@ const CustomDetails: CustomDetailsType  = {
                 <Stack>
                     <Text>
                         {
-                            ante.miscCardSources.find(({name}) => name === 'buffoonPack')?.cards?.slice(0, 5).map(({name}: any) => name).join(', ')
+                            ante.miscCardSources.find(({name}) => name === 'buffoonPack')?.cards?.slice(0, 4).map(({name}: any) => name).join(', ')
                         }
                     </Text>
                     <Button onClick={() => navigateToMiscSource('buffoonPack')}>

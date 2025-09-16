@@ -40,6 +40,8 @@ export interface MiscCardSource {
     soulable?: boolean,
     cards: PackCard[]
     usesAnte?: boolean | undefined | null;
+    beforeGeneration?: ((engine: Game) => void) | undefined;
+    afterGeneration?: ((engine: Game) => void) | undefined;
 }
 
 export interface CardEngine {
@@ -304,7 +306,9 @@ export interface AnalyzeOptions {
     maxMiscCardSource?: number
     lockedCards?: any
 }
-const getMiscCardSources: (maxCards: number)=>MiscCardSource[] = (maxCards: number) => ([
+const getMiscCardSources: (maxCards: number)=>MiscCardSource[] = (maxCards: number) => {
+    let state: {[key: string]: boolean} = {};
+    return ([
     {
         name: "riffRaff",
         cardsToGenerate: 6,
@@ -312,7 +316,16 @@ const getMiscCardSources: (maxCards: number)=>MiscCardSource[] = (maxCards: numb
         source: RNGSource.S_Riff_Raff,
         hasStickers: false,
         soulable: false,
-        cards: []
+        cards: [],
+        beforeGeneration: (engine: Game) => {
+            state["riffRaff"] = engine.isLocked("Riff-raff");
+            engine.lock("Riff-raff");
+        },
+        afterGeneration: (engine: Game) => {
+            if (!state["riffRaff"]) {
+                engine.unlock("Riff-raff");
+            }
+        }
     },
     {
         name: "uncommonTag",
@@ -455,7 +468,7 @@ const getMiscCardSources: (maxCards: number)=>MiscCardSource[] = (maxCards: numb
         cards: [],
         hasStickers: false,
     },
-]);
+])};
 export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOptions) {
     const seed = settings?.seed?.toUpperCase()?.replace(/0/g, 'O')?.trim();
 
@@ -637,6 +650,9 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
                 }
                 continue;
             }
+            if (source.beforeGeneration) {
+                source.beforeGeneration(engine);
+            }
             for (let i = 0; i < source.cardsToGenerate; i++) {
                 let key = `${ante}-${source.name}-${i}`;
                 let generator = generators[source.cardType];
@@ -655,6 +671,9 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
                 }
                 source.cards.push(generatedCard as unknown as PackCard);
 
+            }
+            if (source.afterGeneration) {
+                source.afterGeneration(engine);
             }
         }
 

@@ -25,6 +25,7 @@ export interface InitialState {
         asideOpen: boolean;
         selectOptionsModalOpen: boolean;
         showCardSpoilers: boolean;
+        useCardPeek: boolean;
         autoBuyPacks: boolean;
         autoBuyVouchers: boolean;
         miscSource: string;
@@ -73,6 +74,7 @@ const initialState: InitialState = {
         asideOpen: false,
         selectOptionsModalOpen: false,
         showCardSpoilers: false,
+        useCardPeek: true,
         autoBuyPacks: true,
         autoBuyVouchers: true,
         miscSource: 'riffRaff',
@@ -179,6 +181,9 @@ export const useCardStore = create(
                             prev.applicationState.hasSettingsChanged = true;
                             // prev.applicationState.start = false;
                         }, undefined, 'Global/SetDeck'),
+                        setUseCardPeek: (useCardPeek: boolean) => set((prev: InitialState) => {
+                            prev.applicationState.useCardPeek = useCardPeek
+                        }, undefined, 'Global/SetCardPeek'),
                         setCardsPerAnte: (cardsPerAnte: number) => set((prev: InitialState) => {
                             prev.immolateState.cardsPerAnte = cardsPerAnte
                             prev.applicationState.hasSettingsChanged = true;

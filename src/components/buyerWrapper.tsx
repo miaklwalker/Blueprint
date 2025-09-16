@@ -27,9 +27,11 @@ export function BuyWrapper({children, bottomOffset, metaData, horizontal = false
     const lockCard = useCardStore(state => state.lockCard);
     const unlockCard = useCardStore(state => state.unlockCard);
     const lockedCards = useCardStore(state => state.lockState.lockedCards);
+    const useCardPeek = useCardStore(state => state.applicationState.useCardPeek);
     const cardId = `ante_${metaData?.ante}_${metaData?.location?.toLowerCase()}_${metaData?.index}`
     const isLocked = cardId in lockedCards;
     const handlers = useLongPress(()=>{
+        if(!useCardPeek) return;
         if (isLocked) {
             unlockCard(cardId);
             analyzeSeed();

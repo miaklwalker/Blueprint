@@ -38,6 +38,10 @@ export default function NavBar({ themeName , setTheme }: { themeName: string, se
     const analyzeState = useCardStore(state => state.immolateState);
     const {seed, deck, stake, gameVersion: version, antes, cardsPerAnte} = analyzeState;
     const showCardSpoilers = useCardStore(state => state.applicationState.showCardSpoilers);
+    const useCardPeek = useCardStore(state => state.applicationState.useCardPeek);
+    const setUseCardPeek = useCardStore(state => state.setUseCardPeek);
+
+
     const setSeed = useCardStore(state => state.setSeed);
     const setDeck = useCardStore(state => state.setDeck);
     const setStake = useCardStore(state => state.setStake);
@@ -200,7 +204,7 @@ export default function NavBar({ themeName , setTheme }: { themeName: string, se
                             onClick={() => setCardsPerAnte(cardsPerAnte + 50)}>+50</Button>
                     <Button variant="default" c={'blue'} onClick={() => setCardsPerAnte(1000)}>1000</Button>
                 </Button.Group>
-                <Group>
+                <Group justify={'space-between'}>
                     <Box>
                         <Text mb={0} fz={'xs'}>Show Joker Spoilers</Text>
                         <Tooltip label="Cards that give jokers, are replaced with the joker the card would give."
@@ -211,6 +215,17 @@ export default function NavBar({ themeName , setTheme }: { themeName: string, se
                                 thumbIcon={showCardSpoilers ? (<IconJoker color={'black'}/>) : (
                                     <IconPlayCard color={'black'}/>)}
                                 onChange={() => setShowCardSpoilers(!showCardSpoilers)}
+                            />
+                        </Tooltip>
+                    </Box>
+                    <Box>
+                        <Text mb={0} fz={'xs'}>Quick Reroll</Text>
+                        <Tooltip label="Long pressing a card in the shop queue, will reroll that card."
+                                 refProp="rootRef">
+                            <Switch
+                                size={'xl'}
+                                checked={useCardPeek}
+                                onChange={() => setUseCardPeek(!useCardPeek)}
                             />
                         </Tooltip>
                     </Box>

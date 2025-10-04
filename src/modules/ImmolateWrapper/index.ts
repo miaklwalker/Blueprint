@@ -219,6 +219,7 @@ export class CardEngineWrapper implements EngineWrapper {
             output += `==Ante ${ante}==\n`;
             output += `Boss: ${details.boss}\n`;
             output += `Tags: ${details.tags.join(', ')}\n`
+            output += `Voucher: ${details.voucher}\n`
             output += `Shop Queue: \n`
             let count = 0;
             for (let i = 0; i < details.queue.length; i++) {

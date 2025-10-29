@@ -578,7 +578,7 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
                     engine.unlock(event.name)
                 })
             }
-            if (ante === 1 && blind === 'smallBlind') {
+            if (ante <= 1 && blind === 'smallBlind') {
                 continue;
             }
             const sellKey = `${ante}-${blind}`;
@@ -739,10 +739,16 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
         return result;
     }
 
+
     for (let ante = 1; ante <= settings.antes; ante++) {
         output.antes[ante] = generateAnte(ante);
     }
-
+    try{
+        output.antes[0]=generateAnte(0)
+        output.antes[0].boss = output.antes[1].boss;
+    } catch (e) {
+        console.error("Error generating ante 0:", e);
+    }
     console.log("Final Analysis: ", output);
 
     return output;

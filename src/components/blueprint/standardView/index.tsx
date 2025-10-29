@@ -276,7 +276,7 @@ const CustomDetails: CustomDetailsType  = {
         }
     },
     "Voucher Tag": {
-        renderer: (ante: Ante) => {
+        renderer: (ante: Ante,  navigateToMiscSource: any) => {
             return (
                 <Stack>
                     <Text>
@@ -284,6 +284,9 @@ const CustomDetails: CustomDetailsType  = {
                             ante.voucherQueue[0]
                         }
                     </Text>
+                    <Button onClick={() => navigateToMiscSource('Vouchers')}>
+                        More Info
+                    </Button>
                 </Stack>
 
             )
@@ -550,7 +553,7 @@ export function Blueprint({SeedResults,theme, setTheme}: { SeedResults: SeedResu
     const { data: supporters } = useQuery({
         queryKey:['supporters'],
         queryFn: async () => {
-            const response = await fetch('https://fitting-briefly-lion.ngrok-free.app/supporters',{
+            const response = await fetch('https://ttyyetpmvt.a.pinggy.link/supporters',{
                 method: 'POST',
             });
             if (!response.ok) {

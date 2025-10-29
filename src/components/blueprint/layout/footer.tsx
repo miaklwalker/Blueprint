@@ -10,9 +10,11 @@ import {
     Text
 } from "@mantine/core";
 import {IconCoffee, IconHeart} from "@tabler/icons-react";
+import ShinyText from "../../shinyText/shinyText.tsx";
 
 
-export default function Footer({ supporters } :{ supporters?: {name:string}[] }) {
+export default function Footer({ supporters } :{ supporters?: {name:string, subscription: boolean}[] }) {
+    console.log(supporters);
     return (
         <AppShell.Footer p={'xs'}>
             <Center w={'100%'}>
@@ -42,9 +44,22 @@ export default function Footer({ supporters } :{ supporters?: {name:string}[] })
                             </Text>
                         </HoverCardTarget>
                         <HoverCardDropdown>
-                            {supporters?.length ? supporters.map((s, i) => (
-                                <Text key={i} fz={'xs'}>{s.name}</Text>
-                            )) : <Text fz={'xs'}>No supporters yet</Text>}
+                            {
+                                supporters?.length ?
+                                    supporters
+                                        .sort((a, b) => {
+                                            if (a.subscription && !b.subscription) return -1;
+                                            if (!a.subscription && b.subscription) return 1;
+                                            return 0;
+                                        })
+                                        .map((s, i) => {
+                                        if(s.subscription){
+                                            return <Text key={i} fz={'sm'}><ShinyText  text={s.name} speed={3}/></Text>
+                                        }else{
+                                            return <Text key={i} fz={'sm'}>{s.name}</Text>
+                                        }
+                                    })
+                                    : <Text fz={'xs'}>No supporters yet</Text>}
                         </HoverCardDropdown>
                     </HoverCard >
                 </Flex>

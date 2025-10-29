@@ -23,6 +23,54 @@ export const consumablesFaces: any = [
         "animated" : true
     },
 ]
+export const boosterPacks: any = [
+    { "name" : "Arcana Pack", "pos" : { "x": 0, "y": 0 } },
+    { "name" : "Arcana Pack two", "pos" : { "x": 1, "y": 0 } },
+    { "name" : "Arcana Pack three", "pos" : { "x": 2, "y": 0 } },
+    { "name" : "Arcana Pack four", "pos" : { "x": 3, "y": 0 } },
+
+    { "name" : "Celestial Pack", "pos" : { "x": 0, "y": 1 } },
+    { "name" : "Celestial Pack two", "pos" : { "x": 1, "y": 1 } },
+    { "name" : "Celestial Pack three", "pos" : { "x": 2, "y": 1 } },
+    { "name" : "Celestial Pack four", "pos" : { "x": 3, "y": 1 } },
+
+    { "name" : "Jumbo Arcana Pack", "pos" : { "x": 0, "y": 2 } },
+    { "name" : "Jumbo Arcana Pack two", "pos" : { "x": 1, "y": 2 } },
+    { "name" : "Mega Arcana Pack", "pos" : { "x": 2, "y": 2 } },
+    { "name" : "Mega Arcana Pack two", "pos" : { "x": 3, "y": 2 } },
+
+    { "name" : "Jumbo Celestial Pack", "pos" : { "x": 0, "y": 3 } },
+    { "name" : "Jumbo Celestial Pack two", "pos" : { "x": 1, "y": 3 } },
+    { "name" : "Mega Celestial Pack", "pos" : { "x": 2, "y": 3 } },
+    { "name" : "Mega Celestial Pack two", "pos" : { "x": 3, "y": 3 } },
+
+    { "name" : "Spectral Pack", "pos" : { "x": 0, "y": 4 } },
+    { "name" : "Spectral Pack two", "pos" : { "x": 1, "y": 4 } },
+    { "name" : "Jumbo Spectral Pack", "pos" : { "x": 2, "y": 4 } },
+    { "name" : "Mega Spectral Pack", "pos" : { "x": 3, "y": 4 } },
+
+    { "name" : "blank", "pos" : { "x": 0, "y": 5 } },
+    { "name" : "blank", "pos" : { "x": 1, "y": 5 } },
+    { "name" : "blank", "pos" : { "x": 2, "y": 5 } },
+    { "name" : "blank", "pos" : { "x": 3, "y": 5 } },
+
+    { "name" : "Standard Pack", "pos" : { "x": 0, "y": 6 } },
+    { "name" : "Standard Pack two", "pos" : { "x": 1, "y": 6 } },
+    { "name" : "Standard Pack three", "pos" : { "x": 2, "y": 6 } },
+    { "name" : "Standard Pack four", "pos" : { "x": 3, "y": 6 } },
+
+    { "name" : "Jumbo Standard Pack", "pos" : { "x": 0, "y": 7 } },
+    { "name" : "Jumbo Standard Pack two", "pos" : { "x": 1, "y": 7 } },
+    { "name" : "Mega Standard Pack", "pos" : { "x": 2, "y": 7 } },
+    { "name" : "Mega Standard Pack two", "pos" : { "x": 3, "y": 7 } },
+
+    { "name" : "Buffoon Pack", "pos" : { "x": 0, "y": 8 } },
+    { "name" : "Buffoon Pack two", "pos" : { "x": 1, "y": 8 } },
+    { "name" : "Jumbo Buffoon Pack", "pos" : { "x": 2, "y": 8 } },
+    { "name" : "Mega Buffoon Pack", "pos" : { "x": 3, "y": 8 } },
+
+
+]
 export const tarotsAndPlanets: any = [
     { "name": "The Fool", "pos": { "x": 0, "y": 0 } }, { "name": "The Magician", "pos": { "x": 1, "y": 0 } }, { "name": "The High Priestess", "pos": { "x": 2, "y": 0 } }, { "name": "The Empress", "pos": { "x": 3, "y": 0 } }, { "name": "The Emperor", "pos": { "x": 4, "y": 0 } }, { "name": "The Hierophant", "pos": { "x": 5, "y": 0 } }, { "name": "The Lovers", "pos": { "x": 6, "y": 0 } }, { "name": "The Chariot", "pos": { "x": 7, "y": 0 } }, { "name": "Justice", "pos": { "x": 8, "y": 0 } }, { "name": "The Hermit", "pos": { "x": 9, "y": 0 } }, { "name": "The Wheel of Fortune", "pos": { "x": 0, "y": 1 } }, { "name": "Strength", "pos": { "x": 1, "y": 1 } }, { "name": "The Hanged Man", "pos": { "x": 2, "y": 1 } }, { "name": "Death", "pos": { "x": 3, "y": 1 } }, { "name": "Temperance", "pos": { "x": 4, "y": 1 } }, { "name": "The Devil", "pos": { "x": 5, "y": 1 } }, { "name": "The Tower", "pos": { "x": 6, "y": 1 } }, { "name": "The Star", "pos": { "x": 7, "y": 1 } }, { "name": "The Moon", "pos": { "x": 8, "y": 1 } }, { "name": "The Sun", "pos": { "x": 9, "y": 1 } }, { "name": "Judgement", "pos": { "x": 0, "y": 2 } }, { "name": "The World", "pos": { "x": 1, "y": 2 } }, { "name": "Mercury", "pos": { "x": 0, "y": 3 } }, { "name": "Venus", "pos": { "x": 1, "y": 3 } }, { "name": "Earth", "pos": { "x": 2, "y": 3 } }, { "name": "Mars", "pos": { "x": 3, "y": 3 } }, { "name": "Jupiter", "pos": { "x": 4, "y": 3 } }, { "name": "Saturn", "pos": { "x": 5, "y": 3 } }, { "name": "Uranus", "pos": { "x": 6, "y": 3 } }, { "name": "Neptune", "pos": { "x": 7, "y": 3 } }, { "name": "Pluto", "pos": { "x": 8, "y": 3 } }, { "name": "Planet X", "pos": { "x": 9, "y": 2 } }, { "name": "Ceres", "pos": { "x": 8, "y": 2 } }, { "name": "Eris", "pos": { "x": 3, "y": 2 } }, { "name": "Familiar", "pos": { "x": 0, "y": 4 } }, { "name": "Grim", "pos": { "x": 1, "y": 4 } }, { "name": "Incantation", "pos": { "x": 2, "y": 4 } }, { "name": "Talisman", "pos": { "x": 3, "y": 4 } }, { "name": "Aura", "pos": { "x": 4, "y": 4 } }, { "name": "Wraith", "pos": { "x": 5, "y": 4 } }, { "name": "Sigil", "pos": { "x": 6, "y": 4 } }, { "name": "Ouija", "pos": { "x": 7, "y": 4 } }, { "name": "Ectoplasm", "pos": { "x": 8, "y": 4 } }, { "name": "Immolate", "pos": { "x": 9, "y": 4 } }, { "name": "Ankh", "pos": { "x": 0, "y": 5 } }, { "name": "Deja Vu", "pos": { "x": 1, "y": 5 } }, { "name": "Hex", "pos": { "x": 2, "y": 5 } }, { "name": "Trance", "pos": { "x": 3, "y": 5 } }, { "name": "Medium", "pos": { "x": 4, "y": 5 } }, { "name": "Cryptid", "pos": { "x": 5, "y": 5 } }, { "name": "The Soul", "pos": { "x": 2, "y": 2 } }, { "name": "Black Hole", "pos": { "x": 9, "y": 3 } }
 ];

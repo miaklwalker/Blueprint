@@ -32,30 +32,30 @@ export function EventsPanel() {
     const clearEvents = useCardStore(state => state.clearEvents);
 
     const blindOptions = [
-        { value: "smallBlind", label: "Small Blind" },
-        { value: "bigBlind", label: "Big Blind" },
-        { value: "bossBlind", label: "Boss Blind" }
+        {value: "smallBlind", label: "Small Blind"},
+        {value: "bigBlind", label: "Big Blind"},
+        {value: "bossBlind", label: "Boss Blind"}
     ];
 
     // Track local state for each card's ante and blind selection
     const [selections, setSelections] = useState<{ [key: string]: { ante: string, blind: string } }>(
         EVENT_UNLOCKS.reduce((acc, event) => ({
             ...acc,
-            [event.name]: { ante: "1", blind: "bigBlind" }
+            [event.name]: {ante: "1", blind: "bigBlind"}
         }), {})
     );
 
     const handleAnteChange = (cardName: string, value: string) => {
         setSelections(prev => ({
             ...prev,
-            [cardName]: { ...prev[cardName], ante: value }
+            [cardName]: {...prev[cardName], ante: value}
         }));
     };
 
     const handleBlindChange = (cardName: string, value: string) => {
         setSelections(prev => ({
             ...prev,
-            [cardName]: { ...prev[cardName], blind: value }
+            [cardName]: {...prev[cardName], blind: value}
         }));
     };
 
@@ -68,7 +68,7 @@ export function EventsPanel() {
     };
 
     const toggleEvent = (cardName: string) => {
-        const { ante, blind } = selections[cardName];
+        const {ante, blind} = selections[cardName];
         const isAlreadyTracked = isEventTracked(cardName, ante, blind);
 
         if (isAlreadyTracked) {
@@ -104,7 +104,7 @@ export function EventsPanel() {
 
             <Grid>
                 {EVENT_UNLOCKS.map((event) => {
-                    const { ante, blind } = selections[event.name];
+                    const {ante, blind} = selections[event.name];
                     const isTracked = isEventTracked(event.name, ante, blind);
 
                     return (
@@ -112,7 +112,7 @@ export function EventsPanel() {
                             <Card withBorder p="md" radius="md">
                                 <Group justify="space-between" mb="xs">
                                     <Group>
-                                        <IconCalendarEvent size={20} />
+                                        <IconCalendarEvent size={20}/>
                                         <Text fw={700}>{event.name}</Text>
                                     </Group>
                                     {isTracked && (
@@ -145,7 +145,7 @@ export function EventsPanel() {
                                         color={isTracked ? "red" : "blue"}
                                         ml="auto"
                                         onClick={() => toggleEvent(event.name)}
-                                        leftSection={isTracked ? undefined : <IconCheck size={16} />}
+                                        leftSection={isTracked ? undefined : <IconCheck size={16}/>}
                                     >
                                         {isTracked ? "Remove" : "Activate"}
                                     </Button>
@@ -169,6 +169,7 @@ export function Aside({SeedResults}: { SeedResults: SeedResultsContainer | null 
     const bossesQueue = anteData?.bossQueue;
     const wheelQueue = anteData?.wheelQueue;
     const auraQueue = anteData?.auraQueue;
+    const boosterQueue = anteData?.packQueue
     const buys = useCardStore(state => state.shoppingState.buys);
     const sells = useCardStore(state => state.shoppingState.sells);
     const transactionsCount = Object.keys(buys).length + Object.keys(sells).length;
@@ -223,7 +224,7 @@ export function Aside({SeedResults}: { SeedResults: SeedResultsContainer | null 
                                 voucherQueue={voucherQueue}
                                 wheelQueue={wheelQueue}
                                 auraQueue={auraQueue}
-
+                                boosterQueue={boosterQueue}
                             />
                         ) : (
                             <Center h={200}>

@@ -372,6 +372,7 @@ export class Ante {
     tagsQueue: string[] = [];
     wheelQueue: Stringifies[] = [];
     auraQueue: Stringifies[] = [];
+    packQueue: string[] = [];
 
     constructor(ante: number) {
         this.ante = ante;

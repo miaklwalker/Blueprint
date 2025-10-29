@@ -681,7 +681,7 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
 
         // voucher queue
         let queueDepth = 20
-        // burnerInstance.nextVoucher(ante)
+
         result.voucherQueue = Array(queueDepth).fill(null).map(() => burnerInstance.nextVoucherSimple().name)
         for (let i = 1; i <= ante; i++) {
             burnerInstance.nextBoss(ante)
@@ -735,6 +735,9 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
             });
             staticAnteQueues["Aura"] = result.auraQueue;
         }
+        result.packQueue = Array(queueDepth).fill(null).map(() => engine.nextPack(ante).name)
+
+
         result.miscCardSources = miscCardSources
         return result;
     }

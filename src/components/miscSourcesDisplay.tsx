@@ -8,14 +8,15 @@ import {LOCATIONS} from "../modules/const.ts";
 import {toHeaderCase} from "js-convert-case";
 import {BuyWrapper} from "./buyerWrapper.tsx";
 import {GameCard} from "./Rendering/cards.tsx";
-import {Voucher} from "./Rendering/gameElements.tsx";
+import {BoosterPack, Voucher} from "./Rendering/gameElements.tsx";
 import {Boss} from "./Rendering/gameElements.tsx";
 import {Tag} from "./Rendering/gameElements.tsx";
 import {Joker_Final, StandardCard_Final} from "../modules/ImmolateWrapper/CardEngines/Cards.ts";
 
-export default function MiscCardSourcesDisplay({miscSources, bossQueue, tagQueue, voucherQueue, wheelQueue, auraQueue }: {
+export default function MiscCardSourcesDisplay({miscSources, boosterQueue, bossQueue, tagQueue, voucherQueue, wheelQueue, auraQueue }: {
     miscSources?: MiscCardSource[],
     bossQueue?: any[],
+    boosterQueue?: any[],
     tagQueue?: any[],
     voucherQueue?: any[]
     wheelQueue?: any[]
@@ -259,7 +260,7 @@ export default function MiscCardSourcesDisplay({miscSources, bossQueue, tagQueue
                         }
                     </Accordion.Panel>
                 </Accordion.Item>
-                {/*    Wheel Queue*/}
+                {/*    Aura Queue*/}
                 <Accordion.Item key={'aura'} value={'aura'}>
                     <Accordion.Control>
                         <Group>
@@ -296,6 +297,52 @@ export default function MiscCardSourcesDisplay({miscSources, bossQueue, tagQueue
                                     </Carousel>
                                 </Box>
                             )
+                        }
+                    </Accordion.Panel>
+                </Accordion.Item>
+                {/* Booster Queue */}
+                <Accordion.Item key={'boosters'} value={'boosters'}>
+                    <Accordion.Control>
+                        <Group>
+                            <Text fw={500}>Boosters</Text>
+                        </Group>
+                    </Accordion.Control>
+                    <Accordion.Panel>
+                        {
+                            "boosters" === currentSource &&
+                            <Box>
+                                <Carousel
+                                    getEmblaApi={setEmbla}
+                                    type={'container'}
+                                    slideSize="90px"
+                                    slideGap={{base: 'xs'}}
+                                    withControls={false}
+                                    height={190}
+                                    emblaOptions={{
+                                        dragFree: true,
+                                        align:'start'
+                                    }}
+                                >
+                                    {boosterQueue?.map((packname:string, i: number) => (
+                                        <Carousel.Slide key={i}>
+                                            <BuyWrapper
+                                                metaData={{
+                                                    transactionType: "buy",
+                                                    location: "boosters",
+                                                    locationType: LOCATIONS.MISC,
+                                                    index: i,
+                                                    ante: String(currentAnte),
+                                                    blind: "smallBlind",
+                                                    name: packname,
+                                                    link: `https://balatrowiki.org/w/${packname}`,
+                                                }}
+                                            >
+                                                <BoosterPack packName={packname}/>
+                                            </BuyWrapper>
+                                        </Carousel.Slide>
+                                    ))}
+                                </Carousel>
+                            </Box>
                         }
                     </Accordion.Panel>
                 </Accordion.Item>

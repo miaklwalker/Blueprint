@@ -1,4 +1,4 @@
-import {bosses, tags, vouchers} from "../../modules/const.ts";
+import {boosterPacks, bosses, tags, vouchers} from "../../modules/const.ts";
 import {Layer} from "../../modules/classes/Layer.ts";
 import {Box} from "@mantine/core";
 import {RenderImagesWithCanvas} from "./canvasRenderer.tsx";
@@ -18,6 +18,27 @@ export function Voucher({voucherName}: { voucherName: string | null }) {
             <RenderImagesWithCanvas
                 layers={layers}
                 spacing
+            />
+        </Box>
+
+    )
+}
+
+
+export function BoosterPack({packName}: { packName: string | null }) {
+    let layers = [];
+    const packData = boosterPacks.find((booster: any) => booster.name === packName);
+    if (packData) layers.push(new Layer({
+        ...packData,
+        source: 'images/Boosters.png',
+        order: 0,
+        columns: 4,
+        rows: 9
+    }));
+    return (
+        <Box maw={'80px'}>
+            <RenderImagesWithCanvas
+                layers={layers}
             />
         </Box>
 

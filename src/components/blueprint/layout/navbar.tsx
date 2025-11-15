@@ -40,7 +40,8 @@ export default function NavBar({ themeName , setTheme }: { themeName: string, se
     const showCardSpoilers = useCardStore(state => state.applicationState.showCardSpoilers);
     const useCardPeek = useCardStore(state => state.applicationState.useCardPeek);
     const setUseCardPeek = useCardStore(state => state.setUseCardPeek);
-
+    const maxMiscCardSource = useCardStore(state => state.applicationState.maxMiscCardSource);
+    const setMiscMaxSource = useCardStore(state => state.setMiscMaxSource);
 
     const setSeed = useCardStore(state => state.setSeed);
     const setDeck = useCardStore(state => state.setDeck);
@@ -74,7 +75,7 @@ export default function NavBar({ themeName , setTheme }: { themeName: string, se
             // If we have results, and the user changes the showCardSpoilers, we need to re-analyze the seed
             analyzeSeed();
         }
-    },[showCardSpoilers, deck, stake, version, antes, cardsPerAnte, events, buys])
+    },[showCardSpoilers, deck, stake, version, antes, cardsPerAnte, events, buys, maxMiscCardSource])
 
 
     return (
@@ -201,8 +202,22 @@ export default function NavBar({ themeName , setTheme }: { themeName: string, se
                         {cardsPerAnte}
                     </Button.GroupSection>
                     <Button variant="default" c={'green'}
-                            onClick={() => setCardsPerAnte(cardsPerAnte + 50)}>+50</Button>
+                            onClick={() => setCardsPerAnte(Math.min(cardsPerAnte + 50,0))}>+50</Button>
                     <Button variant="default" c={'blue'} onClick={() => setCardsPerAnte(1000)}>1000</Button>
+                </Button.Group>
+                <InputLabel> Cards per Misc source</InputLabel>
+                <Text fz={'xs'} c={'dimmed'}>
+                    It is recommended to keep this number under 50.
+                </Text>
+                <Button.Group w={'100%'} mb={'lg'}>
+                    <Button variant="default" c={'blue'} onClick={() => setMiscMaxSource(15)}>15</Button>
+                    <Button variant="default" c={'red'} onClick={() => setMiscMaxSource(maxMiscCardSource - 5)}>-5</Button>
+                    <Button.GroupSection flex={1} variant="default" bg="var(--mantine-color-body)" miw={80}>
+                        {maxMiscCardSource}
+                    </Button.GroupSection>
+                    <Button variant="default" c={'green'}
+                            onClick={() => setMiscMaxSource(Math.min(maxMiscCardSource + 5, 100))}>+5</Button>
+                    <Button variant="default" c={'blue'} onClick={() => setMiscMaxSource(100)}>100</Button>
                 </Button.Group>
                 <Group justify={'space-between'}>
                     <Box>

@@ -36,7 +36,6 @@ import Footer from "../layout/footer.tsx";
 import HomePage from "../homePage/homepage.tsx";
 import Index from "../textView";
 import Simple from "../simpleView/simple.tsx";
-import {useQuery} from "@tanstack/react-query";
 
 function QueueCarousel({queue, tabName}: { queue: any[], tabName: string }) {
     const selectedBlind = useCardStore(state => state.applicationState.selectedBlind);
@@ -550,18 +549,7 @@ export function Blueprint({SeedResults,theme, setTheme}: { SeedResults: SeedResu
     const {width} = useViewportSize();
     const settingsOpened = useCardStore(state => state.applicationState.settingsOpen);
     const outputOpened = useCardStore(state => state.applicationState.asideOpen);
-    const { data: supporters } = useQuery({
-        queryKey:['supporters'],
-        queryFn: async () => {
-            const response = await fetch('https://ttyyetpmvt.a.pinggy.link/supporters',{
-                method: 'POST',
-            });
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        }
-    })
+
 
     return (
         <AppShell
@@ -588,7 +576,7 @@ export function Blueprint({SeedResults,theme, setTheme}: { SeedResults: SeedResu
             <NavBar setTheme={setTheme} themeName={theme} />
             <Main SeedResults={SeedResults}/>
             <Aside SeedResults={SeedResults}/>
-            <Footer supporters={supporters}/>
+            <Footer/>
         </AppShell>
     )
 }

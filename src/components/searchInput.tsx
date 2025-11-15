@@ -154,7 +154,10 @@ export default function SearchSeedInput({SeedResults}: { SeedResults: SeedResult
     return (
         <>
             <Spotlight
-                nothingFound="Nothing found..."
+                nothingFound={`
+                    No results found. 
+                   If the card you are seraching for is unlocked in game, like Eris or Lucky Cat make sure that you enabled that card in the events tab. (The hamburger menu on the right )
+                `}
                 highlightQuery
                 scrollable
                 maxHeight={'80vh'}

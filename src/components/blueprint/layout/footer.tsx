@@ -2,18 +2,32 @@ import {
     Anchor,
     AppShell,
     Button,
-    Center,
+    Center, Divider,
     Flex,
     HoverCard,
     HoverCardDropdown,
     HoverCardTarget,
-    Text
+    Text, Title
 } from "@mantine/core";
 import {IconCoffee, IconHeart} from "@tabler/icons-react";
 import ShinyText from "../../shinyText/shinyText.tsx";
+import {useQuery} from "@tanstack/react-query";
 
 
-export default function Footer({ supporters } :{ supporters?: {name:string, subscription: boolean}[] }) {
+export default function Footer() {
+    const { data: supporters, isPending } = useQuery<{name:string, subscription: boolean}[]>({
+        queryKey:['supporters'],
+        queryFn: async () => {
+            const response = await fetch('https://ttyyetpmvt.a.pinggy.link/supporters',{
+                method: 'POST',
+            });
+            if (!response.ok) {
+                console.error(response);
+                return [{ name: 'pifreak', subscription: true}]
+            }
+            return response.json();
+        }
+    })
     return (
         <AppShell.Footer p={'xs'}>
             <Center w={'100%'}>
@@ -39,10 +53,23 @@ export default function Footer({ supporters } :{ supporters?: {name:string, subs
                     <HoverCard >
                         <HoverCardTarget>
                             <Text ta={'center'} fz={'xs'}>
-                             <IconHeart size={'11'}/> Supporters
+                             <IconHeart size={'11'}/> Coffee Buyers
                             </Text>
                         </HoverCardTarget>
                         <HoverCardDropdown>
+                            <Title order={4}>Coffee Buyers</Title>
+                            {
+                                !isPending&&
+                                supporters?.length &&
+                                supporters?.length > 0 && (
+                                    <>
+                                        <Text fz={'xs'} c={'dimmed'} maw={400}>
+                                            These awesome people have bought me a coffee to support my work:
+                                        </Text>
+                                        <Divider mb={'sm'} />
+                                    </>
+                                )
+                            }
                             {
                                 supporters?.length ?
                                     supporters
@@ -59,6 +86,11 @@ export default function Footer({ supporters } :{ supporters?: {name:string, subs
                                         }
                                     })
                                     : <Text fz={'xs'}>No supporters yet</Text>}
+                            <Divider my={'sm'} />
+                            <Text fz={'xs'} c={'dimmed'} maw={400}>
+                                If you have recently bought me a coffee and don't see your name here,
+                                please give it approximately 5 minutes to appear.
+                            </Text>
                         </HoverCardDropdown>
                     </HoverCard >
                 </Flex>

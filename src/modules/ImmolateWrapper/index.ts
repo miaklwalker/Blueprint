@@ -312,7 +312,7 @@ export const getMiscCardSources: (maxCards: number)=>MiscCardSource[] = (maxCard
     return ([
     {
         name: "riffRaff",
-        cardsToGenerate: 6,
+        cardsToGenerate: maxCards,
         cardType: "Joker",
         source: RNGSource.S_Riff_Raff,
         hasStickers: false,

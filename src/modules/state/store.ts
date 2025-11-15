@@ -34,6 +34,7 @@ export interface InitialState {
         selectedBlind: string;
         hasSettingsChanged: boolean;
         analyzedResults: SeedResultsContainer | null | undefined;
+        maxMiscCardSource: number
     };
     searchState: {
         searchTerm: string;
@@ -83,6 +84,7 @@ const initialState: InitialState = {
         selectedBlind: 'bigBlind',
         hasSettingsChanged: false,
         analyzedResults: null,
+        maxMiscCardSource:15
     },
     searchState: {
         searchTerm: '',
@@ -248,6 +250,9 @@ export const useCardStore = create(
                         setSearchString: (searchString: string) => set((prev: InitialState) => {
                             prev.searchState.searchTerm = searchString
                         }, undefined, 'Global/Search/SetSearch'),
+                        setMiscMaxSource: (maxSource: number) => set((prev: InitialState) => {
+                            prev.applicationState.maxMiscCardSource = maxSource
+                        }, undefined, 'Global/SetMiscMaxSource'),
                         setSelectedSearchResult: (result: BuyMetaData) => set((prev: InitialState) => {
                             prev.searchState.selectedSearchResult = result
                             prev.applicationState.selectedAnte = Number(result.ante)
@@ -313,8 +318,9 @@ export const useCardStore = create(
                             const unlocks = get().immolateState.selectedOptions;
                             const events = get().eventState.events;
                             const lockedCards = get().lockState.lockedCards;
-
+                            const maxMiscCardSource = get().applicationState.maxMiscCardSource;
                             const options = {
+                                maxMiscCardSource,
                                 showCardSpoilers,
                                 unlocks,
                                 events,

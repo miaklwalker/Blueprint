@@ -380,12 +380,8 @@ function Simple({SeedResults}: { SeedResults: SeedResultsContainer }) {
                 const nextAnte = anteNumber + 1;
 
                 if (nextAnte <= anteEntries.length && !visibleAntes.includes(nextAnte)) {
-                    setLoadingNextAnte(nextAnte);
-
-                    setTimeout(() => {
-                        setVisibleAntes(prev => [...prev, nextAnte]);
-                        setLoadingNextAnte(nextAnte + 1);
-                    }, 150);
+                    setVisibleAntes(prev => [...prev, nextAnte]);
+                    setLoadingNextAnte(nextAnte + 1);
                 }
             }
         }, [entry?.isIntersecting, anteNumber, selectedAnte, debouncedSetSelectedAnte]);

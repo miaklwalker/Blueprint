@@ -37,7 +37,7 @@ import {SimpleRenderCanvas} from "../../Rendering/canvasRenderer.tsx";
 import {getEnhancerPosition, getSealPosition, getStandardCardPosition} from "../../../modules/utils.ts";
 import React, {useEffect, useRef, useState} from "react";
 import {DragScroll} from "../../DragScroller.tsx";
-import {useIntersection} from "@mantine/hooks";
+import {useDebouncedCallback, useIntersection} from "@mantine/hooks";
 import {SimpleBuyerWrapper} from "./simpleBuyWrapper.tsx";
 import {useCardStore} from "../../../modules/state/store.ts";
 import {IconLockOpen} from "@tabler/icons-react";
@@ -349,6 +349,7 @@ function Simple({SeedResults}: { SeedResults: SeedResultsContainer }) {
     const [loadingNextAnte, setLoadingNextAnte] = useState<number | null>(2); // Track which ante is loading
     const selectedAnte = useCardStore(state => state.applicationState.selectedAnte);
     const setSelectedAnte = useCardStore(state => state.setSelectedAnte);
+    const debouncedSetSelectedAnte = useDebouncedCallback(setSelectedAnte, 500)
     const lockedCards = useCardStore(state => state.lockState.lockedCards);
     const clearLockedCards = useCardStore(state => state.clearLockedCards);
     const analyzeSeed = useCardStore(state => state.analyzeSeed)
@@ -373,7 +374,7 @@ function Simple({SeedResults}: { SeedResults: SeedResultsContainer }) {
                 // When this ante is visible, make the next one available
                 const currentAnte = anteNumber;
                 if (currentAnte !== selectedAnte) {
-                    setSelectedAnte(currentAnte);
+                    debouncedSetSelectedAnte(currentAnte);
                 }
                 // Set the current ante as selected
                 const nextAnte = anteNumber + 1;
@@ -381,14 +382,13 @@ function Simple({SeedResults}: { SeedResults: SeedResultsContainer }) {
                 if (nextAnte <= anteEntries.length && !visibleAntes.includes(nextAnte)) {
                     setLoadingNextAnte(nextAnte);
 
-                    // Simulate loading delay (remove this in production if not needed)
                     setTimeout(() => {
                         setVisibleAntes(prev => [...prev, nextAnte]);
                         setLoadingNextAnte(nextAnte + 1);
-                    }, 300);
+                    }, 150);
                 }
             }
-        }, [entry?.isIntersecting, anteNumber, selectedAnte, setSelectedAnte]);
+        }, [entry?.isIntersecting, anteNumber, selectedAnte, debouncedSetSelectedAnte]);
 
         return <div ref={ref}/>;
     };

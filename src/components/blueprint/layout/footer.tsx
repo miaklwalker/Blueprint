@@ -14,7 +14,6 @@ import ShinyText from "../../shinyText/shinyText.tsx";
 
 
 export default function Footer({ supporters } :{ supporters?: {name:string, subscription: boolean}[] }) {
-    console.log(supporters);
     return (
         <AppShell.Footer p={'xs'}>
             <Center w={'100%'}>

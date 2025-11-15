@@ -307,7 +307,7 @@ export interface AnalyzeOptions {
     maxMiscCardSource?: number
     lockedCards?: any
 }
-const getMiscCardSources: (maxCards: number)=>MiscCardSource[] = (maxCards: number) => {
+export const getMiscCardSources: (maxCards: number)=>MiscCardSource[] = (maxCards: number) => {
     let state: {[key: string]: boolean} = {};
     return ([
     {
@@ -470,6 +470,7 @@ const getMiscCardSources: (maxCards: number)=>MiscCardSource[] = (maxCards: numb
         hasStickers: false,
     },
 ])};
+
 export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOptions) {
     const seed = settings?.seed?.toUpperCase()?.replace(/0/g, 'O')?.trim();
 

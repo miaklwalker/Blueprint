@@ -12,6 +12,7 @@ import {
 import {IconCoffee, IconHeart} from "@tabler/icons-react";
 import ShinyText from "../../shinyText/shinyText.tsx";
 import {useQuery} from "@tanstack/react-query";
+import {useGA} from "../../../modules/useGA.ts";
 
 
 export default function Footer() {
@@ -50,21 +51,21 @@ export default function Footer() {
                     >
                         Buy me a coffee
                     </Button>
-                    <HoverCard >
+                    <HoverCard onOpen={()=>useGA('view_supporters')}>
                         <HoverCardTarget>
                             <Text ta={'center'} fz={'xs'}>
                              <IconHeart size={'11'}/> Coffee Buyers
                             </Text>
                         </HoverCardTarget>
-                        <HoverCardDropdown>
+                        <HoverCardDropdown w={'100%'} maw={400}>
                             <Title order={4}>Coffee Buyers</Title>
                             {
                                 !isPending&&
                                 supporters?.length &&
                                 supporters?.length > 0 && (
                                     <>
-                                        <Text fz={'xs'} c={'dimmed'} maw={400}>
-                                            These awesome people have bought me a coffee to support my work:
+                                        <Text fz={'xs'} c={'dimmed'}>
+                                            These awesome people have bought me a coffee to support my work and have kept me motivated to keep improving Blueprint!:
                                         </Text>
                                         <Divider mb={'sm'} />
                                     </>
@@ -87,7 +88,7 @@ export default function Footer() {
                                     })
                                     : <Text fz={'xs'}>No supporters yet</Text>}
                             <Divider my={'sm'} />
-                            <Text fz={'xs'} c={'dimmed'} maw={400}>
+                            <Text fz={'xs'} c={'dimmed'}>
                                 If you have recently bought me a coffee and don't see your name here,
                                 please give it approximately 5 minutes to appear.
                             </Text>

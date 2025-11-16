@@ -3,6 +3,7 @@ import {useViewportSize} from "@mantine/hooks";
 import {useCardStore} from "../../../modules/state/store.ts";
 import {AppShell, Box, Burger, Button, Center, Container, CopyButton, Group, Title} from "@mantine/core";
 import SearchSeedInput from "../../searchInput.tsx";
+import {useGA} from "../../../modules/useGA.ts";
 
 
 
@@ -44,7 +45,10 @@ export default function Header({SeedResults}: {
                                 )}
                             </CopyButton>
                         )}
-                        <Burger opened={outputOpened} onClick={toggleOutput} size="sm"/>
+                        <Burger opened={outputOpened} onClick={()=>{
+                            useGA('side_panel_toggled')
+                            toggleOutput()
+                        }} size="sm"/>
                     </Group>
                 </Group>
             </Container>

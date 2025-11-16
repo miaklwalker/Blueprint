@@ -20,6 +20,7 @@ import {
 } from "@mantine/core";
 import {IconSearch, IconSettings} from "@tabler/icons-react";
 import {useSetState} from "@mantine/hooks";
+import {useGA} from "../modules/useGA.ts";
 
 const registeredMiscSources = getMiscCardSources(15).map(source => source.name)
 export default function SearchSeedInput({SeedResults}: { SeedResults: SeedResultsContainer | null }) {
@@ -154,10 +155,10 @@ export default function SearchSeedInput({SeedResults}: { SeedResults: SeedResult
     return (
         <>
             <Spotlight
-                nothingFound={`
+                nothingFound={searchString.length > 0 ? `
                     No results found. 
                    If the card you are seraching for is unlocked in game, like Eris or Lucky Cat make sure that you enabled that card in the events tab. (The hamburger menu on the right )
-                `}
+                `: 'Start typing to search for cards'}
                 highlightQuery
                 scrollable
                 maxHeight={'80vh'}
@@ -207,7 +208,10 @@ export default function SearchSeedInput({SeedResults}: { SeedResults: SeedResult
                 <TextInput
                     flex={1}
                     placeholder={'Search for cards'}
-                    onClick={openSpotlight}
+                    onClick={()=>{
+                        useGA('search_bar_clicked')
+                        openSpotlight()
+                    }}
                     leftSection={
                         // <ActionIcon>
                         <HoverCard>

@@ -197,12 +197,12 @@ export default function NavBar({ themeName , setTheme }: { themeName: string, se
                 </Text>
                 <Button.Group w={'100%'} mb={'lg'}>
                     <Button variant="default" c={'blue'} onClick={() => setCardsPerAnte(50)}>50</Button>
-                    <Button variant="default" c={'red'} onClick={() => setCardsPerAnte(cardsPerAnte - 50)}>-50</Button>
+                    <Button variant="default" c={'red'} onClick={() => setCardsPerAnte(Math.max(cardsPerAnte - 50,0))}>-50</Button>
                     <Button.GroupSection flex={1} variant="default" bg="var(--mantine-color-body)" miw={80}>
                         {cardsPerAnte}
                     </Button.GroupSection>
                     <Button variant="default" c={'green'}
-                            onClick={() => setCardsPerAnte(Math.min(cardsPerAnte + 50,0))}>+50</Button>
+                            onClick={() => setCardsPerAnte(Math.min(cardsPerAnte + 50,1000))}>+50</Button>
                     <Button variant="default" c={'blue'} onClick={() => setCardsPerAnte(1000)}>1000</Button>
                 </Button.Group>
                 <InputLabel> Cards per Misc source</InputLabel>
@@ -211,7 +211,7 @@ export default function NavBar({ themeName , setTheme }: { themeName: string, se
                 </Text>
                 <Button.Group w={'100%'} mb={'lg'}>
                     <Button variant="default" c={'blue'} onClick={() => setMiscMaxSource(15)}>15</Button>
-                    <Button variant="default" c={'red'} onClick={() => setMiscMaxSource(maxMiscCardSource - 5)}>-5</Button>
+                    <Button variant="default" c={'red'} onClick={() => setMiscMaxSource(Math.max(maxMiscCardSource - 5,0))}>-5</Button>
                     <Button.GroupSection flex={1} variant="default" bg="var(--mantine-color-body)" miw={80}>
                         {maxMiscCardSource}
                     </Button.GroupSection>

@@ -422,32 +422,7 @@ export class Game extends Lock {
         return items[idx - 1];
     }
 
-    //function poll_edition(_key, _mod, _no_neg, _guaranteed)
-    //     _mod = _mod or 1
-    //     local edition_poll = pseudorandom(pseudoseed(_key or 'edition_generic'))
-    //     if _guaranteed then
-    //         if edition_poll > 1 - 0.003*25 and not _no_neg then
-    //             return {negative = true}
-    //         elseif edition_poll > 1 - 0.006*25 then
-    //             return {polychrome = true}
-    //         elseif edition_poll > 1 - 0.02*25 then
-    //             return {holo = true}
-    //         elseif edition_poll > 1 - 0.04*25 then
-    //             return {foil = true}
-    //         end
-    //     else
-    //         if edition_poll > 1 - 0.003*_mod and not _no_neg then
-    //             return {negative = true}
-    //         elseif edition_poll > 1 - 0.006*G.GAME.edition_rate*_mod then
-    //             return {polychrome = true}
-    //         elseif edition_poll > 1 - 0.02*G.GAME.edition_rate*_mod then
-    //             return {holo = true}
-    //         elseif edition_poll > 1 - 0.04*G.GAME.edition_rate*_mod then
-    //             return {foil = true}
-    //         end
-    //     end
-    //     return nil
-    // end
+
 
 
     poll_edition(source: string, mod:number=1, noNeg: boolean=true, guaranteed: boolean = false): EditionItem{
@@ -862,9 +837,13 @@ export class Game extends Lock {
 
         const editionPoll = this.random(`${RandomQueueNames.R_Standard_Edition}${ante}`);
 
-        if (editionPoll > 0.988 || editionPoll > 0.96) {
+        if (editionPoll > 0.988) {
             edition = Edition.POLYCHROME;
-        } else if (editionPoll > 0.92) {
+        }
+        else if (  editionPoll > 0.96 ) {
+            edition = Edition.HOLOGRAPHIC;
+        }
+        else if (editionPoll > 0.92) {
             edition = Edition.FOIL;
         }
 

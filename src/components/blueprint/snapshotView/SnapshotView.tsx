@@ -168,11 +168,10 @@ export default function SnapshotModal({ SeedResults }: SnapshotViewProps) {
             // Weight check (Higher weight first)
             const aWeight = JOKER_WEIGHTS[jokerA.name] || 0;
             const bWeight = JOKER_WEIGHTS[jokerB.name] || 0;
-            console.log(aWeight, bWeight);
+
             if (aWeight !== bWeight) return bWeight - aWeight;
             if (aWeight && !bWeight) return -1;
             if (!aWeight && bWeight) return 1;
-            console.log("herer");
 
 
 

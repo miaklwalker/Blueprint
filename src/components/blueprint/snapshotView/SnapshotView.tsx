@@ -44,8 +44,9 @@ const JOKER_WEIGHTS: { [key: string]: number } = {
     "Perkeo": 10,
     "Triboulet": 10,
     "Yorick": 10,
-    "Chicot": 10,
-    "Canio": 10,
+    "Baron": 9,
+    "Mime": 9,
+    "Wee Joker": 8,
 };
 
 interface LocationData {
@@ -164,17 +165,16 @@ export default function SnapshotModal({ SeedResults }: SnapshotViewProps) {
 
             if (aRarity !== bRarity) return aRarity - bRarity;
 
-            // Edition check (based on the first instance found)
-            const aEdition = EDITION_ORDER[jokerA.edition || "No Edition"] ?? 4;
-            const bEdition = EDITION_ORDER[jokerB.edition || "No Edition"] ?? 4;
-
-            if (aEdition !== bEdition) return aEdition - bEdition;
-
             // Weight check (Higher weight first)
             const aWeight = JOKER_WEIGHTS[jokerA.name] || 0;
             const bWeight = JOKER_WEIGHTS[jokerB.name] || 0;
-
+            console.log(aWeight, bWeight);
             if (aWeight !== bWeight) return bWeight - aWeight;
+            if (aWeight && !bWeight) return -1;
+            if (!aWeight && bWeight) return 1;
+            console.log("herer");
+
+
 
             return jokerA.name.localeCompare(jokerB.name);
         });

@@ -1,8 +1,8 @@
-import {useCardStore} from "../../../modules/state/store.ts";
-import {useEffect, useMemo, useState} from "react";
+import { useCardStore } from "../../../modules/state/store.ts";
+import { useEffect, useMemo, useState } from "react";
 import { EmblaCarouselType } from 'embla-carousel';
-import {Carousel} from "@mantine/carousel";
-import {blinds, LOCATION_TYPES, LOCATIONS, tagDescriptions} from "../../../modules/const.ts";
+import { Carousel } from "@mantine/carousel";
+import { blinds, LOCATION_TYPES, LOCATIONS, tagDescriptions } from "../../../modules/const.ts";
 import {
     Accordion,
     AppShell,
@@ -21,23 +21,24 @@ import {
     Tabs,
     Text
 } from "@mantine/core";
-import {BuyWrapper} from "../../buyerWrapper.tsx";
-import {GameCard} from "../../Rendering/cards.tsx";
-import {Ante, Pack, SeedResultsContainer} from "../../../modules/ImmolateWrapper/CardEngines/Cards.ts";
-import {BuyMetaData} from "../../../modules/classes/BuyMetaData.ts";
-import {Boss, Tag as RenderTag, Voucher} from "../../Rendering/gameElements.tsx";
-import {Tag}  from "../../../modules/balatrots/enum/Tag.ts";
-import {toHeaderCase} from "js-convert-case";
-import {useDisclosure, useViewportSize} from "@mantine/hooks";
+import { BuyWrapper } from "../../buyerWrapper.tsx";
+import { GameCard } from "../../Rendering/cards.tsx";
+import { Ante, Pack, SeedResultsContainer } from "../../../modules/ImmolateWrapper/CardEngines/Cards.ts";
+import { BuyMetaData } from "../../../modules/classes/BuyMetaData.ts";
+import { Boss, Tag as RenderTag, Voucher } from "../../Rendering/gameElements.tsx";
+import { Tag } from "../../../modules/balatrots/enum/Tag.ts";
+import { toHeaderCase } from "js-convert-case";
+import { useDisclosure, useViewportSize } from "@mantine/hooks";
 import Header from "../layout/header.tsx";
 import NavBar from "../layout/navbar.tsx";
-import {Aside} from "../layout/aside.tsx";
+import { Aside } from "../layout/aside.tsx";
 import Footer from "../layout/footer.tsx";
 import HomePage from "../homePage/homepage.tsx";
 import Index from "../textView";
 import Simple from "../simpleView/simple.tsx";
+import SnapshotView from "../snapshotView/SnapshotView.tsx";
 
-function QueueCarousel({queue, tabName}: { queue: any[], tabName: string }) {
+function QueueCarousel({ queue, tabName }: { queue: any[], tabName: string }) {
     const selectedBlind = useCardStore(state => state.applicationState.selectedBlind);
     const selectedSearchResult = useCardStore(state => state.searchState.selectedSearchResult);
     const [embla, setEmbla] = useState<EmblaCarouselType | null>(null);
@@ -62,11 +63,11 @@ function QueueCarousel({queue, tabName}: { queue: any[], tabName: string }) {
         <Paper>
             <Carousel
                 getEmblaApi={setEmbla}
-                slideGap={{base: 'sm'}}
-                slideSize={{base: 90}}
+                slideGap={{ base: 'sm' }}
+                slideSize={{ base: 90 }}
                 withControls={false}
                 height={190}
-                emblaOptions={{dragFree: true, containScroll: "keepSnaps"}}
+                emblaOptions={{ dragFree: true, containScroll: "keepSnaps" }}
                 type={'container'}
             >
                 {
@@ -86,7 +87,7 @@ function QueueCarousel({queue, tabName}: { queue: any[], tabName: string }) {
                                     })
                                     }
                                 >
-                                    <GameCard card={card}/>
+                                    <GameCard card={card} />
                                 </BuyWrapper>
                             </Carousel.Slide>
                         )
@@ -97,7 +98,7 @@ function QueueCarousel({queue, tabName}: { queue: any[], tabName: string }) {
     )
 }
 
-function AntePanel({ante, tabName, timeTravelVoucherOffset}: {
+function AntePanel({ ante, tabName, timeTravelVoucherOffset }: {
     ante: Ante,
     tabName: string,
     timeTravelVoucherOffset: number
@@ -110,7 +111,7 @@ function AntePanel({ante, tabName, timeTravelVoucherOffset}: {
             <Paper withBorder h={'100%'} p={'sm'}>
                 <Group preventGrowOverflow mb={'sm'}>
                     <Fieldset flex={1} legend={'Shop'}>
-                        <QueueCarousel queue={queue} tabName={tabName}/>
+                        <QueueCarousel queue={queue} tabName={tabName} />
                     </Fieldset>
                     <Fieldset legend={'Voucher'}>
                         <Flex h={192} direction={'column'} align={'space-between'}>
@@ -131,15 +132,15 @@ function AntePanel({ante, tabName, timeTravelVoucherOffset}: {
                                     })
                                 }
                             >
-                                <Voucher voucherName={ante.voucher}/>
+                                <Voucher voucherName={ante.voucher} />
                             </BuyWrapper>
                             <Text ta={'center'} fz={'md'}>  {ante.voucher} </Text>
                         </Flex>
                     </Fieldset>
                 </Group>
 
-                <Accordion multiple={true} value={packs?.map(({name}: { name: string }) => name) ?? []} w={'100%'}
-                           variant={'separated'}>
+                <Accordion multiple={true} value={packs?.map(({ name }: { name: string }) => name) ?? []} w={'100%'}
+                    variant={'separated'}>
                     {
                         packs.map((pack: Pack, index: number) => {
                             return (
@@ -160,14 +161,14 @@ function AntePanel({ante, tabName, timeTravelVoucherOffset}: {
                                             <Carousel
                                                 type={'container'}
                                                 slideSize="90px"
-                                                slideGap={{base: 'xs'}}
+                                                slideGap={{ base: 'xs' }}
                                                 withControls={true}
                                                 height={190}
                                                 emblaOptions={{
                                                     dragFree: true,
                                                     containScroll: "keepSnaps",
-                                                    align:'start'
-                                            }}
+                                                    align: 'start'
+                                                }}
                                             >
                                                 {pack.cards && pack.cards.map((card: any, cardIndex: number) => (
                                                     <Carousel.Slide key={cardIndex}>
@@ -189,7 +190,7 @@ function AntePanel({ante, tabName, timeTravelVoucherOffset}: {
                                                                 })
                                                             }
                                                         >
-                                                            <GameCard card={card}/>
+                                                            <GameCard card={card} />
                                                         </BuyWrapper>
                                                     </Carousel.Slide>
                                                 ))}
@@ -208,14 +209,14 @@ function AntePanel({ante, tabName, timeTravelVoucherOffset}: {
 type CustomDetailsType = {
     [K in Tag]?: any;
 };
-const CustomDetails: CustomDetailsType  = {
+const CustomDetails: CustomDetailsType = {
     "Uncommon Tag": {
         renderer: (ante: Ante, navigateToMiscSource: any) => {
             return (
                 <Stack>
                     <Text>
                         {
-                            ante.miscCardSources.find(({name}) => name === 'uncommonTag')?.cards?.slice(0, 1).map(({name}: any) => name).join(', ')
+                            ante.miscCardSources.find(({ name }) => name === 'uncommonTag')?.cards?.slice(0, 1).map(({ name }: any) => name).join(', ')
                         }
                     </Text>
                     <Button onClick={() => navigateToMiscSource('uncommonTag')}>
@@ -232,7 +233,7 @@ const CustomDetails: CustomDetailsType  = {
                 <Stack>
                     <Text>
                         {
-                            ante.miscCardSources.find(({name}) => name === 'rareTag')?.cards?.slice(0, 1).map(({name}: any) => name).join(', ')
+                            ante.miscCardSources.find(({ name }) => name === 'rareTag')?.cards?.slice(0, 1).map(({ name }: any) => name).join(', ')
                         }
                     </Text>
                     <Button onClick={() => navigateToMiscSource('rareTag')}>
@@ -249,7 +250,7 @@ const CustomDetails: CustomDetailsType  = {
                 <Stack>
                     <Text>
                         {
-                            ante.miscCardSources.find(({name}) => name === 'arcanaPack')?.cards?.slice(0, 5).map(({name}: any) => name).join(', ')
+                            ante.miscCardSources.find(({ name }) => name === 'arcanaPack')?.cards?.slice(0, 5).map(({ name }: any) => name).join(', ')
                         }
                     </Text>
                     <Button onClick={() => navigateToMiscSource('arcanaPack')}>
@@ -275,7 +276,7 @@ const CustomDetails: CustomDetailsType  = {
         }
     },
     "Voucher Tag": {
-        renderer: (ante: Ante,  navigateToMiscSource: any) => {
+        renderer: (ante: Ante, navigateToMiscSource: any) => {
             return (
                 <Stack>
                     <Text>
@@ -297,7 +298,7 @@ const CustomDetails: CustomDetailsType  = {
                 <Stack>
                     <Text>
                         {
-                            ante.miscCardSources.find(({name}) => name === 'topUpTag')?.cards?.slice(0, 5).map(({name}: any) => name).join(', ')
+                            ante.miscCardSources.find(({ name }) => name === 'topUpTag')?.cards?.slice(0, 5).map(({ name }: any) => name).join(', ')
                         }
                     </Text>
                     <Button onClick={() => navigateToMiscSource('topUpTag')}>
@@ -314,7 +315,7 @@ const CustomDetails: CustomDetailsType  = {
                 <Stack>
                     <Text>
                         {
-                            ante.miscCardSources.find(({name}) => name === 'spectralPack')?.cards?.slice(0, 5).map(({name}: any) => name).join(', ')
+                            ante.miscCardSources.find(({ name }) => name === 'spectralPack')?.cards?.slice(0, 5).map(({ name }: any) => name).join(', ')
                         }
                     </Text>
                     <Button onClick={() => navigateToMiscSource('spectralPack')}>
@@ -331,7 +332,7 @@ const CustomDetails: CustomDetailsType  = {
                 <Stack>
                     <Text>
                         {
-                            ante.miscCardSources.find(({name}) => name === 'standardPack')?.cards?.slice(0, 5).map(({name}: any) => name).join(', ')
+                            ante.miscCardSources.find(({ name }) => name === 'standardPack')?.cards?.slice(0, 5).map(({ name }: any) => name).join(', ')
                         }
                     </Text>
                     <Button onClick={() => navigateToMiscSource('standardPack')}>
@@ -348,7 +349,7 @@ const CustomDetails: CustomDetailsType  = {
                 <Stack>
                     <Text>
                         {
-                            ante.miscCardSources.find(({name}) => name === 'celestialPack')?.cards?.slice(0, 5).map(({name}: any) => name).join(', ')
+                            ante.miscCardSources.find(({ name }) => name === 'celestialPack')?.cards?.slice(0, 5).map(({ name }: any) => name).join(', ')
                         }
                     </Text>
                     <Button onClick={() => navigateToMiscSource('celestialPack')}>
@@ -365,7 +366,7 @@ const CustomDetails: CustomDetailsType  = {
                 <Stack>
                     <Text>
                         {
-                            ante.miscCardSources.find(({name}) => name === 'buffoonPack')?.cards?.slice(0, 4).map(({name}: any) => name).join(', ')
+                            ante.miscCardSources.find(({ name }) => name === 'buffoonPack')?.cards?.slice(0, 4).map(({ name }: any) => name).join(', ')
                         }
                     </Text>
                     <Button onClick={() => navigateToMiscSource('buffoonPack')}>
@@ -378,14 +379,14 @@ const CustomDetails: CustomDetailsType  = {
     },
 }
 
-function TagDisplay({tag, ante}: { tag: Tag, ante: Ante }) {
-    const [opened, {close, open}] = useDisclosure(false);
+function TagDisplay({ tag, ante }: { tag: Tag, ante: Ante }) {
+    const [opened, { close, open }] = useDisclosure(false);
     const navigateToMiscSource = useCardStore(state => state.navigateToMiscSource);
     return (
         <Popover opened={opened}>
             <Popover.Target>
                 <Box onMouseEnter={open} onMouseLeave={close}>
-                    <RenderTag tagName={tag}/>
+                    <RenderTag tagName={tag} />
                 </Box>
             </Popover.Target>
             <Popover.Dropdown>
@@ -406,8 +407,8 @@ function TagDisplay({tag, ante}: { tag: Tag, ante: Ante }) {
 
 }
 
-function SeedExplorer({SeedResults}: { SeedResults: SeedResultsContainer }) {
-    const {width} = useViewportSize();
+function SeedExplorer({ SeedResults }: { SeedResults: SeedResultsContainer }) {
+    const { width } = useViewportSize();
 
     const selectedAnte = useCardStore(state => state.applicationState.selectedAnte);
     const setSelectedAnte = useCardStore(state => state.setSelectedAnte);
@@ -466,7 +467,7 @@ function SeedExplorer({SeedResults}: { SeedResults: SeedResultsContainer }) {
                         label: <Group justify={'center'}>
                             {blind}
                             {i < 2 && (
-                                <TagDisplay tag={pool[itemPool]?.tags?.[i] as Tag} ante={pool[itemPool]}/>
+                                <TagDisplay tag={pool[itemPool]?.tags?.[i] as Tag} ante={pool[itemPool]} />
                             )
                             }
                             {
@@ -474,7 +475,7 @@ function SeedExplorer({SeedResults}: { SeedResults: SeedResultsContainer }) {
                                 <Popover>
                                     <Popover.Target>
                                         <Box>
-                                            <Boss bossName={pool[itemPool]?.boss ?? ''}/>
+                                            <Boss bossName={pool[itemPool]?.boss ?? ''} />
                                         </Box>
                                     </Popover.Target>
                                     <Popover.Dropdown>
@@ -501,7 +502,7 @@ function SeedExplorer({SeedResults}: { SeedResults: SeedResultsContainer }) {
                     setSelectedAnte(Number(value));
                 }}
             >
-                <Box mah={'65vh'} style={{display: width > 767 ? 'revert' : 'none'}} mr={'2rem'}>
+                <Box mah={'65vh'} style={{ display: width > 767 ? 'revert' : 'none' }} mr={'2rem'}>
                     <ScrollArea type="scroll" scrollbars={'y'} h={'100%'}>
                         <Tabs.List>
                             {
@@ -524,7 +525,7 @@ function SeedExplorer({SeedResults}: { SeedResults: SeedResultsContainer }) {
                         let panelData = currentAnte ? pool[itemPool] : anteData;
                         return (
                             <AntePanel key={i} tabName={ante} ante={panelData}
-                                       timeTravelVoucherOffset={timeTravelVoucherOffset}/>
+                                timeTravelVoucherOffset={timeTravelVoucherOffset} />
                         )
                     })
                 }
@@ -533,29 +534,30 @@ function SeedExplorer({SeedResults}: { SeedResults: SeedResultsContainer }) {
     )
 }
 
-function Main({SeedResults}: { SeedResults: SeedResultsContainer | null }) {
+function Main({ SeedResults }: { SeedResults: SeedResultsContainer | null }) {
     const viewMode = useCardStore(state => state.applicationState.viewMode);
     return (
         <AppShell.Main>
-            {!SeedResults && <HomePage/>}
-            {SeedResults && viewMode === 'blueprint' && <SeedExplorer SeedResults={SeedResults}/>}
-            {SeedResults && viewMode === 'text' && <Index seedResults={SeedResults}/>}
-            {SeedResults && viewMode === 'simple' && <Simple SeedResults={SeedResults}/>}
+            {!SeedResults && <HomePage />}
+            {SeedResults && viewMode === 'blueprint' && <SeedExplorer SeedResults={SeedResults} />}
+            {SeedResults && viewMode === 'text' && <Index seedResults={SeedResults} />}
+            {SeedResults && viewMode === 'simple' && <Simple SeedResults={SeedResults} />}
+            {SeedResults && viewMode === 'snapshot' && <SnapshotView SeedResults={SeedResults} />}
         </AppShell.Main>
     )
 }
 
-export function Blueprint({SeedResults,theme, setTheme}: { SeedResults: SeedResultsContainer | null, theme: string, setTheme: any }) {
-    const {width} = useViewportSize();
+export function Blueprint({ SeedResults, theme, setTheme }: { SeedResults: SeedResultsContainer | null, theme: string, setTheme: any }) {
+    const { width } = useViewportSize();
     const settingsOpened = useCardStore(state => state.applicationState.settingsOpen);
     const outputOpened = useCardStore(state => state.applicationState.asideOpen);
 
 
     return (
         <AppShell
-            header={{height: {base: 60, md: 70, lg: 80}}}
+            header={{ height: { base: 60, md: 70, lg: 80 } }}
             aside={{
-                width: {base: '100%', md: 400, lg: 550},
+                width: { base: '100%', md: 400, lg: 550 },
                 breakpoint: 'md',
                 collapsed: {
                     desktop: !outputOpened,
@@ -563,7 +565,7 @@ export function Blueprint({SeedResults,theme, setTheme}: { SeedResults: SeedResu
                 },
             }}
             navbar={{
-                width: {base: '100%', md: 400, lg: 400},
+                width: { base: '100%', md: 400, lg: 400 },
                 breakpoint: 'sm',
                 collapsed: {
                     desktop: !(width > 1000) && !settingsOpened,
@@ -572,11 +574,11 @@ export function Blueprint({SeedResults,theme, setTheme}: { SeedResults: SeedResu
             }}
             padding="md"
         >
-            <Header setTheme={setTheme} theme={theme} SeedResults={SeedResults}/>
+            <Header setTheme={setTheme} theme={theme} SeedResults={SeedResults} />
             <NavBar setTheme={setTheme} themeName={theme} />
-            <Main SeedResults={SeedResults}/>
-            <Aside SeedResults={SeedResults}/>
-            <Footer/>
+            <Main SeedResults={SeedResults} />
+            <Aside SeedResults={SeedResults} />
+            <Footer />
         </AppShell>
     )
 }

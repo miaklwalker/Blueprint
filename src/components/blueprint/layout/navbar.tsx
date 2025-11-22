@@ -14,7 +14,7 @@ import {
     Tooltip, useMantineColorScheme,
     useMantineTheme
 } from "@mantine/core";
-import {useCardStore} from "../../../modules/state/store.ts";
+import { useCardStore } from "../../../modules/state/store.ts";
 import UnlocksModal from "../../unlocksModal.tsx";
 import {
     IconFileText,
@@ -23,20 +23,21 @@ import {
     IconListSearch,
     IconMoon,
     IconPlayCard,
-    IconSun
+    IconSun,
+    IconCamera
 } from "@tabler/icons-react";
 import SeedInputAutoComplete from "../../SeedInputAutoComplete.tsx";
-import {useEffect} from "react";
-import {themeNames} from "../../../App.tsx";
+import { useEffect } from "react";
+import { themeNames } from "../../../App.tsx";
 
-export default function NavBar({ themeName , setTheme }: { themeName: string, setTheme: any }) {
+export default function NavBar({ themeName, setTheme }: { themeName: string, setTheme: any }) {
     const theme = useMantineTheme();
     const colorScheme = useMantineColorScheme()
     const viewMode = useCardStore(state => state.applicationState.viewMode);
     const setViewMode = useCardStore(state => state.setViewMode);
     const events = useCardStore(state => state.eventState.events);
     const analyzeState = useCardStore(state => state.immolateState);
-    const {seed, deck, stake, gameVersion: version, antes, cardsPerAnte} = analyzeState;
+    const { seed, deck, stake, gameVersion: version, antes, cardsPerAnte } = analyzeState;
     const showCardSpoilers = useCardStore(state => state.applicationState.showCardSpoilers);
     const useCardPeek = useCardStore(state => state.applicationState.useCardPeek);
     const setUseCardPeek = useCardStore(state => state.setUseCardPeek);
@@ -66,21 +67,20 @@ export default function NavBar({ themeName , setTheme }: { themeName: string, se
     }
 
     useEffect(() => {
-        if(start && !seedResults){
+        if (start && !seedResults) {
             analyzeSeed()
         }
-    }, [start,seedResults]);
-    useEffect(()=>{
-        if(start && seedResults){
-            // If we have results, and the user changes the showCardSpoilers, we need to re-analyze the seed
+    }, [start, seedResults]);
+    useEffect(() => {
+        if (start && seedResults) {
             analyzeSeed();
         }
-    },[showCardSpoilers, deck, stake, version, antes, cardsPerAnte, events, buys, maxMiscCardSource])
+    }, [showCardSpoilers, deck, stake, version, antes, cardsPerAnte, events, buys, maxMiscCardSource])
 
 
     return (
         <AppShell.Navbar p="md">
-            <UnlocksModal/>
+            <UnlocksModal />
             <AppShell.Section>
                 <SegmentedControl
                     fullWidth
@@ -91,7 +91,7 @@ export default function NavBar({ themeName , setTheme }: { themeName: string, se
                             value: 'blueprint',
                             label: (
                                 <Group gap="xs">
-                                    <IconLayout size={16}/>
+                                    <IconLayout size={16} />
                                     <Text>Blueprint</Text>
                                 </Group>
                             )
@@ -100,7 +100,7 @@ export default function NavBar({ themeName , setTheme }: { themeName: string, se
                             value: 'simple',
                             label: (
                                 <Group gap="xs">
-                                    <IconListSearch size={16}/>
+                                    <IconListSearch size={16} />
                                     <Text>Efficiency</Text>
                                 </Group>
                             )
@@ -109,8 +109,17 @@ export default function NavBar({ themeName , setTheme }: { themeName: string, se
                             value: 'text',
                             label: (
                                 <Group gap="xs">
-                                    <IconFileText size={16}/>
+                                    <IconFileText size={16} />
                                     <Text>Text</Text>
+                                </Group>
+                            )
+                        },
+                        {
+                            value: 'snapshot',
+                            label: (
+                                <Group gap="xs">
+                                    <IconCamera size={16} />
+                                    <Text>Snapshot</Text>
                                 </Group>
                             )
                         }
@@ -127,7 +136,7 @@ export default function NavBar({ themeName , setTheme }: { themeName: string, se
                     <Switch
                         size={'xl'}
                         checked={colorScheme.colorScheme === 'dark'}
-                        thumbIcon={colorScheme.colorScheme === 'dark' ? (<IconSun size={16} color={'var(--mantine-color-teal-6)'}/> ) : ( <IconMoon size={16}/>)}
+                        thumbIcon={colorScheme.colorScheme === 'dark' ? (<IconSun size={16} color={'var(--mantine-color-teal-6)'} />) : (<IconMoon size={16} />)}
 
                         onChange={colorScheme.toggleColorScheme}
                     />
@@ -197,12 +206,12 @@ export default function NavBar({ themeName , setTheme }: { themeName: string, se
                 </Text>
                 <Button.Group w={'100%'} mb={'lg'}>
                     <Button variant="default" c={'blue'} onClick={() => setCardsPerAnte(50)}>50</Button>
-                    <Button variant="default" c={'red'} onClick={() => setCardsPerAnte(Math.max(cardsPerAnte - 50,0))}>-50</Button>
+                    <Button variant="default" c={'red'} onClick={() => setCardsPerAnte(Math.max(cardsPerAnte - 50, 0))}>-50</Button>
                     <Button.GroupSection flex={1} variant="default" bg="var(--mantine-color-body)" miw={80}>
                         {cardsPerAnte}
                     </Button.GroupSection>
                     <Button variant="default" c={'green'}
-                            onClick={() => setCardsPerAnte(Math.min(cardsPerAnte + 50,1000))}>+50</Button>
+                        onClick={() => setCardsPerAnte(Math.min(cardsPerAnte + 50, 1000))}>+50</Button>
                     <Button variant="default" c={'blue'} onClick={() => setCardsPerAnte(1000)}>1000</Button>
                 </Button.Group>
                 <InputLabel> Cards per Misc source</InputLabel>
@@ -211,24 +220,24 @@ export default function NavBar({ themeName , setTheme }: { themeName: string, se
                 </Text>
                 <Button.Group w={'100%'} mb={'lg'}>
                     <Button variant="default" c={'blue'} onClick={() => setMiscMaxSource(15)}>15</Button>
-                    <Button variant="default" c={'red'} onClick={() => setMiscMaxSource(Math.max(maxMiscCardSource - 5,0))}>-5</Button>
+                    <Button variant="default" c={'red'} onClick={() => setMiscMaxSource(Math.max(maxMiscCardSource - 5, 0))}>-5</Button>
                     <Button.GroupSection flex={1} variant="default" bg="var(--mantine-color-body)" miw={80}>
                         {maxMiscCardSource}
                     </Button.GroupSection>
                     <Button variant="default" c={'green'}
-                            onClick={() => setMiscMaxSource(Math.min(maxMiscCardSource + 5, 100))}>+5</Button>
+                        onClick={() => setMiscMaxSource(Math.min(maxMiscCardSource + 5, 100))}>+5</Button>
                     <Button variant="default" c={'blue'} onClick={() => setMiscMaxSource(100)}>100</Button>
                 </Button.Group>
                 <Group justify={'space-between'}>
                     <Box>
                         <Text mb={0} fz={'xs'}>Show Joker Spoilers</Text>
                         <Tooltip label="Cards that give jokers, are replaced with the joker the card would give."
-                                 refProp="rootRef">
+                            refProp="rootRef">
                             <Switch
                                 size={'xl'}
                                 checked={showCardSpoilers}
-                                thumbIcon={showCardSpoilers ? (<IconJoker color={'black'}/>) : (
-                                    <IconPlayCard color={'black'}/>)}
+                                thumbIcon={showCardSpoilers ? (<IconJoker color={'black'} />) : (
+                                    <IconPlayCard color={'black'} />)}
                                 onChange={() => setShowCardSpoilers(!showCardSpoilers)}
                             />
                         </Tooltip>
@@ -236,7 +245,7 @@ export default function NavBar({ themeName , setTheme }: { themeName: string, se
                     <Box>
                         <Text mb={0} fz={'xs'}>Quick Reroll</Text>
                         <Tooltip label="Long pressing a card in the shop queue, will reroll that card."
-                                 refProp="rootRef">
+                            refProp="rootRef">
                             <Switch
                                 size={'xl'}
                                 checked={useCardPeek}

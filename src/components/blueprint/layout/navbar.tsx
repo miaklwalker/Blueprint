@@ -16,6 +16,7 @@ import {
 } from "@mantine/core";
 import { useCardStore } from "../../../modules/state/store.ts";
 import UnlocksModal from "../../unlocksModal.tsx";
+import { useGA } from "../../../modules/useGA.ts";
 import {
     IconFileText,
     IconJoker,
@@ -53,6 +54,7 @@ export default function NavBar({ themeName, setTheme }: { themeName: string, set
     const setShowCardSpoilers = useCardStore(state => state.setShowCardSpoilers);
     const setStart = useCardStore(state => state.setStart);
     const openSelectOptionModal = useCardStore(state => state.openSelectOptionModal);
+    const openSnapshotModal = useCardStore(state => state.openSnapshotModal);
     const reset = useCardStore(state => state.reset);
     const hasSettingsChanged = useCardStore((state) => state.applicationState.hasSettingsChanged);
 
@@ -111,15 +113,6 @@ export default function NavBar({ themeName, setTheme }: { themeName: string, set
                                 <Group gap="xs">
                                     <IconFileText size={16} />
                                     <Text>Text</Text>
-                                </Group>
-                            )
-                        },
-                        {
-                            value: 'snapshot',
-                            label: (
-                                <Group gap="xs">
-                                    <IconCamera size={16} />
-                                    <Text>Snapshot</Text>
                                 </Group>
                             )
                         }
@@ -259,6 +252,12 @@ export default function NavBar({ themeName, setTheme }: { themeName: string, set
                 <Stack>
                     <Button color={theme.colors.blue[9]} onClick={() => openSelectOptionModal()}>
                         Modify Unlocks
+                    </Button>
+                    <Button color={theme.colors.cyan[9]} onClick={() => {
+                        openSnapshotModal();
+                        useGA('view_seed_snapshot');
+                    }} leftSection={<IconCamera size={20} />}>
+                        Snapshot
                     </Button>
                     <Button color={theme.colors.red[9]} variant={'filled'} onClick={() => reset()}>
                         Reset

@@ -1,10 +1,10 @@
-import {LOCATION_TYPES, LOCATIONS, options} from "../const.ts";
-import {create} from "zustand/index";
-import {combine, createJSONStorage, devtools, persist, StateStorage} from "zustand/middleware";
-import {immer} from "zustand/middleware/immer";
-import {BuyMetaData} from "../classes/BuyMetaData.ts";
-import {analyzeSeed} from "../ImmolateWrapper";
-import {SeedResultsContainer} from "../ImmolateWrapper/CardEngines/Cards.ts";
+import { LOCATION_TYPES, LOCATIONS, options } from "../const.ts";
+import { create } from "zustand/index";
+import { combine, createJSONStorage, devtools, persist, StateStorage } from "zustand/middleware";
+import { immer } from "zustand/middleware/immer";
+import { BuyMetaData } from "../classes/BuyMetaData.ts";
+import { analyzeSeed } from "../ImmolateWrapper";
+import { SeedResultsContainer } from "../ImmolateWrapper/CardEngines/Cards.ts";
 
 
 export interface InitialState {
@@ -24,6 +24,7 @@ export interface InitialState {
         settingsOpen: boolean;
         asideOpen: boolean;
         selectOptionsModalOpen: boolean;
+        snapshotModalOpen: boolean;
         showCardSpoilers: boolean;
         useCardPeek: boolean;
         autoBuyPacks: boolean;
@@ -74,6 +75,7 @@ const initialState: InitialState = {
         settingsOpen: true,
         asideOpen: false,
         selectOptionsModalOpen: false,
+        snapshotModalOpen: false,
         showCardSpoilers: false,
         useCardPeek: true,
         autoBuyPacks: true,
@@ -84,7 +86,7 @@ const initialState: InitialState = {
         selectedBlind: 'bigBlind',
         hasSettingsChanged: false,
         analyzedResults: null,
-        maxMiscCardSource:15
+        maxMiscCardSource: 15
     },
     searchState: {
         searchTerm: '',
@@ -168,7 +170,7 @@ export const useCardStore = create(
             immer(
                 combine(initialState,
                     (set, get) => ({
-                        setViewMode: (viewMode:string) => set((prev: InitialState) => {
+                        setViewMode: (viewMode: string) => set((prev: InitialState) => {
                             prev.applicationState.viewMode = viewMode;
                         }, undefined, 'Global/SetViewMode'),
                         setSeed: (seed: string) => set((prev: InitialState) => {
@@ -226,6 +228,12 @@ export const useCardStore = create(
                         closeSelectOptionModal: () => set((prev: InitialState) => {
                             prev.applicationState.selectOptionsModalOpen = false
                         }, undefined, 'Global/CloseSelectOptionModal'),
+                        openSnapshotModal: () => set((prev: InitialState) => {
+                            prev.applicationState.snapshotModalOpen = true
+                        }, undefined, 'Global/OpenSnapshotModal'),
+                        closeSnapshotModal: () => set((prev: InitialState) => {
+                            prev.applicationState.snapshotModalOpen = false
+                        }, undefined, 'Global/CloseSnapshotModal'),
                         setSelectedAnte: (selectedAnte: number) => set((prev: InitialState) => {
                             prev.applicationState.selectedAnte = selectedAnte
                             prev.applicationState.selectedBlind = prev.applicationState.selectedAnte === 1 ? 'bigBlind' : 'smallBlind'

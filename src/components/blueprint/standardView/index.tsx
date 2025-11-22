@@ -36,7 +36,7 @@ import Footer from "../layout/footer.tsx";
 import HomePage from "../homePage/homepage.tsx";
 import Index from "../textView";
 import Simple from "../simpleView/simple.tsx";
-import SnapshotView from "../snapshotView/SnapshotView.tsx";
+import SnapshotModal from "../snapshotView/SnapshotView.tsx";
 
 function QueueCarousel({ queue, tabName }: { queue: any[], tabName: string }) {
     const selectedBlind = useCardStore(state => state.applicationState.selectedBlind);
@@ -542,7 +542,7 @@ function Main({ SeedResults }: { SeedResults: SeedResultsContainer | null }) {
             {SeedResults && viewMode === 'blueprint' && <SeedExplorer SeedResults={SeedResults} />}
             {SeedResults && viewMode === 'text' && <Index seedResults={SeedResults} />}
             {SeedResults && viewMode === 'simple' && <Simple SeedResults={SeedResults} />}
-            {SeedResults && viewMode === 'snapshot' && <SnapshotView SeedResults={SeedResults} />}
+            {SeedResults && <SnapshotModal SeedResults={SeedResults} />}
         </AppShell.Main>
     )
 }

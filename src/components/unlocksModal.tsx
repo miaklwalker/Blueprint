@@ -1,6 +1,6 @@
-import {useCardStore} from "../modules/state/store.ts";
-import {Button, Container, Group, Modal, SimpleGrid, Switch} from "@mantine/core";
-import {options} from "../modules/const.ts";
+import { useCardStore } from "../modules/state/store.ts";
+import { Button, Container, Group, Modal, SimpleGrid, Switch } from "@mantine/core";
+import { options } from "../modules/const.ts";
 
 export default function UnlocksModal() {
     const selectOptionsModalOpen = useCardStore(state => state.applicationState.selectOptionsModalOpen);
@@ -19,10 +19,10 @@ export default function UnlocksModal() {
                     value={selectedOptions}
                     onChange={setSelectedOptions}
                 >
-                    <SimpleGrid cols={{base: 2, md: 4, lg: 6}} mb={'lg'} mt={'xs'}>
+                    <SimpleGrid cols={{ base: 2, md: 4, lg: 6 }} mb={'lg'} mt={'xs'}>
                         {
                             options.map((option: string, i: number) => (
-                                <Switch key={i} value={option} label={option}/>))
+                                <Switch key={i} value={option} label={option} />))
                         }
                     </SimpleGrid>
                 </Switch.Group>

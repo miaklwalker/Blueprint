@@ -44,6 +44,7 @@ export default function NavBar({ themeName, setTheme }: { themeName: string, set
     const setUseCardPeek = useCardStore(state => state.setUseCardPeek);
     const maxMiscCardSource = useCardStore(state => state.applicationState.maxMiscCardSource);
     const setMiscMaxSource = useCardStore(state => state.setMiscMaxSource);
+    const selectedOptions = useCardStore(state => state.immolateState.selectedOptions);
 
     const setSeed = useCardStore(state => state.setSeed);
     const setDeck = useCardStore(state => state.setDeck);
@@ -77,7 +78,7 @@ export default function NavBar({ themeName, setTheme }: { themeName: string, set
         if (start && seedResults) {
             analyzeSeed();
         }
-    }, [showCardSpoilers, deck, stake, version, antes, cardsPerAnte, events, buys, maxMiscCardSource])
+    }, [showCardSpoilers, deck, stake, version, antes, cardsPerAnte, events, buys, maxMiscCardSource, selectedOptions])
 
 
     return (

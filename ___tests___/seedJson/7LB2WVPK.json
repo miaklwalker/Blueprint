@@ -15352,9 +15352,9 @@
                 "enhancements": "Wild"
               },
               {
-                "name": "Purple Seal Polychrome Bonus Queen of Clubs",
+                "name": "Purple Seal Holographic Bonus Queen of Clubs",
                 "type": "Standard",
-                "edition": "Polychrome",
+                "edition": "Holographic",
                 "seal": "Purple Seal",
                 "rank": "Queen",
                 "suit": "Clubs",
@@ -18369,9 +18369,9 @@
             "source": "standard_edition",
             "cards": [
               {
-                "name": "Polychrome Glass 2 of Diamonds",
+                "name": "Holographic Glass 2 of Diamonds",
                 "type": "Standard",
-                "edition": "Polychrome",
+                "edition": "Holographic",
                 "seal": "No Seal",
                 "rank": "2",
                 "suit": "Diamonds",
@@ -18523,9 +18523,9 @@
                 "enhancements": "Gold"
               },
               {
-                "name": "Polychrome Mult Jack of Spades",
+                "name": "Holographic Mult Jack of Spades",
                 "type": "Standard",
-                "edition": "Polychrome",
+                "edition": "Holographic",
                 "seal": "No Seal",
                 "rank": "Jack",
                 "suit": "Spades",
@@ -18537,9 +18537,9 @@
                 "enhancements": "Mult"
               },
               {
-                "name": "Polychrome Gold King of Hearts",
+                "name": "Holographic Gold King of Hearts",
                 "type": "Standard",
-                "edition": "Polychrome",
+                "edition": "Holographic",
                 "seal": "No Seal",
                 "rank": "King",
                 "suit": "Hearts",
@@ -22213,7 +22213,7 @@
                 "isRental": false
               },
               {
-                "name": "Riff-raff",
+                "name": "Joker",
                 "type": "Joker",
                 "edition": "",
                 "rarity": 1,

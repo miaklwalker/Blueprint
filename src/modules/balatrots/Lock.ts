@@ -14,6 +14,7 @@ interface ILock {
 
 export class Lock implements ILock {
     private locked: Set<string> = new Set();
+    private purchased: Set<string> = new Set();
     static firstLock = new Set(["Overstock Plus", "Liquidation", "Glow Up", "Reroll Glut", "Omen Globe", "Observatory", "Nacho Tong", "Recyclomancy", "Tarot Tycoon", "Planet Tycoon", "Money Tree", "Antimatter", "Illusion", "Petroglyph", "Retcon", "Palette"]);
     static ante2Lock = new Set(["The Mouth", "The Fish", "The Wall", "The House", "The Mark", "The Wheel", "The Arm", "The Water", "The Needle", "The Flint", "Negative Tag", "Standard Tag", "Meteor Tag", "Buffoon Tag", "Handy Tag", "Garbage Tag", "Ethereal Tag", "Top-up Tag", "Orbital Tag"]);
 
@@ -25,6 +26,18 @@ export class Lock implements ILock {
             item.forEach(item => this.locked.add(item));
         } else if (item instanceof ItemImpl || item instanceof JokerImpl) {
             this.locked.add(item.getName());
+        } else {
+            throw new Error("Invalid argument type");
+        }
+    }
+
+    lockPurchased(item: lockeable) {
+        if (typeof item === 'string') {
+            this.purchased.add(item);
+        } else if (Array.isArray(item)) {
+            item.forEach(item => this.purchased.add(item));
+        } else if (item instanceof ItemImpl || item instanceof JokerImpl) {
+            this.purchased.add(item.getName());
         } else {
             throw new Error("Invalid argument type");
         }
@@ -47,11 +60,33 @@ export class Lock implements ILock {
         }
     }
 
+    unlockPurchased(collection: lockeable) {
+        if (typeof collection === 'string') {
+            this.purchased.delete(collection);
+        } else if (Array.isArray(collection)) {
+            collection.forEach(item => this.purchased.delete(item));
+        } else if (collection instanceof ItemImpl || collection instanceof JokerImpl) {
+            this.purchased.delete(collection.getName());
+        } else {
+            throw new Error("Invalid argument type");
+        }
+    }
+
     isLocked(item: lockeable): boolean {
         if (typeof item === 'string') {
             return this.locked.has(item);
         } else if (item instanceof ItemImpl || item instanceof JokerImpl) {
             return this.locked.has(item.getName());
+        } else {
+            throw new Error("Invalid argument type");
+        }
+    }
+
+    isPurchased(item: lockeable): boolean {
+        if (typeof item === 'string') {
+            return this.purchased.has(item);
+        } else if (item instanceof ItemImpl || item instanceof JokerImpl) {
+            return this.purchased.has(item.getName());
         } else {
             throw new Error("Invalid argument type");
         }

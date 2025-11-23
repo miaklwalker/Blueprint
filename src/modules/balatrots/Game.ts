@@ -1,41 +1,41 @@
-import {Lock} from "./Lock";
-import {Tarot, TarotEnum} from "./enum/cards/Tarot";
-import {Planet, PlanetItem} from "./enum/cards/Planet";
-import {Spectral, SpectralItem} from "./enum/packs/Spectral";
-import {LegendaryJoker, LegendaryJokerItem} from "./enum/cards/LegendaryJoker";
-import {UncommonJoker, UncommonJokerItem} from "./enum/cards/UncommonJoker";
-import {UncommonJoker101CItem, UncommonJoker_101C} from "./enum/cards/UncommonJoker_101C";
-import {UncommonJoker100Item, UncommonJoker_100} from "./enum/cards/UncommonJoker_100";
-import {Card, PlayingCard} from "./enum/cards/Card";
-import {Enhancement, EnhancementItem} from "./enum/Enhancement";
-import {Voucher, VoucherItem} from "./enum/Voucher";
-import {Tag, TagItem} from "./enum/Tag";
-import {PackType, PackTypeItem} from "./enum/packs/PackType";
-import {RareJoker, RareJokerItem} from "./enum/cards/RareJoker";
-import {RareJoker101CItem, RareJoker_101C} from "./enum/cards/RareJoker_101C";
-import {RareJoker100Item, RareJoker_100} from "./enum/cards/RareJoker_100";
-import {CommonJoker, CommonJokerCard} from "./enum/cards/CommonJoker";
-import {CommonJoker_100, CommonJoker_100Card} from "./enum/cards/CommonJoker_100";
-import {BossBlind, BossBlindEnum} from "./enum/BossBlind";
-import {InstanceParams} from "./struct/InstanceParams";
-import {LuaRandom, pseudohash, round13} from "./utils/LuaRandom";
-import {Cache} from "./Cache";
-import {ItemImpl} from "./interface/Item";
-import {Specials, SpecialsItem} from "./enum/cards/Specials";
-import {JokerData} from "./struct/JokerData";
-import {Edition, EditionItem} from "./enum/Edition";
-import {JokerStickers} from "./struct/JokerStickers";
-import {Stake, StakeType} from "./enum/Stake";
-import {JokerImpl} from "./interface/Joker";
-import {ShopInstance} from "./struct/ShopInstance";
-import {Deck, deckMap, deckNames, DeckType} from "./enum/Deck";
-import {ShopItem} from "./struct/ShopItem";
-import {Type} from "./enum/cards/CardType";
-import {PackInfo} from "./struct/PackInfo";
-import {Seal, SealItem} from "./enum/Seal";
-import {QueueNames, RandomQueueNames, RNGSource} from "./enum/QueueName.ts";
-import {PackKind} from "./enum/packs/PackKind.ts";
-import {options} from "../const.ts";
+import { Lock } from "./Lock";
+import { Tarot, TarotEnum } from "./enum/cards/Tarot";
+import { Planet, PlanetItem } from "./enum/cards/Planet";
+import { Spectral, SpectralItem } from "./enum/packs/Spectral";
+import { LegendaryJoker, LegendaryJokerItem } from "./enum/cards/LegendaryJoker";
+import { UncommonJoker, UncommonJokerItem } from "./enum/cards/UncommonJoker";
+import { UncommonJoker101CItem, UncommonJoker_101C } from "./enum/cards/UncommonJoker_101C";
+import { UncommonJoker100Item, UncommonJoker_100 } from "./enum/cards/UncommonJoker_100";
+import { Card, PlayingCard } from "./enum/cards/Card";
+import { Enhancement, EnhancementItem } from "./enum/Enhancement";
+import { Voucher, VoucherItem } from "./enum/Voucher";
+import { Tag, TagItem } from "./enum/Tag";
+import { PackType, PackTypeItem } from "./enum/packs/PackType";
+import { RareJoker, RareJokerItem } from "./enum/cards/RareJoker";
+import { RareJoker101CItem, RareJoker_101C } from "./enum/cards/RareJoker_101C";
+import { RareJoker100Item, RareJoker_100 } from "./enum/cards/RareJoker_100";
+import { CommonJoker, CommonJokerCard } from "./enum/cards/CommonJoker";
+import { CommonJoker_100, CommonJoker_100Card } from "./enum/cards/CommonJoker_100";
+import { BossBlind, BossBlindEnum } from "./enum/BossBlind";
+import { InstanceParams } from "./struct/InstanceParams";
+import { LuaRandom, pseudohash, round13 } from "./utils/LuaRandom";
+import { Cache } from "./Cache";
+import { ItemImpl } from "./interface/Item";
+import { Specials, SpecialsItem } from "./enum/cards/Specials";
+import { JokerData } from "./struct/JokerData";
+import { Edition, EditionItem } from "./enum/Edition";
+import { JokerStickers } from "./struct/JokerStickers";
+import { Stake, StakeType } from "./enum/Stake";
+import { JokerImpl } from "./interface/Joker";
+import { ShopInstance } from "./struct/ShopInstance";
+import { Deck, deckMap, deckNames, DeckType } from "./enum/Deck";
+import { ShopItem } from "./struct/ShopItem";
+import { Type } from "./enum/cards/CardType";
+import { PackInfo } from "./struct/PackInfo";
+import { Seal, SealItem } from "./enum/Seal";
+import { QueueNames, RandomQueueNames, RNGSource } from "./enum/QueueName.ts";
+import { PackKind } from "./enum/packs/PackKind.ts";
+import { options } from "../const.ts";
 
 export class Game extends Lock {
     private static _tarots: Tarot[] | null = null;
@@ -373,12 +373,28 @@ export class Game extends Lock {
 
         let item = items[this.randint(id, 0, items.length - 1)];
 
-        if ((!this.params.isShowman() && this.isLocked(item)) || item.getName() === "RETRY") {
+        // Availability check (Always respected)
+        const isAvailabilityLocked = this.isLocked(item);
+
+        // Purchased check (Respected unless Showman is active AND item is not a Voucher)
+        // Showman only affects Joker, Tarot, Planet, Spectral.
+        // Vouchers are always unique per run (mostly).
+        const isVoucher = item instanceof VoucherItem;
+        const showmanApplies = this.params.isShowman() && !isVoucher;
+        const isPurchasedLocked = this.isPurchased(item);
+
+        if (isAvailabilityLocked || (!showmanApplies && isPurchasedLocked) || item.getName() === "RETRY") {
             let resample = 2;
             while (true) {
                 item = items[this.randint(`${id}_resample${resample}`, 0, items.length - 1)];
                 resample++;
-                if ((!this.isLocked(item) && item.getName() !== "RETRY") || resample > 1000) {
+
+                const isAvailabilityLockedResample = this.isLocked(item);
+                const isVoucherResample = item instanceof VoucherItem;
+                const showmanAppliesResample = this.params.isShowman() && !isVoucherResample;
+                const isPurchasedLockedResample = this.isPurchased(item);
+
+                if ((!isAvailabilityLockedResample && (showmanAppliesResample || !isPurchasedLockedResample) && item.getName() !== "RETRY") || resample > 1000) {
                     return item;
                 }
             }
@@ -396,12 +412,21 @@ export class Game extends Lock {
         }
 
         let item = items[this.randint(id, 0, items.length - 1)];
-        if ((!this.params.isShowman() && this.isLocked(item)) || item.getName() === "RETRY") {
+
+        const isAvailabilityLocked = this.isLocked(item);
+        const showmanApplies = this.params.isShowman();
+        const isPurchasedLocked = this.isPurchased(item);
+
+        if (isAvailabilityLocked || (!showmanApplies && isPurchasedLocked) || item.getName() === "RETRY") {
             let resample = 2;
             while (true) {
                 item = items[this.randint(`${id}_resample${resample}`, 0, items.length - 1)];
                 resample++;
-                if ((!this.isLocked(item) && item.getName() !== "RETRY") || resample > 1000) {
+
+                const isAvailabilityLockedResample = this.isLocked(item);
+                const isPurchasedLockedResample = this.isPurchased(item);
+
+                if ((!isAvailabilityLockedResample && (showmanApplies || !isPurchasedLockedResample) && item.getName() !== "RETRY") || resample > 1000) {
                     return item;
                 }
             }
@@ -425,23 +450,23 @@ export class Game extends Lock {
 
 
 
-    poll_edition(source: string, mod:number=1, noNeg: boolean=true, guaranteed: boolean = false): EditionItem{
+    poll_edition(source: string, mod: number = 1, noNeg: boolean = true, guaranteed: boolean = false): EditionItem {
         let edition
         const editionPoll = this.random(`${source}`);
         const editionRate = this.isVoucherActive(Voucher.GLOW_UP) ? 4
             : this.isVoucherActive(Voucher.HONE) ? 2 : 1;
-        if(guaranteed){
+        if (guaranteed) {
             switch (true) {
-                case (editionPoll > 1 - 0.003*25 && !noNeg):
+                case (editionPoll > 1 - 0.003 * 25 && !noNeg):
                     edition = Edition.NEGATIVE;
                     break;
-                case (editionPoll > 1 - 0.006*25):
+                case (editionPoll > 1 - 0.006 * 25):
                     edition = Edition.POLYCHROME;
                     break;
-                case (editionPoll > 1 - 0.02*25):
+                case (editionPoll > 1 - 0.02 * 25):
                     edition = Edition.HOLOGRAPHIC;
                     break;
-                case (editionPoll > 1 - 0.04*25):
+                case (editionPoll > 1 - 0.04 * 25):
                     edition = Edition.FOIL;
                     break;
                 default:
@@ -746,7 +771,7 @@ export class Game extends Lock {
 
     activateVoucher(voucher: Voucher): void {
         this.params.getVouchers().add(voucher);
-        this.lock(voucher);
+        this.lockPurchased(voucher);
 
         // Find voucher index in VOUCHERS array
         const index = Game.VOUCHERS.findIndex(v => v.getName() === voucher);
@@ -823,11 +848,11 @@ export class Game extends Lock {
     nextStandardCard(ante: number, source?: string): Card {
         let enhancement;
         let isFromCertificate = source === RandomQueueNames.R_Cert;
-        if(isFromCertificate){
+        if (isFromCertificate) {
             return this.nextCertificateStandardCard()
         }
 
-         if (this.random(`${RandomQueueNames.R_Standard_Has_Enhancement}${ante}`) <= 0.6) {
+        if (this.random(`${RandomQueueNames.R_Standard_Has_Enhancement}${ante}`) <= 0.6) {
             enhancement = "No Enhancement";
         } else {
             enhancement = this.randchoice(`${RandomQueueNames.R_Enhancement}${RNGSource.S_Standard}${ante}`, Game.ENHANCEMENTS).getName();
@@ -840,7 +865,7 @@ export class Game extends Lock {
         if (editionPoll > 0.988) {
             edition = Edition.POLYCHROME;
         }
-        else if (  editionPoll > 0.96 ) {
+        else if (editionPoll > 0.96) {
             edition = Edition.HOLOGRAPHIC;
         }
         else if (editionPoll > 0.92) {
@@ -849,7 +874,7 @@ export class Game extends Lock {
 
         let seal = Seal.NO_SEAL;
 
-        if (this.random(`${RandomQueueNames.R_Standard_Has_Seal}${ante}`) > 0.8 ) {
+        if (this.random(`${RandomQueueNames.R_Standard_Has_Seal}${ante}`) > 0.8) {
             const sealPoll = this.random(`${RandomQueueNames.R_Standard_Seal}${ante}`);
             if (sealPoll > 0.75) {
                 seal = Seal.RED_SEAL;
@@ -1031,14 +1056,14 @@ export class Game extends Lock {
         return cards;
     }
 
-    nextEdition(source: string, guaranteed = false ): Edition {
+    nextEdition(source: string, guaranteed = false): Edition {
         let version = this.params.version;
         let rate = version !== 10106 ? 5 : 4;
-        if(this.random(source) < 1/rate || guaranteed){
+        if (this.random(source) < 1 / rate || guaranteed) {
             this.random(source);
             const poll = this.random(source);
-            if(poll > 0.85) return Edition.POLYCHROME;
-            if(poll > 0.5) return Edition.HOLOGRAPHIC;
+            if (poll > 0.85) return Edition.POLYCHROME;
+            if (poll > 0.5) return Edition.HOLOGRAPHIC;
             return Edition.FOIL;
         }
         return Edition.NO_EDITION

@@ -13,22 +13,22 @@ import {
     StandardCard_Final,
     Tarot_Final
 } from "./CardEngines/Cards.ts";
-import {EVENT_UNLOCKS, LOCATIONS, options} from "../const.ts";
-import {RandomQueueNames, RNGSource} from "../balatrots/enum/QueueName.ts";
-import {Deck, deckMap, DeckType} from "../balatrots/enum/Deck.ts";
-import {Stake, StakeType} from "../balatrots/enum/Stake.ts";
-import {Game} from "../balatrots/Game.ts";
-import {InstanceParams} from "../balatrots/struct/InstanceParams.ts";
-import {JokerData} from "../balatrots/struct/JokerData.ts";
-import {Type} from "../balatrots/enum/cards/CardType.ts";
-import {Card} from "../balatrots/enum/cards/Card.ts";
-import {Voucher} from "../balatrots/enum/Voucher.ts";
-import {PlanetItem} from "../balatrots/enum/cards/Planet.ts";
-import {Tarot} from "../balatrots/enum/cards/Tarot.ts";
-import {SpectralItem} from "../balatrots/enum/packs/Spectral.ts";
-import {SpecialsItem} from "../balatrots/enum/cards/Specials.ts";
-import {BalatroAnalyzer} from "../balatrots/BalatroAnalyzer.ts";
-import {Lock} from "../balatrots/Lock.ts"
+import { EVENT_UNLOCKS, LOCATIONS, options } from "../const.ts";
+import { RandomQueueNames, RNGSource } from "../balatrots/enum/QueueName.ts";
+import { Deck, deckMap, DeckType } from "../balatrots/enum/Deck.ts";
+import { Stake, StakeType } from "../balatrots/enum/Stake.ts";
+import { Game } from "../balatrots/Game.ts";
+import { InstanceParams } from "../balatrots/struct/InstanceParams.ts";
+import { JokerData } from "../balatrots/struct/JokerData.ts";
+import { Type } from "../balatrots/enum/cards/CardType.ts";
+import { Card } from "../balatrots/enum/cards/Card.ts";
+import { Voucher } from "../balatrots/enum/Voucher.ts";
+import { PlanetItem } from "../balatrots/enum/cards/Planet.ts";
+import { Tarot } from "../balatrots/enum/cards/Tarot.ts";
+import { SpectralItem } from "../balatrots/enum/packs/Spectral.ts";
+import { SpecialsItem } from "../balatrots/enum/cards/Specials.ts";
+import { BalatroAnalyzer } from "../balatrots/BalatroAnalyzer.ts";
+import { Lock } from "../balatrots/Lock.ts"
 
 // implement a third engine to handle the literal unlocks ( user selected )
 export interface MiscCardSource {
@@ -63,6 +63,12 @@ export interface CardEngine {
     unlock(item: string): void;
 
     isLocked(item: string): boolean;
+
+    lockPurchased(item: string): void;
+
+    unlockPurchased(item: string): void;
+
+    isPurchased(item: string): boolean;
 
     // Next item generators
     nextBoss(ante: number): string;
@@ -258,7 +264,7 @@ export class CardEngineWrapper implements EngineWrapper {
 
     handleBuy(key: string, type: string, makeAnalyzer?: any, analyzeOptions?: AnalyzeOptions) {
         if (type === 'Card') {
-            this.engine.lock(key)
+            this.engine.lockPurchased(key)
             console.log("Card bought: ", key)
             if (key === 'Showman' && makeAnalyzer) {
                 makeAnalyzer(true);
@@ -280,7 +286,7 @@ export class CardEngineWrapper implements EngineWrapper {
 
     handleSell(key: string, type: string, makeAnalyzer: any) {
         if (type === 'Card') {
-            this.engine.unlock(key)
+            this.engine.unlockPurchased(key)
             if (key === 'Showman') {
                 makeAnalyzer(false);
             }
@@ -307,169 +313,170 @@ export interface AnalyzeOptions {
     maxMiscCardSource?: number
     lockedCards?: any
 }
-export const getMiscCardSources: (maxCards: number)=>MiscCardSource[] = (maxCards: number) => {
-    let state: {[key: string]: boolean} = {};
+export const getMiscCardSources: (maxCards: number) => MiscCardSource[] = (maxCards: number) => {
+    let state: { [key: string]: boolean } = {};
     return ([
-    {
-        name: "riffRaff",
-        cardsToGenerate: maxCards,
-        cardType: "Joker",
-        source: RNGSource.S_Riff_Raff,
-        hasStickers: false,
-        soulable: false,
-        cards: [],
-        beforeGeneration: (engine: Game) => {
-            state["riffRaff"] = engine.isLocked("Riff-raff");
-            engine.lock("Riff-raff");
-        },
-        afterGeneration: (engine: Game) => {
-            if (!state["riffRaff"]) {
-                engine.unlock("Riff-raff");
+        {
+            name: "riffRaff",
+            cardsToGenerate: maxCards,
+            cardType: "Joker",
+            source: RNGSource.S_Riff_Raff,
+            hasStickers: false,
+            soulable: false,
+            cards: [],
+            beforeGeneration: (engine: Game) => {
+                state["riffRaff"] = engine.isPurchased("Riff-raff");
+                engine.lockPurchased("Riff-raff");
+            },
+            afterGeneration: (engine: Game) => {
+                if (!state["riffRaff"]) {
+                    engine.unlockPurchased("Riff-raff");
+                }
             }
-        }
-    },
-    {
-        name: "uncommonTag",
-        cardsToGenerate: maxCards,
-        cardType: "Joker",
-        source: RNGSource.S_Uncommon_Tag,
-        cards: []
-    },
-    {
-        name: "rareTag",
-        cardsToGenerate: maxCards,
-        cardType: "Joker",
-        source: RNGSource.S_Rare_Tag,
-        cards: []
-    },
-    {
-        name: "topUpTag",
-        cardsToGenerate: maxCards,
-        cardType: "Joker",
-        source: RNGSource.S_Top_Up,
-        hasStickers: false,
-        cards: []
-    },
-    {
-        name: "arcanaPack",
-        cardsToGenerate: maxCards,
-        cardType: "Tarot",
-        source: RNGSource.S_Arcana,
-        soulable: true,
-        hasStickers: true,
-        cards: []
-    },
-    {
-        name: "emperor",
-        cardsToGenerate: maxCards,
-        cardType: "Tarot",
-        source: RNGSource.S_Emperor,
-        cards: []
-    },
-    {
-        name: "vagabond",
-        cardsToGenerate: maxCards,
-        cardType: "Tarot",
-        source: RNGSource.S_Vagabond,
-        cards: []
-    },
-    {
-        name: "purpleSeal and 8 Ball",
-        cardsToGenerate: maxCards,
-        cardType: "Tarot",
-        source: RNGSource.S_Purple_Seal,
-        cards: []
-    },
-    {
-        name: "superposition",
-        cardsToGenerate: maxCards,
-        cardType: "Tarot",
-        source: RNGSource.S_Superposition,
-        cards: [],
-        hasStickers: false,
-    },
-    {
-        name: "judgement",
-        cardsToGenerate: maxCards,
-        cardType: "Joker",
-        source: RNGSource.S_Judgement,
-        cards: [],
-        hasStickers: false,
-    },
-    {
-        name: "buffoonPack",
-        cardsToGenerate: maxCards,
-        cardType: "Joker",
-        source: RNGSource.S_Buffoon,
-        cards: [],
-        hasStickers: true,
-    },
-    {
-        name: "wraith",
-        cardsToGenerate: maxCards,
-        cardType: "Joker",
-        source: RNGSource.S_Wraith,
-        hasStickers: false,
-        cards: []
-    },
-    {
-        name: "highPriestess",
-        cardsToGenerate: maxCards,
-        cardType: "Planet",
-        source: RNGSource.S_High_Priestess,
-        cards: []
-    },
-    {
-        name: "celestialPack",
-        cardsToGenerate: maxCards,
-        cardType: "Planet",
-        source: RNGSource.S_Celestial,
-        cards: []
-    },
-    {
-        name: 'spectralPack',
-        cardsToGenerate: maxCards,
-        cardType: "Spectral",
-        source: RNGSource.S_Spectral,
-        cards: [],
-        soulable: true,
-        hasStickers: true,
-    },
-    {
-        name: "seance",
-        cardsToGenerate: maxCards,
-        cardType: "Spectral",
-        source: RNGSource.S_Seance,
-        cards: [],
-        soulable: false,
-        hasStickers: false,
-    },
-    {
-        name: "sixthSense",
-        cardsToGenerate: maxCards,
-        cardType: "Spectral",
-        source: RNGSource.S_Sixth_Sense,
-        cards: [],
-        soulable: false,
-        hasStickers: false,
-    },
-    {
-        name: "certificate",
-        cardsToGenerate: maxCards * 3,
-        cardType: "Standard",
-        source: RandomQueueNames.R_Cert,
-        cards: [],
-        usesAnte: false,
-    },
-    {
-        name: "standardPack",
-        cardsToGenerate: maxCards,
-        cardType: "Standard",
-        source: RandomQueueNames.R_Standard_Edition,
-        cards: [],
-        hasStickers: false,
-    },
-])};
+        },
+        {
+            name: "uncommonTag",
+            cardsToGenerate: maxCards,
+            cardType: "Joker",
+            source: RNGSource.S_Uncommon_Tag,
+            cards: []
+        },
+        {
+            name: "rareTag",
+            cardsToGenerate: maxCards,
+            cardType: "Joker",
+            source: RNGSource.S_Rare_Tag,
+            cards: []
+        },
+        {
+            name: "topUpTag",
+            cardsToGenerate: maxCards,
+            cardType: "Joker",
+            source: RNGSource.S_Top_Up,
+            hasStickers: false,
+            cards: []
+        },
+        {
+            name: "arcanaPack",
+            cardsToGenerate: maxCards,
+            cardType: "Tarot",
+            source: RNGSource.S_Arcana,
+            soulable: true,
+            hasStickers: true,
+            cards: []
+        },
+        {
+            name: "emperor",
+            cardsToGenerate: maxCards,
+            cardType: "Tarot",
+            source: RNGSource.S_Emperor,
+            cards: []
+        },
+        {
+            name: "vagabond",
+            cardsToGenerate: maxCards,
+            cardType: "Tarot",
+            source: RNGSource.S_Vagabond,
+            cards: []
+        },
+        {
+            name: "purpleSeal and 8 Ball",
+            cardsToGenerate: maxCards,
+            cardType: "Tarot",
+            source: RNGSource.S_Purple_Seal,
+            cards: []
+        },
+        {
+            name: "superposition",
+            cardsToGenerate: maxCards,
+            cardType: "Tarot",
+            source: RNGSource.S_Superposition,
+            cards: [],
+            hasStickers: false,
+        },
+        {
+            name: "judgement",
+            cardsToGenerate: maxCards,
+            cardType: "Joker",
+            source: RNGSource.S_Judgement,
+            cards: [],
+            hasStickers: false,
+        },
+        {
+            name: "buffoonPack",
+            cardsToGenerate: maxCards,
+            cardType: "Joker",
+            source: RNGSource.S_Buffoon,
+            cards: [],
+            hasStickers: true,
+        },
+        {
+            name: "wraith",
+            cardsToGenerate: maxCards,
+            cardType: "Joker",
+            source: RNGSource.S_Wraith,
+            hasStickers: false,
+            cards: []
+        },
+        {
+            name: "highPriestess",
+            cardsToGenerate: maxCards,
+            cardType: "Planet",
+            source: RNGSource.S_High_Priestess,
+            cards: []
+        },
+        {
+            name: "celestialPack",
+            cardsToGenerate: maxCards,
+            cardType: "Planet",
+            source: RNGSource.S_Celestial,
+            cards: []
+        },
+        {
+            name: 'spectralPack',
+            cardsToGenerate: maxCards,
+            cardType: "Spectral",
+            source: RNGSource.S_Spectral,
+            cards: [],
+            soulable: true,
+            hasStickers: true,
+        },
+        {
+            name: "seance",
+            cardsToGenerate: maxCards,
+            cardType: "Spectral",
+            source: RNGSource.S_Seance,
+            cards: [],
+            soulable: false,
+            hasStickers: false,
+        },
+        {
+            name: "sixthSense",
+            cardsToGenerate: maxCards,
+            cardType: "Spectral",
+            source: RNGSource.S_Sixth_Sense,
+            cards: [],
+            soulable: false,
+            hasStickers: false,
+        },
+        {
+            name: "certificate",
+            cardsToGenerate: maxCards * 3,
+            cardType: "Standard",
+            source: RandomQueueNames.R_Cert,
+            cards: [],
+            usesAnte: false,
+        },
+        {
+            name: "standardPack",
+            cardsToGenerate: maxCards,
+            cardType: "Standard",
+            source: RandomQueueNames.R_Standard_Edition,
+            cards: [],
+            hasStickers: false,
+        },
+    ])
+};
 
 export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOptions) {
     const seed = settings?.seed?.toUpperCase()?.replace(/0/g, 'O')?.trim();
@@ -507,7 +514,7 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
     let spoilerSources = [RNGSource.S_Soul, RNGSource.S_Judgement, RNGSource.S_Wraith];
     const lockedCards = analyzeOptions?.lockedCards || {};
 
-    let staticAnteQueues: {[key: string]: any[]} = {};
+    let staticAnteQueues: { [key: string]: any[] } = {};
 
     function generateAnte(ante: number) {
         engine.initUnlocks(ante, false);
@@ -691,10 +698,10 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
         burnerInstance.nextTag(ante)
         burnerInstance.nextTag(ante);
         result.tagsQueue = Array(queueDepth).fill(null).map(() => burnerInstance.nextTag(ante).name)
-        if(staticAnteQueues["Wheel"]){
+        if (staticAnteQueues["Wheel"]) {
             result.wheelQueue = staticAnteQueues["Wheel"];
         }
-        else{
+        else {
             result.wheelQueue = Array(queueDepth).fill(null).map(() => {
                 return {
                     "name": "King of Clubs",
@@ -714,10 +721,10 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
             staticAnteQueues["Wheel"] = result.wheelQueue;
         }
 
-        if(staticAnteQueues["Aura"]){
+        if (staticAnteQueues["Aura"]) {
             result.auraQueue = staticAnteQueues["Aura"];
         }
-        else{
+        else {
             result.auraQueue = Array(queueDepth).fill(null).map(() => {
                 return {
                     "name": "King of Clubs",
@@ -747,8 +754,8 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
     for (let ante = 1; ante <= settings.antes; ante++) {
         output.antes[ante] = generateAnte(ante);
     }
-    try{
-        output.antes[0]=generateAnte(0)
+    try {
+        output.antes[0] = generateAnte(0)
         output.antes[0].boss = output.antes[1].boss;
     } catch (e) {
         console.error("Error generating ante 0:", e);

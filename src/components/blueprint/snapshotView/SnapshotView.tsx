@@ -28,15 +28,6 @@ const RARITY_ORDER: { [key: number]: number } = {
     0: 4  // Unknown
 };
 
-const EDITION_ORDER: { [key: string]: number } = {
-    "Negative": 0,
-    "Polychrome": 1,
-    "Holographic": 2,
-    "Foil": 3,
-    "No Edition": 4,
-    "": 4
-};
-
 // Higher number = higher priority within the rarity tier
 const JOKER_WEIGHTS: { [key: string]: number } = {
     "Blueprint": 10,

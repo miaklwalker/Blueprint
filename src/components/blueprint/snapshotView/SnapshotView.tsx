@@ -1,9 +1,22 @@
-import { SeedResultsContainer, Ante, Joker_Final } from "../../../modules/ImmolateWrapper/CardEngines/Cards.ts";
-import { Box, Divider, Group, HoverCard, Modal, Paper, ScrollArea, SimpleGrid, Stack, Text, Title, Tooltip } from "@mantine/core";
-import { Boss, Voucher } from "../../Rendering/gameElements.tsx";
-import { JokerCard } from "../../Rendering/cards.tsx";
-import { useMemo } from "react";
-import { useCardStore } from "../../../modules/state/store.ts";
+import {Ante, Joker_Final, SeedResultsContainer} from "../../../modules/ImmolateWrapper/CardEngines/Cards.ts";
+import {
+    Box,
+    Divider,
+    Group,
+    HoverCard,
+    Modal,
+    Paper,
+    ScrollArea,
+    SimpleGrid,
+    Stack,
+    Text,
+    Title,
+    Tooltip
+} from "@mantine/core";
+import {Boss, Voucher} from "../../Rendering/gameElements.tsx";
+import {JokerCard} from "../../Rendering/cards.tsx";
+import {useMemo} from "react";
+import {useCardStore} from "../../../modules/state/store.ts";
 
 interface SnapshotViewProps {
     SeedResults: SeedResultsContainer;
@@ -87,9 +100,8 @@ export default function SnapshotModal({ SeedResults }: SnapshotViewProps) {
 
             const processJoker = (item: any, source: string, sourceType: 'Shop' | 'Pack' | 'Misc', index: number) => {
                 if (item.type === 'Joker') {
-                    const name = item.name;
                     // Key is just the name now, to group all editions together
-                    const key = name;
+                    const key = item.name;
 
                     if (!jokerMap.has(key)) {
                         jokerMap.set(key, {
@@ -213,13 +225,13 @@ export default function SnapshotModal({ SeedResults }: SnapshotViewProps) {
                     <Title order={3} mb="md">Jokers</Title>
                     <SimpleGrid cols={{ base: 2, sm: 4, lg: 6 }}>
                         {sortedUniqueJokers.map((data, index) => (
-                            <HoverCard key={index} width={320} shadow="md" openDelay={300}>
+                            <HoverCard key={index}  shadow="md" openDelay={300} closeOnClickOutside={true}>
                                 <HoverCard.Target>
-                                    <Stack align="center" gap={4}>
+                                    <Box w={'fit-content'}>
                                         <JokerCard card={new Joker_Final(data.joker)} />
-                                    </Stack>
+                                    </Box>
                                 </HoverCard.Target>
-                                <HoverCard.Dropdown>
+                                <HoverCard.Dropdown w={320}>
                                     <Stack gap={0}>
                                         <Title order={3} mb={0}>
                                             {data.joker.name}

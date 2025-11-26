@@ -7,16 +7,18 @@ import {
     NativeSelect,
     NumberInput,
     ScrollArea,
-    SegmentedControl, Select,
+    SegmentedControl,
+    Select,
     Stack,
     Switch,
     Text,
-    Tooltip, useMantineColorScheme,
+    Tooltip,
+    useMantineColorScheme,
     useMantineTheme
 } from "@mantine/core";
-import { useCardStore } from "../../../modules/state/store.ts";
+import {useCardStore} from "../../../modules/state/store.ts";
 import UnlocksModal from "../../unlocksModal.tsx";
-import { useGA } from "../../../modules/useGA.ts";
+import {useGA} from "../../../modules/useGA.ts";
 import {
     IconFileText,
     IconJoker,
@@ -24,12 +26,11 @@ import {
     IconListSearch,
     IconMoon,
     IconPlayCard,
-    IconSun,
-    IconCamera
+    IconSun
 } from "@tabler/icons-react";
 import SeedInputAutoComplete from "../../SeedInputAutoComplete.tsx";
-import { useEffect } from "react";
-import { themeNames } from "../../../App.tsx";
+import {useEffect} from "react";
+import {themeNames} from "../../../App.tsx";
 
 export default function NavBar({ themeName, setTheme }: { themeName: string, setTheme: any }) {
     const theme = useMantineTheme();
@@ -131,14 +132,12 @@ export default function NavBar({ themeName, setTheme }: { themeName: string, set
                         size={'xl'}
                         checked={colorScheme.colorScheme === 'dark'}
                         thumbIcon={colorScheme.colorScheme === 'dark' ? (<IconSun size={16} color={'var(--mantine-color-teal-6)'} />) : (<IconMoon size={16} />)}
-
                         onChange={colorScheme.toggleColorScheme}
                     />
                 </Group>
 
             </AppShell.Section>
             <AppShell.Section pr={'xs'} grow my="md" component={ScrollArea} scrollbars={'y'}>
-
                 <SeedInputAutoComplete
                     seed={seed}
                     setSeed={setSeed}
@@ -255,10 +254,13 @@ export default function NavBar({ themeName, setTheme }: { themeName: string, set
                         Modify Unlocks
                     </Button>
                     <Button color={theme.colors.cyan[9]} onClick={() => {
+                        if(!seedResults){
+                            handleAnalyzeClick()
+                        }
                         openSnapshotModal();
                         useGA('view_seed_snapshot');
-                    }} leftSection={<IconCamera size={20} />}>
-                        Snapshot
+                    }}>
+                        Seed Summary
                     </Button>
                     <Button color={theme.colors.red[9]} variant={'filled'} onClick={() => reset()}>
                         Reset

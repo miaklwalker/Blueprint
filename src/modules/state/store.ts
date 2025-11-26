@@ -178,12 +178,10 @@ export const useCardStore = create(
                             prev.shoppingState = initialState.shoppingState
                             prev.searchState = initialState.searchState;
                             prev.applicationState.hasSettingsChanged = true;
-                            // prev.applicationState.start = false;
                         }, undefined, 'Global/SetSeed'),
                         setDeck: (deck: string) => set((prev: InitialState) => {
                             prev.immolateState.deck = deck
                             prev.applicationState.hasSettingsChanged = true;
-                            // prev.applicationState.start = false;
                         }, undefined, 'Global/SetDeck'),
                         setUseCardPeek: (useCardPeek: boolean) => set((prev: InitialState) => {
                             prev.applicationState.useCardPeek = useCardPeek
@@ -191,27 +189,22 @@ export const useCardStore = create(
                         setCardsPerAnte: (cardsPerAnte: number) => set((prev: InitialState) => {
                             prev.immolateState.cardsPerAnte = cardsPerAnte
                             prev.applicationState.hasSettingsChanged = true;
-                            // prev.applicationState.start = false;
                         }, undefined, 'Global/SetCardsPerAnte'),
                         setAntes: (antes: number) => set((prev: InitialState) => {
                             prev.immolateState.antes = antes
                             prev.applicationState.hasSettingsChanged = true;
-                            // prev.applicationState.start = false;
                         }, undefined, 'Global/SetAntes'),
                         setStake: (stake: string) => set((prev: InitialState) => {
                             prev.immolateState.stake = stake
                             prev.applicationState.hasSettingsChanged = true;
-                            // prev.applicationState.start = false;
                         }, undefined, 'Global/SetStake'),
                         setGameVersion: (gameVersion: string) => set((prev: InitialState) => {
                             prev.immolateState.gameVersion = gameVersion
                             prev.applicationState.hasSettingsChanged = true;
-                            // prev.applicationState.start = false;
                         }, undefined, 'Global/SetGameVersion'),
                         setSelectedOptions: (selectedOptions: string[]) => set((prev: InitialState) => {
                             prev.immolateState.selectedOptions = selectedOptions
                             prev.applicationState.hasSettingsChanged = true;
-                            // prev.applicationState.start = false;
                         }, undefined, 'Global/SetSelectedOptions'),
 
                         setStart: (start: boolean) => set((prev: InitialState) => {

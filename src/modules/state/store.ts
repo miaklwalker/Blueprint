@@ -25,6 +25,8 @@ export interface InitialState {
         asideOpen: boolean;
         selectOptionsModalOpen: boolean;
         featuresModalOpen: boolean;
+        rerollCalculatorModalOpen: boolean;
+        rerollCalculatorMetadata: any | null;
         snapshotModalOpen: boolean;
         showCardSpoilers: boolean;
         useCardPeek: boolean;
@@ -78,6 +80,8 @@ const initialState: InitialState = {
         asideOpen: false,
         selectOptionsModalOpen: false,
         featuresModalOpen: false,
+        rerollCalculatorModalOpen: false,
+        rerollCalculatorMetadata: null,
         snapshotModalOpen: false,
         showCardSpoilers: false,
         useCardPeek: true,
@@ -238,6 +242,14 @@ export const useCardStore = create(
                         closeFeaturesModal: () => set((prev: InitialState) => {
                             prev.applicationState.featuresModalOpen = false
                         }, undefined, 'Global/CloseFeaturesModal'),
+                        openRerollCalculatorModal: (metadata: any) => set((prev: InitialState) => {
+                            prev.applicationState.rerollCalculatorModalOpen = true
+                            prev.applicationState.rerollCalculatorMetadata = metadata
+                        }, undefined, 'Global/OpenRerollCalculatorModal'),
+                        closeRerollCalculatorModal: () => set((prev: InitialState) => {
+                            prev.applicationState.rerollCalculatorModalOpen = false
+                            prev.applicationState.rerollCalculatorMetadata = null
+                        }, undefined, 'Global/CloseRerollCalculatorModal'),
                         openSnapshotModal: () => set((prev: InitialState) => {
                             prev.applicationState.snapshotModalOpen = true
                         }, undefined, 'Global/OpenSnapshotModal'),

@@ -18,6 +18,7 @@ import {
 import { useCardStore } from "../../../modules/state/store.ts";
 import UnlocksModal from "../../unlocksModal.tsx";
 import FeaturesModal from "../../FeaturesModal.tsx";
+import { RerollCalculatorModal } from "../../RerollCalculatorModal.tsx";
 import { useGA } from "../../../modules/useGA.ts";
 import {
     IconFileText,
@@ -60,6 +61,9 @@ export default function NavBar({ themeName, setTheme }: { themeName: string, set
     const openSelectOptionModal = useCardStore(state => state.openSelectOptionModal);
     const openFeaturesModal = useCardStore(state => state.openFeaturesModal);
     const openSnapshotModal = useCardStore(state => state.openSnapshotModal);
+    const rerollCalculatorModalOpen = useCardStore(state => state.applicationState.rerollCalculatorModalOpen);
+    const rerollCalculatorMetadata = useCardStore(state => state.applicationState.rerollCalculatorMetadata);
+    const closeRerollCalculatorModal = useCardStore(state => state.closeRerollCalculatorModal);
     const reset = useCardStore(state => state.reset);
     const hasSettingsChanged = useCardStore((state) => state.applicationState.hasSettingsChanged);
 
@@ -89,6 +93,12 @@ export default function NavBar({ themeName, setTheme }: { themeName: string, set
         <AppShell.Navbar p="md">
             <UnlocksModal />
             <FeaturesModal />
+            <RerollCalculatorModal
+                opened={rerollCalculatorModalOpen}
+                onClose={closeRerollCalculatorModal}
+                targetIndex={rerollCalculatorMetadata?.index ?? 0}
+                metaData={rerollCalculatorMetadata}
+            />
             <AppShell.Section>
                 <SegmentedControl
                     fullWidth

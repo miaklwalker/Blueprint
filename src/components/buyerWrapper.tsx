@@ -1,5 +1,3 @@
-import { useCardStore } from "../modules/state/store.ts";
-import { useForceUpdate, useHover, useLongPress } from "@mantine/hooks";
 import {
     ActionIcon,
     Badge,
@@ -16,10 +14,11 @@ import {
     Transition,
     useMantineTheme
 } from "@mantine/core";
-import { BuyWrapperProps, LOCATION_TYPES } from "../modules/const.ts";
+import { useHover, useLongPress } from "@mantine/hooks";
 import { IconArrowCapsule, IconCalculator, IconChevronDown, IconExternalLink, IconFlag, IconLock } from "@tabler/icons-react";
-import { RerollCalculatorModal } from "./RerollCalculatorModal.tsx";
 import { useState } from "react";
+import { BuyWrapperProps, LOCATION_TYPES } from "../modules/const.ts";
+import { useCardStore } from "../modules/state/store.ts";
 
 export function BuyWrapper({ children, bottomOffset, metaData, horizontal = false }: BuyWrapperProps) {
     const selectedSearchResult = useCardStore(state => state.searchState.selectedSearchResult);
@@ -42,22 +41,26 @@ export function BuyWrapper({ children, bottomOffset, metaData, horizontal = fals
             analyzeSeed();
         }
     });
-    const forceUpdate = useForceUpdate();
     let isSelected = sameAnte && sameIndex && sameLocation;
     const analyzeSeed = useCardStore(state => state.analyzeSeed);
     const { hovered, ref } = useHover();
-    const { hovered: menuHovered, ref: menuRef } = useHover();
+    const [menuOpen, setMenuOpen] = useState(false);
     const addBuy = useCardStore(state => state.addBuy);
     const removeBuy = useCardStore(state => state.removeBuy);
     const owned = useCardStore(state => state.isOwned);
     let key = `${metaData?.ante}-${metaData?.location}-${metaData?.index}${metaData?.locationType === LOCATION_TYPES.PACK ? `-${metaData?.blind}` : ''}`;
     const cardIsOwned = owned(key);
-    const [rerollModalOpen, setRerollModalOpen] = useState(false);
-    const hasUserAttention = (hovered || menuHovered) && !rerollModalOpen;
+    const openRerollCalculatorModal = useCardStore(state => state.openRerollCalculatorModal);
+    const hasUserAttention = hovered || menuOpen;
     const theme = useMantineTheme()
 
 
+
+
+
+
     const setRerollStartIndex = useCardStore(state => state.setRerollStartIndex);
+
     const rarityColorMap: { [key: number]: string } = {
         1: "#0093ff",
         2: "#35bd86",
@@ -69,7 +72,12 @@ export function BuyWrapper({ children, bottomOffset, metaData, horizontal = fals
 
 
     return (
-        <Center pos={'relative'} ref={ref} h={'100%'} style={{ overflow: 'visible' }}>
+        <Center
+            pos={'relative'}
+            ref={ref}
+            h={'100%'}
+            style={{ overflow: 'visible' }}
+        >
             <Indicator disabled={!cardIsOwned} inline label="Owned" size={16} position={'top-center'}>
                 <Tooltip
                     bg={'transparent'}
@@ -166,8 +174,15 @@ export function BuyWrapper({ children, bottomOffset, metaData, horizontal = fals
                             >
                                 {cardIsOwned ? "Undo" : "Buy"}
                             </Button>
-                            <Menu trigger={'click-hover'} transitionProps={{ transition: 'pop' }} position="bottom-end"
-                                withinPortal closeDelay={300}>
+                            <Menu
+                                trigger={'click-hover'}
+                                transitionProps={{ transition: 'pop' }}
+                                position="bottom-end"
+                                withinPortal
+                                onOpen={() => setMenuOpen(true)}
+                                onClose={() => setMenuOpen(false)}
+                                closeDelay={300}
+                            >
                                 <Menu.Target>
                                     <ActionIcon
                                         variant="filled"
@@ -183,7 +198,7 @@ export function BuyWrapper({ children, bottomOffset, metaData, horizontal = fals
                                         <IconChevronDown size={16} stroke={1.5} />
                                     </ActionIcon>
                                 </Menu.Target>
-                                <Menu.Dropdown ref={menuRef}>
+                                <Menu.Dropdown >
                                     {
                                         metaData?.link &&
                                         <Menu.Item
@@ -222,7 +237,7 @@ export function BuyWrapper({ children, bottomOffset, metaData, horizontal = fals
                                         metaData?.locationType === LOCATION_TYPES.SHOP &&
                                         <Menu.Item
                                             leftSection={<IconCalculator size={16} stroke={1.5} color={theme.colors.blue[5]} />}
-                                            onClick={() => setRerollModalOpen(true)}
+                                            onClick={() => { openRerollCalculatorModal(metaData) }}
                                         >
                                             Calc Reroll
                                         </Menu.Item>
@@ -246,15 +261,6 @@ export function BuyWrapper({ children, bottomOffset, metaData, horizontal = fals
                     )
                 }
             </Transition>
-            <RerollCalculatorModal
-                opened={rerollModalOpen}
-                onClose={() => {
-                    setRerollModalOpen(false);
-                    forceUpdate();
-                }}
-                targetIndex={metaData?.index ?? 0}
-                metaData={metaData}
-            />
         </Center>
     )
 }

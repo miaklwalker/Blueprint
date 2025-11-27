@@ -1,5 +1,5 @@
-import {useCardStore} from "../modules/state/store.ts";
-import {useHover, useLongPress} from "@mantine/hooks";
+import { useCardStore } from "../modules/state/store.ts";
+import { useHover, useLongPress } from "@mantine/hooks";
 import {
     ActionIcon,
     Badge,
@@ -16,10 +16,12 @@ import {
     Transition,
     useMantineTheme
 } from "@mantine/core";
-import {BuyWrapperProps, LOCATION_TYPES} from "../modules/const.ts";
-import {IconArrowCapsule, IconChevronDown, IconExternalLink, IconLock} from "@tabler/icons-react";
+import { BuyWrapperProps, LOCATION_TYPES } from "../modules/const.ts";
+import { IconArrowCapsule, IconCalculator, IconChevronDown, IconExternalLink, IconLock } from "@tabler/icons-react";
+import { RerollCalculatorModal } from "./RerollCalculatorModal.tsx";
+import { useState } from "react";
 
-export function BuyWrapper({children, bottomOffset, metaData, horizontal = false}: BuyWrapperProps) {
+export function BuyWrapper({ children, bottomOffset, metaData, horizontal = false }: BuyWrapperProps) {
     const selectedSearchResult = useCardStore(state => state.searchState.selectedSearchResult);
     let sameLocation = selectedSearchResult?.location === metaData?.location;
     let sameAnte = selectedSearchResult?.ante === metaData?.ante;
@@ -30,8 +32,8 @@ export function BuyWrapper({children, bottomOffset, metaData, horizontal = false
     const useCardPeek = useCardStore(state => state.applicationState.useCardPeek);
     const cardId = `ante_${metaData?.ante}_${metaData?.location?.toLowerCase()}_${metaData?.index}`
     const isLocked = cardId in lockedCards;
-    const handlers = useLongPress(()=>{
-        if(!useCardPeek) return;
+    const handlers = useLongPress(() => {
+        if (!useCardPeek) return;
         if (isLocked) {
             unlockCard(cardId);
             analyzeSeed();
@@ -42,8 +44,8 @@ export function BuyWrapper({children, bottomOffset, metaData, horizontal = false
     });
     let isSelected = sameAnte && sameIndex && sameLocation;
     const analyzeSeed = useCardStore(state => state.analyzeSeed);
-    const {hovered, ref} = useHover();
-    const {hovered: menuHovered, ref: menuRef} = useHover();
+    const { hovered, ref } = useHover();
+    const { hovered: menuHovered, ref: menuRef } = useHover();
     const addBuy = useCardStore(state => state.addBuy);
     const removeBuy = useCardStore(state => state.removeBuy);
     const owned = useCardStore(state => state.isOwned);
@@ -52,6 +54,7 @@ export function BuyWrapper({children, bottomOffset, metaData, horizontal = false
     const hasUserAttention = hovered || menuHovered;
     const theme = useMantineTheme()
 
+    const [rerollModalOpen, setRerollModalOpen] = useState(false);
     const rarityColorMap: { [key: number]: string } = {
         1: "#0093ff",
         2: "#35bd86",
@@ -63,12 +66,12 @@ export function BuyWrapper({children, bottomOffset, metaData, horizontal = false
 
 
     return (
-        <Center pos={'relative'} ref={ref} h={'100%'} style={{overflow: 'visible'}}>
+        <Center pos={'relative'} ref={ref} h={'100%'} style={{ overflow: 'visible' }}>
             <Indicator disabled={!cardIsOwned} inline label="Owned" size={16} position={'top-center'}>
                 <Tooltip
                     bg={'transparent'}
                     opened={hasUserAttention}
-                    events={{hover: true, focus: true, touch: true}}
+                    events={{ hover: true, focus: true, touch: true }}
                     label={
                         <Flex align={'center'} justify={'space-between'} gap={4}>
                             {/*// @ts-ignore*/}
@@ -88,7 +91,7 @@ export function BuyWrapper({children, bottomOffset, metaData, horizontal = false
                     }
                     position="top"
                     withinPortal
-                    transitionProps={{transition: 'slide-up', duration: 300, enterDelay: 350, exitDelay: 150}}
+                    transitionProps={{ transition: 'slide-up', duration: 300, enterDelay: 350, exitDelay: 150 }}
                 >
                     <Card
                         {...handlers}
@@ -113,11 +116,11 @@ export function BuyWrapper({children, bottomOffset, metaData, horizontal = false
                                             zIndex: 10,
                                         }}
                                     >
-                                        <IconLock size={10}/>
+                                        <IconLock size={10} />
                                     </ActionIcon>
                                 </Tooltip>
                             )}
-                            {cardIsOwned && <Overlay color="#000" backgroundOpacity={0.55} blur={1}/>}
+                            {cardIsOwned && <Overlay color="#000" backgroundOpacity={0.55} blur={1} />}
                             {children}
                         </Card.Section>
                     </Card>
@@ -137,7 +140,7 @@ export function BuyWrapper({children, bottomOffset, metaData, horizontal = false
                             wrap="nowrap"
                             gap={0}
                             pos={'absolute'}
-                            style={{...styles, zIndex: 1}}
+                            style={{ ...styles, zIndex: 1 }}
                             left={horizontal ? "200px" : 'unset'}
                             top={horizontal ? 'unset' : bottomOffset ? `calc(80% + ${bottomOffset}px)` : '80%'}
                         >
@@ -160,8 +163,8 @@ export function BuyWrapper({children, bottomOffset, metaData, horizontal = false
                             >
                                 {cardIsOwned ? "Undo" : "Buy"}
                             </Button>
-                            <Menu trigger={'click-hover'} transitionProps={{transition: 'pop'}} position="bottom-end"
-                                  withinPortal closeDelay={300}>
+                            <Menu trigger={'click-hover'} transitionProps={{ transition: 'pop' }} position="bottom-end"
+                                withinPortal closeDelay={300}>
                                 <Menu.Target>
                                     <ActionIcon
                                         variant="filled"
@@ -174,7 +177,7 @@ export function BuyWrapper({children, bottomOffset, metaData, horizontal = false
                                             borderLeft: '1px solid var(--mantine-color-body)'
                                         }}
                                     >
-                                        <IconChevronDown size={16} stroke={1.5}/>
+                                        <IconChevronDown size={16} stroke={1.5} />
                                     </ActionIcon>
                                 </Menu.Target>
                                 <Menu.Dropdown ref={menuRef}>
@@ -182,7 +185,7 @@ export function BuyWrapper({children, bottomOffset, metaData, horizontal = false
                                         metaData?.link &&
                                         <Menu.Item
                                             leftSection={<IconExternalLink size={16} stroke={1.5}
-                                                                           color={theme.colors.blue[5]}/>}
+                                                color={theme.colors.blue[5]} />}
                                             component={'a'}
                                             href={metaData?.link}
                                             target={'_blank'}
@@ -212,8 +215,23 @@ export function BuyWrapper({children, bottomOffset, metaData, horizontal = false
                                             {!isLocked ? 'Re roll' : 'Undo'}
                                         </Menu.Item>
                                     }
+                                    {
+                                        metaData?.locationType === LOCATION_TYPES.SHOP &&
+                                        <Menu.Item
+                                            leftSection={<IconCalculator size={16} stroke={1.5} color={theme.colors.blue[5]} />}
+                                            onClick={() => setRerollModalOpen(true)}
+                                        >
+                                            Calc Reroll
+                                        </Menu.Item>
+                                    }
                                 </Menu.Dropdown>
                             </Menu>
+                            <RerollCalculatorModal
+                                opened={rerollModalOpen}
+                                onClose={() => setRerollModalOpen(false)}
+                                targetIndex={metaData?.index ?? 0}
+                                metaData={metaData}
+                            />
 
                         </Group>
 

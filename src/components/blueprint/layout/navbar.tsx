@@ -17,11 +17,11 @@ import {
     useMantineColorScheme,
     useMantineTheme
 } from "@mantine/core";
-import { useCardStore } from "../../../modules/state/store.ts";
+import {useCardStore} from "../../../modules/state/store.ts";
 import UnlocksModal from "../../unlocksModal.tsx";
 import FeaturesModal from "../../FeaturesModal.tsx";
-import { RerollCalculatorModal } from "../../RerollCalculatorModal.tsx";
-import { useGA } from "../../../modules/useGA.ts";
+import {RerollCalculatorModal} from "../../RerollCalculatorModal.tsx";
+import {useGA} from "../../../modules/useGA.ts";
 import {
     IconFileText,
     IconJoker,
@@ -29,13 +29,11 @@ import {
     IconListSearch,
     IconMoon,
     IconPlayCard,
-    IconSun,
-    IconCamera,
-    IconInfoCircle
+    IconSun
 } from "@tabler/icons-react";
 import SeedInputAutoComplete from "../../SeedInputAutoComplete.tsx";
-import { useEffect } from "react";
-import { themeNames } from "../../../App.tsx";
+import {useEffect} from "react";
+import {themeNames} from "../../../App.tsx";ß
 
 export default function NavBar({ themeName, setTheme }: { themeName: string, setTheme: any }) {
     const theme = useMantineTheme();
@@ -290,26 +288,6 @@ export default function NavBar({ themeName, setTheme }: { themeName: string, set
                     <Button color={theme.colors.blue[9]} onClick={() => openSelectOptionModal()}>
                         Modify Unlocks
                     </Button>
-                    <Button color={theme.colors.cyan[9]} onClick={() => {
-                        if(!seedResults){
-                            handleAnalyzeClick()
-                        }
-                        openSnapshotModal();
-                        useGA('view_seed_snapshot');
-                    }}>
-                        Seed Summary
-                    </Button>
-                    <Button color={theme.colors.red[9]} variant={'filled'} onClick={() => reset()}>
-                        Reset
-                    </Button>
-                    <Button
-                        onClick={handleAnalyzeClick}
-                        disabled={!hasSettingsChanged}
-                        color={hasSettingsChanged ? "green" : "gray"}
-
-                    >
-                        Analyze Seed
-                    </Button>
                     <Group grow>
                         <Button
                             color={theme.colors.cyan[9]}
@@ -318,7 +296,7 @@ export default function NavBar({ themeName, setTheme }: { themeName: string, set
                                 useGA('view_seed_snapshot');
                             }}
                         >
-                            Snapshot
+                            Seed Summary
                         </Button>
                         <Button color={theme.colors.red[9]} variant={'filled'} onClick={() => reset()}>
                             Reset

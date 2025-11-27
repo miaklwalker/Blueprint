@@ -33,7 +33,7 @@ import {
 } from "@tabler/icons-react";
 import SeedInputAutoComplete from "../../SeedInputAutoComplete.tsx";
 import {useEffect} from "react";
-import {themeNames} from "../../../App.tsx";ß
+import {themeNames} from "../../../App.tsx";
 
 export default function NavBar({ themeName, setTheme }: { themeName: string, setTheme: any }) {
     const theme = useMantineTheme();

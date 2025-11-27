@@ -1,8 +1,8 @@
-import {Modal, NumberInput, Text, Group, Stack, Table, Divider} from "@mantine/core";
-import {useMemo, useState} from "react";
-import {useCardStore} from "../modules/state/store.ts";
-import {Voucher} from "../modules/balatrots/enum/Voucher.ts";
-import {BuyMetaData} from "../modules/classes/BuyMetaData.ts";
+import { Modal, NumberInput, Text, Group, Stack, Table, Divider, TextInput, InputLabel, SimpleGrid } from "@mantine/core";
+import { useMemo, useState } from "react";
+import { useCardStore } from "../modules/state/store.ts";
+import { Voucher } from "../modules/balatrots/enum/Voucher.ts";
+import { BuyMetaData } from "../modules/classes/BuyMetaData.ts";
 
 interface RerollCalculatorModalProps {
     opened: boolean;
@@ -11,13 +11,13 @@ interface RerollCalculatorModalProps {
     metaData?: BuyMetaData;
 }
 
-export function RerollCalculatorModal({opened, onClose, targetIndex, metaData}: RerollCalculatorModalProps) {
+export function RerollCalculatorModal({ opened, onClose, targetIndex, metaData }: RerollCalculatorModalProps) {
     const globalStartIndex = useCardStore(state => state.applicationState.rerollStartIndex);
     const [startIndex, setStartIndex] = useState<number>(globalStartIndex);
     const buys = useCardStore(state => state.shoppingState.buys);
-    const seedResults = useCardStore(state => state.applicationState.analyzedResults );
-    const selectedAnte = useCardStore(state => state.applicationState.selectedAnte );
-    const shopQueue = useMemo(() => seedResults?.antes?.[selectedAnte]?.queue,[seedResults, selectedAnte]);
+    const seedResults = useCardStore(state => state.applicationState.analyzedResults);
+    const selectedAnte = useCardStore(state => state.applicationState.selectedAnte);
+    const shopQueue = useMemo(() => seedResults?.antes?.[selectedAnte]?.queue, [seedResults, selectedAnte]);
     // Sync local state with global state when modal opens or global state changes
     useMemo(() => {
         if (opened) {
@@ -50,22 +50,25 @@ export function RerollCalculatorModal({opened, onClose, targetIndex, metaData}: 
     }, [ownedVouchers]);
 
     const calculation = useMemo(() => {
-        const calculateCostForParams = (sSize: number, discount: number, tIndex: number, sIndex: number) => {
-            let rolls = 0;
-            if (tIndex >= sIndex) {
-                rolls = Math.floor((tIndex - sIndex) / sSize);
-            }
-            if (rolls <= 0) return 0;
-
-            // Split strategy (3 visits) is the default comparison
-            const visits = 3;
+        const calculatesRollsPerVisit = (sSize: number, visits: number, tIndex: number, sIndex: number): number[] => {
+            const cardsToSee = tIndex - sIndex + 1;
+            const totalFreeCards = visits * sSize;
             const rollsPerVisit = Array(visits).fill(0);
-            for (let i = 0; i < rolls; i++) {
+            if (cardsToSee <= totalFreeCards) {
+                return rollsPerVisit;
+            }
+            const cardsNeedingRerolls = cardsToSee - totalFreeCards;
+            const totalRerollsNeeded = Math.ceil(cardsNeedingRerolls / sSize);
+            for (let i = 0; i < totalRerollsNeeded; i++) {
                 rollsPerVisit[i % visits]++;
             }
-
+            return rollsPerVisit;
+        }
+        const calculateCostForParams = (sSize: number, discount: number, tIndex: number, sIndex: number, visits: number = 3) => {
+            const rollsPerVisit = calculatesRollsPerVisit(sSize, visits, tIndex, sIndex);
             let totalCost = 0;
             rollsPerVisit.forEach(r => {
+                // Each visit starts at $5 for the first reroll (after seeing free cards)
                 let currentCost = 5;
                 for (let k = 0; k < r; k++) {
                     let cost = Math.max(0, currentCost - discount);
@@ -75,12 +78,12 @@ export function RerollCalculatorModal({opened, onClose, targetIndex, metaData}: 
             });
             return totalCost;
         };
-
+        const baseCost = calculateCostForParams(2, 0, targetIndex, startIndex);
         const currentCost = calculateCostForParams(shopSize, rerollDiscount, targetIndex, startIndex);
-
+        const baseSingleVisitCost = calculateCostForParams(2, 0, targetIndex, startIndex, 1);
+        const singleVisitCost = calculateCostForParams(shopSize, rerollDiscount, targetIndex, startIndex, 1);
         // Calculate savings for each voucher
         const voucherSavingsList: { name: string, savings: number }[] = [];
-
         ownedVouchers.forEach(v => {
             let tempSize = shopSize;
             let tempDiscount = rerollDiscount;
@@ -97,34 +100,14 @@ export function RerollCalculatorModal({opened, onClose, targetIndex, metaData}: 
             const savings = costWithout - currentCost;
 
             if (savings > 0) {
-                voucherSavingsList.push({name: v, savings});
+                voucherSavingsList.push({ name: v, savings });
             }
         });
 
-        // For main display, we still want single vs split comparison using CURRENT params
-        // Re-use logic for single visit
-        let rollsNeeded = 0;
-        if (targetIndex >= startIndex) {
-            rollsNeeded = Math.floor((targetIndex - startIndex) / shopSize);
-        }
-        let baseRollsNeeded = 0;
-        if (targetIndex >= startIndex) {
-            baseRollsNeeded = Math.floor((targetIndex - startIndex) / 2);
-        }
 
-        const calculateSingleVisit = (needRolls = rollsNeeded) => {
-            if (needRolls <= 0) return 0;
-            let total = 0;
-            let current = 5;
-            for (let i = 0; i < needRolls; i++) {
-                total += Math.max(0, current - rerollDiscount);
-                current += 1;
-            }
-            return total;
-        }
-        const baseSingleVisitCost = calculateSingleVisit(baseRollsNeeded);
-        const singleVisitCost = calculateSingleVisit();
-        const baseCost = calculateCostForParams(2, 0, targetIndex, startIndex);
+        const rollsNeeded = calculatesRollsPerVisit(shopSize, 3, targetIndex, startIndex)
+            .reduce((a, b) => a + b, 0);
+
 
         return {
             baseCost,
@@ -138,49 +121,56 @@ export function RerollCalculatorModal({opened, onClose, targetIndex, metaData}: 
     }, [startIndex, targetIndex, shopSize, rerollDiscount, ownedVouchers]);
 
     return (
-        <Modal opened={opened} onClose={onClose} title="Reroll Calculator" centered>
+        <Modal opened={opened} onClose={onClose} title="Reroll Calculator" centered size='lg'>
             <Stack>
-                <NumberInput
-                    label="Starting Index"
-                    description="Where to calculate cost from, you can also use the mark as start button to set this automatically"
-                    value={startIndex}
-                    onChange={(val) => setStartIndex(Number(val))}
-                    min={0}
-                    max={targetIndex}
-                />
-                <Divider/>
+                <Group align='flex-end' px={'sm'}>
+                    <Stack gap={0} flex={4}>
+                        <InputLabel> Starting Point</InputLabel>
+                        <TextInput
+                            value={shopQueue?.[startIndex]?.name ?? 'Unknown'}
+                            disabled
+                            readOnly
+                        />
+                    </Stack>
+                    <NumberInput
+                        flex={1}
+                        value={startIndex}
+                        onChange={(val) => setStartIndex(Number(val))}
+                        min={0}
+                        max={targetIndex}
+                    />
+                </Group>
+                <Divider />
                 <Stack gap={0} px={'sm'}>
-                    <Text size="xs" c="dimmed">Cheapest Route</Text>
-                    <Text fw={700}>${calculation.splitVisitCost}</Text>
+                    <Text size="xs" c="dimmed">Target Card</Text>
+                    <Text fz='sm' fw={700}>{metaData?.index}) {metaData?.name ?? 'Unknown'}</Text>
                 </Stack>
-                <Group grow px={'sm'}>
-                    <Stack gap={0}>
-                        <Text size="xs" c="dimmed">Starting Card</Text>
-                        <Text fw={700}>{startIndex}) {shopQueue?.[startIndex]?.name ?? 'Unknown'}</Text>
+                <Divider />
+                <SimpleGrid cols={{ base: 2, lg: 4 }} px={'sm'}>
+                    <Stack gap={0} w='fit-content'>
+                        <Text size="xs" c="dimmed" w='fit-content'>Rolls Needed</Text>
+                        <Text fw={700} ta='center'>{calculation.rollsNeeded}</Text>
                     </Stack>
-                    <Stack gap={0}>
-                        <Text size="xs" c="dimmed">Target Card</Text>
-                        <Text fw={700}>{metaData?.index}) {metaData?.name ?? 'Unknown'}</Text>
+                    <Stack gap={0} w='fit-content'>
+                        <Text size="xs" c="dimmed" w='fit-content'>Minimum Cost</Text>
+                        <Text fw={700} ta='center'>${calculation.splitVisitCost}</Text>
                     </Stack>
-                </Group>
-                <Divider/>
-                <Group grow px={'sm'}>
-                    <Stack gap={0}>
-                        <Text size="xs" c="dimmed">Cards in Shop</Text>
-                        <Text fw={700}>{shopSize}</Text>
+                    <Stack gap={0} w='fit-content'>
+                        <Text size="xs" c="dimmed" w='fit-content'>Cards in Shop</Text>
+                        <Text fw={700} ta='center'>{shopSize}</Text>
                     </Stack>
-                    <Stack gap={0}>
-                        <Text size="xs" c="dimmed">Discount</Text>
-                        <Text fw={700}>${rerollDiscount}</Text>
+                    <Stack gap={0} w='fit-content'>
+                        <Text size="xs" c="dimmed" w='fit-content'>Reroll Starting Cost</Text>
+                        <Text fw={700} ta='center'>${5 - rerollDiscount}</Text>
                     </Stack>
-                </Group>
-                <Divider label="Cost Routing" labelPosition="center" mb={0}/>
-                <Table p={0} mt={0}>
+                </SimpleGrid>
+                <Divider />
+                <Table withTableBorder>
                     <Table.Thead>
                         <Table.Tr>
                             <Table.Th>Strategy</Table.Th>
                             <Table.Th>Cost</Table.Th>
-                            { calculation.voucherSavingsList?.length > 0 && (
+                            {calculation.voucherSavingsList?.length > 0 && (
                                 <Table.Th> Base Cost</Table.Th>
                             )}
                         </Table.Tr>
@@ -194,7 +184,7 @@ export function RerollCalculatorModal({opened, onClose, targetIndex, metaData}: 
                             <Table.Td>
                                 <Text fw={700} c="red">${calculation.singleVisitCost}</Text>
                             </Table.Td>
-                            { calculation.voucherSavingsList?.length > 0 && (
+                            {calculation.voucherSavingsList?.length > 0 && (
                                 <Table.Td>
                                     <Text fw={700}>${calculation.baseSingleVisitCost}</Text>
                                 </Table.Td>
@@ -203,13 +193,14 @@ export function RerollCalculatorModal({opened, onClose, targetIndex, metaData}: 
                         <Table.Tr>
                             <Table.Td>
                                 <Text fw={500}>Split (3 Visits)</Text>
-                                <Text size="xs" c="dimmed">Optimized across 3 shops
-                                    ({Math.floor(calculation.rollsNeeded / 3)} rolls per shop)</Text>
+                                <Text size="xs" c="dimmed">
+                                    Evenly split across 3 rounds
+                                </Text>
                             </Table.Td>
                             <Table.Td>
                                 <Text fw={700} c="green">${calculation.splitVisitCost}</Text>
                             </Table.Td>
-                            { calculation.voucherSavingsList?.length > 0 && (
+                            {calculation.voucherSavingsList?.length > 0 && (
                                 <Table.Td>
                                     <Text fw={700}>${calculation.baseCost}</Text>
                                 </Table.Td>
@@ -217,10 +208,9 @@ export function RerollCalculatorModal({opened, onClose, targetIndex, metaData}: 
                         </Table.Tr>
                     </Table.Tbody>
                 </Table>
-
                 {calculation.voucherSavingsList.length > 0 && (
                     <>
-                        <Divider label="Voucher Savings" labelPosition="center"/>
+                        <Divider label="Voucher Savings" labelPosition="center" />
                         <Table>
                             <Table.Thead>
                                 <Table.Tr>
@@ -242,7 +232,7 @@ export function RerollCalculatorModal({opened, onClose, targetIndex, metaData}: 
                     </>
                 )}
             </Stack>
-        </Modal>
+        </Modal >
     );
 }
 

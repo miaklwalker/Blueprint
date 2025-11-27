@@ -1,5 +1,5 @@
 import { useCardStore } from "../modules/state/store.ts";
-import { useHover, useLongPress } from "@mantine/hooks";
+import { useForceUpdate, useHover, useLongPress } from "@mantine/hooks";
 import {
     ActionIcon,
     Badge,
@@ -42,6 +42,7 @@ export function BuyWrapper({ children, bottomOffset, metaData, horizontal = fals
             analyzeSeed();
         }
     });
+    const forceUpdate = useForceUpdate();
     let isSelected = sameAnte && sameIndex && sameLocation;
     const analyzeSeed = useCardStore(state => state.analyzeSeed);
     const { hovered, ref } = useHover();
@@ -51,9 +52,8 @@ export function BuyWrapper({ children, bottomOffset, metaData, horizontal = fals
     const owned = useCardStore(state => state.isOwned);
     let key = `${metaData?.ante}-${metaData?.location}-${metaData?.index}${metaData?.locationType === LOCATION_TYPES.PACK ? `-${metaData?.blind}` : ''}`;
     const cardIsOwned = owned(key);
-    console.log(hovered, menuHovered)
     const [rerollModalOpen, setRerollModalOpen] = useState(false);
-    const hasUserAttention = (hovered || menuHovered) && !rerollModalOpen
+    const hasUserAttention = (hovered || menuHovered) && !rerollModalOpen;
     const theme = useMantineTheme()
 
 
@@ -248,7 +248,10 @@ export function BuyWrapper({ children, bottomOffset, metaData, horizontal = fals
             </Transition>
             <RerollCalculatorModal
                 opened={rerollModalOpen}
-                onClose={() => setRerollModalOpen(false)}
+                onClose={() => {
+                    setRerollModalOpen(false);
+                    forceUpdate();
+                }}
                 targetIndex={metaData?.index ?? 0}
                 metaData={metaData}
             />

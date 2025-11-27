@@ -24,6 +24,7 @@ export interface InitialState {
         settingsOpen: boolean;
         asideOpen: boolean;
         selectOptionsModalOpen: boolean;
+        featuresModalOpen: boolean;
         snapshotModalOpen: boolean;
         showCardSpoilers: boolean;
         useCardPeek: boolean;
@@ -76,6 +77,7 @@ const initialState: InitialState = {
         settingsOpen: true,
         asideOpen: false,
         selectOptionsModalOpen: false,
+        featuresModalOpen: false,
         snapshotModalOpen: false,
         showCardSpoilers: false,
         useCardPeek: true,
@@ -230,6 +232,12 @@ export const useCardStore = create(
                         closeSelectOptionModal: () => set((prev: InitialState) => {
                             prev.applicationState.selectOptionsModalOpen = false
                         }, undefined, 'Global/CloseSelectOptionModal'),
+                        openFeaturesModal: () => set((prev: InitialState) => {
+                            prev.applicationState.featuresModalOpen = true
+                        }, undefined, 'Global/OpenFeaturesModal'),
+                        closeFeaturesModal: () => set((prev: InitialState) => {
+                            prev.applicationState.featuresModalOpen = false
+                        }, undefined, 'Global/CloseFeaturesModal'),
                         openSnapshotModal: () => set((prev: InitialState) => {
                             prev.applicationState.snapshotModalOpen = true
                         }, undefined, 'Global/OpenSnapshotModal'),

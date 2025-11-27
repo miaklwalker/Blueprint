@@ -2,6 +2,7 @@ import {
     AppShell,
     Box,
     Button,
+    Divider,
     Group,
     InputLabel,
     NativeSelect,
@@ -16,6 +17,7 @@ import {
 } from "@mantine/core";
 import { useCardStore } from "../../../modules/state/store.ts";
 import UnlocksModal from "../../unlocksModal.tsx";
+import FeaturesModal from "../../FeaturesModal.tsx";
 import { useGA } from "../../../modules/useGA.ts";
 import {
     IconFileText,
@@ -25,7 +27,8 @@ import {
     IconMoon,
     IconPlayCard,
     IconSun,
-    IconCamera
+    IconCamera,
+    IconInfoCircle
 } from "@tabler/icons-react";
 import SeedInputAutoComplete from "../../SeedInputAutoComplete.tsx";
 import { useEffect } from "react";
@@ -55,6 +58,7 @@ export default function NavBar({ themeName, setTheme }: { themeName: string, set
     const setShowCardSpoilers = useCardStore(state => state.setShowCardSpoilers);
     const setStart = useCardStore(state => state.setStart);
     const openSelectOptionModal = useCardStore(state => state.openSelectOptionModal);
+    const openFeaturesModal = useCardStore(state => state.openFeaturesModal);
     const openSnapshotModal = useCardStore(state => state.openSnapshotModal);
     const reset = useCardStore(state => state.reset);
     const hasSettingsChanged = useCardStore((state) => state.applicationState.hasSettingsChanged);
@@ -84,6 +88,7 @@ export default function NavBar({ themeName, setTheme }: { themeName: string, set
     return (
         <AppShell.Navbar p="md">
             <UnlocksModal />
+            <FeaturesModal />
             <AppShell.Section>
                 <SegmentedControl
                     fullWidth
@@ -120,12 +125,15 @@ export default function NavBar({ themeName, setTheme }: { themeName: string, set
                     ]}
                     mb="sm"
                 />
+                <Divider mb='md' />
+
                 <Group align={'flex-end'}>
                     <Select
                         label={'Theme'}
                         value={themeName}
                         onChange={setTheme}
                         data={themeNames}
+                        flex={1}
                     />
                     <Switch
                         size={'xl'}
@@ -136,9 +144,9 @@ export default function NavBar({ themeName, setTheme }: { themeName: string, set
                     />
                 </Group>
 
+
             </AppShell.Section>
             <AppShell.Section pr={'xs'} grow my="md" component={ScrollArea} scrollbars={'y'}>
-
                 <SeedInputAutoComplete
                     seed={seed}
                     setSeed={setSeed}
@@ -251,18 +259,6 @@ export default function NavBar({ themeName, setTheme }: { themeName: string, set
             </AppShell.Section>
             <AppShell.Section my="md">
                 <Stack>
-                    <Button color={theme.colors.blue[9]} onClick={() => openSelectOptionModal()}>
-                        Modify Unlocks
-                    </Button>
-                    <Button color={theme.colors.cyan[9]} onClick={() => {
-                        openSnapshotModal();
-                        useGA('view_seed_snapshot');
-                    }} leftSection={<IconCamera size={20} />}>
-                        Snapshot
-                    </Button>
-                    <Button color={theme.colors.red[9]} variant={'filled'} onClick={() => reset()}>
-                        Reset
-                    </Button>
                     <Button
                         onClick={handleAnalyzeClick}
                         disabled={!hasSettingsChanged}
@@ -271,6 +267,33 @@ export default function NavBar({ themeName, setTheme }: { themeName: string, set
                     >
                         Analyze Seed
                     </Button>
+                    <Button
+                        color={theme.colors.grape[9]}
+                        onClick={() => {
+                            useGA('view_features');
+                            openFeaturesModal()
+                        }}
+                    >
+                        Features
+                    </Button>
+                    <Button color={theme.colors.blue[9]} onClick={() => openSelectOptionModal()}>
+                        Modify Unlocks
+                    </Button>
+                    <Group grow>
+                        <Button
+                            color={theme.colors.cyan[9]}
+                            onClick={() => {
+                                openSnapshotModal();
+                                useGA('view_seed_snapshot');
+                            }}
+                        >
+                            Snapshot
+                        </Button>
+                        <Button color={theme.colors.red[9]} variant={'filled'} onClick={() => reset()}>
+                            Reset
+                        </Button>
+                    </Group>
+
                 </Stack>
             </AppShell.Section>
         </AppShell.Navbar>

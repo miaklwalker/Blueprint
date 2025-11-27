@@ -51,10 +51,12 @@ export function BuyWrapper({ children, bottomOffset, metaData, horizontal = fals
     const owned = useCardStore(state => state.isOwned);
     let key = `${metaData?.ante}-${metaData?.location}-${metaData?.index}${metaData?.locationType === LOCATION_TYPES.PACK ? `-${metaData?.blind}` : ''}`;
     const cardIsOwned = owned(key);
-    const hasUserAttention = hovered || menuHovered;
+    console.log(hovered, menuHovered)
+    const [rerollModalOpen, setRerollModalOpen] = useState(false);
+    const hasUserAttention = (hovered || menuHovered) && !rerollModalOpen
     const theme = useMantineTheme()
 
-    const [rerollModalOpen, setRerollModalOpen] = useState(false);
+
     const setRerollStartIndex = useCardStore(state => state.setRerollStartIndex);
     const rarityColorMap: { [key: number]: string } = {
         1: "#0093ff",
@@ -236,12 +238,7 @@ export function BuyWrapper({ children, bottomOffset, metaData, horizontal = fals
                                     }
                                 </Menu.Dropdown>
                             </Menu>
-                            <RerollCalculatorModal
-                                opened={rerollModalOpen}
-                                onClose={() => setRerollModalOpen(false)}
-                                targetIndex={metaData?.index ?? 0}
-                                metaData={metaData}
-                            />
+
 
                         </Group>
 
@@ -249,6 +246,12 @@ export function BuyWrapper({ children, bottomOffset, metaData, horizontal = fals
                     )
                 }
             </Transition>
+            <RerollCalculatorModal
+                opened={rerollModalOpen}
+                onClose={() => setRerollModalOpen(false)}
+                targetIndex={metaData?.index ?? 0}
+                metaData={metaData}
+            />
         </Center>
     )
 }

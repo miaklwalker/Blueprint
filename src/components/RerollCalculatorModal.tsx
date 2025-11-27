@@ -1,8 +1,8 @@
-import { Modal, NumberInput, Text, Group, Stack, Table, Divider, Badge } from "@mantine/core";
-import { useMemo, useState } from "react";
-import { useCardStore } from "../modules/state/store.ts";
-import { Voucher } from "../modules/balatrots/enum/Voucher.ts";
-import { BuyMetaData } from "../modules/classes/BuyMetaData.ts";
+import {Modal, NumberInput, Text, Group, Stack, Table, Divider} from "@mantine/core";
+import {useMemo, useState} from "react";
+import {useCardStore} from "../modules/state/store.ts";
+import {Voucher} from "../modules/balatrots/enum/Voucher.ts";
+import {BuyMetaData} from "../modules/classes/BuyMetaData.ts";
 
 interface RerollCalculatorModalProps {
     opened: boolean;
@@ -11,11 +11,13 @@ interface RerollCalculatorModalProps {
     metaData?: BuyMetaData;
 }
 
-export function RerollCalculatorModal({ opened, onClose, targetIndex, metaData }: RerollCalculatorModalProps) {
+export function RerollCalculatorModal({opened, onClose, targetIndex, metaData}: RerollCalculatorModalProps) {
     const globalStartIndex = useCardStore(state => state.applicationState.rerollStartIndex);
     const [startIndex, setStartIndex] = useState<number>(globalStartIndex);
     const buys = useCardStore(state => state.shoppingState.buys);
-
+    const seedResults = useCardStore(state => state.applicationState.analyzedResults );
+    const selectedAnte = useCardStore(state => state.applicationState.selectedAnte );
+    const shopQueue = useMemo(() => seedResults?.antes?.[selectedAnte]?.queue,[seedResults, selectedAnte]);
     // Sync local state with global state when modal opens or global state changes
     useMemo(() => {
         if (opened) {
@@ -48,14 +50,15 @@ export function RerollCalculatorModal({ opened, onClose, targetIndex, metaData }
     }, [ownedVouchers]);
 
     const calculation = useMemo(() => {
-        let rollsNeeded = 0;
-        if (targetIndex >= startIndex) {
-            rollsNeeded = Math.floor((targetIndex - startIndex) / shopSize);
-        }
-
-        const calculateCost = (rolls: number, visits: number) => {
+        const calculateCostForParams = (sSize: number, discount: number, tIndex: number, sIndex: number) => {
+            let rolls = 0;
+            if (tIndex >= sIndex) {
+                rolls = Math.floor((tIndex - sIndex) / sSize);
+            }
             if (rolls <= 0) return 0;
 
+            // Split strategy (3 visits) is the default comparison
+            const visits = 3;
             const rollsPerVisit = Array(visits).fill(0);
             for (let i = 0; i < rolls; i++) {
                 rollsPerVisit[i % visits]++;
@@ -65,7 +68,7 @@ export function RerollCalculatorModal({ opened, onClose, targetIndex, metaData }
             rollsPerVisit.forEach(r => {
                 let currentCost = 5;
                 for (let k = 0; k < r; k++) {
-                    let cost = Math.max(0, currentCost - rerollDiscount);
+                    let cost = Math.max(0, currentCost - discount);
                     totalCost += cost;
                     currentCost += 1;
                 }
@@ -73,32 +76,66 @@ export function RerollCalculatorModal({ opened, onClose, targetIndex, metaData }
             return totalCost;
         };
 
-        const singleVisitCost = calculateCost(rollsNeeded, 1);
-        const splitVisitCost = calculateCost(rollsNeeded, 3);
+        const currentCost = calculateCostForParams(shopSize, rerollDiscount, targetIndex, startIndex);
 
-        const baseRollsNeeded = Math.floor((targetIndex - startIndex) / 2);
-        const calculateBaseCost = (rolls: number) => {
+        // Calculate savings for each voucher
+        const voucherSavingsList: { name: string, savings: number }[] = [];
+
+        ownedVouchers.forEach(v => {
+            let tempSize = shopSize;
+            let tempDiscount = rerollDiscount;
+
+            if (v === Voucher.OVERSTOCK) tempSize -= 1;
+            if (v === Voucher.OVERSTOCK_PLUS) tempSize -= 1;
+            if (v === Voucher.REROLL_SURPLUS) tempDiscount -= 2;
+            if (v === Voucher.REROLL_GLUT) tempDiscount -= 2;
+
+            // If removing the voucher makes size < 2 (shouldn't happen with base 2), clamp it?
+            // Base is 2. Overstock adds 1. So removing it goes back to 2. Safe.
+
+            const costWithout = calculateCostForParams(tempSize, tempDiscount, targetIndex, startIndex);
+            const savings = costWithout - currentCost;
+
+            if (savings > 0) {
+                voucherSavingsList.push({name: v, savings});
+            }
+        });
+
+        // For main display, we still want single vs split comparison using CURRENT params
+        // Re-use logic for single visit
+        let rollsNeeded = 0;
+        if (targetIndex >= startIndex) {
+            rollsNeeded = Math.floor((targetIndex - startIndex) / shopSize);
+        }
+        let baseRollsNeeded = 0;
+        if (targetIndex >= startIndex) {
+            baseRollsNeeded = Math.floor((targetIndex - startIndex) / 2);
+        }
+
+        const calculateSingleVisit = (needRolls = rollsNeeded) => {
+            if (needRolls <= 0) return 0;
             let total = 0;
             let current = 5;
-            for (let i = 0; i < rolls; i++) {
-                total += current;
+            for (let i = 0; i < needRolls; i++) {
+                total += Math.max(0, current - rerollDiscount);
                 current += 1;
             }
             return total;
         }
-        const baseCost = calculateBaseCost(baseRollsNeeded);
-
-        const voucherSavings = baseCost - singleVisitCost;
+        const baseSingleVisitCost = calculateSingleVisit(baseRollsNeeded);
+        const singleVisitCost = calculateSingleVisit();
+        const baseCost = calculateCostForParams(2, 0, targetIndex, startIndex);
 
         return {
+            baseCost,
+            baseSingleVisitCost,
             rollsNeeded,
             singleVisitCost,
-            splitVisitCost,
-            baseCost,
-            voucherSavings
+            splitVisitCost: currentCost,
+            voucherSavingsList
         };
 
-    }, [startIndex, targetIndex, shopSize, rerollDiscount]);
+    }, [startIndex, targetIndex, shopSize, rerollDiscount, ownedVouchers]);
 
     return (
         <Modal opened={opened} onClose={onClose} title="Reroll Calculator" centered>
@@ -111,11 +148,23 @@ export function RerollCalculatorModal({ opened, onClose, targetIndex, metaData }
                     min={0}
                     max={targetIndex}
                 />
-                <Stack gap={0}>
-                    <Text size="xs" c="dimmed">Target Card</Text>
-                    <Text fw={700}>{metaData?.index} {metaData?.name ?? 'Unknown'}</Text>
+                <Divider/>
+                <Stack gap={0} px={'sm'}>
+                    <Text size="xs" c="dimmed">Cheapest Route</Text>
+                    <Text fw={700}>${calculation.splitVisitCost}</Text>
                 </Stack>
-                <Group grow>
+                <Group grow px={'sm'}>
+                    <Stack gap={0}>
+                        <Text size="xs" c="dimmed">Starting Card</Text>
+                        <Text fw={700}>{startIndex}) {shopQueue?.[startIndex]?.name ?? 'Unknown'}</Text>
+                    </Stack>
+                    <Stack gap={0}>
+                        <Text size="xs" c="dimmed">Target Card</Text>
+                        <Text fw={700}>{metaData?.index}) {metaData?.name ?? 'Unknown'}</Text>
+                    </Stack>
+                </Group>
+                <Divider/>
+                <Group grow px={'sm'}>
                     <Stack gap={0}>
                         <Text size="xs" c="dimmed">Cards in Shop</Text>
                         <Text fw={700}>{shopSize}</Text>
@@ -125,14 +174,15 @@ export function RerollCalculatorModal({ opened, onClose, targetIndex, metaData }
                         <Text fw={700}>${rerollDiscount}</Text>
                     </Stack>
                 </Group>
-
-                <Divider />
-
-                <Table>
+                <Divider label="Cost Routing" labelPosition="center" mb={0}/>
+                <Table p={0} mt={0}>
                     <Table.Thead>
                         <Table.Tr>
                             <Table.Th>Strategy</Table.Th>
                             <Table.Th>Cost</Table.Th>
+                            { calculation.voucherSavingsList?.length > 0 && (
+                                <Table.Th> Base Cost</Table.Th>
+                            )}
                         </Table.Tr>
                     </Table.Thead>
                     <Table.Tbody>
@@ -144,29 +194,55 @@ export function RerollCalculatorModal({ opened, onClose, targetIndex, metaData }
                             <Table.Td>
                                 <Text fw={700} c="red">${calculation.singleVisitCost}</Text>
                             </Table.Td>
+                            { calculation.voucherSavingsList?.length > 0 && (
+                                <Table.Td>
+                                    <Text fw={700}>${calculation.baseSingleVisitCost}</Text>
+                                </Table.Td>
+                            )}
                         </Table.Tr>
                         <Table.Tr>
                             <Table.Td>
                                 <Text fw={500}>Split (3 Visits)</Text>
-                                <Text size="xs" c="dimmed">Optimized across 3 shops ({Math.floor(calculation.rollsNeeded / 3)} rolls per shop)</Text>
+                                <Text size="xs" c="dimmed">Optimized across 3 shops
+                                    ({Math.floor(calculation.rollsNeeded / 3)} rolls per shop)</Text>
                             </Table.Td>
                             <Table.Td>
                                 <Text fw={700} c="green">${calculation.splitVisitCost}</Text>
                             </Table.Td>
+                            { calculation.voucherSavingsList?.length > 0 && (
+                                <Table.Td>
+                                    <Text fw={700}>${calculation.baseCost}</Text>
+                                </Table.Td>
+                            )}
                         </Table.Tr>
                     </Table.Tbody>
                 </Table>
 
-                {calculation.voucherSavings > 0 && (
-                    <Badge color="green" fullWidth size="lg" variant="light">
-                        Vouchers saved you ${calculation.voucherSavings}
-                    </Badge>
+                {calculation.voucherSavingsList.length > 0 && (
+                    <>
+                        <Divider label="Voucher Savings" labelPosition="center"/>
+                        <Table>
+                            <Table.Thead>
+                                <Table.Tr>
+                                    <Table.Th>Voucher</Table.Th>
+                                    <Table.Th>Saved <Text span fz='xs' c='dimmed'> ( from best case )</Text></Table.Th>
+                                </Table.Tr>
+                            </Table.Thead>
+                            <Table.Tbody>
+                                {calculation.voucherSavingsList.map((v) => (
+                                    <Table.Tr key={v.name}>
+                                        <Table.Td>{v.name}</Table.Td>
+                                        <Table.Td>
+                                            <Text fw={700} c="green">${v.savings}</Text>
+                                        </Table.Td>
+                                    </Table.Tr>
+                                ))}
+                            </Table.Tbody>
+                        </Table>
+                    </>
                 )}
-
-                <Text size="xs" c="dimmed" ta="center">
-                    Base cost (no vouchers): ${calculation.baseCost}
-                </Text>
             </Stack>
         </Modal>
     );
 }
+

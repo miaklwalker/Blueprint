@@ -390,7 +390,7 @@ function TagDisplay({ tag, ante }: { tag: Tag, ante: Ante }) {
                 </Box>
             </Popover.Target>
             <Popover.Dropdown>
-                <Box onMouseEnter={open} onMouseLeave={close}>
+                <Box onMouseEnter={open} onMouseLeave={close} maw={375} w={'100%'}>
                     <Text ta={'center'}>{tag}</Text>
                     <Text>
                         {tagDescriptions[tag ?? ''] ?? 'No description available'}

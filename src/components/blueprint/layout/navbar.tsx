@@ -8,11 +8,13 @@ import {
     NativeSelect,
     NumberInput,
     ScrollArea,
-    SegmentedControl, Select,
+    SegmentedControl,
+    Select,
     Stack,
     Switch,
     Text,
-    Tooltip, useMantineColorScheme,
+    Tooltip,
+    useMantineColorScheme,
     useMantineTheme
 } from "@mantine/core";
 import { useCardStore } from "../../../modules/state/store.ts";
@@ -149,7 +151,6 @@ export default function NavBar({ themeName, setTheme }: { themeName: string, set
                         size={'xl'}
                         checked={colorScheme.colorScheme === 'dark'}
                         thumbIcon={colorScheme.colorScheme === 'dark' ? (<IconSun size={16} color={'var(--mantine-color-teal-6)'} />) : (<IconMoon size={16} />)}
-
                         onChange={colorScheme.toggleColorScheme}
                     />
                 </Group>
@@ -288,6 +289,26 @@ export default function NavBar({ themeName, setTheme }: { themeName: string, set
                     </Button>
                     <Button color={theme.colors.blue[9]} onClick={() => openSelectOptionModal()}>
                         Modify Unlocks
+                    </Button>
+                    <Button color={theme.colors.cyan[9]} onClick={() => {
+                        if(!seedResults){
+                            handleAnalyzeClick()
+                        }
+                        openSnapshotModal();
+                        useGA('view_seed_snapshot');
+                    }}>
+                        Seed Summary
+                    </Button>
+                    <Button color={theme.colors.red[9]} variant={'filled'} onClick={() => reset()}>
+                        Reset
+                    </Button>
+                    <Button
+                        onClick={handleAnalyzeClick}
+                        disabled={!hasSettingsChanged}
+                        color={hasSettingsChanged ? "green" : "gray"}
+
+                    >
+                        Analyze Seed
                     </Button>
                     <Group grow>
                         <Button

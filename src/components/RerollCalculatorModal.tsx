@@ -11,9 +11,17 @@ interface RerollCalculatorModalProps {
     metaData?: BuyMetaData;
 }
 
-export function RerollCalculatorModal({ opened, onClose, targetIndex }: RerollCalculatorModalProps) {
-    const [startIndex, setStartIndex] = useState<number>(0);
+export function RerollCalculatorModal({ opened, onClose, targetIndex, metaData }: RerollCalculatorModalProps) {
+    const globalStartIndex = useCardStore(state => state.applicationState.rerollStartIndex);
+    const [startIndex, setStartIndex] = useState<number>(globalStartIndex);
     const buys = useCardStore(state => state.shoppingState.buys);
+
+    // Sync local state with global state when modal opens or global state changes
+    useMemo(() => {
+        if (opened) {
+            setStartIndex(globalStartIndex);
+        }
+    }, [opened, globalStartIndex]);
 
     const ownedVouchers = useMemo(() => {
         const vouchers: string[] = [];
@@ -97,20 +105,19 @@ export function RerollCalculatorModal({ opened, onClose, targetIndex }: RerollCa
             <Stack>
                 <NumberInput
                     label="Starting Index"
-                    description="The index you are currently at (default 0)"
+                    description="Where to calculate cost from, you can also use the mark as start button to set this automatically"
                     value={startIndex}
                     onChange={(val) => setStartIndex(Number(val))}
                     min={0}
                     max={targetIndex}
                 />
-
+                <Stack gap={0}>
+                    <Text size="xs" c="dimmed">Target Card</Text>
+                    <Text fw={700}>{metaData?.index} {metaData?.name ?? 'Unknown'}</Text>
+                </Stack>
                 <Group grow>
                     <Stack gap={0}>
-                        <Text size="xs" c="dimmed">Target Index</Text>
-                        <Text fw={700}>{targetIndex}</Text>
-                    </Stack>
-                    <Stack gap={0}>
-                        <Text size="xs" c="dimmed">Shop Size</Text>
+                        <Text size="xs" c="dimmed">Cards in Shop</Text>
                         <Text fw={700}>{shopSize}</Text>
                     </Stack>
                     <Stack gap={0}>
@@ -141,7 +148,7 @@ export function RerollCalculatorModal({ opened, onClose, targetIndex }: RerollCa
                         <Table.Tr>
                             <Table.Td>
                                 <Text fw={500}>Split (3 Visits)</Text>
-                                <Text size="xs" c="dimmed">Optimized across 3 shops</Text>
+                                <Text size="xs" c="dimmed">Optimized across 3 shops ({Math.floor(calculation.rollsNeeded / 3)} rolls per shop)</Text>
                             </Table.Td>
                             <Table.Td>
                                 <Text fw={700} c="green">${calculation.splitVisitCost}</Text>
@@ -152,7 +159,7 @@ export function RerollCalculatorModal({ opened, onClose, targetIndex }: RerollCa
 
                 {calculation.voucherSavings > 0 && (
                     <Badge color="green" fullWidth size="lg" variant="light">
-                        Vouchers saved you ${calculation.voucherSavings}!
+                        Vouchers saved you ${calculation.voucherSavings}
                     </Badge>
                 )}
 

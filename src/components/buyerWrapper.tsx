@@ -17,7 +17,7 @@ import {
     useMantineTheme
 } from "@mantine/core";
 import { BuyWrapperProps, LOCATION_TYPES } from "../modules/const.ts";
-import { IconArrowCapsule, IconCalculator, IconChevronDown, IconExternalLink, IconLock } from "@tabler/icons-react";
+import { IconArrowCapsule, IconCalculator, IconChevronDown, IconExternalLink, IconFlag, IconLock } from "@tabler/icons-react";
 import { RerollCalculatorModal } from "./RerollCalculatorModal.tsx";
 import { useState } from "react";
 
@@ -55,6 +55,7 @@ export function BuyWrapper({ children, bottomOffset, metaData, horizontal = fals
     const theme = useMantineTheme()
 
     const [rerollModalOpen, setRerollModalOpen] = useState(false);
+    const setRerollStartIndex = useCardStore(state => state.setRerollStartIndex);
     const rarityColorMap: { [key: number]: string } = {
         1: "#0093ff",
         2: "#35bd86",
@@ -222,6 +223,15 @@ export function BuyWrapper({ children, bottomOffset, metaData, horizontal = fals
                                             onClick={() => setRerollModalOpen(true)}
                                         >
                                             Calc Reroll
+                                        </Menu.Item>
+                                    }
+                                    {
+                                        metaData?.locationType === LOCATION_TYPES.SHOP &&
+                                        <Menu.Item
+                                            leftSection={<IconFlag size={16} stroke={1.5} color={theme.colors.orange[5]} />}
+                                            onClick={() => setRerollStartIndex(metaData?.index ?? 0)}
+                                        >
+                                            Mark as Start
                                         </Menu.Item>
                                     }
                                 </Menu.Dropdown>

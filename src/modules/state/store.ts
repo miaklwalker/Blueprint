@@ -35,7 +35,8 @@ export interface InitialState {
         selectedBlind: string;
         hasSettingsChanged: boolean;
         analyzedResults: SeedResultsContainer | null | undefined;
-        maxMiscCardSource: number
+        maxMiscCardSource: number;
+        rerollStartIndex: number;
     };
     searchState: {
         searchTerm: string;
@@ -86,7 +87,8 @@ const initialState: InitialState = {
         selectedBlind: 'bigBlind',
         hasSettingsChanged: false,
         analyzedResults: null,
-        maxMiscCardSource: 15
+        maxMiscCardSource: 15,
+        rerollStartIndex: 0
     },
     searchState: {
         searchTerm: '',
@@ -261,6 +263,9 @@ export const useCardStore = create(
                         setMiscMaxSource: (maxSource: number) => set((prev: InitialState) => {
                             prev.applicationState.maxMiscCardSource = maxSource
                         }, undefined, 'Global/SetMiscMaxSource'),
+                        setRerollStartIndex: (index: number) => set((prev: InitialState) => {
+                            prev.applicationState.rerollStartIndex = index
+                        }, undefined, 'Global/SetRerollStartIndex'),
                         setSelectedSearchResult: (result: BuyMetaData) => set((prev: InitialState) => {
                             prev.searchState.selectedSearchResult = result
                             prev.applicationState.selectedAnte = Number(result.ante)

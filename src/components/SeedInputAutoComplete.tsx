@@ -43,7 +43,7 @@ export function QuickAnalyze() {
         </NativeSelect>
     );
     return (
-        <Paper withBorder shadow={'lg'} p={'1rem'} mb={'xl'} radius={'md'}>
+        <Paper withBorder shadow={'lg'} p={'1rem'} radius={'md'}>
             <Group align={'flex-end'}>
                 <Autocomplete
                     flex={1}

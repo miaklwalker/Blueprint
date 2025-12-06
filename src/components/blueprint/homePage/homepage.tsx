@@ -1,5 +1,5 @@
 import {IconEye, IconGauge, IconList, IconMessage2, IconShoppingCart, IconUser} from '@tabler/icons-react';
-import {Container, Paper, SimpleGrid, Space, Text, ThemeIcon, Title} from '@mantine/core';
+import {Container, Paper, SimpleGrid, Space, Stack, Text, ThemeIcon, Title} from '@mantine/core';
 import classes from './Homepage.module.css';
 import HeroClasses from "./Hero.module.css"
 import React from "react";
@@ -50,11 +50,11 @@ interface FeatureProps {
     description: React.ReactNode;
 }
 
-export function Feature({ icon: Icon, title, description }: FeatureProps) {
+export function Feature({icon: Icon, title, description}: FeatureProps) {
     return (
         <Paper withBorder p={'1rem'} shadow={'lg'}>
             <ThemeIcon variant="light" size={40} radius={40}>
-                <Icon size={18} stroke={1.5} />
+                <Icon size={18} stroke={1.5}/>
             </ThemeIcon>
             <Text mt="sm" mb={7}>
                 {title}
@@ -68,7 +68,7 @@ export function Feature({ icon: Icon, title, description }: FeatureProps) {
 
 function HeroText() {
     return (
-        <Container  fluid mb={'xl'}>
+        <Container fluid mb={'xl'}>
             <div className={HeroClasses.inner}>
                 <Title className={HeroClasses.title}>
                     Fully featured {' '}
@@ -87,26 +87,43 @@ function HeroText() {
                 </Container>
 
                 <div className={HeroClasses.controls}>
-                    <QuickAnalyze/>
+                    <Stack gap={'sm'}>
+                        <QuickAnalyze/>
+                        <Text ta={'right'} fz={'sm'} c={'dimmed'}>
+                            Want to search for seeds instead ?
+                            Try {" "}
+                            <Text
+                                component={'a'}
+                                fz={'sm'}
+                                style={{ textDecoration: 'underline'}}
+                                href={'https://github.com/OptimusPi/MotelyJAML/releases/tag/v1.0.0'}
+                            >
+                                MotelyJAML
+                            </Text>
+                            {" "}by pifreak
+                        </Text>
+                    </Stack>
+
                 </div>
+
             </div>
         </Container>
     );
 }
 
 export function FeaturesGrid() {
-    const features = Features.map((feature, index) => <Feature {...feature} key={index} />);
+    const features = Features.map((feature, index) => <Feature {...feature} key={index}/>);
 
     return (
         <Container className={classes.wrapper}>
             <HeroText/>
-            <Space my={'xl'} />
+            <Space my={'xl'}/>
             <Paper p={'2rem'}>
                 <SimpleGrid
                     mt={60}
-                    cols={{ base: 1, sm: 2, md: 3 }}
-                    spacing={{ base: 'xl', md: 50 }}
-                    verticalSpacing={{ base: 'xl', md: 50 }}
+                    cols={{base: 1, sm: 2, md: 3}}
+                    spacing={{base: 'xl', md: 50}}
+                    verticalSpacing={{base: 'xl', md: 50}}
                 >
                     {features}
                 </SimpleGrid>
@@ -116,8 +133,7 @@ export function FeaturesGrid() {
 }
 
 
-
-export default function HomePage(){
+export default function HomePage() {
     return (
         <Container fluid>
             <FeaturesGrid/>

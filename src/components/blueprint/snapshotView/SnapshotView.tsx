@@ -137,7 +137,7 @@ export default function SnapshotModal({ SeedResults }: SnapshotViewProps) {
                 blind.packs.forEach((pack: any) => {
                     if (pack.cards) {
                         pack.cards.forEach((card: any, index: number) => {
-                            processJoker(card, `Ante ${anteNum} ${pack.name}`, 'Pack', index);
+                            processJoker(card, `Ante ${anteNum} ${pack.name} pack`, 'Pack', index);
                         });
                     }
                 });
@@ -147,7 +147,7 @@ export default function SnapshotModal({ SeedResults }: SnapshotViewProps) {
             anteData.miscCardSources.forEach((source: any) => {
                 if (source.cards) {
                     source.cards.forEach((card: any, index: number) => {
-                        processJoker(card, `Ante ${anteNum} ${source.name}`, 'Misc', index);
+                        processJoker(card, `Ante ${anteNum} ${source.name} queue`, 'Misc', index);
                     });
                 }
             })

@@ -341,6 +341,11 @@ export class Game extends Lock {
         this.hasSpoilers = false;
     }
 
+    private withCacheState<T>(fn: () => T): T {
+        // Roll back only the keys mutated during `fn` (cheap), instead of copying the whole cache.
+        return this.cache.withRollback(fn);
+    }
+
     private getNode(id: string) {
         var c = this.cache.getNode(id);
 
@@ -647,6 +652,14 @@ export class Game extends Lock {
             }
         }
         return new JokerData(joker, rarity, edition, stickers);
+    }
+
+    /**
+     * Returns what `nextJoker(...)` would return, but does NOT advance RNG/cache state.
+     * Intended for spoiler/peek UI.
+     */
+    peekJoker(source: QueueNames, ante: number, hasStickers: boolean): JokerData {
+        return this.withCacheState(() => this.nextJoker(source, ante, hasStickers));
     }
 
     getShopInstance(): ShopInstance {
@@ -1025,7 +1038,7 @@ export class Game extends Lock {
             let item = (card as ItemImpl).getName();
             let spoilerSource = this.hasSpoilersMap[item];
             if (spoilerSource && this.hasSpoilers) {
-                return this.nextJoker(spoilerSource, ante, false)
+                return this.peekJoker(spoilerSource, ante, false)
             }
             return card as Card;
         }

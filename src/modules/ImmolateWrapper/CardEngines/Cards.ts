@@ -331,7 +331,9 @@ export class Pack {
                 continue;
             }
             if (typeof data === 'string' && itemsWithSpoilers.includes(data) && spoilers) {
-                let joker = instance.nextJoker(instance.commonSources[data], ante, true);
+                // Peek/spoiler should not advance underlying RNG state
+                // @ts-ignore - Game implements peekJoker, but CardEngine interface may not.
+                let joker = (instance.peekJoker ? instance.peekJoker(instance.commonSources[data], ante, true) : instance.nextJoker(instance.commonSources[data], ante, true));
                 let commonCardInterface = {
                     name: joker.joker,
                     type: cardType,

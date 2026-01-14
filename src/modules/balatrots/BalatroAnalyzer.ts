@@ -386,7 +386,7 @@ export class BalatroAnalyzer {
                 )
                 let spoilerSource = this.hasSpoilersMap[card.name];
                 if( this.hasSpoilers && spoilerSource) {
-                    let joker = game.nextJoker(spoilerSource, this.result.ante, true);
+                    let joker = game.peekJoker(spoilerSource, this.result.ante, true);
                     // @ts-ignore
                     BalatroAnalyzer.getSticker(joker);
                     card = joker
@@ -416,7 +416,7 @@ export class BalatroAnalyzer {
         let sticker: Edition | null = null;
         let spoilerSource = this.hasSpoilersMap[shopItem.item.name];
         if (this.hasSpoilers && spoilerSource) {
-            const joker: JokerData = game.nextJoker(spoilerSource, ante, true);
+            const joker: JokerData = game.peekJoker(spoilerSource, ante, true);
             run.addJoker(joker.joker.getName());
             sticker = BalatroAnalyzer.getSticker(joker);
             this.result.addItemToShopQueue(joker);
@@ -483,7 +483,7 @@ export class BalatroAnalyzer {
                 if (item === "The Soul") {
                     run.hasTheSoul = true;
                 }
-                let joker = game.nextJoker(spoilerSource, this.result.ante, true);
+                let joker = game.peekJoker(spoilerSource, this.result.ante, true);
                 run.addJoker(joker.joker.getName());
                 const sticker = BalatroAnalyzer.getSticker(joker);
                 options.add(new Option(joker.joker, new ItemImpl(sticker)));

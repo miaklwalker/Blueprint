@@ -543,7 +543,7 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
             let shopItem = engine.nextShopItem(ante);
             let spoilerSource = engine.hasSpoilersMap[shopItem.item.name];
             if (engine.hasSpoilers && spoilerSource) {
-                const joker: JokerData = engine.nextJoker(spoilerSource, ante, true);
+                const joker: JokerData = engine.peekJoker(spoilerSource, ante, true);
                 result.queue.push(
                     engineWrapper.makeGameCard(joker)
                 )
@@ -560,7 +560,7 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
             if (analyzeOptions && analyzeOptions?.showCardSpoilers) {
                 if (itemsWithSpoilers.includes(result.queue[i].name)) {
                     // @ts-ignore
-                    result.queue[i] = Pack.PackCardToCard(engine.nextJoker(spoilerSources[itemsWithSpoilers.indexOf(result.queue[i].name)], ante, false), 'Joker')
+                    result.queue[i] = Pack.PackCardToCard(engine.peekJoker(spoilerSources[itemsWithSpoilers.indexOf(result.queue[i].name)], ante, false), 'Joker')
                 }
             }
             if (analyzeOptions && analyzeOptions.buys[key]) {
@@ -672,7 +672,7 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
                 )
                 let spoilerSource = engine.hasSpoilersMap[card.name];
                 if (engine.hasSpoilers && spoilerSource) {
-                    card = engine.nextJoker(spoilerSource, ante, true)
+                    card = engine.peekJoker(spoilerSource, ante, true)
                 }
                 let generatedCard = engineWrapper.makeGameCard(card);
                 if (analyzeOptions && analyzeOptions.buys[key]) {

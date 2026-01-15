@@ -95,27 +95,18 @@ export function pseudohash(s: string) {
     return isNaN(num) ? NaN : num;
 }
 
-const inv_prec = Math.pow(10, 13);
-const two_inv_prec = Math.pow(2, 13);
-const five_inv_prec = Math.pow(5, 13);
-
-function nextAfter(x: number, direction: number): number {
-    const epsilon = Number.EPSILON;
-    return direction > x ? x + epsilon : x - epsilon;
-}
-
 export function round13(x: number) {
-    const tentative = Math.floor(x * inv_prec) / inv_prec;
-    const truncated = (x * two_inv_prec % 1) * five_inv_prec;
+    const decimal = x.toFixed(52).replace(/0+$/, '').padEnd(15, '0');
+    const numerator = Number(decimal.slice(2, 15));
+    const extra = decimal.slice(15);
 
-    if (
-        tentative !== x &&
-        tentative !== nextAfter(x, 1) &&
-        truncated % 1 >= 0.5
-    ) {
-        return (Math.floor(x * inv_prec) + 1) / inv_prec;
+    if (extra < '5') {
+        return numerator / 1e13;
+    } else if (extra > '5') {
+        return (numerator + 1) / 1e13;
     }
-    return tentative;
+
+    return (numerator + numerator % 2) / 1e13;
 }
 
 export function debugBitOperation(z: bigint) {

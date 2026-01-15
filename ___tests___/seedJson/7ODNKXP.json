@@ -32499,23 +32499,11 @@
                 "type": "Spectral"
               },
               {
-                "name": "Hex",
-                "type": "Spectral"
-              },
-              {
-                "name": "Cryptid",
-                "type": "Spectral"
-              },
-              {
-                "name": "Immolate",
-                "type": "Spectral"
-              },
-              {
-                "name": "Cryptid",
-                "type": "Spectral"
-              },
-              {
                 "name": "Trance",
+                "type": "Spectral"
+              },
+              {
+                "name": "Grim",
                 "type": "Spectral"
               },
               {
@@ -32523,27 +32511,39 @@
                 "type": "Spectral"
               },
               {
-                "name": "Immolate",
+                "name": "Incantation",
                 "type": "Spectral"
               },
               {
-                "name": "Trance",
+                "name": "Wraith",
                 "type": "Spectral"
               },
               {
-                "name": "Sigil",
+                "name": "Ouija",
                 "type": "Spectral"
               },
               {
-                "name": "Ectoplasm",
+                "name": "Grim",
                 "type": "Spectral"
               },
               {
-                "name": "Trance",
+                "name": "Ouija",
+                "type": "Spectral"
+              },
+              {
+                "name": "Incantation",
                 "type": "Spectral"
               },
               {
                 "name": "Familiar",
+                "type": "Spectral"
+              },
+              {
+                "name": "Familiar",
+                "type": "Spectral"
+              },
+              {
+                "name": "Hex",
                 "type": "Spectral"
               }
             ],

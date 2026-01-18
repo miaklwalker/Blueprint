@@ -530,13 +530,13 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
         burnerInstance.initUnlocks(ante, false)
         const burnerWrapper = new CardEngineWrapper(burnerInstance);
         const result = new Ante(ante);
-        const showmanIsLocked = engine.isLocked('Showman');
+        const showmanIsPurchased = engine.isPurchased('Showman');
         updateShowmanOwned(false);
         result.boss = engine.nextBoss(ante).name
         result.voucher = engine.nextVoucher(ante).name;
         result.tags.push(engine.nextTag(ante).name);
         result.tags.push(engine.nextTag(ante).name);
-        updateShowmanOwned(showmanIsLocked);
+        updateShowmanOwned(showmanIsPurchased);
 
         for (let i = 0; i < Math.min(settings.cardsPerAnte, 1000); i++) {
             const key: `${number}-${LOCATIONS.SHOP}-${number}` = `${ante}-${LOCATIONS.SHOP}-${i}`;

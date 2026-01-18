@@ -31,6 +31,7 @@ export default function PurchaseTimeline({buys, sells}: {
 
     const addSell = useCardStore(state => state.addSell);
     const undoSell = useCardStore(state => state.undoSell);
+    const analyzeSeed = useCardStore(state => state.analyzeSeed);
 
     const exportPurchases = () => {
         const data = JSON.stringify({ buys, sells }, null, 2);
@@ -189,6 +190,7 @@ export default function PurchaseTimeline({buys, sells}: {
                                         <Button color={'red'} size={'compact-sm'} onClick={() => {
                                             if (buyData.transactionType === 'sell') {
                                                 undoSell(buyData);
+                                                analyzeSeed();
                                             } else {
                                                 console.log('Removing buy:', buyData);
                                                 removeBuy(buyData);
@@ -208,6 +210,7 @@ export default function PurchaseTimeline({buys, sells}: {
                                                     })
                                                     sellData.transactionType = 'sell';
                                                     addSell(sellData);
+                                                    analyzeSeed();
                                                 }}
                                             >
                                                 Sell

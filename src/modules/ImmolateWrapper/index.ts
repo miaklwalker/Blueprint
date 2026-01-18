@@ -652,7 +652,7 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
             "Standard": (source, ante) => engine.nextStandardCard(ante, source),
         }
         for (let source of miscCardSources) {
-            if (source.usesAnte === false && ante !== 1) {
+            if (source.usesAnte === false && ante > 1) {
                 const savedResults = output.antes[1].miscCardSources.find(s => s.name === source.name);
                 if (savedResults) {
                     source.cards = savedResults.cards;
@@ -750,16 +750,15 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
         return result;
     }
 
-
-    for (let ante = 1; ante <= settings.antes; ante++) {
-        output.antes[ante] = generateAnte(ante);
-    }
     try {
         output.antes[0] = generateAnte(0)
-        output.antes[0].boss = output.antes[1].boss;
     } catch (e) {
         console.error("Error generating ante 0:", e);
     }
+    for (let ante = 1; ante <= settings.antes; ante++) {
+        output.antes[ante] = generateAnte(ante);
+    }
+    output.antes[0].boss = output.antes[1].boss;
     console.log("Final Analysis: ", output);
 
     return output;

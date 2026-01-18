@@ -24,7 +24,7 @@ import {Boss, Tag as RenderTag, Voucher} from "../../Rendering/gameElements.tsx"
 import {BuyMetaData} from "../../../modules/classes/BuyMetaData.ts";
 import {BuyWrapper} from "../../buyerWrapper.tsx";
 import {LOCATIONS, LOCATION_TYPES, blinds, tagDescriptions} from "../../../modules/const.ts";
-import {useCardStore} from "../../../modules/state/store.ts";
+import { useCardStore} from "../../../modules/state/store.ts";
 import {GameCard} from "../../Rendering/cards.tsx";
 import Header from "../layout/header.tsx";
 import NavBar from "../layout/navbar.tsx";
@@ -35,6 +35,7 @@ import Index from "../textView";
 import Simple from "../simpleView/simple.tsx";
 import SnapshotModal from "../snapshotView/SnapshotView.tsx";
 import {useSeedResultsContainer} from "../../../modules/state/analysisResultProvider.tsx";
+import type {Blinds} from "../../../modules/state/store.ts";
 import type {Tag} from "../../../modules/balatrots/enum/Tag.ts";
 import type {Ante, Pack} from "../../../modules/ImmolateWrapper/CardEngines/Cards.ts";
 import type {EmblaCarouselType} from 'embla-carousel';
@@ -185,13 +186,13 @@ function AntePanel({ ante, tabName, timeTravelVoucherOffset }: {
                                                                     ante: tabName,
                                                                     blind: selectedBlind,
                                                                     itemType: 'card',
-                                                                    link: `https://balatrowiki.org/w/${card.name}`,
+                                                                    link: `https://balatrowiki.org/w/${card!.name}`,
                                                                     card: card,
-                                                                    name: card.name
+                                                                    name: card!.name
                                                                 })
                                                             }
                                                         >
-                                                            <GameCard card={card} />
+                                                            <GameCard card={card!} />
                                                         </BuyWrapper>
                                                     </Carousel.Slide>
                                                 ))}
@@ -208,7 +209,7 @@ function AntePanel({ ante, tabName, timeTravelVoucherOffset }: {
     )
 }
 type CustomDetailsType = {
-    [K in Tag]?: { renderer: (ante: Ante, navigateToMiscSource) => React.ReactNode  };
+    [K in Tag]?: { renderer: (ante: Ante, navigateToMiscSource: (source: string)=>void) => React.ReactNode  };
 };
 const CustomDetails: CustomDetailsType = {
     "Uncommon Tag": {
@@ -445,7 +446,7 @@ function SeedExplorer() {
                 />
                 <SegmentedControl
                     value={selectedBlind}
-                    onChange={setSelectedBlind}
+                    onChange={(v)=>setSelectedBlind(v as Blinds)}
                     fullWidth
                     radius="xl"
                     size="md"

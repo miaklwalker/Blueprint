@@ -1,7 +1,7 @@
 // src/components/SimpleBuyerWrapper.tsx
 import React from "react";
 import {IconLock} from "@tabler/icons-react";
-import {ActionIcon, Tooltip, Box} from "@mantine/core";
+import {ActionIcon, Box, Tooltip} from "@mantine/core";
 import {useLongPress} from "@mantine/hooks"
 import {useCardStore} from "../../../modules/state/store.ts";
 
@@ -16,16 +16,13 @@ export function SimpleBuyerWrapper({card, cardId, children}: SimpleBuyerWrapperP
     const lockedCards = useCardStore(state => state.lockState.lockedCards);
     const lockCard = useCardStore(state => state.lockCard);
     const unlockCard = useCardStore(state => state.unlockCard);
-    const analyzeSeed = useCardStore(state => state.analyzeSeed);
     const isLocked = cardId in lockedCards;
 
     const handlers = useLongPress(()=>{
         if (isLocked) {
             unlockCard(cardId);
-            analyzeSeed();
         } else {
             lockCard(cardId, card);
-            analyzeSeed();
         }
     });
 
@@ -33,10 +30,8 @@ export function SimpleBuyerWrapper({card, cardId, children}: SimpleBuyerWrapperP
         e.preventDefault();
         if (isLocked) {
             unlockCard(cardId);
-            analyzeSeed();
         } else {
             lockCard(cardId, card);
-            analyzeSeed();
         }
     };
 

@@ -184,7 +184,7 @@ export function Aside() {
         <AppShell.Aside p="md">
             {!media && (
                 <AppShell.Section hiddenFrom={'sm'} mb="md">
-                    <SearchSeedInput SeedResults={SeedResults}/>
+                    <SearchSeedInput/>
                 </AppShell.Section>
             )}
             <AppShell.Section>

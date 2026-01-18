@@ -13,16 +13,13 @@ import {
     Title,
     Tooltip
 } from "@mantine/core";
-import type {Ante, SeedResultsContainer} from "../../../modules/ImmolateWrapper/CardEngines/Cards.ts";
-import {CardTuple, Joker_Final} from "../../../modules/ImmolateWrapper/CardEngines/Cards.ts";
+import {Joker_Final} from "../../../modules/ImmolateWrapper/CardEngines/Cards.ts";
 import {Boss, Voucher} from "../../Rendering/gameElements.tsx";
 import {JokerCard} from "../../Rendering/cards.tsx";
 import {useCardStore} from "../../../modules/state/store.ts";
 import {useSeedResultsContainer} from "../../../modules/state/analysisResultProvider.tsx";
+import type {Ante, CardTuple} from "../../../modules/ImmolateWrapper/CardEngines/Cards.ts";
 
-interface SnapshotViewProps {
-    SeedResults: SeedResultsContainer;
-}
 
 // number suffix 1st, 2nd, 3rd, 4th, 5th, 6th, 7th, 8th, 9th, 10th
 function numberSuffix(num: number) {
@@ -167,8 +164,8 @@ export default function SnapshotModal() {
 
     const sortedUniqueJokers = useMemo(() => {
         return [...uniqueJokers].sort((a, b) => {
-            const jokerA = a.joker;
-            const jokerB = b.joker;
+            const jokerA = a.joker as Joker_Final;
+            const jokerB = b.joker as Joker_Final;
 
             // Rarity check
             const aRarity = RARITY_ORDER[jokerA.rarity || 0] || 4;
@@ -237,7 +234,13 @@ export default function SnapshotModal() {
                             <HoverCard key={index}  shadow="md" openDelay={300} closeOnClickOutside={true}>
                                 <HoverCard.Target>
                                     <Box w={'fit-content'}>
-                                        <JokerCard card={new Joker_Final(data.joker)} />
+                                        <JokerCard card={new Joker_Final({
+                                            ...data.joker,
+                                            isEternal: undefined,
+                                            isPerishable: undefined,
+                                            isRental: undefined,
+                                            rarity: undefined
+                                        })} />
                                     </Box>
                                 </HoverCard.Target>
                                 <HoverCard.Dropdown w={320}>

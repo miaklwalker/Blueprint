@@ -82,7 +82,7 @@ export class NextPackCard {
 }
 
 export interface Stringifies {
-    rarity: number;
+    rarity?: number | undefined;
     name: string;
     type: string;
     edition?: string | undefined;
@@ -148,7 +148,7 @@ export class Joker_Final implements Stringifies {
     isPerishable: boolean | undefined;
     isRental: boolean | undefined;
 
-    constructor(joker: Card_Final) {
+    constructor(joker: Omit<Card_Final, 'seal' | 'rank' | 'suit' | 'base' | 'enhancements'| 'joker'>) {
         this.name = joker.name;
         this.type = joker.type;
         this.edition = joker.edition === "No Edition" ? '' : joker.edition ?? '';
@@ -291,63 +291,6 @@ export class Pack {
                 return new Joker_Final(templateCard);
             }
         }
-    }
-
-    init(instance: CardEngine, ante: number, spoilers = true) {
-        let itemsWithSpoilers: string[] = ["The Soul", "Judgement", "Wraith"];
-        let cards, cardType;
-        switch (this.name) {
-            case "Celestial Pack":
-                cards = instance.nextCelestialPack(this.size, ante);
-                cardType = 'Planet'
-                break;
-            case "Arcana Pack":
-                cards = instance.nextArcanaPack(this.size, ante);
-                cardType = "Tarot"
-                break;
-            case "Spectral Pack":
-                cards = instance.nextSpectralPack(this.size, ante);
-                cardType = "Spectral"
-                break;
-            case "Buffoon Pack":
-                cards = instance.nextBuffoonPack(this.size, ante);
-                cardType = "Joker"
-                break;
-            case "Standard Pack":
-                cards = instance.nextStandardPack(this.size, ante);
-                cardType = "Standard"
-                break;
-            default:
-                console.debug("unknown pack type");
-                return;
-        }
-        for (let i = 0; i < this.size; i++) {
-            let data: string | PackCard | undefined = cards.get(i);
-            if (data === undefined) {
-                console.debug("No data for pack card");
-                continue;
-            }
-            if (typeof data === 'string' && itemsWithSpoilers.includes(data) && spoilers) {
-                // Peek/spoiler should not advance underlying RNG state
-                // @ts-ignore - Game implements peekJoker, but CardEngine interface may not.
-                let joker = (instance.peekJoker ? instance.peekJoker(instance.commonSources[data], ante, true) : instance.nextJoker(instance.commonSources[data], ante, true));
-                let commonCardInterface = {
-                    name: joker.joker,
-                    type: cardType,
-                    edition: joker.edition,
-                    seal: joker.seal,
-                    isEternal: joker?.stickers?.eternal,
-                    isPerishable: joker?.stickers?.perishable,
-                    isRental: joker?.stickers?.rental,
-                } as Card_Final
-                let jokerCard = new Joker_Final(commonCardInterface);
-                this.cards.push(jokerCard);
-                continue;
-            }
-            this.cards.push(Pack.PackCardToCard(data, cardType))
-        }
-        // @ts-ignore
-        cards.delete();
     }
 }
 

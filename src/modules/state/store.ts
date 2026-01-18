@@ -1,10 +1,10 @@
-import { LOCATION_TYPES, LOCATIONS, options } from "../const.ts";
 import { create } from "zustand/index";
-import { combine, createJSONStorage, devtools, persist, StateStorage } from "zustand/middleware";
+import { combine, createJSONStorage, devtools, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
-import { BuyMetaData } from "../classes/BuyMetaData.ts";
-import { analyzeSeed } from "../ImmolateWrapper";
-import { SeedResultsContainer } from "../ImmolateWrapper/CardEngines/Cards.ts";
+import { LOCATIONS, LOCATION_TYPES, options } from "../const.ts";
+import type { StateStorage } from "zustand/middleware";
+import type { BuyMetaData } from "../classes/BuyMetaData.ts";
+import type { SeedResultsContainer } from "../ImmolateWrapper/CardEngines/Cards.ts";
 
 export type Blinds = 'smallBlind' | 'bigBlind' | 'bossBlind';
 export interface InitialState {
@@ -16,7 +16,7 @@ export interface InitialState {
         stake: string;
         showmanOwned: boolean;
         gameVersion: string;
-        selectedOptions: string[];
+        selectedOptions: Array<any>;
     };
     applicationState: {
         viewMode: string
@@ -43,7 +43,7 @@ export interface InitialState {
     };
     searchState: {
         searchTerm: string;
-        searchResults: any[];
+        searchResults: Array<any>;
         selectedSearchResult: any | null;
     };
     shoppingState: {
@@ -55,7 +55,7 @@ export interface InitialState {
         }
     };
     eventState: {
-        events: any[]
+        events: Array<any>
     },
     lockState: {
         lockedCards: Record<string, any>  // Maps card IDs to locked cards
@@ -102,8 +102,6 @@ interface StoreActions {
     trackEvent: (event: any) => void;
     clearEvents: () => void;
     removeEvent: (index: number) => void;
-    setHasSettingsChanged: (hasSettingsChanged: boolean) => void;
-    analyzeSeed: () => void;
     lockCard: (cardId: string, card: any) => void;
     unlockCard: (cardId: string) => void;
     clearLockedCards: () => void;
@@ -167,10 +165,10 @@ const initialState: InitialState = {
 const blueprintStorage: StateStorage = {
     // @ts-ignore
     getItem: (): string => {
-        let immolateState = getImmolateStateFromUrl();
+        const immolateState = getImmolateStateFromUrl();
 
 
-        let results = {
+        const results = {
             state: {
                 immolateState: {
                     ...initialState.immolateState,
@@ -349,22 +347,22 @@ export const useCardStore = create<CardStore,[
 
                         }, undefined, 'Global/NavigateToMiscSource'),
                         addBuy: (buy) => set((prev) => {
-                            let key = `${buy.ante}-${buy.location}-${buy.index}${buy.locationType === LOCATION_TYPES.PACK ? `-${buy.blind}` : ''}`;
+                            const key = `${buy.ante}-${buy.location}-${buy.index}${buy.locationType === LOCATION_TYPES.PACK ? `-${buy.blind}` : ''}`;
                             prev.shoppingState.buys[key] = buy;
                         }, undefined, 'Global/AddBuy'),
                         removeBuy: (buy) => set((prev) => {
-                            let key = `${buy.ante}-${buy.location}-${buy.index}${buy.locationType === LOCATION_TYPES.PACK ? `-${buy.blind}` : ''}`;
+                            const key = `${buy.ante}-${buy.location}-${buy.index}${buy.locationType === LOCATION_TYPES.PACK ? `-${buy.blind}` : ''}`;
                             delete prev.shoppingState.buys[key];
                         }, undefined, 'Global/RemoveBuy'),
                         isOwned: (key: string) => {
                             return key in get().shoppingState.buys;
                         },
                         addSell: (sell) => set((prev) => {
-                            let key = `${sell.ante}-${sell.blind}-${sell.name}`;
+                            const key = `${sell.ante}-${sell.blind}-${sell.name}`;
                             prev.shoppingState.sells[key] = sell;
                         }, undefined, 'Global/AddSell'),
                         undoSell: (sell) => set((prev) => {
-                            let key = `${sell.ante}-${sell.blind}-${sell.name}`;
+                            const key = `${sell.ante}-${sell.blind}-${sell.name}`;
                             delete prev.shoppingState.sells[key];
                         }, undefined, 'Global/UndoSell'),
                         setBuys: (buys) => set((prev) => {
@@ -383,31 +381,6 @@ export const useCardStore = create<CardStore,[
                         removeEvent: (index) => set((prev) => {
                             prev.eventState.events.splice(index, 1)
                         }, undefined, 'Global/RemoveEvent'),
-                        setHasSettingsChanged: (hasSettingsChanged) => set((prev) => {
-                            prev.applicationState.hasSettingsChanged = hasSettingsChanged
-                        }, undefined, 'Global/SetHasSettingsChanged'),
-                        analyzeSeed: () => set((prev) => {
-                            const analyzeState = get().immolateState;
-                            const buys = get().shoppingState.buys;
-                            const sells = get().shoppingState.sells;
-                            const showCardSpoilers = get().applicationState.showCardSpoilers;
-                            const unlocks = get().immolateState.selectedOptions;
-                            const events = get().eventState.events;
-                            const lockedCards = get().lockState.lockedCards;
-                            const maxMiscCardSource = get().applicationState.maxMiscCardSource;
-                            const options = {
-                                maxMiscCardSource,
-                                showCardSpoilers,
-                                unlocks,
-                                events,
-                                updates: [],
-                                buys,
-                                sells,
-                                lockedCards
-                            }
-                            prev.applicationState.analyzedResults = analyzeSeed(analyzeState, options);
-                            prev.applicationState.hasSettingsChanged = false; // Reset flag after analyzing
-                        }, undefined, 'Global/AnalyzeSeed'),
                         lockCard: (cardId: string, card: any) => set((prev) => {
                             prev.lockState.lockedCards[cardId] = card;
                             prev.applicationState.hasSettingsChanged = true;

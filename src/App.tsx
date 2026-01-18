@@ -13,14 +13,6 @@ import {SeedOptionsProvider} from "./modules/state/optionsProvider.tsx";
 import {DownloadSeedResultProvider} from "./modules/state/downloadProvider.tsx";
 import {BlueprintThemeProvider, useBlueprintTheme} from "./modules/state/themeProvider.tsx";
 
-
-//TODO Add info to those pop overs
-//TODO Allow tags to be included in the buys
-//TODO Add a way to see the seed in the analyze page
-//TODO VOUCHER PETROGLYPH HIERO GLYPH GENERATION.
-//TODO SHow Pack Names and amounts
-// Maybe make analyzation a tree ? Where we can remove branches that have changed, but keep the rest of the tree
-
 const queryClient = new QueryClient()
 
 

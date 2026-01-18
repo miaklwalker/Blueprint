@@ -16,15 +16,16 @@ import {
 } from "@mantine/core";
 import { useHover, useLongPress } from "@mantine/hooks";
 import { IconArrowCapsule, IconCalculator, IconChevronDown, IconExternalLink, IconFlag, IconLock } from "@tabler/icons-react";
-import { useState } from "react";
-import { BuyWrapperProps, LOCATION_TYPES } from "../modules/const.ts";
+import React, { useState } from "react";
+import { LOCATION_TYPES } from "../modules/const.ts";
 import { useCardStore } from "../modules/state/store.ts";
+import type { BuyWrapperProps} from "../modules/const.ts";
 
 export function BuyWrapper({ children, bottomOffset, metaData, horizontal = false }: BuyWrapperProps) {
     const selectedSearchResult = useCardStore(state => state.searchState.selectedSearchResult);
-    let sameLocation = selectedSearchResult?.location === metaData?.location;
-    let sameAnte = selectedSearchResult?.ante === metaData?.ante;
-    let sameIndex = selectedSearchResult?.index === metaData?.index;
+    const sameLocation = selectedSearchResult?.location === metaData?.location;
+    const sameAnte = selectedSearchResult?.ante === metaData?.ante;
+    const sameIndex = selectedSearchResult?.index === metaData?.index;
     const lockCard = useCardStore(state => state.lockCard);
     const unlockCard = useCardStore(state => state.unlockCard);
     const lockedCards = useCardStore(state => state.lockState.lockedCards);
@@ -35,20 +36,17 @@ export function BuyWrapper({ children, bottomOffset, metaData, horizontal = fals
         if (!useCardPeek) return;
         if (isLocked) {
             unlockCard(cardId);
-            analyzeSeed();
         } else {
             lockCard(cardId, metaData?.card);
-            analyzeSeed();
         }
     });
-    let isSelected = sameAnte && sameIndex && sameLocation;
-    const analyzeSeed = useCardStore(state => state.analyzeSeed);
+    const isSelected = sameAnte && sameIndex && sameLocation;
     const { hovered, ref } = useHover();
     const [menuOpen, setMenuOpen] = useState(false);
     const addBuy = useCardStore(state => state.addBuy);
     const removeBuy = useCardStore(state => state.removeBuy);
     const owned = useCardStore(state => state.isOwned);
-    let key = `${metaData?.ante}-${metaData?.location}-${metaData?.index}${metaData?.locationType === LOCATION_TYPES.PACK ? `-${metaData?.blind}` : ''}`;
+    const key = `${metaData?.ante}-${metaData?.location}-${metaData?.index}${metaData?.locationType === LOCATION_TYPES.PACK ? `-${metaData?.blind}` : ''}`;
     const cardIsOwned = owned(key);
     const openRerollCalculatorModal = useCardStore(state => state.openRerollCalculatorModal);
     const hasUserAttention = hovered || menuOpen;
@@ -85,7 +83,7 @@ export function BuyWrapper({ children, bottomOffset, metaData, horizontal = fals
                     events={{ hover: true, focus: true, touch: true }}
                     label={
                         <Flex align={'center'} justify={'space-between'} gap={4}>
-                            {/*// @ts-ignore*/}
+                            {/* @ts-ignore */}
                             <Badge autoContrast color={metaData?.card?.rarity ? rarityColorMap[metaData?.card?.rarity] : undefined}>
                                 <Text span size={'sm'} fw={'bolder'}>{metaData?.index}</Text> {metaData?.name ?? metaData?.card?.name ?? 'Unknown'}
                             </Badge>
@@ -165,10 +163,8 @@ export function BuyWrapper({ children, bottomOffset, metaData, horizontal = fals
                                     if (!metaData) return;
                                     if (cardIsOwned) {
                                         removeBuy(metaData);
-                                        analyzeSeed()
                                     } else {
                                         addBuy(metaData);
-                                        analyzeSeed()
                                     }
                                 }}
                             >
@@ -222,10 +218,8 @@ export function BuyWrapper({ children, bottomOffset, metaData, horizontal = fals
                                                 () => {
                                                     if (isLocked) {
                                                         unlockCard(cardId);
-                                                        analyzeSeed();
                                                     } else {
                                                         lockCard(cardId, metaData?.card);
-                                                        analyzeSeed();
                                                     }
                                                 }
                                             }

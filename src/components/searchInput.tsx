@@ -20,9 +20,8 @@ import {LOCATIONS} from "../modules/const.ts";
 import {useCardStore} from "../modules/state/store.ts";
 import {GaEvent} from "../modules/useGA.ts";
 import {useSeedResultsContainer} from "../modules/state/analysisResultProvider.tsx";
-import type {Blinds} from "../modules/state/store.ts";
 import type {BuyMetaData} from "../modules/classes/BuyMetaData.ts";
-import type {Ante, Blind} from "../modules/ImmolateWrapper/CardEngines/Cards.ts";
+import type {Ante} from "../modules/ImmolateWrapper/CardEngines/Cards.ts";
 
 const registeredMiscSources = getMiscCardSources(15).map(source => source.name)
 export default function SearchSeedInput() {
@@ -98,11 +97,14 @@ export default function SearchSeedInput() {
                     })
                 }
             })
-            Object.keys(ante.blinds as Record<Blinds,Blind>).forEach((blind) => {
+            const blinds = Object.keys(ante.blinds) as Array<keyof typeof ante.blinds>;
+            blinds
+                .forEach((blind) => {
                 // @ts-ignore I didn't do a great job typing cards throughout the project
                 ante.blinds[blind]?.packs?.forEach((pack) => {
                     // @ts-ignore I didn't do a great job typing cards throughout the project
                     pack.cards.forEach((card, index) => {
+                        if(!card) return;
                         const cardString = `${card?.edition ?? ''} ${card.name}`.trim();
                         if (cardString.toLowerCase().includes(searchString.toLowerCase())) {
                             cards.push({
@@ -162,7 +164,7 @@ export default function SearchSeedInput() {
             <Spotlight
                 nothingFound={searchString.length > 0 ? `
                     No results found. 
-                   If the card you are seraching for is unlocked in game, like Eris or Lucky Cat make sure that you enabled that card in the events tab. (The hamburger menu on the right )
+                   If the card you are searching for is unlocked in game, like Eris or Lucky Cat make sure that you enabled that card in the events tab. (The hamburger menu on the right )
                 `: 'Start typing to search for cards'}
                 highlightQuery
                 scrollable

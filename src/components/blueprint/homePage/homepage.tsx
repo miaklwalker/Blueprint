@@ -44,7 +44,7 @@ export const Features = [
         icon: IconList,
         title: 'In Depth',
         description:
-            'The App supports viewing cards from several sources besides the shop including sources like uncommmon tags, 8-ball, purple seal etc.',
+            'The App supports viewing cards from several sources besides the shop including sources like uncommon tags, 8-ball, purple seal etc.',
     },
     {
         icon: IconMessage2,

@@ -4,11 +4,9 @@ import {AppShell, Box, Burger, Button, Center, Container, CopyButton, Group, Tit
 import {useCardStore} from "../../../modules/state/store.ts";
 import SearchSeedInput from "../../searchInput.tsx";
 import {GaEvent} from "../../../modules/useGA.ts";
-import {useSeedResultsContainer} from "../../../modules/state/analysisResultProvider.tsx";
 
 
 export default function Header() {
-    const SeedResults = useSeedResultsContainer();
     const {width} = useViewportSize();
     const start = useCardStore(state => state.applicationState.start)
     const settingsOpened = useCardStore(state => state.applicationState.settingsOpen);
@@ -32,7 +30,7 @@ export default function Header() {
                     </Group>
 
                     <Group align={'center'}>
-                        {width > 600 && start && <SearchSeedInput SeedResults={SeedResults}/>}
+                        {width > 600 && start && <SearchSeedInput/>}
                         {width > 700 && start && (
                             <CopyButton value={new URL(window.location.href).toString()}>
                                 {({copied, copy}) => (

@@ -1,5 +1,4 @@
-import {SeedResultsContainer} from "../../../modules/ImmolateWrapper/CardEngines/Cards.ts";
-import {useCardStore} from "../../../modules/state/store.ts";
+import {useMediaQuery} from "@mantine/hooks";
 import {
     AppShell,
     Badge,
@@ -7,7 +6,8 @@ import {
     Card,
     Center,
     Grid,
-    Group, NumberInput,
+    Group,
+    NumberInput,
     ScrollArea,
     Select,
     Stack,
@@ -17,12 +17,13 @@ import {
     useMantineTheme
 } from "@mantine/core";
 import {IconCalendarEvent, IconCards, IconCheck, IconShoppingCart} from "@tabler/icons-react";
+import React, {useState} from "react";
+import {useCardStore} from "../../../modules/state/store.ts";
 import SearchSeedInput from "../../searchInput.tsx";
 import MiscCardSourcesDisplay from "../../miscSourcesDisplay.tsx";
 import PurchaseTimeline from "../../purchaseTimeline.tsx";
-import {useMediaQuery} from "@mantine/hooks";
-import {useState} from "react";
 import {EVENT_UNLOCKS} from "../../../modules/const.ts";
+import {useSeedResultsContainer} from "../../../modules/state/analysisResultProvider.tsx";
 
 
 export function EventsPanel() {
@@ -160,7 +161,8 @@ export function EventsPanel() {
 }
 
 
-export function Aside({SeedResults}: { SeedResults: SeedResultsContainer | null }) {
+export function Aside() {
+    const SeedResults = useSeedResultsContainer()
     const selectedAnte = useCardStore(state => state.applicationState.selectedAnte);
     const anteData = SeedResults?.antes[selectedAnte];
     const miscSources = anteData?.miscCardSources;

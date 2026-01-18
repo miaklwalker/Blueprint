@@ -1,44 +1,46 @@
-import {
-    Ante,
-    BoosterPack,
-    Card_Final,
-    Consumables_Final,
-    Joker_Final,
-    NextShopItem,
-    Pack,
-    PackCard,
-    Planet_Final,
-    SeedResultsContainer,
-    Spectral_Final,
-    StandardCard_Final,
-    Tarot_Final
-} from "./CardEngines/Cards.ts";
 import { EVENT_UNLOCKS, LOCATIONS, options } from "../const.ts";
-import { RandomQueueNames, RNGSource } from "../balatrots/enum/QueueName.ts";
-import { Deck, deckMap, DeckType } from "../balatrots/enum/Deck.ts";
-import { Stake, StakeType } from "../balatrots/enum/Stake.ts";
+import { RNGSource, RandomQueueNames } from "../balatrots/enum/QueueName.ts";
+import { Deck, deckMap } from "../balatrots/enum/Deck.ts";
+import { Stake } from "../balatrots/enum/Stake.ts";
 import { Game } from "../balatrots/Game.ts";
 import { InstanceParams } from "../balatrots/struct/InstanceParams.ts";
 import { JokerData } from "../balatrots/struct/JokerData.ts";
 import { Type } from "../balatrots/enum/cards/CardType.ts";
 import { Card } from "../balatrots/enum/cards/Card.ts";
-import { Voucher } from "../balatrots/enum/Voucher.ts";
 import { PlanetItem } from "../balatrots/enum/cards/Planet.ts";
 import { Tarot } from "../balatrots/enum/cards/Tarot.ts";
 import { SpectralItem } from "../balatrots/enum/packs/Spectral.ts";
 import { SpecialsItem } from "../balatrots/enum/cards/Specials.ts";
 import { BalatroAnalyzer } from "../balatrots/BalatroAnalyzer.ts";
 import { Lock } from "../balatrots/Lock.ts"
+import {
+    Ante,
+    Joker_Final,
+    Pack,
+    Planet_Final,
+    SeedResultsContainer,
+    Spectral_Final,
+    StandardCard_Final,
+    Tarot_Final
+} from "./CardEngines/Cards.ts";
+import type { Voucher } from "../balatrots/enum/Voucher.ts";
+import type { StakeType } from "../balatrots/enum/Stake.ts";
+import type {
+    BoosterPack,
+    Card_Final,
+    Consumables_Final,
+    NextShopItem,
+    PackCard} from "./CardEngines/Cards.ts";
 
-// implement a third engine to handle the literal unlocks ( user selected )
+export type SpoilableItems = "The Soul" | "Judgement" | "Wraith";
 export interface MiscCardSource {
-    name: string;
+    name: SpoilableItems | string;
     cardsToGenerate: number;
     cardType: string;
-    source: string;
+    source: RNGSource | RandomQueueNames;
     hasStickers?: boolean,
     soulable?: boolean,
-    cards: PackCard[]
+    cards: Array<PackCard>
     usesAnte?: boolean | undefined | null;
     beforeGeneration?: ((engine: Game) => void) | undefined;
     afterGeneration?: ((engine: Game) => void) | undefined;
@@ -51,75 +53,75 @@ export interface CardEngine {
     commonSources: { [key: string]: string };
 
     // Initialization methods
-    InstParams(deck: string, stake: string, showman: boolean, version: string): void;
+    InstParams: (deck: string, stake: string, showman: boolean, version: string) => void;
 
-    initLocks(ante: number, fresh_profile: boolean, fresh_run: boolean): void;
+    initLocks: (ante: number, fresh_profile: boolean, fresh_run: boolean) => void;
 
-    initUnlocks(ante: number, fresh_profile: boolean): void;
+    initUnlocks: (ante: number, fresh_profile: boolean) => void;
 
     // Lock management
-    lock(item: string): void;
+    lock: (item: string) => void;
 
-    unlock(item: string): void;
+    unlock: (item: string) => void;
 
-    isLocked(item: string): boolean;
+    isLocked: (item: string) => boolean;
 
-    lockPurchased(item: string): void;
+    lockPurchased: (item: string) => void;
 
-    unlockPurchased(item: string): void;
+    unlockPurchased: (item: string) => void;
 
-    isPurchased(item: string): boolean;
+    isPurchased: (item: string) => boolean;
 
     // Next item generators
-    nextBoss(ante: number): string;
+    nextBoss: (ante: number) => string;
 
-    nextVoucher(ante: number): string;
+    nextVoucher: (ante: number) => string;
 
-    nextTag(ante: number): string;
+    nextTag: (ante: number) => string;
 
-    nextShopItem(ante: number): NextShopItem;
+    nextShopItem: (ante: number) => NextShopItem;
 
-    nextJoker(source: string, ante: number, hasStickers?: boolean): PackCard;
+    nextJoker: (source: string, ante: number, hasStickers?: boolean) => PackCard;
 
-    nextTarot(source: string, ante: number, hasStickers?: boolean): PackCard;
+    nextTarot: (source: string, ante: number, hasStickers?: boolean) => PackCard;
 
-    nextPlanet(source: string, ante: number, hasStickers?: boolean): PackCard;
+    nextPlanet: (source: string, ante: number, hasStickers?: boolean) => PackCard;
 
-    nextSpectral(source: string, ante: number, hasStickers?: boolean): PackCard;
+    nextSpectral: (source: string, ante: number, hasStickers?: boolean) => PackCard;
 
-    nextPack(ante: number): string;
+    nextPack: (ante: number) => string;
 
     // Pack generators
-    nextCelestialPack(size: number, ante: number): Map<number, string>;
+    nextCelestialPack: (size: number, ante: number) => Map<number, string>;
 
-    nextArcanaPack(size: number, ante: number): Map<number, string>;
+    nextArcanaPack: (size: number, ante: number) => Map<number, string>;
 
-    nextSpectralPack(size: number, ante: number): Map<number, string>;
+    nextSpectralPack: (size: number, ante: number) => Map<number, string>;
 
-    nextBuffoonPack(size: number, ante: number): Map<number, PackCard>;
+    nextBuffoonPack: (size: number, ante: number) => Map<number, PackCard>;
 
-    nextStandardPack(size: number, ante: number): Map<number, PackCard>;
+    nextStandardPack: (size: number, ante: number) => Map<number, PackCard>;
 
     // Pack info
-    packInfo(pack: string): BoosterPack;
+    packInfo: (pack: string) => BoosterPack;
 
     // Voucher methods
-    activateVoucher(voucher: string): void;
+    activateVoucher: (voucher: string) => void;
 
-    isVoucherActive(voucher: string): boolean;
+    isVoucherActive: (voucher: string) => boolean;
 
     // Specialized methods
-    lockLevelTwoVouchers(): void;
+    lockLevelTwoVouchers: () => void;
 
-    handleSelectedUnlocks(unlocks: string[]): void;
+    handleSelectedUnlocks: (unlocks: Array<string>) => void;
 
     // Cleanup
-    delete(): void;
+    delete: () => void;
 }
 
 export interface EngineWrapper {
     // Card creation and analysis
-    makeCard(card: NextShopItem): Joker_Final | StandardCard_Final | Consumables_Final;
+    makeCard: (card: NextShopItem) => Joker_Final | StandardCard_Final | Consumables_Final;
 }
 
 
@@ -131,11 +133,11 @@ export class CardEngineWrapper implements EngineWrapper {
     }
 
     makeGameCard(card: any): Joker_Final | StandardCard_Final | Consumables_Final {
-        let instanceOfJoker = card instanceof JokerData;
-        let instanceOfTarot = card instanceof Tarot;
-        let instanceOfPlanet = card instanceof PlanetItem;
-        let instanceOfSpectral = card instanceof SpectralItem || card instanceof SpecialsItem;
-        let instanceofStandard = card instanceof Card;
+        const instanceOfJoker = card instanceof JokerData;
+        const instanceOfTarot = card instanceof Tarot;
+        const instanceOfPlanet = card instanceof PlanetItem;
+        const instanceOfSpectral = card instanceof SpectralItem || card instanceof SpecialsItem;
+        const instanceofStandard = card instanceof Card;
         switch (true) {
             case instanceOfJoker:
                 BalatroAnalyzer.getSticker(card);
@@ -181,7 +183,7 @@ export class CardEngineWrapper implements EngineWrapper {
     }
 
     makeCard(card: NextShopItem): Joker_Final | StandardCard_Final | Consumables_Final {
-        let cardType = card.type;
+        const cardType = card.type;
         if (cardType === 'Joker') {
             return new Joker_Final({
                 name: card.item,
@@ -208,7 +210,6 @@ export class CardEngineWrapper implements EngineWrapper {
                 type: cardType
             } as Card_Final)
         } else {
-            // Not yet implemented by immolate
             return new StandardCard_Final({
                 name: card.item,
                 type: cardType,
@@ -219,21 +220,23 @@ export class CardEngineWrapper implements EngineWrapper {
 
     static printAnalysis(seedAnalysis: SeedResultsContainer) {
         let output = "";
-        let antes = Object.entries(seedAnalysis.antes);
+        const antes = Object.entries(seedAnalysis.antes);
 
-        for (let [ante, details] of antes) {
+        for (const [ante, details] of antes) {
             output += `==Ante ${ante}==\n`;
             output += `Boss: ${details.boss}\n`;
             output += `Tags: ${details.tags.join(', ')}\n`
             output += `Voucher: ${details.voucher}\n`
             output += `Shop Queue: \n`
             let count = 0;
+            // eslint-disable-next-line @typescript-eslint/prefer-for-of
             for (let i = 0; i < details.queue.length; i++) {
                 output += `${++count}) ${details.queue[i].name}\n`
             }
             output += '\n'
             output += "Packs: \n"
-            for (let pack of details.packs) {
+            for (const pack of details.packs) {
+                // @ts-ignore
                 output += `${pack.name} - ${pack.cards.map((card: { name: string; }) => card.name).join(', ')}\n`
             }
             output += '\n'
@@ -274,7 +277,7 @@ export class CardEngineWrapper implements EngineWrapper {
             this.engine.activateVoucher(key as Voucher)
             const isLevelOneVoucher = !options.includes(key);
             if (isLevelOneVoucher) {
-                let levelTwo = this.findLevelTwoVoucher(key);
+                const levelTwo = this.findLevelTwoVoucher(key);
                 if (analyzeOptions?.unlocks?.includes(levelTwo)) {
                     this.engine.unlock(levelTwo);
                 } else {
@@ -307,14 +310,14 @@ export interface AnalyzeOptions {
     buys: { [key: string]: any };
     sells: { [key: string]: any };
     showCardSpoilers: boolean;
-    unlocks: string[];
-    events: Event[];
-    updates?: any[],
+    unlocks: Array<string>;
+    events: Array<Event>;
+    updates?: Array<any>,
     maxMiscCardSource?: number
     lockedCards?: any
 }
-export const getMiscCardSources: (maxCards: number) => MiscCardSource[] = (maxCards: number) => {
-    let state: { [key: string]: boolean } = {};
+export const getMiscCardSources: (maxCards: number) => Array<MiscCardSource> = (maxCards: number) => {
+    const state: { [key: string]: boolean } = {};
     return ([
         {
             name: "riffRaff",
@@ -479,14 +482,15 @@ export const getMiscCardSources: (maxCards: number) => MiscCardSource[] = (maxCa
 };
 
 export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOptions) {
-    const seed = settings?.seed?.toUpperCase()?.replace(/0/g, 'O')?.trim();
+
+    const seed = settings.seed.toUpperCase().replace(/0/g, 'O').trim();
 
     if (!seed) return;
-    let output = new SeedResultsContainer();
-    const deck = new Deck(deckMap[settings.deck] as DeckType)
+    const output = new SeedResultsContainer();
+    const deck = new Deck(deckMap[settings.deck])
     const stake = new Stake(settings.stake as StakeType)
     const version = Number(settings.gameVersion)
-    let params = new InstanceParams(deck, stake, false, version);
+    const params = new InstanceParams(deck, stake, false, version);
     const engine = new Game(
         seed,
         params
@@ -508,25 +512,25 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
     }
 
 
-    let engineWrapper = new CardEngineWrapper(engine);
+    const engineWrapper = new CardEngineWrapper(engine);
 
-    let itemsWithSpoilers: string[] = ["The Soul", "Judgement", "Wraith"];
-    let spoilerSources = [RNGSource.S_Soul, RNGSource.S_Judgement, RNGSource.S_Wraith];
-    const lockedCards = analyzeOptions?.lockedCards || {};
+    const itemsWithSpoilers: Array<SpoilableItems> = ["The Soul", "Judgement", "Wraith"];
+    const spoilerSources = [RNGSource.S_Soul, RNGSource.S_Judgement, RNGSource.S_Wraith];
+    const lockedCards = analyzeOptions.lockedCards || {};
 
-    let staticAnteQueues: { [key: string]: any[] } = {};
+    const staticAnteQueues = {};
 
     function generateAnte(ante: number) {
         engine.initUnlocks(ante, false);
-        let burnerInstance = new Game(
+        const burnerInstance = new Game(
             seed,
             params
         );
         burnerInstance.initLocks(1, true, true);
         burnerInstance.initUnlocks(ante, false)
-        let burnerWrapper = new CardEngineWrapper(burnerInstance);
-        let result = new Ante(ante);
-        let showmanIsLocked = engine.isLocked('Showman');
+        const burnerWrapper = new CardEngineWrapper(burnerInstance);
+        const result = new Ante(ante);
+        const showmanIsLocked = engine.isLocked('Showman');
         updateShowmanOwned(false);
         result.boss = engine.nextBoss(ante).name
         result.voucher = engine.nextVoucher(ante).name;
@@ -535,31 +539,33 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
         updateShowmanOwned(showmanIsLocked);
 
         for (let i = 0; i < Math.min(settings.cardsPerAnte, 1000); i++) {
-            let key = `${ante}-${LOCATIONS.SHOP}-${i}`;
+            const key: `${number}-${LOCATIONS.SHOP}-${number}` = `${ante}-${LOCATIONS.SHOP}-${i}`;
             const lockCardId = `ante_${ante}_shop_${i}`;
             if (lockedCards[lockCardId]) {
                 engine.lock(lockedCards[lockCardId].name);
             }
-            let shopItem = engine.nextShopItem(ante);
-            let spoilerSource = engine.hasSpoilersMap[shopItem.item.name];
+            const shopItem = engine.nextShopItem(ante);
+            const spoilerSource = engine.hasSpoilersMap[shopItem.item.name];
             if (engine.hasSpoilers && spoilerSource) {
                 const joker: JokerData = engine.peekJoker(spoilerSource, ante, true);
                 result.queue.push(
+                    // @ts-expect-error reports types dont match.
                     engineWrapper.makeGameCard(joker)
                 )
             } else if (shopItem.type === Type.JOKER) {
                 result.queue.push(
+                    // @ts-expect-error reports types dont match.
                     engineWrapper.makeGameCard(shopItem.jokerData)
                 )
             } else {
                 result.queue.push(
+                    // @ts-expect-error reports types dont match.
                     engineWrapper.makeGameCard(shopItem.item)
-                    // shopItem.item as Card
                 )
             }
             if (analyzeOptions && analyzeOptions?.showCardSpoilers) {
-                if (itemsWithSpoilers.includes(result.queue[i].name)) {
-                    // @ts-ignore
+                if (itemsWithSpoilers.includes(result.queue[i].name as SpoilableItems)) {
+                    // @ts-expect-error reports types dont match.
                     result.queue[i] = Pack.PackCardToCard(engine.peekJoker(spoilerSources[itemsWithSpoilers.indexOf(result.queue[i].name)], ante, false), 'Joker')
                 }
             }
@@ -569,18 +575,18 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
 
         }
 
-        let voucherKey = `${ante}-${LOCATIONS.VOUCHER}-0`;
-        if (analyzeOptions?.buys && analyzeOptions.buys[voucherKey]) {
-            let name = analyzeOptions.buys[voucherKey].name;
+        const voucherKey = `${ante}-${LOCATIONS.VOUCHER}-0`;
+        if (analyzeOptions.buys && analyzeOptions.buys[voucherKey]) {
+            const name = analyzeOptions.buys[voucherKey].name;
             if (name) {
                 engineWrapper.handleBuy(name, "Voucher", updateShowmanOwned, analyzeOptions)
                 burnerWrapper.handleBuy(name, "Voucher", updateShowmanOwned, analyzeOptions)
             }
         }
 
-        for (let blind of Object.keys(result.blinds)) {
+        for (const blind of Object.keys(result.blinds)) {
             if (analyzeOptions?.events) {
-                let currentEvents = analyzeOptions.events.filter((event: any) => event.ante === ante && event.blind === blind);
+                const currentEvents = analyzeOptions.events.filter((event: any) => event.ante === ante && event.blind === blind);
 
                 currentEvents.forEach((event: any) => {
                     engine.unlock(event.name)
@@ -594,16 +600,16 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
                 .keys(analyzeOptions?.sells ?? {})
                 .filter((key: string) => key.startsWith(sellKey))
                 .forEach(key => {
-                    let sell = analyzeOptions.sells[key];
+                    const sell = analyzeOptions.sells[key];
                     if (sell && sell.name) {
                         engineWrapper.handleSell(sell.name, "Card", updateShowmanOwned)
                     }
                 })
 
             for (let j = 0; j < 2; j++) {
-                let packString = engine.nextPack(ante);
-                let packInfo = engine.packInfo(packString);
-                let pack = {
+                const packString = engine.nextPack(ante);
+                const packInfo = engine.packInfo(packString);
+                const pack = {
                     name: packInfo.getKind(),
                     choices: packInfo.getChoices(),
                     size: packInfo.getSize(),
@@ -612,13 +618,11 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
                         ante
                     ).map(engineWrapper.makeGameCard)
                 }
+                // @ts-ignore
                 result.blinds[blind].packs.push(pack)
                 for (let k = 0; k < pack.size; k++) {
-                    //`ante_${key}_${blindName}_pack_${packIndex}_card_${cardIndex}`
-                    //todo implment the lock for packs here
-                    let key = `${ante}-${packInfo.getKind()}-${k}-${blind}`;
+                    const key = `${ante}-${packInfo.getKind()}-${k}-${blind}`;
                     if (analyzeOptions && analyzeOptions.buys[key]) {
-                        console.log("Buying from pack: ", key, pack.cards[k].name)
                         engineWrapper.handleBuy(pack.cards[k].name, "Card", updateShowmanOwned, analyzeOptions)
                     }
                 }
@@ -629,8 +633,8 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
 
         const updates = analyzeOptions?.updates;
         if (updates) {
-            for (let update of updates) {
-                let source = miscCardSources.find((source) => source.name === update.source);
+            for (const update of updates) {
+                const source = miscCardSources.find((source) => source.name === update.source);
                 if (source) {
                     source.cardsToGenerate = update.count;
                     if (update.type) {
@@ -639,19 +643,19 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
                 }
             }
         }
-        let generators: any = {
-            // @ts-ignore
+        const generators: any = {
+            // @ts-expect-error reports types dont match.
             "Joker": (...args: any) => engine.nextJoker(...args),
-            // @ts-ignore
+            // @ts-expect-error reports types dont match.
             "Planet": (...args: any) => engine.nextPlanet(...args),
-            // @ts-ignore
+            // @ts-expect-error reports types dont match.
             "Tarot": (...args: any) => engine.nextTarot(...args),
-            // @ts-ignore
+            // @ts-expect-error reports types dont match.
             "Spectral": (...args: any) => engine.nextSpectral(...args),
-            // @ts-ignore
+            // @ts-expect-error reports types dont match.
             "Standard": (source, ante) => engine.nextStandardCard(ante, source),
         }
-        for (let source of miscCardSources) {
+        for (const source of miscCardSources) {
             if (source.usesAnte === false && ante !== 1) {
                 const savedResults = output.antes[1].miscCardSources.find(s => s.name === source.name);
                 if (savedResults) {
@@ -663,18 +667,20 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
                 source.beforeGeneration(engine);
             }
             for (let i = 0; i < source.cardsToGenerate; i++) {
-                let key = `${ante}-${source.name}-${i}`;
-                let generator = generators[source.cardType];
+                const key = `${ante}-${source.name}-${i}`;
+                const generator = generators[source.cardType];
                 let card = generator(
                     source.source,
                     ante,
                     source.soulable ?? source.hasStickers ?? false
                 )
-                let spoilerSource = engine.hasSpoilersMap[card.name];
+                const spoilerSource = engine.hasSpoilersMap[card.name];
+                // @ts-ignore
                 if (engine.hasSpoilers && spoilerSource) {
                     card = engine.peekJoker(spoilerSource, ante, true)
                 }
-                let generatedCard = engineWrapper.makeGameCard(card);
+                const generatedCard = engineWrapper.makeGameCard(card);
+                // @ts-ignore
                 if (analyzeOptions && analyzeOptions.buys[key]) {
                     engineWrapper.handleBuy(generatedCard.name, "Card", updateShowmanOwned, analyzeOptions)
                 }
@@ -688,7 +694,7 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
 
 
         // voucher queue
-        let queueDepth = 20
+        const queueDepth = 20
 
         result.voucherQueue = Array(queueDepth).fill(null).map(() => burnerInstance.nextVoucherSimple().name)
         for (let i = 1; i <= ante; i++) {
@@ -698,10 +704,13 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
         burnerInstance.nextTag(ante)
         burnerInstance.nextTag(ante);
         result.tagsQueue = Array(queueDepth).fill(null).map(() => burnerInstance.nextTag(ante).name)
+        // @ts-ignore
         if (staticAnteQueues["Wheel"]) {
+            // @ts-ignore
             result.wheelQueue = staticAnteQueues["Wheel"];
         }
         else {
+            // @ts-ignore
             result.wheelQueue = Array(queueDepth).fill(null).map(() => {
                 return {
                     "name": "King of Clubs",
@@ -718,13 +727,16 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
                     "enhancements": "No Enhancement"
                 };
             });
+            // @ts-ignore
             staticAnteQueues["Wheel"] = result.wheelQueue;
         }
-
+        // @ts-ignore
         if (staticAnteQueues["Aura"]) {
+            // @ts-ignore
             result.auraQueue = staticAnteQueues["Aura"];
         }
         else {
+            // @ts-ignore
             result.auraQueue = Array(queueDepth).fill(null).map(() => {
                 return {
                     "name": "King of Clubs",
@@ -741,6 +753,7 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
                     "enhancements": "No Enhancement",
                 }
             });
+            // @ts-ignore
             staticAnteQueues["Aura"] = result.auraQueue;
         }
         result.packQueue = Array(queueDepth).fill(null).map(() => engine.nextPack(ante).name)
@@ -760,7 +773,6 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
     } catch (e) {
         console.error("Error generating ante 0:", e);
     }
-    console.log("Final Analysis: ", output);
 
     return output;
 }

@@ -1,3 +1,4 @@
+import { options } from "../const.ts";
 import { Lock } from "./Lock";
 import { Tarot, TarotEnum } from "./enum/cards/Tarot";
 import { Planet, PlanetItem } from "./enum/cards/Planet";
@@ -17,145 +18,149 @@ import { RareJoker100Item, RareJoker_100 } from "./enum/cards/RareJoker_100";
 import { CommonJoker, CommonJokerCard } from "./enum/cards/CommonJoker";
 import { CommonJoker_100, CommonJoker_100Card } from "./enum/cards/CommonJoker_100";
 import { BossBlind, BossBlindEnum } from "./enum/BossBlind";
-import { InstanceParams } from "./struct/InstanceParams";
+
 import { LuaRandom, pseudohash, round13 } from "./utils/LuaRandom";
 import { Cache } from "./Cache";
-import { ItemImpl } from "./interface/Item";
 import { Specials, SpecialsItem } from "./enum/cards/Specials";
 import { JokerData } from "./struct/JokerData";
 import { Edition, EditionItem } from "./enum/Edition";
 import { JokerStickers } from "./struct/JokerStickers";
-import { Stake, StakeType } from "./enum/Stake";
-import { JokerImpl } from "./interface/Joker";
-import { ShopInstance } from "./struct/ShopInstance";
-import { Deck, deckMap, deckNames, DeckType } from "./enum/Deck";
+import { StakeType } from "./enum/Stake";
+
+import { DeckType, deckMap, deckNames } from "./enum/Deck";
 import { ShopItem } from "./struct/ShopItem";
 import { Type } from "./enum/cards/CardType";
 import { PackInfo } from "./struct/PackInfo";
 import { Seal, SealItem } from "./enum/Seal";
-import { QueueNames, RandomQueueNames, RNGSource } from "./enum/QueueName.ts";
+import { RNGSource, RandomQueueNames } from "./enum/QueueName.ts";
 import { PackKind } from "./enum/packs/PackKind.ts";
-import { options } from "../const.ts";
+import {ShopInstance} from "./struct/ShopInstance.ts";
+import type { QueueNames} from "./enum/QueueName.ts";
+import type { Deck} from "./enum/Deck";
+import type { JokerImpl } from "./interface/Joker";
+import type { Stake} from "./enum/Stake";
+import type { ItemImpl } from "./interface/Item";
+import type { InstanceParams } from "./struct/InstanceParams";
 
 export class Game extends Lock {
-    private static _tarots: Tarot[] | null = null;
-    private static _planets: PlanetItem[] | null = null;
-    private static _spectrals: SpectralItem[] | null = null;
-    private static _legendaryJokers: LegendaryJokerItem[] | null = null;
-    private static _uncommonJokers: UncommonJokerItem[] | null = null;
-    private static _uncommonJokers101C: UncommonJoker101CItem[] | null = null;
-    private static _uncommonJokers100: UncommonJoker100Item[] | null = null;
-    private static _cards: Card[] | null = null;
-    private static _enhancements: EnhancementItem[] | null = null;
-    private static _vouchers: VoucherItem[] | null = null;
-    private static _tags: TagItem[] | null = null;
-    private static _packs: PackTypeItem[] | null = null;
-    private static _rareJokers: RareJokerItem[] | null = null;
-    private static _rareJokers101C: RareJoker101CItem[] | null = null;
-    private static _rareJokers100: RareJoker100Item[] | null = null;
-    private static _commonJokers: CommonJokerCard[] | null = null;
-    private static _commonJokers100: CommonJoker_100Card[] | null = null;
-    private static _bossBlind: BossBlind[] | null = null;
+    private static _tarots: Array<Tarot> | null = null;
+    private static _planets: Array<PlanetItem> | null = null;
+    private static _spectrals: Array<SpectralItem> | null = null;
+    private static _legendaryJokers: Array<LegendaryJokerItem> | null = null;
+    private static _uncommonJokers: Array<UncommonJokerItem> | null = null;
+    private static _uncommonJokers101C: Array<UncommonJoker101CItem> | null = null;
+    private static _uncommonJokers100: Array<UncommonJoker100Item> | null = null;
+    private static _cards: Array<Card> | null = null;
+    private static _enhancements: Array<EnhancementItem> | null = null;
+    private static _vouchers: Array<VoucherItem> | null = null;
+    private static _tags: Array<TagItem> | null = null;
+    private static _packs: Array<PackTypeItem> | null = null;
+    private static _rareJokers: Array<RareJokerItem> | null = null;
+    private static _rareJokers101C: Array<RareJoker101CItem> | null = null;
+    private static _rareJokers100: Array<RareJoker100Item> | null = null;
+    private static _commonJokers: Array<CommonJokerCard> | null = null;
+    private static _commonJokers100: Array<CommonJoker_100Card> | null = null;
+    private static _bossBlind: Array<BossBlind> | null = null;
 
-    static get TAROTS(): Tarot[] {
+    static get TAROTS(): Array<Tarot> {
         if (!this._tarots) {
             this._tarots = Object.values(TarotEnum).map(tarot => new Tarot(tarot));
         }
         return this._tarots;
     }
 
-    static get PLANETS(): PlanetItem[] {
+    static get PLANETS(): Array<PlanetItem> {
         if (!this._planets) {
             this._planets = Object.values(Planet).map(planet => new PlanetItem(planet));
         }
         return this._planets;
     }
 
-    static get SPECTRALS(): SpectralItem[] {
+    static get SPECTRALS(): Array<SpectralItem> {
         if (!this._spectrals) {
             this._spectrals = Object.values(Spectral).map(spectral => new SpectralItem(spectral));
         }
         return this._spectrals;
     }
 
-    static get LEGENDARY_JOKERS(): LegendaryJokerItem[] {
+    static get LEGENDARY_JOKERS(): Array<LegendaryJokerItem> {
         if (!this._legendaryJokers) {
             this._legendaryJokers = Object.values(LegendaryJoker).map(joker => new LegendaryJokerItem(joker));
         }
         return this._legendaryJokers;
     }
 
-    static get UNCOMMON_JOKERS(): UncommonJokerItem[] {
+    static get UNCOMMON_JOKERS(): Array<UncommonJokerItem> {
         if (!this._uncommonJokers) {
             this._uncommonJokers = Object.values(UncommonJoker).map(joker => new UncommonJokerItem(joker));
         }
         return this._uncommonJokers;
     }
 
-    static get UNCOMMON_JOKERS_101C(): UncommonJoker101CItem[] {
+    static get UNCOMMON_JOKERS_101C(): Array<UncommonJoker101CItem> {
         if (!this._uncommonJokers101C) {
             this._uncommonJokers101C = Object.values(UncommonJoker_101C).map(joker => new UncommonJoker101CItem(joker));
         }
         return this._uncommonJokers101C;
     }
 
-    static get UNCOMMON_JOKERS_100(): UncommonJoker100Item[] {
+    static get UNCOMMON_JOKERS_100(): Array<UncommonJoker100Item> {
         if (!this._uncommonJokers100) {
             this._uncommonJokers100 = Object.values(UncommonJoker_100).map(joker => new UncommonJoker100Item(joker));
         }
         return this._uncommonJokers100;
     }
 
-    static get CARDS(): Card[] {
+    static get CARDS(): Array<Card> {
         if (!this._cards) {
             this._cards = Object.values(PlayingCard).map(card => new Card(card));
         }
         return this._cards;
     }
 
-    static get ENHANCEMENTS(): EnhancementItem[] {
+    static get ENHANCEMENTS(): Array<EnhancementItem> {
         if (!this._enhancements) {
             this._enhancements = Object.values(Enhancement).map(enhancement => new EnhancementItem(enhancement));
         }
         return this._enhancements;
     }
 
-    static get VOUCHERS(): VoucherItem[] {
+    static get VOUCHERS(): Array<VoucherItem> {
         if (!this._vouchers) {
             this._vouchers = Object.values(Voucher).map(voucher => new VoucherItem(voucher));
         }
         return this._vouchers;
     }
 
-    static get TAGS(): TagItem[] {
+    static get TAGS(): Array<TagItem> {
         if (!this._tags) {
             this._tags = Object.values(Tag).map(tag => new TagItem(tag));
         }
         return this._tags;
     }
 
-    static get PACKS(): PackTypeItem[] {
+    static get PACKS(): Array<PackTypeItem> {
         if (!this._packs) {
             this._packs = Object.values(PackType).map(pack => new PackTypeItem(pack, PackTypeItem.VALUES[pack]));
         }
         return this._packs;
     }
 
-    static get RARE_JOKERS(): RareJokerItem[] {
+    static get RARE_JOKERS(): Array<RareJokerItem> {
         if (!this._rareJokers) {
             this._rareJokers = Object.values(RareJoker).map(joker => new RareJokerItem(joker));
         }
         return this._rareJokers;
     }
 
-    static get RARE_JOKERS_101C(): RareJoker101CItem[] {
+    static get RARE_JOKERS_101C(): Array<RareJoker101CItem> {
         if (!this._rareJokers101C) {
             this._rareJokers101C = Object.values(RareJoker_101C).map(joker => new RareJoker101CItem(joker));
         }
         return this._rareJokers101C;
     }
 
-    static get RARE_JOKERS_100(): RareJoker100Item[] {
+    static get RARE_JOKERS_100(): Array<RareJoker100Item> {
         if (!this._rareJokers100) {
             this._rareJokers100 = Object.values(RareJoker_100).map(joker => new RareJoker100Item(joker));
         }
@@ -347,14 +352,14 @@ export class Game extends Lock {
     }
 
     private getNode(id: string) {
-        var c = this.cache.getNode(id);
+        let c = this.cache.getNode(id);
 
         if (c == null) {
             c = pseudohash(id + this.seed);
             this.cache.setNode(id, c);
         }
 
-        var value = round13((c * 1.72431234 + 2.134453429141) % 1);
+        const value = round13((c * 1.72431234 + 2.134453429141) % 1);
 
         this.cache.setNode(id, value);
 
@@ -371,8 +376,8 @@ export class Game extends Lock {
         return rng.randint(min, max);
     }
 
-    randchoice<T extends ItemImpl>(id: string, items: T[]): ItemImpl {
-        if (!items || items.length === 0) {
+    randchoice<T extends ItemImpl>(id: string, items: Array<T>): ItemImpl {
+        if (items.length === 0) {
             throw new Error('Items array cannot be empty');
         }
 
@@ -390,6 +395,7 @@ export class Game extends Lock {
 
         if (isAvailabilityLocked || (!showmanApplies && isPurchasedLocked) || item.getName() === "RETRY") {
             let resample = 2;
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             while (true) {
                 item = items[this.randint(`${id}_resample${resample}`, 0, items.length - 1)];
                 resample++;
@@ -407,12 +413,12 @@ export class Game extends Lock {
         return item;
     }
 
-    randchoice_simple<T extends ItemImpl>(id: string, items: T[]): ItemImpl {
+    randchoice_simple<T extends ItemImpl>(id: string, items: Array<T>): ItemImpl {
         return this.randchoice<T>(id, items);
     }
 
-    private randchoiceJoker<T extends JokerImpl>(id: string, items: T[]): JokerImpl {
-        if (!items || items.length === 0) {
+    private randchoiceJoker<T extends JokerImpl>(id: string, items: Array<T>): JokerImpl {
+        if (items.length === 0) {
             throw new Error('Items array cannot be empty');
         }
 
@@ -424,6 +430,7 @@ export class Game extends Lock {
 
         if (isAvailabilityLocked || (!showmanApplies && isPurchasedLocked) || item.getName() === "RETRY") {
             let resample = 2;
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             while (true) {
                 item = items[this.randint(`${id}_resample${resample}`, 0, items.length - 1)];
                 resample++;
@@ -439,10 +446,10 @@ export class Game extends Lock {
         return item;
     }
 
-    randweightedchoice(id: string, items: PackTypeItem[]): PackTypeItem {
+    randweightedchoice(id: string, items: Array<PackTypeItem>): PackTypeItem {
         const poll: number = this.random(id) * 22.42;
-        let idx: number = 1;
-        let weight: number = 0;
+        let idx = 1;
+        let weight = 0;
 
         while (weight < poll) {
             weight += items[idx].getValue();
@@ -451,9 +458,6 @@ export class Game extends Lock {
 
         return items[idx - 1];
     }
-
-
-
 
     poll_edition(source: string, mod: number = 1, noNeg: boolean = true, guaranteed: boolean = false): EditionItem {
         let edition
@@ -757,7 +761,7 @@ export class Game extends Lock {
 
     setDeck(deck: Deck): void {
         this.params.setDeck(deck);
-        let name = deckMap[deck.name]
+        const name = deckMap[deck.name]
         switch (name) {
             case DeckType.MAGIC_DECK:
                 this.activateVoucher(Voucher.CRYSTAL_BALL);
@@ -813,9 +817,10 @@ export class Game extends Lock {
     }
 
     nextBoss(ante: number): ItemImpl {
-        const bossPool: BossBlind[] = [];
+        const bossPool: Array<BossBlind> = [];
         let numBosses = 0;
 
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < Game.BOSSES.length; i++) {
             if (!this.isLocked(Game.BOSSES[i])) {
                 if ((ante % 8 === 0 && Game.BOSSES[i].getName().charAt(0) !== 'T') ||
@@ -826,6 +831,7 @@ export class Game extends Lock {
         }
 
         if (numBosses === 0) {
+            // eslint-disable-next-line @typescript-eslint/prefer-for-of
             for (let i = 0; i < Game.BOSSES.length; i++) {
                 if ((ante % 8 === 0 && Game.BOSSES[i].getName().charAt(0) !== 'T') ||
                     (ante % 8 !== 0 && Game.BOSSES[i].getName().charAt(0) === 'T')) {
@@ -841,8 +847,8 @@ export class Game extends Lock {
     }
 
     nextCertificateStandardCard() {
-        let enhancement = "No Enhancement";
-        let edition = Edition.NO_EDITION;
+        const enhancement = "No Enhancement";
+        const edition = Edition.NO_EDITION;
         let seal;
         const base = this.randchoice(`${RandomQueueNames.R_Cert_Seal}`, Game.CARDS);
         const sealPoll = this.random(`${RandomQueueNames.R_Cert}`);
@@ -860,7 +866,7 @@ export class Game extends Lock {
 
     nextStandardCard(ante: number, source?: string): Card {
         let enhancement;
-        let isFromCertificate = source === RandomQueueNames.R_Cert;
+        const isFromCertificate = source === RandomQueueNames.R_Cert;
         if (isFromCertificate) {
             return this.nextCertificateStandardCard()
         }
@@ -906,7 +912,7 @@ export class Game extends Lock {
     }
 
     nextArcanaPack(size: number, ante: number) {
-        const pack: ItemImpl[] = new Array(size);
+        const pack: Array<ItemImpl> = new Array(size);
 
         for (let i = 0; i < size; i++) {
             if (this.isVoucherActive(Voucher.OMEN_GLOBE) && this.random("omen_globe") > 0.8) {
@@ -928,8 +934,8 @@ export class Game extends Lock {
         return pack;
     }
 
-    nextCelestialPack(size: number, ante: number): ItemImpl[] {
-        const pack: ItemImpl[] = new Array(size);
+    nextCelestialPack(size: number, ante: number): Array<ItemImpl> {
+        const pack: Array<ItemImpl> = new Array(size);
 
         for (let i = 0; i < size; i++) {
             pack[i] = this.nextPlanet("pl1", ante, true);
@@ -947,8 +953,8 @@ export class Game extends Lock {
         return pack;
     }
 
-    nextSpectralPack(size: number, ante: number): ItemImpl[] {
-        const pack: ItemImpl[] = new Array(size);
+    nextSpectralPack(size: number, ante: number): Array<ItemImpl> {
+        const pack: Array<ItemImpl> = new Array(size);
 
         for (let i = 0; i < size; i++) {
             pack[i] = this.nextSpectral(RNGSource.S_Spectral, ante, true);
@@ -967,8 +973,8 @@ export class Game extends Lock {
         return pack;
     }
 
-    nextStandardPack(size: number, ante: number): Card[] {
-        const pack: Card[] = new Array(size);
+    nextStandardPack(size: number, ante: number): Array<Card> {
+        const pack: Array<Card> = new Array(size);
 
         for (let i = 0; i < size; i++) {
             pack[i] = this.nextStandardCard(ante);
@@ -977,8 +983,8 @@ export class Game extends Lock {
         return pack;
     }
 
-    public nextBuffoonPack(size: number, ante: number): JokerData[] {
-        const pack: JokerData[] = new Array(size);
+    public nextBuffoonPack(size: number, ante: number): Array<JokerData> {
+        const pack: Array<JokerData> = new Array(size);
 
         for (let i = 0; i < size; i++) {
             const joker = this.nextJoker(RNGSource.S_Buffoon, ante, true);
@@ -1021,7 +1027,7 @@ export class Game extends Lock {
         this.lock("Palette");
     }
 
-    handleSelectedUnlocks(selectedUnlocks: string[]) {
+    handleSelectedUnlocks(selectedUnlocks: Array<string>) {
         options.forEach((option: string) => {
             if (selectedUnlocks.includes(option)) {
                 this.unlock(option);
@@ -1031,13 +1037,13 @@ export class Game extends Lock {
         })
     }
 
-    processPackCards(packInfo: PackInfo, card: any, ante: number) {
+    processPackCards(packInfo: PackInfo, card: Card | ItemImpl | JokerData, ante: number) {
         if (packInfo.getKind() === PackKind.BUFFOON) {
             return card as JokerData
         } else {
-            let item = (card as ItemImpl).getName();
-            let spoilerSource = this.hasSpoilersMap[item];
-            if (spoilerSource && this.hasSpoilers) {
+            const item = (card as ItemImpl).getName();
+            const spoilerSource = this.hasSpoilersMap[item];
+            if (this.hasSpoilers) {
                 return this.peekJoker(spoilerSource, ante, false)
             }
             return card as Card;
@@ -1070,8 +1076,8 @@ export class Game extends Lock {
     }
 
     nextEdition(source: string, guaranteed = false): Edition {
-        let version = this.params.version;
-        let rate = version !== 10106 ? 5 : 4;
+        const version = this.params.version;
+        const rate = version !== 10106 ? 5 : 4;
         if (this.random(source) < 1 / rate || guaranteed) {
             this.random(source);
             const poll = this.random(source);

@@ -1,17 +1,14 @@
-import {SeedResultsContainer} from "../../../modules/ImmolateWrapper/CardEngines/Cards.ts";
+import React from "react";
 import {useViewportSize} from "@mantine/hooks";
-import {useCardStore} from "../../../modules/state/store.ts";
 import {AppShell, Box, Burger, Button, Center, Container, CopyButton, Group, Title} from "@mantine/core";
+import {useCardStore} from "../../../modules/state/store.ts";
 import SearchSeedInput from "../../searchInput.tsx";
-import {useGA} from "../../../modules/useGA.ts";
+import {GaEvent} from "../../../modules/useGA.ts";
+import {useSeedResultsContainer} from "../../../modules/state/analysisResultProvider.tsx";
 
 
-
-export default function Header({SeedResults}: {
-    SeedResults: SeedResultsContainer | null,
-    theme: string,
-    setTheme: any
-}) {
+export default function Header() {
+    const SeedResults = useSeedResultsContainer();
     const {width} = useViewportSize();
     const start = useCardStore(state => state.applicationState.start)
     const settingsOpened = useCardStore(state => state.applicationState.settingsOpen);
@@ -46,7 +43,7 @@ export default function Header({SeedResults}: {
                             </CopyButton>
                         )}
                         <Burger opened={outputOpened} onClick={()=>{
-                            useGA('side_panel_toggled')
+                            GaEvent('side_panel_toggled')
                             toggleOutput()
                         }} size="sm"/>
                     </Group>

@@ -1,8 +1,5 @@
-import { useCardStore } from "../../../modules/state/store.ts";
-import { useEffect, useMemo, useState } from "react";
-import { EmblaCarouselType } from 'embla-carousel';
-import { Carousel } from "@mantine/carousel";
-import { blinds, LOCATION_TYPES, LOCATIONS, tagDescriptions } from "../../../modules/const.ts";
+import React, {useEffect, useMemo, useState} from "react";
+import {Carousel} from "@mantine/carousel";
 import {
     Accordion,
     AppShell,
@@ -21,24 +18,28 @@ import {
     Tabs,
     Text
 } from "@mantine/core";
-import { BuyWrapper } from "../../buyerWrapper.tsx";
-import { GameCard } from "../../Rendering/cards.tsx";
-import { Ante, Pack, SeedResultsContainer } from "../../../modules/ImmolateWrapper/CardEngines/Cards.ts";
-import { BuyMetaData } from "../../../modules/classes/BuyMetaData.ts";
-import { Boss, Tag as RenderTag, Voucher } from "../../Rendering/gameElements.tsx";
-import { Tag } from "../../../modules/balatrots/enum/Tag.ts";
-import { toHeaderCase } from "js-convert-case";
-import { useDisclosure, useViewportSize } from "@mantine/hooks";
+import {toHeaderCase} from "js-convert-case";
+import {useDisclosure, useViewportSize} from "@mantine/hooks";
+import {Boss, Tag as RenderTag, Voucher} from "../../Rendering/gameElements.tsx";
+import {BuyMetaData} from "../../../modules/classes/BuyMetaData.ts";
+import {BuyWrapper} from "../../buyerWrapper.tsx";
+import {LOCATIONS, LOCATION_TYPES, blinds, tagDescriptions} from "../../../modules/const.ts";
+import {useCardStore} from "../../../modules/state/store.ts";
+import {GameCard} from "../../Rendering/cards.tsx";
 import Header from "../layout/header.tsx";
 import NavBar from "../layout/navbar.tsx";
-import { Aside } from "../layout/aside.tsx";
+import {Aside} from "../layout/aside.tsx";
 import Footer from "../layout/footer.tsx";
 import HomePage from "../homePage/homepage.tsx";
 import Index from "../textView";
 import Simple from "../simpleView/simple.tsx";
 import SnapshotModal from "../snapshotView/SnapshotView.tsx";
+import {useSeedResultsContainer} from "../../../modules/state/analysisResultProvider.tsx";
+import type {Tag} from "../../../modules/balatrots/enum/Tag.ts";
+import type {Ante, Pack} from "../../../modules/ImmolateWrapper/CardEngines/Cards.ts";
+import type {EmblaCarouselType} from 'embla-carousel';
 
-function QueueCarousel({ queue, tabName }: { queue: any[], tabName: string }) {
+function QueueCarousel({ queue, tabName }: { queue: Array<any>, tabName: string }) {
     const selectedBlind = useCardStore(state => state.applicationState.selectedBlind);
     const selectedSearchResult = useCardStore(state => state.searchState.selectedSearchResult);
     const [embla, setEmbla] = useState<EmblaCarouselType | null>(null);
@@ -105,7 +106,7 @@ function AntePanel({ ante, tabName, timeTravelVoucherOffset }: {
 }) {
     const queue = ante.queue;
     const selectedBlind = useCardStore(state => state.applicationState.selectedBlind);
-    const packs = ante?.blinds?.[selectedBlind]?.packs;
+    const packs = ante.blinds[selectedBlind].packs;
     return (
         <Tabs.Panel w={'100%'} value={tabName}>
             <Paper withBorder h={'100%'} p={'sm'}>
@@ -126,7 +127,7 @@ function AntePanel({ ante, tabName, timeTravelVoucherOffset }: {
                                         ante: String(Number(tabName) - timeTravelVoucherOffset),
                                         blind: selectedBlind,
                                         itemType: 'voucher',
-                                        name: ante?.voucher ?? "",
+                                        name: ante.voucher ?? "",
                                         index: 0,
                                         link: `https://balatrowiki.org/w/vouchers`
                                     })
@@ -170,7 +171,7 @@ function AntePanel({ ante, tabName, timeTravelVoucherOffset }: {
                                                     align: 'start'
                                                 }}
                                             >
-                                                {pack.cards && pack.cards.map((card: any, cardIndex: number) => (
+                                                {pack.cards.map((card, cardIndex) => (
                                                     <Carousel.Slide key={cardIndex}>
                                                         <BuyWrapper
                                                             key={cardIndex}
@@ -207,16 +208,16 @@ function AntePanel({ ante, tabName, timeTravelVoucherOffset }: {
     )
 }
 type CustomDetailsType = {
-    [K in Tag]?: any;
+    [K in Tag]?: { renderer: (ante: Ante, navigateToMiscSource) => React.ReactNode  };
 };
 const CustomDetails: CustomDetailsType = {
     "Uncommon Tag": {
-        renderer: (ante: Ante, navigateToMiscSource: any) => {
+        renderer: (ante: Ante, navigateToMiscSource) => {
             return (
                 <Stack>
                     <Text>
                         {
-                            ante.miscCardSources.find(({ name }) => name === 'uncommonTag')?.cards?.slice(0, 1).map(({ name }: any) => name).join(', ')
+                            ante.miscCardSources.find(({ name }) => name === 'uncommonTag')?.cards.slice(0, 1).map(({ name }) => name).join(', ')
                         }
                     </Text>
                     <Button onClick={() => navigateToMiscSource('uncommonTag')}>
@@ -228,12 +229,12 @@ const CustomDetails: CustomDetailsType = {
         }
     },
     "Rare Tag": {
-        renderer: (ante: Ante, navigateToMiscSource: any) => {
+        renderer: (ante: Ante, navigateToMiscSource) => {
             return (
                 <Stack>
                     <Text>
                         {
-                            ante.miscCardSources.find(({ name }) => name === 'rareTag')?.cards?.slice(0, 1).map(({ name }: any) => name).join(', ')
+                            ante.miscCardSources.find(({ name }) => name === 'rareTag')?.cards.slice(0, 1).map(({ name }) => name).join(', ')
                         }
                     </Text>
                     <Button onClick={() => navigateToMiscSource('rareTag')}>
@@ -245,12 +246,12 @@ const CustomDetails: CustomDetailsType = {
         }
     },
     "Charm Tag": {
-        renderer: (ante: Ante, navigateToMiscSource: any) => {
+        renderer: (ante: Ante, navigateToMiscSource) => {
             return (
                 <Stack>
                     <Text>
                         {
-                            ante.miscCardSources.find(({ name }) => name === 'arcanaPack')?.cards?.slice(0, 5).map(({ name }: any) => name).join(', ')
+                            ante.miscCardSources.find(({ name }) => name === 'arcanaPack')?.cards.slice(0, 5).map(({ name }) => name).join(', ')
                         }
                     </Text>
                     <Button onClick={() => navigateToMiscSource('arcanaPack')}>
@@ -276,7 +277,7 @@ const CustomDetails: CustomDetailsType = {
         }
     },
     "Voucher Tag": {
-        renderer: (ante: Ante, navigateToMiscSource: any) => {
+        renderer: (ante: Ante, navigateToMiscSource) => {
             return (
                 <Stack>
                     <Text>
@@ -293,12 +294,12 @@ const CustomDetails: CustomDetailsType = {
         }
     },
     "Top-up Tag": {
-        renderer: (ante: Ante, navigateToMiscSource: any) => {
+        renderer: (ante: Ante, navigateToMiscSource) => {
             return (
                 <Stack>
                     <Text>
                         {
-                            ante.miscCardSources.find(({ name }) => name === 'topUpTag')?.cards?.slice(0, 5).map(({ name }: any) => name).join(', ')
+                            ante.miscCardSources.find(({ name }) => name === 'topUpTag')?.cards.slice(0, 5).map(({ name }) => name).join(', ')
                         }
                     </Text>
                     <Button onClick={() => navigateToMiscSource('topUpTag')}>
@@ -310,12 +311,12 @@ const CustomDetails: CustomDetailsType = {
         }
     },
     "Ethereal Tag": {
-        renderer: (ante: Ante, navigateToMiscSource: any) => {
+        renderer: (ante: Ante, navigateToMiscSource) => {
             return (
                 <Stack>
                     <Text>
                         {
-                            ante.miscCardSources.find(({ name }) => name === 'spectralPack')?.cards?.slice(0, 5).map(({ name }: any) => name).join(', ')
+                            ante.miscCardSources.find(({ name }) => name === 'spectralPack')?.cards.slice(0, 5).map(({ name }) => name).join(', ')
                         }
                     </Text>
                     <Button onClick={() => navigateToMiscSource('spectralPack')}>
@@ -327,12 +328,12 @@ const CustomDetails: CustomDetailsType = {
         }
     },
     "Standard Tag": {
-        renderer: (ante: Ante, navigateToMiscSource: any) => {
+        renderer: (ante: Ante, navigateToMiscSource) => {
             return (
                 <Stack>
                     <Text>
                         {
-                            ante.miscCardSources.find(({ name }) => name === 'standardPack')?.cards?.slice(0, 5).map(({ name }: any) => name).join(', ')
+                            ante.miscCardSources.find(({ name }) => name === 'standardPack')?.cards.slice(0, 5).map(({ name }) => name).join(', ')
                         }
                     </Text>
                     <Button onClick={() => navigateToMiscSource('standardPack')}>
@@ -344,12 +345,12 @@ const CustomDetails: CustomDetailsType = {
         }
     },
     "Meteor Tag": {
-        renderer: (ante: Ante, navigateToMiscSource: any) => {
+        renderer: (ante: Ante, navigateToMiscSource) => {
             return (
                 <Stack>
                     <Text>
                         {
-                            ante.miscCardSources.find(({ name }) => name === 'celestialPack')?.cards?.slice(0, 5).map(({ name }: any) => name).join(', ')
+                            ante.miscCardSources.find(({ name }) => name === 'celestialPack')?.cards.slice(0, 5).map(({ name }) => name).join(', ')
                         }
                     </Text>
                     <Button onClick={() => navigateToMiscSource('celestialPack')}>
@@ -361,12 +362,12 @@ const CustomDetails: CustomDetailsType = {
         }
     },
     "Buffoon Tag": {
-        renderer: (ante: Ante, navigateToMiscSource: any) => {
+        renderer: (ante: Ante, navigateToMiscSource) => {
             return (
                 <Stack>
                     <Text>
                         {
-                            ante.miscCardSources.find(({ name }) => name === 'buffoonPack')?.cards?.slice(0, 4).map(({ name }: any) => name).join(', ')
+                            ante.miscCardSources.find(({ name }) => name === 'buffoonPack')?.cards.slice(0, 4).map(({ name }) => name).join(', ')
                         }
                     </Text>
                     <Button onClick={() => navigateToMiscSource('buffoonPack')}>
@@ -393,11 +394,11 @@ function TagDisplay({ tag, ante }: { tag: Tag, ante: Ante }) {
                 <Box onMouseEnter={open} onMouseLeave={close} maw={375} w={'100%'}>
                     <Text ta={'center'}>{tag}</Text>
                     <Text>
-                        {tagDescriptions[tag ?? ''] ?? 'No description available'}
+                        {tagDescriptions[tag] ?? 'No description available'}
                     </Text>
                     {
-                        CustomDetails[tag as Tag] &&
-                        CustomDetails[tag as Tag]?.renderer(ante, navigateToMiscSource)
+                        CustomDetails[tag] &&
+                        CustomDetails[tag].renderer(ante, navigateToMiscSource)
                     }
                 </Box>
             </Popover.Dropdown>
@@ -407,9 +408,9 @@ function TagDisplay({ tag, ante }: { tag: Tag, ante: Ante }) {
 
 }
 
-function SeedExplorer({ SeedResults }: { SeedResults: SeedResultsContainer }) {
+function SeedExplorer() {
     const { width } = useViewportSize();
-
+    const SeedResults = useSeedResultsContainer()
     const selectedAnte = useCardStore(state => state.applicationState.selectedAnte);
     const setSelectedAnte = useCardStore(state => state.setSelectedAnte);
 
@@ -419,28 +420,15 @@ function SeedExplorer({ SeedResults }: { SeedResults: SeedResultsContainer }) {
     // const buys = useCardStore(state => state.shoppingState.buys);
     const timeTravelVoucherOffset = useMemo(() => {
         return 0
-        // let keys = Object.keys(buys);
-        // if(keys.length === 0) return 0;
-        // let offset = 0;
-        // for(let i = 0; i < keys.length; i++){
-        //     let buy = buys[keys[i]];
-        //     if(buy.locationType === LOCATIONS.VOUCHER){
-        //
-        //         let sameAnte = String(buy.ante) === String(selectedAnte);
-        //         let sameBlind = blindsCamelCase.indexOf(buy.blind) < blindsCamelCase.indexOf(selectedBlind);
-        //         let offsetNames = ['Hieroglyph', 'Petroglyph'];
-        //         if(sameAnte && sameBlind && offsetNames.includes(buy?.name ?? '')){
-        //             offset++;
-        //         }
-        //     }
-        // }
-        // return offset;
-    }, [ /*buys, selectedAnte, selectedBlind */]);
+    }, []);
+
+    if(!SeedResults){
+        return null;
+    }
 
 
-    let pool: { [key: number | string]: Ante } = SeedResults.antes //timeTravelVoucherOffset === 0 ? SeedResults.antes : SeedResults.timeTravelAntes;
-
-    let itemPool = selectedAnte //timeTravelVoucherOffset === 0 ? selectedAnte : `${selectedAnte-timeTravelVoucherOffset}-${timeTravelVoucherOffset}`;
+    const pool = SeedResults.antes
+    const itemPool = selectedAnte
 
     return (
         <>
@@ -467,7 +455,7 @@ function SeedExplorer({ SeedResults }: { SeedResults: SeedResultsContainer }) {
                         label: <Group justify={'center'}>
                             {blind}
                             {i < 2 && (
-                                <TagDisplay tag={pool[itemPool]?.tags?.[i] as Tag} ante={pool[itemPool]} />
+                                <TagDisplay tag={pool[itemPool].tags[i] as Tag} ante={pool[itemPool]} />
                             )
                             }
                             {
@@ -475,12 +463,12 @@ function SeedExplorer({ SeedResults }: { SeedResults: SeedResultsContainer }) {
                                 <Popover>
                                     <Popover.Target>
                                         <Box>
-                                            <Boss bossName={pool[itemPool]?.boss ?? ''} />
+                                            <Boss bossName={pool[itemPool].boss ?? ''} />
                                         </Box>
                                     </Popover.Target>
                                     <Popover.Dropdown>
                                         <Box>
-                                            <Text>{pool[itemPool]?.boss}</Text>
+                                            <Text>{pool[itemPool].boss}</Text>
                                         </Box>
                                     </Popover.Dropdown>
                                 </Popover>
@@ -519,10 +507,9 @@ function SeedExplorer({ SeedResults }: { SeedResults: SeedResultsContainer }) {
                     </ScrollArea>
                 </Box>
                 {
-                    SeedResults &&
                     Object.entries(SeedResults.antes).map(([ante, anteData]: [string, Ante], i: number) => {
-                        let currentAnte = String(ante) === String(selectedAnte);
-                        let panelData = currentAnte ? pool[itemPool] : anteData;
+                        const currentAnte = String(ante) === String(selectedAnte);
+                        const panelData = currentAnte ? pool[itemPool] : anteData;
                         return (
                             <AntePanel key={i} tabName={ante} ante={panelData}
                                 timeTravelVoucherOffset={timeTravelVoucherOffset} />
@@ -534,20 +521,21 @@ function SeedExplorer({ SeedResults }: { SeedResults: SeedResultsContainer }) {
     )
 }
 
-function Main({ SeedResults }: { SeedResults: SeedResultsContainer | null }) {
+function Main() {
+    const SeedResults = useSeedResultsContainer()
     const viewMode = useCardStore(state => state.applicationState.viewMode);
     return (
         <AppShell.Main>
-            {!SeedResults && <HomePage />}
-            {SeedResults && viewMode === 'blueprint' && <SeedExplorer SeedResults={SeedResults} />}
-            {SeedResults && viewMode === 'text' && <Index seedResults={SeedResults} />}
-            {SeedResults && viewMode === 'simple' && <Simple SeedResults={SeedResults} />}
-            {SeedResults && <SnapshotModal SeedResults={SeedResults} />}
+            {!SeedResults && <HomePage/>}
+            {SeedResults && viewMode === 'blueprint' && <SeedExplorer />}
+            {SeedResults && viewMode === 'text' && <Index />}
+            {SeedResults && viewMode === 'simple' && <Simple />}
+            {SeedResults && <SnapshotModal />}
         </AppShell.Main>
     )
 }
 
-export function Blueprint({ SeedResults, theme, setTheme }: { SeedResults: SeedResultsContainer | null, theme: string, setTheme: any }) {
+export function Blueprint() {
     const { width } = useViewportSize();
     const settingsOpened = useCardStore(state => state.applicationState.settingsOpen);
     const outputOpened = useCardStore(state => state.applicationState.asideOpen);
@@ -574,10 +562,10 @@ export function Blueprint({ SeedResults, theme, setTheme }: { SeedResults: SeedR
             }}
             padding="md"
         >
-            <Header setTheme={setTheme} theme={theme} SeedResults={SeedResults} />
-            <NavBar setTheme={setTheme} themeName={theme} />
-            <Main SeedResults={SeedResults} />
-            <Aside SeedResults={SeedResults} />
+            <Header />
+            <NavBar/>
+            <Main />
+            <Aside />
             <Footer />
         </AppShell>
     )

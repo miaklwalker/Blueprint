@@ -17,11 +17,7 @@ import {
     useMantineColorScheme,
     useMantineTheme
 } from "@mantine/core";
-import {useCardStore} from "../../../modules/state/store.ts";
-import UnlocksModal from "../../unlocksModal.tsx";
-import FeaturesModal from "../../FeaturesModal.tsx";
-import {RerollCalculatorModal} from "../../RerollCalculatorModal.tsx";
-import {useGA} from "../../../modules/useGA.ts";
+import React from "react";
 import {
     IconFileText,
     IconJoker,
@@ -31,16 +27,24 @@ import {
     IconPlayCard,
     IconSun
 } from "@tabler/icons-react";
+import {useCardStore} from "../../../modules/state/store.ts";
+import UnlocksModal from "../../unlocksModal.tsx";
+import FeaturesModal from "../../FeaturesModal.tsx";
+import {RerollCalculatorModal} from "../../RerollCalculatorModal.tsx";
+import {GaEvent} from "../../../modules/useGA.ts";
 import SeedInputAutoComplete from "../../SeedInputAutoComplete.tsx";
-import {useEffect} from "react";
-import {themeNames} from "../../../App.tsx";
+import { useBlueprintTheme} from "../../../modules/state/themeProvider.tsx";
+import type {KnownThemes} from "../../../modules/state/themeProvider.tsx";
 
-export default function NavBar({ themeName, setTheme }: { themeName: string, setTheme: any }) {
+
+export default function NavBar() {
     const theme = useMantineTheme();
+    const {theme: themeName, setTheme, themes} = useBlueprintTheme()
+    const themeNames = Object.keys(themes);
     const colorScheme = useMantineColorScheme()
     const viewMode = useCardStore(state => state.applicationState.viewMode);
     const setViewMode = useCardStore(state => state.setViewMode);
-    const events = useCardStore(state => state.eventState.events);
+
     const analyzeState = useCardStore(state => state.immolateState);
     const { seed, deck, stake, gameVersion: version, antes, cardsPerAnte } = analyzeState;
     const showCardSpoilers = useCardStore(state => state.applicationState.showCardSpoilers);
@@ -48,7 +52,7 @@ export default function NavBar({ themeName, setTheme }: { themeName: string, set
     const setUseCardPeek = useCardStore(state => state.setUseCardPeek);
     const maxMiscCardSource = useCardStore(state => state.applicationState.maxMiscCardSource);
     const setMiscMaxSource = useCardStore(state => state.setMiscMaxSource);
-    const selectedOptions = useCardStore(state => state.immolateState.selectedOptions);
+
 
     const setSeed = useCardStore(state => state.setSeed);
     const setDeck = useCardStore(state => state.setDeck);
@@ -67,26 +71,11 @@ export default function NavBar({ themeName, setTheme }: { themeName: string, set
     const reset = useCardStore(state => state.reset);
     const hasSettingsChanged = useCardStore((state) => state.applicationState.hasSettingsChanged);
 
-
-    const start = useCardStore(state => state.applicationState.start);
-    const analyzeSeed = useCardStore(state => state.analyzeSeed);
-    const seedResults = useCardStore(state => state.applicationState.analyzedResults);
-    const buys = useCardStore(state => state.shoppingState.buys);
     const handleAnalyzeClick = () => {
         setStart(true);
-        analyzeSeed();
     }
 
-    useEffect(() => {
-        if (start && !seedResults) {
-            analyzeSeed()
-        }
-    }, [start, seedResults]);
-    useEffect(() => {
-        if (start && seedResults) {
-            analyzeSeed();
-        }
-    }, [showCardSpoilers, deck, stake, version, antes, cardsPerAnte, events, buys, maxMiscCardSource, selectedOptions])
+
 
 
     return (
@@ -141,7 +130,10 @@ export default function NavBar({ themeName, setTheme }: { themeName: string, set
                     <Select
                         label={'Theme'}
                         value={themeName}
-                        onChange={setTheme}
+                        onChange={(t)=>{
+                            if(!t)return
+                            setTheme(t as KnownThemes)
+                        }}
                         data={themeNames}
                         flex={1}
                     />
@@ -279,7 +271,7 @@ export default function NavBar({ themeName, setTheme }: { themeName: string, set
                     <Button
                         color={theme.colors.grape[9]}
                         onClick={() => {
-                            useGA('view_features');
+                            GaEvent('view_features');
                             openFeaturesModal()
                         }}
                     >
@@ -293,7 +285,7 @@ export default function NavBar({ themeName, setTheme }: { themeName: string, set
                             color={theme.colors.cyan[9]}
                             onClick={() => {
                                 openSnapshotModal();
-                                useGA('view_seed_snapshot');
+                                GaEvent('view_seed_snapshot');
                             }}
                         >
                             Seed Summary

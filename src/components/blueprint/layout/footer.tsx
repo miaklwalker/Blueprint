@@ -1,3 +1,4 @@
+import React from "react";
 import {
     Anchor,
     AppShell,
@@ -10,21 +11,21 @@ import {
     Text, Title
 } from "@mantine/core";
 import {IconCoffee, IconHeart} from "@tabler/icons-react";
-import ShinyText from "../../shinyText/shinyText.tsx";
 import {useQuery} from "@tanstack/react-query";
-import {useGA} from "../../../modules/useGA.ts";
+import ShinyText from "../../shinyText/shinyText.tsx";
+import {GaEvent} from "../../../modules/useGA.ts";
 
 
 export default function Footer() {
-    const { data: supporters, isPending } = useQuery<{name:string, subscription: boolean}[]>({
-        queryKey:['supporters'],
+    const {data: supporters, isPending} = useQuery<Array<{ name: string, subscription: boolean }>>({
+        queryKey: ['supporters'],
         queryFn: async () => {
-            const response = await fetch('https://ttyyetpmvt.a.pinggy.link/supporters',{
+            const response = await fetch('https://ttyyetpmvt.a.pinggy.link/supporters', {
                 method: 'POST',
             });
             if (!response.ok) {
                 console.error(response);
-                return [{ name: 'pifreak', subscription: true}]
+                return [{name: 'pifreak', subscription: true}]
             }
             return response.json();
         }
@@ -39,7 +40,6 @@ export default function Footer() {
                         <Anchor fz={'xs'} href={'https://vite.dev/'}> Vite </Anchor>,
                         <Anchor fz={'xs'} href={'https://github.com/pmndrs/zustand'}> Zustand </Anchor>,
                         <Anchor fz={'xs'} href={'https://github.com/MathIsFun0/Immolate'}> Immolate </Anchor>.
-                        {/*<Anchor fz={'xs'} href={'https://github.com/miaklwalker/Blueprint'}> source code </Anchor>.*/}
                     </Text>
                     <Button
                         component={'a'}
@@ -51,23 +51,24 @@ export default function Footer() {
                     >
                         Buy me a coffee
                     </Button>
-                    <HoverCard onOpen={()=>useGA('view_supporters')}>
+                    <HoverCard onOpen={() => GaEvent('view_supporters')}>
                         <HoverCardTarget>
                             <Text ta={'center'} fz={'xs'}>
-                             <IconHeart size={'11'}/> Coffee Buyers
+                                <IconHeart size={'11'}/> Coffee Buyers
                             </Text>
                         </HoverCardTarget>
                         <HoverCardDropdown w={'100%'} maw={400}>
                             <Title order={4}>Coffee Buyers</Title>
                             {
-                                !isPending&&
+                                !isPending &&
                                 supporters?.length &&
-                                supporters?.length > 0 && (
+                                supporters.length > 0 && (
                                     <>
                                         <Text fz={'xs'} c={'dimmed'}>
-                                            These awesome people have bought me a coffee to support my work and have kept me motivated to keep improving Blueprint!:
+                                            These awesome people have bought me a coffee to support my work and have kept me
+                                            motivated to keep improving Blueprint!:
                                         </Text>
-                                        <Divider mb={'sm'} />
+                                        <Divider mb={'sm'}/>
                                     </>
                                 )
                             }
@@ -80,20 +81,21 @@ export default function Footer() {
                                             return 0;
                                         })
                                         .map((s, i) => {
-                                        if(s.subscription){
-                                            return <Text key={i} fz={'sm'}><ShinyText  text={s.name} speed={3}/></Text>
-                                        }else{
-                                            return <Text key={i} fz={'sm'}>{s.name}</Text>
-                                        }
-                                    })
+                                            if (s.subscription) {
+                                                return <Text key={i} fz={'sm'}><ShinyText text={s.name}
+                                                                                          speed={3}/></Text>
+                                            } else {
+                                                return <Text key={i} fz={'sm'}>{s.name}</Text>
+                                            }
+                                        })
                                     : <Text fz={'xs'}>No supporters yet</Text>}
-                            <Divider my={'sm'} />
+                            <Divider my={'sm'}/>
                             <Text fz={'xs'} c={'dimmed'}>
-                                If you have recently bought me a coffee and don't see your name here,
+                                If you have recently bought me a coffee and don&#39;t see your name here,
                                 please give it approximately 5 minutes to appear.
                             </Text>
                         </HoverCardDropdown>
-                    </HoverCard >
+                    </HoverCard>
                 </Flex>
 
             </Center>

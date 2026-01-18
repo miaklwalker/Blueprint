@@ -1,9 +1,19 @@
-import {IconEye, IconGauge, IconList, IconMessage2, IconShoppingCart, IconUser} from '@tabler/icons-react';
+import {
+    IconEye,
+    IconGauge,
+    IconList,
+    IconMessage2,
+    IconShoppingCart,
+    IconUser
+} from '@tabler/icons-react';
 import {Container, Paper, SimpleGrid, Space, Stack, Text, ThemeIcon, Title} from '@mantine/core';
-import classes from './Homepage.module.css';
-import HeroClasses from "./Hero.module.css"
 import React from "react";
 import {QuickAnalyze} from "../../SeedInputAutoComplete.tsx";
+import classes from './Homepage.module.css';
+import HeroClasses from "./Hero.module.css"
+import type {
+    Icon,
+    IconProps} from '@tabler/icons-react';
 
 export const Features = [
     {
@@ -45,7 +55,7 @@ export const Features = [
 ];
 
 interface FeatureProps {
-    icon: React.FC<any>;
+    icon:  React.ForwardRefExoticComponent<IconProps & React.RefAttributes<Icon>>;
     title: React.ReactNode;
     description: React.ReactNode;
 }

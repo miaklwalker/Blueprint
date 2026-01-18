@@ -1,10 +1,11 @@
-import {
+import type {
     Card_Final,
     Joker_Final,
     Planet_Final,
     Spectral_Final,
     Tarot_Final
 } from "../ImmolateWrapper/CardEngines/Cards.ts";
+import type {Blinds} from "../state/store.ts";
 
 
 
@@ -14,7 +15,7 @@ export class BuyMetaData {
     locationType: string;
     index: number;
     ante: string;
-    blind: string;
+    blind: Blinds;
     link?: string;
     name?: string;
     card?: Card_Final | Joker_Final | Spectral_Final | Tarot_Final | Planet_Final
@@ -24,7 +25,7 @@ export class BuyMetaData {
         locationType: string,
         index: number,
         ante: string,
-        blind: string,
+        blind: Blinds,
         itemType?: string,
         link?: string,
         name?: string

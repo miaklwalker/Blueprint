@@ -1,27 +1,28 @@
-import {Card} from "./enum/cards/Card";
-import {Type} from "./enum/cards/CardType";
-import {Deck} from "./enum/Deck";
-import {Edition} from "./enum/Edition";
+import {getMiscCardSources} from "../ImmolateWrapper";
 import {PackKind} from "./enum/packs/PackKind";
-import {Stake} from "./enum/Stake";
-import {Version} from "./enum/Version";
-import {Game} from "./Game";
-import {AnalysisParams} from "./interface/AnalysisParams";
-import {Configurations} from "./interface/Configurations";
 import {ItemImpl} from "./interface/Item";
+import {Type} from "./enum/cards/CardType";
+import {Edition} from "./enum/Edition";
+import {Game} from "./Game";
 import {Result} from "./Result";
 import {Run} from "./Run";
 import {AbstractCard} from "./struct/AbstractCard";
 import {CardNameBuilder} from "./struct/CardNameBuilder";
 import {InstanceParams} from "./struct/InstanceParams";
-import {JokerData} from "./struct/JokerData";
 import {Option} from "./struct/Option";
-import {RandomQueueNames, RNGSource} from "./enum/QueueName.ts";
-import {MiscCardSource} from "../ImmolateWrapper";
-import {BossBlind} from "./enum/BossBlind.ts";
-
-// @ts-ignore
-
+import {RNGSource} from "./enum/QueueName.ts";
+import type {QueueNames} from "./enum/QueueName.ts";
+import type {JokerData} from "./struct/JokerData";
+import type {AnalysisParams} from "./interface/AnalysisParams";
+import type {Version} from "./enum/Version";
+import type {Stake} from "./enum/Stake";
+import type {Configurations} from "./interface/Configurations";
+import type {Deck} from "./enum/Deck";
+import type {SpoilableItems} from "../ImmolateWrapper";
+import type {Card} from "./enum/cards/Card";
+import type {BossBlind} from "./enum/BossBlind.ts";
+import type {PackCard} from "../ImmolateWrapper/CardEngines/Cards.ts";
+import type {PackInfo} from "./struct/PackInfo.ts";
 
 
 export class BalatroAnalyzer {
@@ -117,17 +118,17 @@ export class BalatroAnalyzer {
     ] as const;
     // seed: string;
     ante: number;
-    cardsPerAnte: number[];
+    cardsPerAnte: Array<number>;
     deck: Deck;
     stake: Stake;
     version: Version;
     configurations: Configurations;
     result: Result;
     hasSpoilers: boolean;
-    hasSpoilersMap: { [key: string]: RNGSource };
+    hasSpoilersMap: Record<SpoilableItems, RNGSource>;
 
 
-    constructor(ante: number, cardsPerAnte: number[], deck: Deck, stake: Stake, version: Version, configurations: Configurations) {
+    constructor(ante: number, cardsPerAnte: Array<number>, deck: Deck, stake: Stake, version: Version, configurations: Configurations) {
         // this.seed = seed;
         this.ante = ante;
         this.cardsPerAnte = cardsPerAnte;
@@ -149,7 +150,7 @@ export class BalatroAnalyzer {
             throw new Error(`cardsPerAnte array does not have enough elements for ante ${ante}`);
         }
 
-        const selectedOptions: boolean[] = new Array(BalatroAnalyzer.OPTIONS.length).fill(true);
+        const selectedOptions: Array<boolean> = new Array(BalatroAnalyzer.OPTIONS.length).fill(true);
         const game = new Game(seed, new InstanceParams(deck, stake, false, version.getVersion()));
         game.initLocks(1, true, false);
         game.firstLock();
@@ -161,29 +162,24 @@ export class BalatroAnalyzer {
 
         for (let a = 1; a <= ante; a++) {
             this.result.setCurrentAnte = a;
-            this.processAnte(game, run, a, cardsPerAnte[a - 1], selectedOptions);
+            this.processAnte(game, run, a, cardsPerAnte[a - 1]);
         }
 
         return {run, game};
     }
 
-    private lockOptions(game: Game, selectedOptions: boolean[]): void {
+    private lockOptions(game: Game, selectedOptions: Array<boolean>): void {
         for (let i = 0; i < BalatroAnalyzer.OPTIONS.length; i++) {
             if (!selectedOptions[i]) {
                 game.lock(BalatroAnalyzer.OPTIONS[i]);
-            }else{
+            } else {
                 game.unlock(BalatroAnalyzer.OPTIONS[i]);
             }
         }
     }
 
-    // @ts-ignore
-    private processAnte(game: Game, run: Run, ante: number, cardsCount: number, selectedOptions: boolean[]): void {
+    private processAnte(game: Game, run: Run, ante: number, cardsCount: number): void {
         game.initUnlocks(ante, false);
-
-
-
-
         const voucher = game.nextVoucher(ante).getName();
         // game.lock(voucher);
         this.result.addVoucher(voucher);
@@ -194,8 +190,6 @@ export class BalatroAnalyzer {
         const boss = game.nextBoss(ante) as BossBlind
         this.result.addBoss(boss)
 
-        // this.unlockVouchers(game, voucher, selectedOptions);
-
         if (this.configurations.analyzeShopQueue) {
             for (let i = 0; i < cardsCount; i++) {
                 this.processShopItem(game, run, ante);
@@ -204,195 +198,52 @@ export class BalatroAnalyzer {
 
         const numPacks = ante === 1 ? 4 : 6;
         for (let p = 1; p <= numPacks; p++) {
-            this.processPack(game, run, ante, p);
+            this.processPack(game, run, ante);
         }
         this.processQueues(game, run)
 
 
     }
 
-    private processQueues(game: Game, run: Run): MiscCardSource[] {
-        let maxCards = 15;
-        const miscCardSources: MiscCardSource[] = [
-            {
-                name: "riffRaff",
-                cardsToGenerate: 6,
-                cardType: "Joker",
-                source: RNGSource.S_Riff_Raff,
-                hasStickers: false,
-                soulable: false,
-                cards: []
-            },
-            {
-                name: "uncommonTag",
-                cardsToGenerate: maxCards,
-                cardType: "Joker",
-                source: RNGSource.S_Uncommon_Tag,
-                cards: []
-            },
-            {
-                name: "rareTag",
-                cardsToGenerate: maxCards,
-                cardType: "Joker",
-                source: RNGSource.S_Rare_Tag,
-                cards: []
-            },
-            {
-                name: "topUpTag",
-                cardsToGenerate: maxCards,
-                cardType: "Joker",
-                source: RNGSource.S_Top_Up,
-                hasStickers: false,
-                cards: []
-            },
-            {
-                name: "arcanaPack",
-                cardsToGenerate: maxCards,
-                cardType: "Tarot",
-                source: RNGSource.S_Arcana,
-                soulable: true,
-                hasStickers: true,
-                cards: []
-            },
-            {
-                name: "emperor",
-                cardsToGenerate: maxCards,
-                cardType: "Tarot",
-                source: RNGSource.S_Emperor,
-                cards: []
-            },
-            {
-                name: "vagabond",
-                cardsToGenerate: maxCards,
-                cardType: "Tarot",
-                source: RNGSource.S_Vagabond,
-                cards: []
-            },
-            {
-                name: "purpleSeal and 8 Ball",
-                cardsToGenerate: maxCards,
-                cardType: "Tarot",
-                source: RNGSource.S_Purple_Seal,
-                cards: []
-            },
-            {
-                name: "superposition",
-                cardsToGenerate: maxCards,
-                cardType: "Tarot",
-                source: RNGSource.S_Superposition,
-                cards: [],
-                hasStickers: false,
-            },
-            {
-                name: "judgement",
-                cardsToGenerate: maxCards,
-                cardType: "Joker",
-                source: RNGSource.S_Judgement,
-                cards: []
-            },
-            {
-                name: "buffoonPack",
-                cardsToGenerate: maxCards,
-                cardType: "Joker",
-                source: RNGSource.S_Buffoon,
-                cards: [],
-                hasStickers: true,
-            },
-            {
-                name: "wraith",
-                cardsToGenerate: maxCards,
-                cardType: "Joker",
-                source: RNGSource.S_Wraith,
-                hasStickers: false,
-                cards: []
-            },
-            {
-                name: "highPriestess",
-                cardsToGenerate: maxCards,
-                cardType: "Planet",
-                source: RNGSource.S_High_Priestess,
-                cards: []
-            },
-            {
-                name: "celestialPack",
-                cardsToGenerate: maxCards,
-                cardType: "Planet",
-                source: RNGSource.S_Celestial,
-                cards: []
-            },
-            {
-                name: 'spectralPack',
-                cardsToGenerate: maxCards,
-                cardType: "Spectral",
-                source: RNGSource.S_Spectral,
-                cards: [],
-                soulable: true,
-                hasStickers: true,
-            },
-            {
-                name: "seance",
-                cardsToGenerate: maxCards,
-                cardType: "Spectral",
-                source: RNGSource.S_Seance,
-                cards: [],
-                soulable: false,
-                hasStickers: false,
-            },
-            {
-                name: "sixthSense",
-                cardsToGenerate: maxCards,
-                cardType: "Spectral",
-                source: RNGSource.S_Sixth_Sense,
-                cards: [],
-                soulable: false,
-                hasStickers: false,
-            },
-            {
-                name: "certificate",
-                cardsToGenerate: maxCards,
-                cardType: "Standard",
-                source: RandomQueueNames.R_Standard_Has_Seal,
-                cards: [],
-            },
-            {
-                name: "standardPack",
-                cardsToGenerate: maxCards,
-                cardType: "Standard",
-                source: RandomQueueNames.R_Standard_Edition,
-                cards: [],
-                hasStickers: false,
-            },
-        ];
-        let generators: any = {
-            // @ts-ignore
-            "Joker": (...args: any) => game.nextJoker(...args),
-            // @ts-ignore
-            "Planet": (...args: any) => game.nextPlanet(...args),
-            // @ts-ignore
-            "Tarot": (...args: any) => game.nextTarot(...args),
-            // @ts-ignore
-            "Spectral": (...args: any) => game.nextSpectral(...args),
-            // @ts-ignore
-            "Standard": (source, ante) => game.nextStandardCard(ante, source),
+    private processQueues(game: Game, run: Run) {
+        const maxCards = 15;
+
+        interface Generators {
+            Joker: (source: QueueNames, ante: number, hasStickers: boolean) => JokerData;
+            Planet: (source: QueueNames, ante: number, hasStickers: boolean) => ItemImpl;
+            Tarot: (source: QueueNames, ante: number, hasStickers: boolean) => ItemImpl;
+            Spectral: (source: QueueNames, ante: number, hasStickers: boolean) => ItemImpl;
+            Standard: (source: QueueNames, ante: number) => Card;
         }
 
-        for (let source of miscCardSources) {
+        const generators: Generators = {
+            "Joker": (...args) => game.nextJoker(...args),
+            "Planet": (...args) => game.nextPlanet(...args),
+            "Tarot": (...args) => game.nextTarot(...args),
+            "Spectral": (...args) => game.nextSpectral(...args),
+            "Standard": (source, ante) => game.nextStandardCard(ante, source),
+        }
+        const miscCardSources = getMiscCardSources(maxCards)
+
+        for (const source of miscCardSources) {
             for (let i = 0; i < source.cardsToGenerate; i++) {
-                let generator = generators[source.cardType];
+                const generator = generators[source.cardType as keyof Generators];
                 let card = generator(
                     source.source,
                     this.result.ante,
                     source.soulable ?? source.hasStickers ?? false
                 )
-                let spoilerSource = this.hasSpoilersMap[card.name];
-                if( this.hasSpoilers && spoilerSource) {
-                    let joker = game.peekJoker(spoilerSource, this.result.ante, true);
-                    // @ts-ignore
+                const isSpoilable = Object.keys(this.hasSpoilersMap)
+                    .includes(card.name);
+
+                if (this.hasSpoilers && isSpoilable) {
+                    const spoilerSource = this.hasSpoilersMap[card.name as SpoilableItems];
+                    const joker = game.peekJoker(spoilerSource, this.result.ante, true);
                     BalatroAnalyzer.getSticker(joker);
                     card = joker
                     run.addJoker(card.joker.name);
                 }
-                source.cards.push(card);
+                source.cards.push(card as unknown as PackCard);
             }
             this.result.addMiscCardSourcesToQueue([source])
             // console.log(`Generated ${source.cards.length} cards from ${source.name}`);
@@ -400,40 +251,26 @@ export class BalatroAnalyzer {
         return miscCardSources;
     }
 
-    // private unlockVouchers(game: Game, voucher: string, selectedOptions: boolean[]): void {
-    //     for (let i = 0; i < Game.VOUCHERS.length; i += 2) {
-    //         if (Game.VOUCHERS[i].getName() === voucher) {
-    //             if (selectedOptions[BalatroAnalyzer.OPTIONS.indexOf(Game.VOUCHERS[i + 1].getName())]) {
-    //                 game.unlock(Game.VOUCHERS[i + 1].getName());
-    //             }
-    //         }
-    //     }
-    // }
 
     private processShopItem(game: Game, run: Run, ante: number): void {
         const shopItem = game.nextShopItem(ante);
-        // @ts-ignore
-        let sticker: Edition | null = null;
-        let spoilerSource = this.hasSpoilersMap[shopItem.item.name];
+        const spoilerSource = Object.keys(this.hasSpoilersMap)
+            .includes(shopItem.item.name);
         if (this.hasSpoilers && spoilerSource) {
-            const joker: JokerData = game.peekJoker(spoilerSource, ante, true);
+            const joker: JokerData = game.peekJoker(this.hasSpoilersMap[shopItem.item.name as SpoilableItems], ante, true);
             run.addJoker(joker.joker.getName());
-            sticker = BalatroAnalyzer.getSticker(joker);
+            BalatroAnalyzer.getSticker(joker);
             this.result.addItemToShopQueue(joker);
         } else if (shopItem.type === Type.JOKER) {
             run.addJoker(shopItem.jokerData.joker.getName());
-            sticker = BalatroAnalyzer.getSticker(shopItem.jokerData);
+            BalatroAnalyzer.getSticker(shopItem.jokerData);
             this.result.addItemToShopQueue(shopItem.jokerData);
         } else {
             this.result.addItemToShopQueue(shopItem.item as Card);
         }
-
-
-        // console.log(` Card ${i + 1}: ${shopItem.item.getName()} ${sticker ? `(${new EditionItem(sticker).getName()})` : ""}`);
     }
 
-    // @ts-ignore
-    private processPack(game: Game, run: Run, ante: number, packNumber: number): void {
+    private processPack(game: Game, run: Run, ante: number): void {
         const pack = game.nextPack(ante);
         const packInfo = game.packInfo(pack);
         const options = new Set<Option>();
@@ -461,10 +298,10 @@ export class BalatroAnalyzer {
             cards[c] = this.processCard(run, packInfo, cards[c], options, game);
         }
 
-        this.result.addPackToQueue(packInfo.getKind(), cards as (Card | JokerData)[]);
+        this.result.addPackToQueue(packInfo.getKind(), cards as Array<Card | JokerData>);
     }
 
-    private processCard(run: Run, packInfo: any, card: any, options: Set<Option>, game: Game): Card | JokerData {
+    private processCard(run: Run, packInfo: PackInfo, card: ItemImpl | JokerData | Card, options: Set<Option>, game: Game): Card | JokerData | ItemImpl {
         if (packInfo.getKind() === PackKind.BUFFOON) {
             const joker: JokerData = card as JokerData;
             const sticker = BalatroAnalyzer.getSticker(joker);
@@ -477,13 +314,16 @@ export class BalatroAnalyzer {
             options.add(new Option(new AbstractCard(cardName), new ItemImpl(Edition.NO_EDITION)));
             return card;
         } else {
-            let item = (card as ItemImpl).getName();
-            let spoilerSource = this.hasSpoilersMap[item];
-            if (spoilerSource && this.hasSpoilers) {
+            const item = (card as ItemImpl).getName();
+            const isSpoilable = Object.keys(this.hasSpoilersMap)
+                .includes(item);
+
+            if (isSpoilable && this.hasSpoilers) {
+                const spoilerSource = this.hasSpoilersMap[item as SpoilableItems];
                 if (item === "The Soul") {
                     run.hasTheSoul = true;
                 }
-                let joker = game.peekJoker(spoilerSource, this.result.ante, true);
+                const joker = game.peekJoker(spoilerSource, this.result.ante, true);
                 run.addJoker(joker.joker.getName());
                 const sticker = BalatroAnalyzer.getSticker(joker);
                 options.add(new Option(joker.joker, new ItemImpl(sticker)));

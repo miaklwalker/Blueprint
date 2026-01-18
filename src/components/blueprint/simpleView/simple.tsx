@@ -1,13 +1,4 @@
 import {
-    Joker_Final,
-    Pack,
-    Planet_Final,
-    SeedResultsContainer,
-    Spectral_Final,
-    StandardCard_Final,
-    Tarot_Final
-} from "../../../modules/ImmolateWrapper/CardEngines/Cards.ts";
-import {
     Affix,
     Box,
     Button,
@@ -21,6 +12,9 @@ import {
     Title,
     Tooltip
 } from "@mantine/core";
+import React, {useEffect, useRef, useState} from "react";
+import {useDebouncedCallback, useIntersection} from "@mantine/hooks";
+import {IconLockOpen} from "@tabler/icons-react";
 import {
     bosses,
     consumablesFaces,
@@ -35,24 +29,33 @@ import {
 import {Layer} from "../../../modules/classes/Layer.ts";
 import {SimpleRenderCanvas} from "../../Rendering/canvasRenderer.tsx";
 import {getEnhancerPosition, getSealPosition, getStandardCardPosition} from "../../../modules/utils.ts";
-import React, {useEffect, useRef, useState} from "react";
 import {DragScroll} from "../../DragScroller.tsx";
-import {useDebouncedCallback, useIntersection} from "@mantine/hooks";
-import {SimpleBuyerWrapper} from "./simpleBuyWrapper.tsx";
 import {useCardStore} from "../../../modules/state/store.ts";
-import {IconLockOpen} from "@tabler/icons-react";
+import {
+    Joker_Final,
+    StandardCard_Final
+} from "../../../modules/ImmolateWrapper/CardEngines/Cards.ts";
+import {useSeedResultsContainer} from "../../../modules/state/analysisResultProvider.tsx";
+import {SimpleBuyerWrapper} from "./simpleBuyWrapper.tsx";
+import type {
+    CardTuple,
+    Planet_Final,
+    Spectral_Final
+,
+    Stringifies, Tarot_Final
+} from "../../../modules/ImmolateWrapper/CardEngines/Cards.ts";
 
 
 function SimpleJokerCard({card, index}: { card: Joker_Final, index?: number }) {
-    let layers = [];
-    const jokerData = jokers.find((joker: any) => joker.name === card.name);
+    const layers = [];
+    const jokerData = jokers.find((joker: { name: string; }) => joker.name === card.name);
     if (jokerData) layers.push(new Layer({...jokerData, source: 'images/Jokers.png', order: 0, columns: 10, rows: 16}));
-    const face = jokerFaces.find((joker: any) => joker.name === card.name);
+    const face = jokerFaces.find((joker: { name: string; }) => joker.name === card.name);
     if (face) layers.push(new Layer({...face, source: 'images/Jokers.png', order: 1, columns: 10, rows: 16}));
     if (card.edition) {
-        const index = editionMap[card.edition];
+        const idx = editionMap[card.edition];
         layers.push(new Layer({
-            pos: {x: index, y: 0},
+            pos: {x: idx, y: 0},
             name: card.edition,
             order: 2,
             source: 'images/Editions.png',
@@ -105,11 +108,10 @@ function SimpleJokerCard({card, index}: { card: Joker_Final, index?: number }) {
 }
 
 function SimplePlayingCard({card, index}: { card: StandardCard_Final, index?: number }) {
-    if (!card?.rank || !card?.suit) return null;
+    if (!card.rank || !card.suit) return null;
     const position = getStandardCardPosition(card.rank, card.suit);
-    //getEnhancerPosition
-    const background = getEnhancerPosition([card?.enhancements ?? '']);
-    let layers = [
+    const background = getEnhancerPosition([card.enhancements ?? '']);
+    const layers = [
         new Layer({
             pos: background,
             name: 'background',
@@ -128,9 +130,9 @@ function SimplePlayingCard({card, index}: { card: StandardCard_Final, index?: nu
         })
     ]
     if (card.edition) {
-        const index = editionMap[card.edition];
+        const idx = editionMap[card.edition];
         layers.push(new Layer({
-            pos: {x: index, y: 0},
+            pos: {x: idx, y: 0},
             name: card.edition,
             order: 2,
             source: 'images/Editions.png',
@@ -157,18 +159,19 @@ function SimplePlayingCard({card, index}: { card: StandardCard_Final, index?: nu
         </Tooltip>
     )
 }
-
-function SimpleConsumables({card, index}: { card: Planet_Final | Spectral_Final | Tarot_Final, index?: number }) {
-    let layers = [
+export type ConsumableCard = Planet_Final | Spectral_Final | Tarot_Final;
+export type C_Card = Omit<ConsumableCard,'edition'> & { edition?: string }
+function SimpleConsumables({card, index}: { card: C_Card | undefined, index?: number }) {
+    const layers = [
         new Layer({
-            ...tarotsAndPlanets.find((t: any) => t.name === card.name),
+            ...tarotsAndPlanets.find((t: { name: string; }) => t.name === card?.name),
             order: 0,
             source: 'images/Tarots.png',
             rows: 6,
             columns: 10
         })
     ]
-    let consumablesFace = consumablesFaces.find((t: any) => t.name === card.name);
+    const consumablesFace = consumablesFaces.find((t: { name: string; }) => t.name === card?.name);
     if (consumablesFace) {
         layers.push(new Layer({
             ...consumablesFace,
@@ -181,7 +184,7 @@ function SimpleConsumables({card, index}: { card: Planet_Final | Spectral_Final 
     }
     const positionText = index ? `${index} ` : '';
     return (
-        <Tooltip label={positionText + card.name}>
+        <Tooltip label={positionText + card?.name}>
             <Box>
                 <SimpleRenderCanvas
                     invert={card?.edition === "Negative"}
@@ -193,23 +196,22 @@ function SimpleConsumables({card, index}: { card: Planet_Final | Spectral_Final 
 }
 
 interface GameCardProps {
-    card: Planet_Final | Spectral_Final | Tarot_Final | Joker_Final | StandardCard_Final
+    card: CardTuple | Stringifies | undefined
     index?: number
 }
 
 function GameCard({card, index}: GameCardProps) {
-    let Card = () => {
-        if (card instanceof StandardCard_Final) {
-            return <SimplePlayingCard index={index} card={card}/>
-        } else if (card instanceof Joker_Final) {
-            return <SimpleJokerCard card={card} index={index}/>
-        } else {
-            return <SimpleConsumables index={index} card={card}/>
-        }
-    }
     return (
         <Paper maw={'71px'}>
-            <Card/>
+            {
+                card instanceof StandardCard_Final ? (
+                    <SimplePlayingCard index={index} card={card}/>
+                ) : card instanceof Joker_Final ? (
+                    <SimpleJokerCard index={index} card={card}/>
+                ) : (
+                    <SimpleConsumables index={index} card={card}/>
+                )
+            }
         </Paper>
     )
 }
@@ -217,8 +219,8 @@ function GameCard({card, index}: GameCardProps) {
 const MemoizedGameCard = React.memo(GameCard);
 
 function SimpleVoucher({voucherName}: { voucherName: string | null }) {
-    let layers = [];
-    const voucherData = vouchers.find((voucher: any) => voucher.name === voucherName);
+    const layers = [];
+    const voucherData = vouchers.find((voucher: { name: string | null; }) => voucher.name === voucherName);
     if (voucherData) layers.push(new Layer({
         ...voucherData,
         source: 'images/Vouchers.png',
@@ -312,13 +314,13 @@ function AnteSkeletonLoader() {
 
             {/* Packs section */}
             <Skeleton height={20} width="80px" mb="sm"/>
-            {Array(2).fill(0).map((_, blindIndex) => (
+            {Array(2).fill(0).map((_i, blindIndex) => (
                 <Box key={blindIndex} mb="xl">
                     <Skeleton height={18} width="100px" mb="xs"/>
                     <Box mb="md">
                         <Skeleton height={16} width="180px" mb="xs"/>
                         <Group gap="xs" wrap={'nowrap'}>
-                            {Array(4).fill(0).map((_, i) => (
+                            {Array(4).fill(0).map((_j, i) => (
                                 <Skeleton key={i} height={90} width={71}/>
                             ))}
                         </Group>
@@ -343,9 +345,10 @@ function AnteSkeletonLoader() {
     );
 }
 
-function Simple({SeedResults}: { SeedResults: SeedResultsContainer }) {
+function Simple() {
+    const SeedResults = useSeedResultsContainer()
     const containerRef = useRef<HTMLDivElement>(null);
-    const [visibleAntes, setVisibleAntes] = useState<number[]>([1]); // Start with first ante visible
+    const [visibleAntes, setVisibleAntes] = useState<Array<number>>([1]); // Start with first ante visible
     const [loadingNextAnte, setLoadingNextAnte] = useState<number | null>(2); // Track which ante is loading
     const selectedAnte = useCardStore(state => state.applicationState.selectedAnte);
     const setSelectedAnte = useCardStore(state => state.setSelectedAnte);
@@ -384,7 +387,7 @@ function Simple({SeedResults}: { SeedResults: SeedResultsContainer }) {
                     setLoadingNextAnte(nextAnte + 1);
                 }
             }
-        }, [entry?.isIntersecting, anteNumber, selectedAnte, debouncedSetSelectedAnte]);
+        }, [entry?.isIntersecting, anteNumber]);
 
         return <div ref={ref}/>;
     };
@@ -444,7 +447,7 @@ function Simple({SeedResults}: { SeedResults: SeedResultsContainer }) {
                         <Title order={4} mb={'1rem'}>Shop</Title>
                         <DragScroll>
                             <Group wrap={'nowrap'}>
-                                {value.queue.map((card: any, index: number) => (
+                                {value.queue.map((card, index) => (
                                     <SimpleBuyerWrapper
                                         key={index}
                                         card={card}
@@ -459,15 +462,15 @@ function Simple({SeedResults}: { SeedResults: SeedResultsContainer }) {
 
                         {/* Packs section */}
                         <Title order={4} mb={'xs'}>Packs</Title>
-                        {Object.entries(blinds).map(([blindName, blind]: [string, any]) => (
+                        {Object.entries(blinds).map(([blindName, blind]) => (
                             <Box key={blindName} mb="xs">
                                 <Title order={5} mb={'xs'} c="dimmed">
                                     {blindName === 'smallBlind' ? 'Small Blind' :
                                         blindName === 'bigBlind' ? 'Big Blind' : 'Boss Blind'}
                                 </Title>
 
-                                {blind.packs && blind.packs.length > 0 ? (
-                                    blind.packs.map((pack: Pack, packIndex: number) => (
+                                {blind.packs.length > 0 ? (
+                                    blind.packs.map((pack, packIndex) => (
                                         <Box key={packIndex} mb="xs">
                                             <Text fw={700} fz="sm" mb="xs">
                                                 {pack.name || `Pack ${packIndex + 1}`} {pack.size} cards,
@@ -475,7 +478,7 @@ function Simple({SeedResults}: { SeedResults: SeedResultsContainer }) {
                                             </Text>
                                             <DragScroll>
                                                 <Group wrap={'nowrap'}>
-                                                    {pack.cards.map((card: any, cardIndex: number) => (
+                                                    {pack.cards.map((card, cardIndex) => (
                                                         <SimpleBuyerWrapper
                                                             key={cardIndex}
                                                             card={card}

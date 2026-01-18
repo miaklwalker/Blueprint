@@ -1,10 +1,5 @@
-import {Ante, SeedResultsContainer} from "../modules/ImmolateWrapper/CardEngines/Cards.ts";
-import {useCardStore} from "../modules/state/store.ts";
-import {useCallback, useMemo, useState} from "react";
-import {closeSpotlight, openSpotlight, Spotlight} from "@mantine/spotlight";
-import {BuyMetaData} from "../modules/classes/BuyMetaData.ts";
-import {LOCATIONS} from "../modules/const.ts";
-import {getMiscCardSources, MiscCardSource} from "../modules/ImmolateWrapper";
+import React, {useCallback, useMemo, useState} from "react";
+import {Spotlight, closeSpotlight, openSpotlight} from "@mantine/spotlight";
 import {toHeaderCase} from "js-convert-case";
 import {
     ActionIcon,
@@ -20,10 +15,18 @@ import {
 } from "@mantine/core";
 import {IconSearch, IconSettings} from "@tabler/icons-react";
 import {useSetState} from "@mantine/hooks";
-import {useGA} from "../modules/useGA.ts";
+import {getMiscCardSources} from "../modules/ImmolateWrapper";
+import {LOCATIONS} from "../modules/const.ts";
+import {useCardStore} from "../modules/state/store.ts";
+import {GaEvent} from "../modules/useGA.ts";
+import {useSeedResultsContainer} from "../modules/state/analysisResultProvider.tsx";
+import type {Blinds} from "../modules/state/store.ts";
+import type {BuyMetaData} from "../modules/classes/BuyMetaData.ts";
+import type {Ante, Blind} from "../modules/ImmolateWrapper/CardEngines/Cards.ts";
 
 const registeredMiscSources = getMiscCardSources(15).map(source => source.name)
-export default function SearchSeedInput({SeedResults}: { SeedResults: SeedResultsContainer | null }) {
+export default function SearchSeedInput() {
+    const SeedResults = useSeedResultsContainer();
     const searchString = useCardStore(state => state.searchState.searchTerm);
     const setSearchString = useCardStore(state => state.setSearchString);
     const goToResults = useCardStore(state => state.setSelectedSearchResult);
@@ -54,11 +57,11 @@ export default function SearchSeedInput({SeedResults}: { SeedResults: SeedResult
 
     const updateSourceFilter = useCallback((parent: string, enabled?: boolean, child?: string, childEnabled?: boolean) => {
         if (!child) {
-            let current = sourceFilterConfig[parent as sources];
+            const current = sourceFilterConfig[parent as sources];
             setSourceFilterConfig({[parent]: {...current, enabled: enabled ?? true}});
         } else {
-            let current = sourceFilterConfig[parent as sources];
-            if (current && current.children) {
+            const current = sourceFilterConfig[parent as sources];
+            if (current.children) {
                 setSourceFilterConfig({
                     [parent]: {
                         enabled: current.enabled,
@@ -75,16 +78,16 @@ export default function SearchSeedInput({SeedResults}: { SeedResults: SeedResult
 
     const searchResults = useMemo(() => {
         if (searchString === '' || !searchActive) return [];
-        const cards: BuyMetaData[] = [];
-        let antes: Ante[] = Object?.values(SeedResults?.antes ?? {});
+        const cards: Array<BuyMetaData> = [];
+        const antes: Array<Ante> = Object.values(SeedResults?.antes ?? {});
         antes.forEach((ante: Ante) => {
             ante.queue.forEach((card, index) => {
-                const cardString = `${(card?.edition && card.edition !== 'No Edition') ? card.edition : ''} ${card.name}`.trim();
+                const cardString = `${(card.edition && card.edition !== 'No Edition') ? card.edition : ''} ${card.name}`.trim();
                 if (cardString.toLowerCase().includes(searchString.toLowerCase())) {
 
                     cards.push({
                         transactionType: "buy",
-                        // @ts-ignore
+                        // @ts-ignore I didn't do a great job typing cards throughout the project
                         card: card,
                         location: LOCATIONS.SHOP,
                         locationType: LOCATIONS.SHOP,
@@ -95,9 +98,11 @@ export default function SearchSeedInput({SeedResults}: { SeedResults: SeedResult
                     })
                 }
             })
-            Object.keys(ante.blinds).forEach((blind) => {
+            Object.keys(ante.blinds as Record<Blinds,Blind>).forEach((blind) => {
+                // @ts-ignore I didn't do a great job typing cards throughout the project
                 ante.blinds[blind]?.packs?.forEach((pack) => {
-                    pack.cards.forEach((card: any, index: number) => {
+                    // @ts-ignore I didn't do a great job typing cards throughout the project
+                    pack.cards.forEach((card, index) => {
                         const cardString = `${card?.edition ?? ''} ${card.name}`.trim();
                         if (cardString.toLowerCase().includes(searchString.toLowerCase())) {
                             cards.push({
@@ -114,9 +119,9 @@ export default function SearchSeedInput({SeedResults}: { SeedResults: SeedResult
                     })
                 })
             })
-            Object.values(ante.miscCardSources).forEach((source: MiscCardSource) => {
-                source.cards.forEach((card: any, index) => {
-                    const cardString = `${card?.edition ?? ''} ${card.name}`.trim();
+            Object.values(ante.miscCardSources).forEach((source) => {
+                source.cards.forEach((card, index) => {
+                    const cardString = `${card.edition} ${card.name}`.trim();
                     if (cardString.toLowerCase().includes(searchString.toLowerCase())) {
                         cards.push({
                             transactionType: "buy",
@@ -145,13 +150,13 @@ export default function SearchSeedInput({SeedResults}: { SeedResults: SeedResult
                 const miscConfig = sourceFilterConfig.misc;
                 if (miscConfig.enabled) {
                     const childConfig = miscConfig.children || {};
-                    return childConfig[location]?.enabled ?? false;
+                    return childConfig[location].enabled;
                 }
                 return false;
             }
             return false;
         })
-    }, [searchString, searchActive, sourceFilterConfig])
+    }, [searchString, searchActive, SeedResults?.antes, sourceFilterConfig.shop.enabled, sourceFilterConfig.packs.enabled, sourceFilterConfig.misc])
     return (
         <>
             <Spotlight
@@ -198,7 +203,7 @@ export default function SearchSeedInput({SeedResults}: { SeedResults: SeedResult
                 searchProps={{
                     value: searchString,
                     onChange: (e) => {
-                        let query = e.currentTarget.value;
+                        const query = e.currentTarget.value;
                         setSearchActive(query !== '')
                         setSearchString(query)
                     },
@@ -209,7 +214,7 @@ export default function SearchSeedInput({SeedResults}: { SeedResults: SeedResult
                     flex={1}
                     placeholder={'Search for cards'}
                     onClick={()=>{
-                        useGA('search_bar_clicked')
+                        GaEvent('search_bar_clicked')
                         openSpotlight()
                     }}
                     leftSection={
@@ -226,8 +231,8 @@ export default function SearchSeedInput({SeedResults}: { SeedResults: SeedResult
                                     value={
                                     ['shop', 'packs', 'misc'].filter(source => sourceFilterConfig?.[source as sources]?.enabled)
                                     }
-                                    onChange={(e:string[]) => {
-                                        const sources = Object.keys(sourceFilterConfig) as sources[];
+                                    onChange={(e:Array<string>) => {
+                                        const sources = Object.keys(sourceFilterConfig) as Array<sources>;
                                         for ( const source of sources ) {
                                             if(e.includes(source) && !sourceFilterConfig[source].enabled) {
                                                 updateSourceFilter(source, true);

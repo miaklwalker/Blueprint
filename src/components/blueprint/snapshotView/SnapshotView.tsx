@@ -1,4 +1,4 @@
-import {Ante, Joker_Final, SeedResultsContainer} from "../../../modules/ImmolateWrapper/CardEngines/Cards.ts";
+import React, {useMemo} from "react";
 import {
     Box,
     Divider,
@@ -13,22 +13,29 @@ import {
     Title,
     Tooltip
 } from "@mantine/core";
+import type {Ante, SeedResultsContainer} from "../../../modules/ImmolateWrapper/CardEngines/Cards.ts";
+import {CardTuple, Joker_Final} from "../../../modules/ImmolateWrapper/CardEngines/Cards.ts";
 import {Boss, Voucher} from "../../Rendering/gameElements.tsx";
 import {JokerCard} from "../../Rendering/cards.tsx";
-import {useMemo} from "react";
 import {useCardStore} from "../../../modules/state/store.ts";
+import {useSeedResultsContainer} from "../../../modules/state/analysisResultProvider.tsx";
 
 interface SnapshotViewProps {
     SeedResults: SeedResultsContainer;
 }
+
 // number suffix 1st, 2nd, 3rd, 4th, 5th, 6th, 7th, 8th, 9th, 10th
 function numberSuffix(num: number) {
     if (num >= 11 && num <= 13) return 'th';
     switch (num % 10) {
-        case 1: return 'st';
-        case 2: return 'nd';
-        case 3: return 'rd';
-        default: return 'th';
+        case 1:
+            return 'st';
+        case 2:
+            return 'nd';
+        case 3:
+            return 'rd';
+        default:
+            return 'th';
     }
 }
 
@@ -60,25 +67,26 @@ interface LocationData {
 }
 
 interface UniqueJokerData {
-    joker: any;
+    joker: CardTuple;
     count: number;
-    locations: LocationData[];
+    locations: Array<LocationData>;
     firstOpportunity: string;
     shopCount: number;
     packCount: number;
     miscCount: number;
 }
 
-export default function SnapshotModal({ SeedResults }: SnapshotViewProps) {
+export default function SnapshotModal() {
+    const SeedResults = useSeedResultsContainer()
     const opened = useCardStore(state => state.applicationState.snapshotModalOpen);
     const close = useCardStore(state => state.closeSnapshotModal);
 
-    const { bosses, vouchers, uniqueJokers } = useMemo(() => {
-        const bosses: { name: string, ante: number }[] = [];
-        const vouchers: { name: string, ante: number }[] = [];
+    const {bosses: Bosses, vouchers: Vouchers, uniqueJokers} = useMemo(() => {
+        const bosses: Array<{ name: string, ante: number }> = [];
+        const vouchers: Array<{ name: string, ante: number }> = [];
         const jokerMap = new Map<string, UniqueJokerData>();
 
-        if (!SeedResults) return { bosses, vouchers, uniqueJokers: [] };
+        if (!SeedResults) return {bosses, vouchers, uniqueJokers: []};
 
         const sortedAntes = Object.entries(SeedResults.antes)
             .sort(([a], [b]) => {
@@ -92,13 +100,13 @@ export default function SnapshotModal({ SeedResults }: SnapshotViewProps) {
         sortedAntes.forEach(([anteStr, anteData]: [string, Ante]) => {
             const anteNum = Number(anteStr);
             if (anteData.boss) {
-                bosses.push({ name: anteData.boss, ante: anteNum });
+                bosses.push({name: anteData.boss, ante: anteNum});
             }
             if (anteData.voucher) {
-                vouchers.push({ name: anteData.voucher, ante: anteNum });
+                vouchers.push({name: anteData.voucher, ante: anteNum});
             }
 
-            const processJoker = (item: any, source: string, sourceType: 'Shop' | 'Pack' | 'Misc', index: number) => {
+            const processJoker = (item: CardTuple, source: string, sourceType: 'Shop' | 'Pack' | 'Misc', index: number) => {
                 if (item.type === 'Joker') {
                     // Key is just the name now, to group all editions together
                     const key = item.name;
@@ -163,8 +171,9 @@ export default function SnapshotModal({ SeedResults }: SnapshotViewProps) {
             const jokerB = b.joker;
 
             // Rarity check
-            const aRarity = RARITY_ORDER[jokerA.rarity ?? 0] ?? 4;
-            const bRarity = RARITY_ORDER[jokerB.rarity ?? 0] ?? 4;
+            const aRarity = RARITY_ORDER[jokerA.rarity || 0] || 4;
+
+            const bRarity = RARITY_ORDER[jokerB.rarity || 0] || 4;
 
             if (aRarity !== bRarity) return aRarity - bRarity;
 
@@ -189,7 +198,7 @@ export default function SnapshotModal({ SeedResults }: SnapshotViewProps) {
                     <Title order={3} mb="md">Bosses</Title>
                     <ScrollArea>
                         <Group wrap="nowrap">
-                            {bosses.map((boss, index) => (
+                            {Bosses.map((boss, index) => (
                                 <Stack key={index} align="center" gap="xs">
                                     <Tooltip label={boss.name}>
                                         <Box>
@@ -207,7 +216,7 @@ export default function SnapshotModal({ SeedResults }: SnapshotViewProps) {
                     <Title order={3} mb="md">Vouchers</Title>
                     <ScrollArea>
                         <Group wrap="nowrap">
-                            {vouchers.map((voucher, index) => (
+                            {Vouchers.map((voucher, index) => (
                                 <Stack key={index} align="center" gap="xs">
                                     <Tooltip label={voucher.name}>
                                         <Box>

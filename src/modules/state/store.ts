@@ -6,7 +6,7 @@ import { BuyMetaData } from "../classes/BuyMetaData.ts";
 import { analyzeSeed } from "../ImmolateWrapper";
 import { SeedResultsContainer } from "../ImmolateWrapper/CardEngines/Cards.ts";
 
-
+export type Blinds = 'smallBlind' | 'bigBlind' | 'bossBlind';
 export interface InitialState {
     immolateState: {
         seed: string;
@@ -35,7 +35,7 @@ export interface InitialState {
         miscSource: string;
         asideTab: string;
         selectedAnte: number;
-        selectedBlind: string;
+        selectedBlind: Blinds;
         hasSettingsChanged: boolean;
         analyzedResults: SeedResultsContainer | null | undefined;
         maxMiscCardSource: number;
@@ -61,7 +61,55 @@ export interface InitialState {
         lockedCards: Record<string, any>  // Maps card IDs to locked cards
     }
 }
-
+interface StoreActions {
+    setViewMode: (viewMode: string) => void;
+    setSeed: (seed: string) => void;
+    setDeck: (deck: string) => void;
+    setCardsPerAnte: (cardsPerAnte: number) => void;
+    setAntes: (antes: number) => void;
+    setStake: (stake: string) => void;
+    setGameVersion: (gameVersion: string) => void;
+    setSelectedOptions: (selectedOptions: Array<string>) => void;
+    setUseCardPeek: (useCardPeek: boolean) => void;
+    setStart: (start: boolean) => void;
+    setShowCardSpoilers: (showCardSpoilers: boolean) => void;
+    openSelectOptionModal: () => void;
+    closeSelectOptionModal: () => void;
+    openFeaturesModal: () => void;
+    closeFeaturesModal: () => void;
+    openRerollCalculatorModal: (metadata: any) => void;
+    closeRerollCalculatorModal: () => void;
+    openSnapshotModal: () => void;
+    closeSnapshotModal: () => void;
+    setSelectedAnte: (selectedAnte: number) => void;
+    setSelectedBlind: (selectedBlind: Blinds) => void;
+    toggleSettings: () => void;
+    toggleOutput: () => void;
+    setMiscSource: (source: string) => void;
+    setAsideTab: (tab: string) => void;
+    setSearchString: (searchString: string) => void;
+    setMiscMaxSource: (maxSource: number) => void;
+    setRerollStartIndex: (index: number) => void;
+    setSelectedSearchResult: (result: BuyMetaData) => void;
+    navigateToMiscSource: (source: string) => void;
+    addBuy: (buy: BuyMetaData) => void;
+    removeBuy: (buy: BuyMetaData) => void;
+    isOwned: (key: string) => boolean;
+    addSell: (sell: BuyMetaData) => void;
+    undoSell: (sell: BuyMetaData) => void;
+    setBuys: (buys: { [key: string]: BuyMetaData }) => void;
+    setSells: (sells: { [key: string]: BuyMetaData }) => void;
+    trackEvent: (event: any) => void;
+    clearEvents: () => void;
+    removeEvent: (index: number) => void;
+    setHasSettingsChanged: (hasSettingsChanged: boolean) => void;
+    analyzeSeed: () => void;
+    lockCard: (cardId: string, card: any) => void;
+    unlockCard: (cardId: string) => void;
+    clearLockedCards: () => void;
+    reset: () => void;
+}
+export interface CardStore extends InitialState, StoreActions { }
 const initialState: InitialState = {
     immolateState: {
         seed: '',
@@ -172,114 +220,116 @@ function getImmolateStateFromUrl() {
 }
 
 
-export const useCardStore = create(
+export const useCardStore = create<CardStore,[
+    ["zustand/devtools", never], ["zustand/persist", unknown], ["zustand/immer", never]
+]>(
     devtools(
         persist(
             immer(
                 combine(initialState,
                     (set, get) => ({
-                        setViewMode: (viewMode: string) => set((prev: InitialState) => {
+                        setViewMode: (viewMode) => set((prev) => {
                             prev.applicationState.viewMode = viewMode;
                         }, undefined, 'Global/SetViewMode'),
-                        setSeed: (seed: string) => set((prev: InitialState) => {
-                            prev.immolateState.seed = seed?.toUpperCase();
+                        setSeed: (seed) => set((prev) => {
+                            prev.immolateState.seed = seed.toUpperCase();
                             prev.shoppingState = initialState.shoppingState
                             prev.searchState = initialState.searchState;
                             prev.applicationState.hasSettingsChanged = true;
                         }, undefined, 'Global/SetSeed'),
-                        setDeck: (deck: string) => set((prev: InitialState) => {
+                        setDeck: (deck: string) => set((prev) => {
                             prev.immolateState.deck = deck
                             prev.applicationState.hasSettingsChanged = true;
                         }, undefined, 'Global/SetDeck'),
-                        setUseCardPeek: (useCardPeek: boolean) => set((prev: InitialState) => {
+                        setUseCardPeek: (useCardPeek) => set((prev) => {
                             prev.applicationState.useCardPeek = useCardPeek
                         }, undefined, 'Global/SetCardPeek'),
-                        setCardsPerAnte: (cardsPerAnte: number) => set((prev: InitialState) => {
+                        setCardsPerAnte: (cardsPerAnte) => set((prev) => {
                             prev.immolateState.cardsPerAnte = cardsPerAnte
                             prev.applicationState.hasSettingsChanged = true;
                         }, undefined, 'Global/SetCardsPerAnte'),
-                        setAntes: (antes: number) => set((prev: InitialState) => {
+                        setAntes: (antes) => set((prev) => {
                             prev.immolateState.antes = antes
                             prev.applicationState.hasSettingsChanged = true;
                         }, undefined, 'Global/SetAntes'),
-                        setStake: (stake: string) => set((prev: InitialState) => {
+                        setStake: (stake) => set((prev) => {
                             prev.immolateState.stake = stake
                             prev.applicationState.hasSettingsChanged = true;
                         }, undefined, 'Global/SetStake'),
-                        setGameVersion: (gameVersion: string) => set((prev: InitialState) => {
+                        setGameVersion: (gameVersion) => set((prev) => {
                             prev.immolateState.gameVersion = gameVersion
                             prev.applicationState.hasSettingsChanged = true;
                         }, undefined, 'Global/SetGameVersion'),
-                        setSelectedOptions: (selectedOptions: string[]) => set((prev: InitialState) => {
+                        setSelectedOptions: (selectedOptions) => set((prev) => {
                             prev.immolateState.selectedOptions = selectedOptions
                             prev.applicationState.hasSettingsChanged = true;
                         }, undefined, 'Global/SetSelectedOptions'),
 
-                        setStart: (start: boolean) => set((prev: InitialState) => {
+                        setStart: (start) => set((prev) => {
                             prev.applicationState.start = start
                             prev.applicationState.settingsOpen = false
                         }, undefined, 'Global/SetStart'),
 
-                        setShowCardSpoilers: (showCardSpoilers: boolean) => set((prev: InitialState) => {
+                        setShowCardSpoilers: (showCardSpoilers) => set((prev) => {
                             prev.applicationState.showCardSpoilers = showCardSpoilers
                         }, undefined, 'Global/SetShowCardSpoilers'),
-                        openSelectOptionModal: () => set((prev: InitialState) => {
+                        openSelectOptionModal: () => set((prev) => {
                             prev.applicationState.selectOptionsModalOpen = true
                         }, undefined, 'Global/OpenSelectOptionModal'),
-                        closeSelectOptionModal: () => set((prev: InitialState) => {
+                        closeSelectOptionModal: () => set((prev) => {
                             prev.applicationState.selectOptionsModalOpen = false
                         }, undefined, 'Global/CloseSelectOptionModal'),
-                        openFeaturesModal: () => set((prev: InitialState) => {
+                        openFeaturesModal: () => set((prev) => {
                             prev.applicationState.featuresModalOpen = true
                         }, undefined, 'Global/OpenFeaturesModal'),
-                        closeFeaturesModal: () => set((prev: InitialState) => {
+                        closeFeaturesModal: () => set((prev) => {
                             prev.applicationState.featuresModalOpen = false
                         }, undefined, 'Global/CloseFeaturesModal'),
-                        openRerollCalculatorModal: (metadata: any) => set((prev: InitialState) => {
+                        openRerollCalculatorModal: (metadata) => set((prev) => {
                             prev.applicationState.rerollCalculatorModalOpen = true
                             prev.applicationState.rerollCalculatorMetadata = metadata
                         }, undefined, 'Global/OpenRerollCalculatorModal'),
-                        closeRerollCalculatorModal: () => set((prev: InitialState) => {
+                        closeRerollCalculatorModal: () => set((prev) => {
                             prev.applicationState.rerollCalculatorModalOpen = false
                             prev.applicationState.rerollCalculatorMetadata = null
                         }, undefined, 'Global/CloseRerollCalculatorModal'),
-                        openSnapshotModal: () => set((prev: InitialState) => {
+                        openSnapshotModal: () => set((prev) => {
                             prev.applicationState.snapshotModalOpen = true
                         }, undefined, 'Global/OpenSnapshotModal'),
-                        closeSnapshotModal: () => set((prev: InitialState) => {
+                        closeSnapshotModal: () => set((prev) => {
                             prev.applicationState.snapshotModalOpen = false
                         }, undefined, 'Global/CloseSnapshotModal'),
-                        setSelectedAnte: (selectedAnte: number) => set((prev: InitialState) => {
+                        setSelectedAnte: (selectedAnte) => set((prev) => {
                             prev.applicationState.selectedAnte = selectedAnte
                             prev.applicationState.selectedBlind = prev.applicationState.selectedAnte === 1 ? 'bigBlind' : 'smallBlind'
                             prev.searchState.selectedSearchResult = null;
                         }, undefined, 'Global/SetSelectedAnte'),
-                        setSelectedBlind: (selectedBlind: string) => set((prev: InitialState) => {
+                        setSelectedBlind: (selectedBlind) => set((prev) => {
                             prev.applicationState.selectedBlind = selectedBlind
                         }, undefined, 'Global/SetSelectedBlind'),
-                        toggleSettings: () => set((prev: InitialState) => {
+                        toggleSettings: () => set((prev) => {
                             prev.applicationState.settingsOpen = !prev.applicationState.settingsOpen;
                         }, undefined, 'Global/ToggleSettings'),
-                        toggleOutput: () => set((prev: InitialState) => {
+                        toggleOutput: () => set((prev) => {
                             prev.applicationState.asideOpen = !prev.applicationState.asideOpen;
                         }, undefined, 'Global/ToggleOutput'),
-                        setMiscSource: (source: string) => set((prev: InitialState) => {
+                        setMiscSource: (source) => set((prev) => {
                             prev.applicationState.miscSource = source
 
                         }, undefined, "Global/SetMiscSource"),
-                        setAsideTab: (tab: string) => set((prev: InitialState) => {
+                        setAsideTab: (tab) => set((prev) => {
                             prev.applicationState.asideTab = tab
                         }, undefined, "Global/SetAsideTab"),
-                        setSearchString: (searchString: string) => set((prev: InitialState) => {
+                        setSearchString: (searchString) => set((prev) => {
                             prev.searchState.searchTerm = searchString
                         }, undefined, 'Global/Search/SetSearch'),
-                        setMiscMaxSource: (maxSource: number) => set((prev: InitialState) => {
+                        setMiscMaxSource: (maxSource) => set((prev) => {
                             prev.applicationState.maxMiscCardSource = maxSource
                         }, undefined, 'Global/SetMiscMaxSource'),
-                        setRerollStartIndex: (index: number) => set((prev: InitialState) => {
+                        setRerollStartIndex: (index) => set((prev) => {
                             prev.applicationState.rerollStartIndex = index
                         }, undefined, 'Global/SetRerollStartIndex'),
-                        setSelectedSearchResult: (result: BuyMetaData) => set((prev: InitialState) => {
+                        setSelectedSearchResult: (result) => set((prev) => {
                             prev.searchState.selectedSearchResult = result
                             prev.applicationState.selectedAnte = Number(result.ante)
                             prev.applicationState.selectedBlind = result.blind
@@ -291,52 +341,52 @@ export const useCardStore = create(
                             }
 
                         }, undefined, 'Global/Search/SetSelectedSearchResult'),
-                        navigateToMiscSource: (source: string) => set((prev: InitialState) => {
+                        navigateToMiscSource: (source) => set((prev) => {
                             prev.applicationState.asideOpen = true
                             prev.applicationState.settingsOpen = false
                             prev.applicationState.asideTab = 'sources'
                             prev.applicationState.miscSource = source
 
                         }, undefined, 'Global/NavigateToMiscSource'),
-                        addBuy: (buy: BuyMetaData) => set((prev: InitialState) => {
+                        addBuy: (buy) => set((prev) => {
                             let key = `${buy.ante}-${buy.location}-${buy.index}${buy.locationType === LOCATION_TYPES.PACK ? `-${buy.blind}` : ''}`;
                             prev.shoppingState.buys[key] = buy;
                         }, undefined, 'Global/AddBuy'),
-                        removeBuy: (buy: BuyMetaData) => set((prev: InitialState) => {
+                        removeBuy: (buy) => set((prev) => {
                             let key = `${buy.ante}-${buy.location}-${buy.index}${buy.locationType === LOCATION_TYPES.PACK ? `-${buy.blind}` : ''}`;
                             delete prev.shoppingState.buys[key];
                         }, undefined, 'Global/RemoveBuy'),
                         isOwned: (key: string) => {
                             return key in get().shoppingState.buys;
                         },
-                        addSell: (sell: BuyMetaData) => set((prev: InitialState) => {
+                        addSell: (sell) => set((prev) => {
                             let key = `${sell.ante}-${sell.blind}-${sell.name}`;
                             prev.shoppingState.sells[key] = sell;
                         }, undefined, 'Global/AddSell'),
-                        undoSell: (sell: BuyMetaData) => set((prev: InitialState) => {
+                        undoSell: (sell) => set((prev) => {
                             let key = `${sell.ante}-${sell.blind}-${sell.name}`;
                             delete prev.shoppingState.sells[key];
                         }, undefined, 'Global/UndoSell'),
-                        setBuys: (buys: { [key: string]: BuyMetaData }) => set((prev: InitialState) => {
+                        setBuys: (buys) => set((prev) => {
                             prev.shoppingState.buys = buys;
                         }, undefined, 'Global/SetBuys'),
 
-                        setSells: (sells: { [key: string]: BuyMetaData }) => set((prev: InitialState) => {
+                        setSells: (sells) => set((prev) => {
                             prev.shoppingState.sells = sells;
                         }, undefined, 'Global/SetSells'),
-                        trackEvent: (event: any) => set((prev: InitialState) => {
+                        trackEvent: (event) => set((prev) => {
                             prev.eventState.events.push(event)
                         }, undefined, 'Global/TrackEvent'),
-                        clearEvents: () => set((prev: InitialState) => {
+                        clearEvents: () => set((prev) => {
                             prev.eventState.events = []
                         }, undefined, 'Global/ClearEvents'),
-                        removeEvent: (index: number) => set((prev: InitialState) => {
+                        removeEvent: (index) => set((prev) => {
                             prev.eventState.events.splice(index, 1)
                         }, undefined, 'Global/RemoveEvent'),
-                        setHasSettingsChanged: (hasSettingsChanged: boolean) => set((prev: InitialState) => {
+                        setHasSettingsChanged: (hasSettingsChanged) => set((prev) => {
                             prev.applicationState.hasSettingsChanged = hasSettingsChanged
                         }, undefined, 'Global/SetHasSettingsChanged'),
-                        analyzeSeed: () => set((prev: InitialState) => {
+                        analyzeSeed: () => set((prev) => {
                             const analyzeState = get().immolateState;
                             const buys = get().shoppingState.buys;
                             const sells = get().shoppingState.sells;
@@ -358,53 +408,20 @@ export const useCardStore = create(
                             prev.applicationState.analyzedResults = analyzeSeed(analyzeState, options);
                             prev.applicationState.hasSettingsChanged = false; // Reset flag after analyzing
                         }, undefined, 'Global/AnalyzeSeed'),
-                        lockCard: (cardId: string, card: any) => set((prev: InitialState) => {
+                        lockCard: (cardId: string, card: any) => set((prev) => {
                             prev.lockState.lockedCards[cardId] = card;
                             prev.applicationState.hasSettingsChanged = true;
                             return prev;
                         }, undefined, 'Cards/LockCard'),
 
-                        downloadImmolateResults: () => {
-                            const analyzeState = get().immolateState;
-                            const buys = get().shoppingState.buys;
-                            const sells = get().shoppingState.sells;
-                            const showCardSpoilers = get().applicationState.showCardSpoilers;
-                            const unlocks = get().immolateState.selectedOptions;
-                            const events = get().eventState.events;
-                            const lockedCards = get().lockState.lockedCards;
 
-                            const options = {
-                                showCardSpoilers,
-                                unlocks,
-                                events,
-                                updates: [],
-                                buys,
-                                sells,
-                                lockedCards
-                            }
-                            const immolateResults = analyzeSeed(analyzeState, options)
-                            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify
-                                ({
-                                    analyzeState,
-                                    options,
-                                    immolateResults
-                                }, null, 2));
-                            const downloadAnchorNode = document.createElement('a');
-                            downloadAnchorNode.setAttribute("href", dataStr);
-                            const fileName = `${analyzeState.seed}.json`;
-                            downloadAnchorNode.setAttribute("download", fileName);
-                            document.body.appendChild(downloadAnchorNode); // required for firefox
-                            downloadAnchorNode.click();
-                            downloadAnchorNode.remove();
-                        },
-
-                        unlockCard: (cardId: string) => set((prev: InitialState) => {
+                        unlockCard: (cardId: string) => set((prev) => {
                             delete prev.lockState.lockedCards[cardId];
                             prev.applicationState.hasSettingsChanged = true;
                             return prev;
                         }, undefined, 'Cards/UnlockCard'),
 
-                        clearLockedCards: () => set((prev: InitialState) => {
+                        clearLockedCards: () => set((prev) => {
                             prev.lockState.lockedCards = {};
                             prev.applicationState.hasSettingsChanged = true;
                             return prev;

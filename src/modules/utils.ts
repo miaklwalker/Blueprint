@@ -23,7 +23,7 @@ export function getSealPosition(seal: string) {
     return sealMap[seal];
 }
 
-export function getEnhancerPosition(modifiers: string[]) {
+export function getEnhancerPosition(modifiers: Array<string>) {
     const enhancerMap:{[key:string]: {x:number, y:number}} = {
         'Bonus': { x: 1, y: 1 },
         'Mult': { x: 2, y: 1 },

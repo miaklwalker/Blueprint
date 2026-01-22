@@ -1,3 +1,4 @@
+import React from 'react';
 import {MiscCardSource} from "../modules/ImmolateWrapper";
 import {Accordion, Box, Center, Group, Paper, Text, Title} from "@mantine/core";
 import {useCardStore} from "../modules/state/store.ts";
@@ -13,7 +14,7 @@ import {Boss} from "./Rendering/gameElements.tsx";
 import {Tag} from "./Rendering/gameElements.tsx";
 import {Joker_Final, StandardCard_Final} from "../modules/ImmolateWrapper/CardEngines/Cards.ts";
 
-export default function MiscCardSourcesDisplay({miscSources, boosterQueue, bossQueue, tagQueue, voucherQueue, wheelQueue, auraQueue }: {
+export default function MiscCardSourcesDisplay({miscSources, boosterQueue, bossQueue, tagQueue, voucherQueue, wheelQueue, auraQueue, draws }: {
     miscSources?: MiscCardSource[],
     bossQueue?: any[],
     boosterQueue?: any[],
@@ -21,6 +22,7 @@ export default function MiscCardSourcesDisplay({miscSources, boosterQueue, bossQ
     voucherQueue?: any[]
     wheelQueue?: any[]
     auraQueue?: any[]
+    draws?: Record<string, any[]>
 }) {
     if (!miscSources || Object.keys(miscSources).length === 0) {
         return (
@@ -346,6 +348,67 @@ export default function MiscCardSourcesDisplay({miscSources, boosterQueue, bossQ
                         }
                     </Accordion.Panel>
                 </Accordion.Item>
+                {/* Draws Sections */ }
+                {
+                    draws && Object.entries(draws).map(([k,v]) => {
+                        return (
+                        <Accordion.Item key={String(k)} value={String(k)}>
+                            <Accordion.Control>
+                                <Group>
+                                    <Text fw={500}>{toHeaderCase(String(k))}</Text>
+                                </Group>
+                            </Accordion.Control>
+                            <Accordion.Panel>
+                                {
+                                    String(k) === currentSource &&
+                                    <Box>
+                                        <Carousel
+                                            getEmblaApi={setEmbla}
+                                            type={'container'}
+                                            slideSize="90px"
+                                            slideGap={{base: 'xs'}}
+                                            withControls={false}
+                                            height={190}
+                                            emblaOptions={{
+                                                dragFree: true,
+                                                align:'start'
+                                            }}
+
+                                        >
+                                            {v?.map((card: any, i: number) => (
+                                                <Carousel.Slide key={i}>
+                                                    <BuyWrapper
+                                                        metaData={{
+                                                            location: '',
+                                                            blind:'smallBlind',
+                                                            transactionType: "buy",
+                                                            locationType: LOCATIONS.MISC,
+                                                            index: i,
+                                                            ante: String(currentAnte),
+                                                            name: card?.name,
+                                                            card: card
+                                                        }}
+                                                    >
+                                                        <GameCard card={
+                                                            card
+                                                        }/>
+                                                    </BuyWrapper>
+
+                                                </Carousel.Slide>
+                                            ))}
+                                        </Carousel>
+                                    </Box>
+                                }
+                            </Accordion.Panel>
+                        </Accordion.Item>
+                    )
+                    })
+                }
+
+
+
+
+
             </Accordion>
         </Paper>
     );

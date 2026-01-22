@@ -175,6 +175,11 @@ export function Aside() {
     const buys = useCardStore(state => state.shoppingState.buys);
     const sells = useCardStore(state => state.shoppingState.sells);
     const transactionsCount = Object.keys(buys).length + Object.keys(sells).length;
+    const blinds = Object
+        .entries(anteData?.blinds ?? {})
+        .reduce((acc, [k, v]) => {
+            return {...acc, [k]: v.deck};
+        },{})
     const theme = useMantineTheme();
 
     const tab = useCardStore(state => state.applicationState.asideTab);
@@ -227,6 +232,7 @@ export function Aside() {
                                 wheelQueue={wheelQueue}
                                 auraQueue={auraQueue}
                                 boosterQueue={boosterQueue}
+                                draws={blinds}
                             />
                         ) : (
                             <Center h={200}>

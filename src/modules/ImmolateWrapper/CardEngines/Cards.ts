@@ -302,6 +302,7 @@ export class SeedResultsContainer {
 }
 export interface Blind {
     packs: Array<Pack>;
+    deck: Array<Stringifies>;
 }
 export class Ante {
     ante: number;
@@ -331,13 +332,16 @@ export class Ante {
         this.miscCardSources = [];
         this.blinds = {
             smallBlind: {
-                packs: []
+                packs: [],
+                deck: []
             },
             bigBlind: {
-                packs: []
+                packs: [],
+                deck: []
             },
             bossBlind: {
-                packs: []
+                packs: [],
+                deck: []
             }
         }
     }

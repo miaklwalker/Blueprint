@@ -1,18 +1,20 @@
-import { EVENT_UNLOCKS, LOCATIONS, options } from "../const.ts";
-import { RNGSource, RandomQueueNames } from "../balatrots/enum/QueueName.ts";
-import { Deck, deckMap } from "../balatrots/enum/Deck.ts";
-import { Stake } from "../balatrots/enum/Stake.ts";
-import { Game } from "../balatrots/Game.ts";
-import { InstanceParams } from "../balatrots/struct/InstanceParams.ts";
-import { JokerData } from "../balatrots/struct/JokerData.ts";
-import { Type } from "../balatrots/enum/cards/CardType.ts";
-import { Card } from "../balatrots/enum/cards/Card.ts";
-import { PlanetItem } from "../balatrots/enum/cards/Planet.ts";
-import { Tarot } from "../balatrots/enum/cards/Tarot.ts";
-import { SpectralItem } from "../balatrots/enum/packs/Spectral.ts";
-import { SpecialsItem } from "../balatrots/enum/cards/Specials.ts";
-import { BalatroAnalyzer } from "../balatrots/BalatroAnalyzer.ts";
-import { Lock } from "../balatrots/Lock.ts"
+import {EVENT_UNLOCKS, LOCATIONS, options} from "../const.ts";
+import {RandomQueueNames, RNGSource} from "../balatrots/enum/QueueName.ts";
+import {Deck, deckMap} from "../balatrots/enum/Deck.ts";
+import type {StakeType} from "../balatrots/enum/Stake.ts";
+import {Stake} from "../balatrots/enum/Stake.ts";
+import {Game} from "../balatrots/Game.ts";
+import {InstanceParams} from "../balatrots/struct/InstanceParams.ts";
+import {JokerData} from "../balatrots/struct/JokerData.ts";
+import {Type} from "../balatrots/enum/cards/CardType.ts";
+import {Card} from "../balatrots/enum/cards/Card.ts";
+import {PlanetItem} from "../balatrots/enum/cards/Planet.ts";
+import {Tarot} from "../balatrots/enum/cards/Tarot.ts";
+import {SpectralItem} from "../balatrots/enum/packs/Spectral.ts";
+import {SpecialsItem} from "../balatrots/enum/cards/Specials.ts";
+import {BalatroAnalyzer} from "../balatrots/BalatroAnalyzer.ts";
+import {Lock} from "../balatrots/Lock.ts"
+import type {BoosterPack, Card_Final, Consumables_Final, NextShopItem, PackCard} from "./CardEngines/Cards.ts";
 import {
     Ante,
     Joker_Final,
@@ -23,14 +25,9 @@ import {
     StandardCard_Final,
     Tarot_Final
 } from "./CardEngines/Cards.ts";
-import type { Voucher } from "../balatrots/enum/Voucher.ts";
-import type { StakeType } from "../balatrots/enum/Stake.ts";
-import type {
-    BoosterPack,
-    Card_Final,
-    Consumables_Final,
-    NextShopItem,
-    PackCard} from "./CardEngines/Cards.ts";
+import type {Voucher} from "../balatrots/enum/Voucher.ts";
+import {Edition, EditionItem} from "../balatrots/enum/Edition.ts";
+import {Seal, SealItem} from "../balatrots/enum/Seal.ts";
 
 export type SpoilableItems = "The Soul" | "Judgement" | "Wraith";
 export interface MiscCardSource {
@@ -549,17 +546,14 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
             if (engine.hasSpoilers && spoilerSource) {
                 const joker: JokerData = engine.peekJoker(spoilerSource, ante, true);
                 result.queue.push(
-                    // @ts-expect-error reports types dont match.
                     engineWrapper.makeGameCard(joker)
                 )
             } else if (shopItem.type === Type.JOKER) {
                 result.queue.push(
-                    // @ts-expect-error reports types dont match.
                     engineWrapper.makeGameCard(shopItem.jokerData)
                 )
             } else {
                 result.queue.push(
-                    // @ts-expect-error reports types dont match.
                     engineWrapper.makeGameCard(shopItem.item)
                 )
             }
@@ -692,7 +686,13 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
             }
         }
 
-
+        result.blinds.smallBlind.deck = engine.getDeckDraw(ante,1,52)
+            .map(item=>engineWrapper.makeGameCard(new Card(item.name, 'No Enhancement', new EditionItem(Edition.NO_EDITION),new SealItem(Seal.NO_SEAL))))
+        result.blinds.bigBlind.deck = engine.getDeckDraw(ante,2,52)
+            .map(item=>engineWrapper.makeGameCard(new Card(item.name, 'No Enhancement', new EditionItem(Edition.NO_EDITION),new SealItem(Seal.NO_SEAL))))
+        result.blinds.bossBlind.deck = engine.getDeckDraw(ante,3,52)
+            .map(item=>engineWrapper.makeGameCard(new Card(item.name, 'No Enhancement', new EditionItem(Edition.NO_EDITION),new SealItem(Seal.NO_SEAL))))
+        console.log(result.blinds);
         // voucher queue
         const queueDepth = 20
 

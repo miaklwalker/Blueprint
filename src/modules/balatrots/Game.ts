@@ -7,7 +7,7 @@ import { LegendaryJoker, LegendaryJokerItem } from "./enum/cards/LegendaryJoker"
 import { UncommonJoker, UncommonJokerItem } from "./enum/cards/UncommonJoker";
 import { UncommonJoker101CItem, UncommonJoker_101C } from "./enum/cards/UncommonJoker_101C";
 import { UncommonJoker100Item, UncommonJoker_100 } from "./enum/cards/UncommonJoker_100";
-import { Card, PlayingCard } from "./enum/cards/Card";
+import {Card, PlayingCard} from "./enum/cards/Card";
 import { Enhancement, EnhancementItem } from "./enum/Enhancement";
 import { Voucher, VoucherItem } from "./enum/Voucher";
 import { Tag, TagItem } from "./enum/Tag";
@@ -1136,4 +1136,100 @@ item wheel_of_fortune_edition(instance* inst) {
 
     */
 
+    private getNodeAt(id: string, n: number): number {
+        let c = pseudohash(id + this.seed);
+        let value = 0;
+        for (let i = 0; i < n; i++) {
+            value = round13((c * 1.72431234 + 2.134453429141) % 1);
+            c = value;
+        }
+        return (value + this.hashedSeed) / 2;
+    }
+    static get CARDS_ABANDONED(): Card[] {
+        // Abandoned Deck: 40 cards, no face cards (J, Q, K).
+        return this.CARDS.filter(c => {
+            const name = c.getName();
+            return !name.includes("_J") && !name.includes("_Q") && !name.includes("_K");
+        }).map(c => new Card(c.getName() as PlayingCard));
+    }
+
+    static get CARDS_CHECKERED(): Card[] {
+        // Checkered Deck: 52 cards (Hearts/Spades only).
+        return this.CARDS.map(c => {
+            const name = c.getName() as string;
+            const rank = name.split("_")[1];
+            const suit = name.split("_")[0];
+            let newSuit = suit;
+            if (suit === 'C') newSuit = 'S';
+            if (suit === 'D') newSuit = 'H';
+            return new Card(`${newSuit}_${rank}` as PlayingCard);
+        });
+    }
+
+    /**
+     * Returns a fully shuffled deck for the given ante and round index (1, 2, or 3).
+     */
+    private getShuffledDeck(ante: number, round: number = 1): Card[] {
+        const deckType = this.params.getDeck().name;
+        let cards: Card[];
+
+        switch (deckType) {
+            case deckNames[DeckType.ABANDONED_DECK]:
+                cards = Game.CARDS_ABANDONED;
+                break;
+            case deckNames[DeckType.CHECKERED_DECK]:
+                cards = Game.CARDS_CHECKERED;
+                break;
+            case deckNames[DeckType.ERRATIC_DECK]: {
+                // erratic_suits_and_ranks randomization
+                const pool = [...Game.CARDS].sort((a, b) => a.getName().localeCompare(b.getName()));
+                const randomizedCards: Card[] = [];
+                const suitsOrder = ["H", "C", "D", "S"];
+                const ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"];
+
+                for (const _suit of suitsOrder) {
+                    for (const _rank of ranks) {
+                        const erraticRng = new LuaRandom(this.getNode("erratic"));
+                        const randomIndex = erraticRng.randint(1, pool.length);
+                        randomizedCards.push(new Card(pool[randomIndex - 1].getName() as PlayingCard));
+                    }
+                }
+                cards = randomizedCards;
+                break;
+            }
+            default:
+                cards = Game.CARDS.map(c => new Card(c.getName() as PlayingCard));
+                break;
+        }
+
+        const rng = new LuaRandom(this.getNodeAt(`${RandomQueueNames.R_Shuffle_New_Round}${ante}`, round));
+
+        for (let i = cards.length - 1; i >= 1; i--) {
+            const j = rng.randint(1, i + 1) -1;
+            let temp = cards[i];
+            cards[i] = cards[j];
+            cards[j] = temp;
+
+        }
+
+        // Balatro draws from the end (FILO).
+        // Return reversed so index 0 is the first card drawn.
+        return cards.reverse();
+    }
+
+    /**
+     * Returns the 'draw' used at the start of a round/ante.
+     * @param ante The current ante number
+     * @param round The round index within the ante (1, 2, or 3) (default 1)
+     * @param count Number of cards to draw (default 8)
+     */
+    getDeckDraw(ante: number, round: number = 1, count: number = 8): Card[] {
+        const deck = this.getShuffledDeck(ante, round);
+        return deck.slice(0, count);
+    }
+
+    getStartingDeckDraw(): Card[] {
+        // pifreak loves you!
+        return this.getDeckDraw(1, 1, 8);
+    }
 }

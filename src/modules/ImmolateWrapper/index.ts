@@ -692,7 +692,6 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
             .map(item=>engineWrapper.makeGameCard(new Card(item.name, 'No Enhancement', new EditionItem(Edition.NO_EDITION),new SealItem(Seal.NO_SEAL))))
         result.blinds.bossBlind.deck = engine.getDeckDraw(ante,3,52)
             .map(item=>engineWrapper.makeGameCard(new Card(item.name, 'No Enhancement', new EditionItem(Edition.NO_EDITION),new SealItem(Seal.NO_SEAL))))
-        console.log(result.blinds);
         // voucher queue
         const queueDepth = 20
 

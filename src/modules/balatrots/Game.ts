@@ -1181,20 +1181,12 @@ item wheel_of_fortune_edition(instance* inst) {
                 cards = Game.CARDS_CHECKERED;
                 break;
             case deckNames[DeckType.ERRATIC_DECK]: {
-                // erratic_suits_and_ranks randomization
-                const pool = [...Game.CARDS].sort((a, b) => a.getName().localeCompare(b.getName()));
                 const randomizedCards: Card[] = [];
-                const suitsOrder = ["H", "C", "D", "S"];
-                const ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"];
-
-                for (const _suit of suitsOrder) {
-                    for (const _rank of ranks) {
-                        const erraticRng = new LuaRandom(this.getNode("erratic"));
-                        const randomIndex = erraticRng.randint(1, pool.length);
-                        randomizedCards.push(new Card(pool[randomIndex - 1].getName() as PlayingCard));
-                    }
+                for(let i = 0; i < 52; i++){
+                    const card = this.randchoice_simple(RandomQueueNames.R_Erratic, Game.CARDS);
+                    randomizedCards.push(new Card(card.getName() as PlayingCard));
                 }
-                cards = randomizedCards;
+                cards = randomizedCards.sort((a, b) => a.getName().localeCompare(b.getName()));
                 break;
             }
             default:

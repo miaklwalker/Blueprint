@@ -1220,8 +1220,29 @@ item wheel_of_fortune_edition(instance* inst) {
         return deck.slice(0, count);
     }
 
-    getStartingDeckDraw(): Array<Card> {
+    getStartingDeckDraw(count = 8, sort : 'rank' | 'suit' = 'rank'): Array<Card> {
         // pifreak loves you!
-        return this.getDeckDraw(1, 1, 8);
+        const hand = this.getDeckDraw(1, 1, count);
+        const suitOrder = { 'C': 0, 'D': 1, 'H': 2, 'S': 3 } as {
+            [key: string]: number
+        }
+        switch (sort) {
+            case 'rank':
+                return hand.sort((a, b) => {
+                    const rankA = parseInt(a.getName().split('_')[1]);
+                    const rankB = parseInt(b.getName().split('_')[1]);
+                    return rankA - rankB;
+                });
+            case 'suit':
+                return hand.sort((a, b) => {
+                    const suitA = a.getName().split('_')[0];
+                    const suitB = b.getName().split('_')[0];
+                    return suitOrder[suitA] - suitOrder[suitB];
+                });
+        }
+
+
+
+
     }
 }

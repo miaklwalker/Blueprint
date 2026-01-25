@@ -1043,7 +1043,7 @@ export class Game extends Lock {
         } else {
             const item = (card as ItemImpl).getName();
             const spoilerSource = this.hasSpoilersMap[item];
-            if (this.hasSpoilers) {
+            if (this.hasSpoilers && spoilerSource) {
                 return this.peekJoker(spoilerSource, ante, false)
             }
             return card as Card;
@@ -1145,7 +1145,7 @@ item wheel_of_fortune_edition(instance* inst) {
         }
         return (value + this.hashedSeed) / 2;
     }
-    static get CARDS_ABANDONED(): Card[] {
+    static get CARDS_ABANDONED(): Array<Card> {
         // Abandoned Deck: 40 cards, no face cards (J, Q, K).
         return this.CARDS.filter(c => {
             const name = c.getName();
@@ -1153,10 +1153,10 @@ item wheel_of_fortune_edition(instance* inst) {
         }).map(c => new Card(c.getName() as PlayingCard));
     }
 
-    static get CARDS_CHECKERED(): Card[] {
+    static get CARDS_CHECKERED(): Array<Card> {
         // Checkered Deck: 52 cards (Hearts/Spades only).
         return this.CARDS.map(c => {
-            const name = c.getName() as string;
+            const name = c.getName();
             const rank = name.split("_")[1];
             const suit = name.split("_")[0];
             let newSuit = suit;
@@ -1169,7 +1169,7 @@ item wheel_of_fortune_edition(instance* inst) {
     /**
      * Returns a fully shuffled deck for the given ante and round index (1, 2, or 3).
      */
-    private getShuffledDeck(ante: number, round: number = 1): Card[] {
+    private getShuffledDeck(ante: number, round: number = 1): Array<Card> {
         const deckType = this.params.getDeck().name;
         let cards: Card[];
 
@@ -1181,7 +1181,7 @@ item wheel_of_fortune_edition(instance* inst) {
                 cards = Game.CARDS_CHECKERED;
                 break;
             case deckNames[DeckType.ERRATIC_DECK]: {
-                const randomizedCards: Card[] = [];
+                const randomizedCards: Array<Card> = [];
                 for(let i = 0; i < 52; i++){
                     const card = this.randchoice_simple(RandomQueueNames.R_Erratic, Game.CARDS);
                     randomizedCards.push(new Card(card.getName() as PlayingCard));
@@ -1215,12 +1215,12 @@ item wheel_of_fortune_edition(instance* inst) {
      * @param round The round index within the ante (1, 2, or 3) (default 1)
      * @param count Number of cards to draw (default 8)
      */
-    getDeckDraw(ante: number, round: number = 1, count: number = 8): Card[] {
+    getDeckDraw(ante: number, round: number = 1, count: number = 8): Array<Card> {
         const deck = this.getShuffledDeck(ante, round);
         return deck.slice(0, count);
     }
 
-    getStartingDeckDraw(): Card[] {
+    getStartingDeckDraw(): Array<Card> {
         // pifreak loves you!
         return this.getDeckDraw(1, 1, 8);
     }

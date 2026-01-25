@@ -346,11 +346,6 @@ export class Game extends Lock {
         this.hasSpoilers = false;
     }
 
-    private withCacheState<T>(fn: () => T): T {
-        // Roll back only the keys mutated during `fn` (cheap), instead of copying the whole cache.
-        return this.cache.withRollback(fn);
-    }
-
     private getNode(id: string) {
         let c = this.cache.getNode(id);
 
@@ -656,14 +651,6 @@ export class Game extends Lock {
             }
         }
         return new JokerData(joker, rarity, edition, stickers);
-    }
-
-    /**
-     * Returns what `nextJoker(...)` would return, but does NOT advance RNG/cache state.
-     * Intended for spoiler/peek UI.
-     */
-    peekJoker(source: QueueNames, ante: number, hasStickers: boolean): JokerData {
-        return this.withCacheState(() => this.nextJoker(source, ante, hasStickers));
     }
 
     getShopInstance(): ShopInstance {
@@ -1044,7 +1031,7 @@ export class Game extends Lock {
             const item = (card as ItemImpl).getName();
             const spoilerSource = this.hasSpoilersMap[item];
             if (this.hasSpoilers) {
-                return this.peekJoker(spoilerSource, ante, false)
+                return this.nextJoker(spoilerSource, ante, false)
             }
             return card as Card;
         }
@@ -1145,7 +1132,7 @@ item wheel_of_fortune_edition(instance* inst) {
         }
         return (value + this.hashedSeed) / 2;
     }
-    static get CARDS_ABANDONED(): Card[] {
+    static get CARDS_ABANDONED(): Array<Card> {
         // Abandoned Deck: 40 cards, no face cards (J, Q, K).
         return this.CARDS.filter(c => {
             const name = c.getName();
@@ -1153,10 +1140,10 @@ item wheel_of_fortune_edition(instance* inst) {
         }).map(c => new Card(c.getName() as PlayingCard));
     }
 
-    static get CARDS_CHECKERED(): Card[] {
+    static get CARDS_CHECKERED(): Array<Card> {
         // Checkered Deck: 52 cards (Hearts/Spades only).
         return this.CARDS.map(c => {
-            const name = c.getName() as string;
+            const name = c.getName();
             const rank = name.split("_")[1];
             const suit = name.split("_")[0];
             let newSuit = suit;
@@ -1169,9 +1156,9 @@ item wheel_of_fortune_edition(instance* inst) {
     /**
      * Returns a fully shuffled deck for the given ante and round index (1, 2, or 3).
      */
-    private getShuffledDeck(ante: number, round: number = 1): Card[] {
+    private getShuffledDeck(ante: number, round: number = 1): Array<Card> {
         const deckType = this.params.getDeck().name;
-        let cards: Card[];
+        let cards: Array<Card>;
 
         switch (deckType) {
             case deckNames[DeckType.ABANDONED_DECK]:
@@ -1181,7 +1168,7 @@ item wheel_of_fortune_edition(instance* inst) {
                 cards = Game.CARDS_CHECKERED;
                 break;
             case deckNames[DeckType.ERRATIC_DECK]: {
-                const randomizedCards: Card[] = [];
+                const randomizedCards: Array<Card> = [];
                 for(let i = 0; i < 52; i++){
                     const card = this.randchoice_simple(RandomQueueNames.R_Erratic, Game.CARDS);
                     randomizedCards.push(new Card(card.getName() as PlayingCard));
@@ -1198,7 +1185,7 @@ item wheel_of_fortune_edition(instance* inst) {
 
         for (let i = cards.length - 1; i >= 1; i--) {
             const j = rng.randint(1, i + 1) -1;
-            let temp = cards[i];
+            const temp = cards[i];
             cards[i] = cards[j];
             cards[j] = temp;
 
@@ -1215,13 +1202,29 @@ item wheel_of_fortune_edition(instance* inst) {
      * @param round The round index within the ante (1, 2, or 3) (default 1)
      * @param count Number of cards to draw (default 8)
      */
-    getDeckDraw(ante: number, round: number = 1, count: number = 8): Card[] {
+    getDeckDraw(ante: number, round: number = 1, count: number = 8): Array<Card> {
         const deck = this.getShuffledDeck(ante, round);
         return deck.slice(0, count);
     }
 
-    getStartingDeckDraw(): Card[] {
+    getStartingDeckDraw(count = 8, sort: 'rank' | 'suit' = 'rank'): Array<Card> {
         // pifreak loves you!
-        return this.getDeckDraw(1, 1, 8);
+        const hand =  this.getDeckDraw(1, 1, count);
+        if (sort === 'rank') {
+            return hand.sort((a, b) => {
+                const rankA = parseInt(a.getName().split('_')[1]);
+                const rankB = parseInt(b.getName().split('_')[1]);
+                return rankA - rankB;
+            });
+        }
+        else {
+            const suitOrder: Record<string, number> = { 'C': 1, 'D': 2, 'H': 3, 'S': 4 };
+            return hand.sort((a, b) => {
+                const suitA = a.getName().split('_')[0];
+                const suitB = b.getName().split('_')[0];
+                return suitOrder[suitA] - suitOrder[suitB];
+            });
+        }
     }
 }
+

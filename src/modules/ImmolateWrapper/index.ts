@@ -544,7 +544,7 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
             const shopItem = engine.nextShopItem(ante);
             const spoilerSource = engine.hasSpoilersMap[shopItem.item.name];
             if (engine.hasSpoilers && spoilerSource) {
-                const joker: JokerData = engine.nextJoker(spoilerSource, ante, true);
+                const joker: JokerData = engine.peekJoker(spoilerSource, ante, true);
                 result.queue.push(
                     engineWrapper.makeGameCard(joker)
                 )
@@ -560,7 +560,7 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
             if (analyzeOptions && analyzeOptions?.showCardSpoilers) {
                 if (itemsWithSpoilers.includes(result.queue[i].name as SpoilableItems)) {
                     // @ts-expect-error reports types dont match.
-                    result.queue[i] = Pack.PackCardToCard(engine.nextJoker(spoilerSources[itemsWithSpoilers.indexOf(result.queue[i].name)], ante, false), 'Joker')
+                    result.queue[i] = Pack.PackCardToCard(engine.peekJoker(spoilerSources[itemsWithSpoilers.indexOf(result.queue[i].name)], ante, false), 'Joker')
                 }
             }
             if (analyzeOptions && analyzeOptions.buys[key]) {
@@ -671,7 +671,7 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
                 const spoilerSource = engine.hasSpoilersMap[card.name];
                 // @ts-ignore
                 if (engine.hasSpoilers && spoilerSource) {
-                    card = engine.nextJoker(spoilerSource, ante, true)
+                    card = engine.peekJoker(spoilerSource, ante, true)
                 }
                 const generatedCard = engineWrapper.makeGameCard(card);
                 // @ts-ignore

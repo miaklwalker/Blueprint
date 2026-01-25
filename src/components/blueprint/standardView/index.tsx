@@ -39,6 +39,7 @@ import type {Blinds} from "../../../modules/state/store.ts";
 import type {Tag} from "../../../modules/balatrots/enum/Tag.ts";
 import type {Ante, Pack} from "../../../modules/ImmolateWrapper/CardEngines/Cards.ts";
 import type {EmblaCarouselType} from 'embla-carousel';
+import {useDownloadSeedResults} from "../../../modules/state/downloadProvider.tsx";
 
 function QueueCarousel({ queue, tabName }: { queue: Array<any>, tabName: string }) {
     const selectedBlind = useCardStore(state => state.applicationState.selectedBlind);
@@ -535,12 +536,23 @@ function Main() {
         </AppShell.Main>
     )
 }
+// declare window module and saveSeedDebug function
+declare global {
+    interface Window {
+        saveSeedDebug: () => void;
+    }
+}
 
 export function Blueprint() {
     const { width } = useViewportSize();
     const settingsOpened = useCardStore(state => state.applicationState.settingsOpen);
     const outputOpened = useCardStore(state => state.applicationState.asideOpen);
-
+    const download = useDownloadSeedResults()
+    useEffect(() => {
+        if(typeof window !== 'undefined') {
+            window.saveSeedDebug = download
+        }
+    }, [download]);
 
     return (
         <AppShell

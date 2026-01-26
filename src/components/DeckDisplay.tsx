@@ -366,13 +366,14 @@ export function DeckDisplay() {
                         </ActionIcon>
                     </Tooltip>
                     <Tooltip label="Test Draw">
-                        <ActionIcon
+                        <Button
                             variant="light"
                             color="blue"
                             onClick={openDrawSimulator}
+                            leftSection={<IconPlayerPlay size={18} />}
                         >
-                            <IconPlayerPlay size={18} />
-                        </ActionIcon>
+                            Simulate Draw
+                        </Button>
                     </Tooltip>
                 </Group>
             </Group>

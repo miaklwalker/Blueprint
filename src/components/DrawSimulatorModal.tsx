@@ -194,7 +194,7 @@ export function DrawSimulatorModal() {
 
     // Helper to sort cards
     const sortCards = useCallback((cards: DeckCard[], mode: string) => {
-        const suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades'];
+        const suits = ['Spades','Hearts', 'Clubs', 'Diamonds'];
         const rankOrder = ['A', 'K', 'Q', 'J', '10', '9', '8', '7', '6', '5', '4', '3', '2'];
 
         return [...cards].sort((a, b) => {

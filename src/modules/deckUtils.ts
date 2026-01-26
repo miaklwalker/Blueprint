@@ -238,7 +238,12 @@ export function getDeckStats(deck: Array<DeckCard>) {
  */
 export function convertGameCardToDeckCard(card: Card, index: number): DeckCard {
     const name = card.getName(); // Format: "S_A", "H_T", etc.
-    const [suitCode, rankCode] = name.split('_');
+    let suitCode = 'S';
+    let rankCode = 'A';
+
+    if (typeof name === 'string' && name.includes('_')) {
+        [suitCode, rankCode] = name.split('_');
+    }
 
     // Safely look up suit and rank, defaulting if not found (though they should be)
     const suit = CODE_TO_SUIT[suitCode] || 'Spades';
@@ -250,7 +255,7 @@ export function convertGameCardToDeckCard(card: Card, index: number): DeckCard {
         type: 'Standard',
         rank,
         suit,
-        base: name,
+        base: typeof name === 'string' ? name : String(name),
         source: 'starting',
         edition: card.getEdition()?.name,
         enhancement: card.getEnhancement(),

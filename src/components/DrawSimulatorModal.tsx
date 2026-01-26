@@ -242,8 +242,9 @@ export function DrawSimulatorModal() {
                 if (enhancement && enhancement.endsWith(" Card")) {
                     enhancement = enhancement.replace(" Card", "");
                 }
+                const baseName = typeof dc.base === 'string' ? dc.base : (Array.isArray(dc.base) ? (dc.base as any).join('') : String(dc.base || ''));
                 const newCard = new Card(
-                    dc.base as PlayingCard,
+                    baseName as PlayingCard,
                     enhancement,
                     new EditionItem(dc.edition as Edition),
                     new SealItem(dc.seal as Seal)

@@ -164,12 +164,19 @@ export class CardEngineWrapper implements EngineWrapper {
                     type: 'Spectral',
                 } as Card_Final)
             case instanceofStandard:
+                const cardName = typeof card.name === 'string' ? card.name : (card.getName ? card.getName() : '');
+                if (typeof cardName !== 'string' || !cardName.includes('_')) {
+                    // Fallback for cards that don't match the expected S_A format
+                    return new StandardCard_Final({
+                        name: card.name || 'Unknown Card',
+                        type: 'Standard',
+                        seal: card._seal?.name || "No Seal",
+                        edition: card._edition?.name || "No Edition",
+                        enhancements: card._enhancement || "No Enhancement",
+                    } as any)
+                }
                 return new StandardCard_Final({
-                    base: [
-                        card.name.split('_')[0],
-                        "_",
-                        card.name.split('_')[1]
-                    ],
+                    base: cardName,
                     seal: card._seal?.name || "No Seal",
                     edition: card._edition?.name || "No Edition",
                     enhancements: card._enhancement || "No Enhancement",

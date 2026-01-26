@@ -19,7 +19,8 @@ import { IconArrowCapsule, IconCalculator, IconChevronDown, IconExternalLink, Ic
 import React, { useState } from "react";
 import { LOCATION_TYPES } from "../modules/const.ts";
 import { useCardStore } from "../modules/state/store.ts";
-import type { BuyWrapperProps} from "../modules/const.ts";
+import type { BuyWrapperProps } from "../modules/const.ts";
+import type { DeckCard } from "../modules/deckUtils.ts";
 
 export function BuyWrapper({ children, bottomOffset, metaData, horizontal = false }: BuyWrapperProps) {
     const selectedSearchResult = useCardStore(state => state.searchState.selectedSearchResult);
@@ -30,6 +31,9 @@ export function BuyWrapper({ children, bottomOffset, metaData, horizontal = fals
     const unlockCard = useCardStore(state => state.unlockCard);
     const lockedCards = useCardStore(state => state.lockState.lockedCards);
     const useCardPeek = useCardStore(state => state.applicationState.useCardPeek);
+    const addCardToDeck = useCardStore(state => state.addCardToDeck);
+    const removeCardFromDeck = useCardStore(state => state.removeCardFromDeck);
+    const deckCards = useCardStore(state => state.deckState.cards);
     const cardId = `ante_${metaData?.ante}_${metaData?.location?.toLowerCase()}_${metaData?.index}`
     const isLocked = cardId in lockedCards;
     const handlers = useLongPress(() => {
@@ -163,8 +167,29 @@ export function BuyWrapper({ children, bottomOffset, metaData, horizontal = fals
                                     if (!metaData) return;
                                     if (cardIsOwned) {
                                         removeBuy(metaData);
+                                        // Remove from deck if it's a standard card from a pack
+                                        if (metaData.locationType === LOCATION_TYPES.PACK && metaData.card?.type === 'Standard') {
+                                            // Find and remove the card from deck by matching source details
+                                            const cardToRemove = deckCards.find((c: DeckCard) =>
+                                                c.source === 'pack' &&
+                                                c.sourceDetails?.ante === Number(metaData.ante) &&
+                                                c.sourceDetails?.blind === metaData.blind &&
+                                                c.sourceDetails?.packName === metaData.location
+                                            );
+                                            if (cardToRemove) {
+                                                removeCardFromDeck(cardToRemove.id);
+                                            }
+                                        }
                                     } else {
                                         addBuy(metaData);
+                                        // Add to deck if it's a standard card from a pack
+                                        if (metaData.locationType === LOCATION_TYPES.PACK && metaData.card?.type === 'Standard') {
+                                            addCardToDeck(metaData.card, 'pack', {
+                                                ante: Number(metaData.ante),
+                                                blind: metaData.blind,
+                                                packName: metaData.location
+                                            });
+                                        }
                                     }
                                 }}
                             >

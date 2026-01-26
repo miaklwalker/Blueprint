@@ -1,20 +1,20 @@
 import React from 'react';
-import {MiscCardSource} from "../modules/ImmolateWrapper";
-import {Accordion, Box, Center, Group, Paper, Text, Title} from "@mantine/core";
-import {useCardStore} from "../modules/state/store.ts";
-import {useEffect, useState} from "react";
+import { MiscCardSource } from "../modules/ImmolateWrapper";
+import { Accordion, Box, Center, Group, Paper, Text, Title } from "@mantine/core";
+import { useCardStore } from "../modules/state/store.ts";
+import { useEffect, useState } from "react";
 import { EmblaCarouselType } from 'embla-carousel';
-import {Carousel} from "@mantine/carousel";
-import {LOCATIONS} from "../modules/const.ts";
-import {toHeaderCase} from "js-convert-case";
-import {BuyWrapper} from "./buyerWrapper.tsx";
-import {GameCard} from "./Rendering/cards.tsx";
-import {BoosterPack, Voucher} from "./Rendering/gameElements.tsx";
-import {Boss} from "./Rendering/gameElements.tsx";
-import {Tag} from "./Rendering/gameElements.tsx";
-import {Joker_Final, StandardCard_Final} from "../modules/ImmolateWrapper/CardEngines/Cards.ts";
+import { Carousel } from "@mantine/carousel";
+import { LOCATIONS } from "../modules/const.ts";
+import { toHeaderCase } from "js-convert-case";
+import { BuyWrapper } from "./buyerWrapper.tsx";
+import { GameCard } from "./Rendering/cards.tsx";
+import { BoosterPack, Voucher } from "./Rendering/gameElements.tsx";
+import { Boss } from "./Rendering/gameElements.tsx";
+import { Tag } from "./Rendering/gameElements.tsx";
+import { Joker_Final, StandardCard_Final } from "../modules/ImmolateWrapper/CardEngines/Cards.ts";
 
-export default function MiscCardSourcesDisplay({miscSources, boosterQueue, bossQueue, tagQueue, voucherQueue, wheelQueue, auraQueue, draws }: {
+export default function MiscCardSourcesDisplay({ miscSources, boosterQueue, bossQueue, tagQueue, voucherQueue, wheelQueue, auraQueue, draws }: {
     miscSources?: MiscCardSource[],
     bossQueue?: any[],
     boosterQueue?: any[],
@@ -52,7 +52,7 @@ export default function MiscCardSourcesDisplay({miscSources, boosterQueue, bossQ
         <Paper p="md" withBorder mb="md">
             <Title order={3} mb="xs">Card Sources</Title>
             <Accordion onChange={e => setCurrentSource(`${e}`)} variant={'separated'} value={currentSource}>
-                {miscSources.map(({name, cards}: { name: string, cards: any }) => (
+                {miscSources.map(({ name, cards }: { name: string, cards: any }) => (
                     <Accordion.Item key={String(name)} value={String(name)}>
                         <Accordion.Control>
                             <Group>
@@ -67,12 +67,12 @@ export default function MiscCardSourcesDisplay({miscSources, boosterQueue, bossQ
                                         getEmblaApi={setEmbla}
                                         type={'container'}
                                         slideSize="90px"
-                                        slideGap={{base: 'xs'}}
+                                        slideGap={{ base: 'xs' }}
                                         withControls={false}
                                         height={190}
                                         emblaOptions={{
                                             dragFree: true,
-                                            align:'start'
+                                            align: 'start'
                                         }}
 
                                     >
@@ -91,7 +91,7 @@ export default function MiscCardSourcesDisplay({miscSources, boosterQueue, bossQ
                                                         card: card
                                                     }}
                                                 >
-                                                    <GameCard card={card}/>
+                                                    <GameCard card={card} />
                                                 </BuyWrapper>
 
                                             </Carousel.Slide>
@@ -118,12 +118,12 @@ export default function MiscCardSourcesDisplay({miscSources, boosterQueue, bossQ
                                     getEmblaApi={setEmbla}
                                     type={'container'}
                                     slideSize="90px"
-                                    slideGap={{base: 'xs'}}
+                                    slideGap={{ base: 'xs' }}
                                     withControls={false}
                                     height={190}
                                     emblaOptions={{
                                         dragFree: true,
-                                        align:'start'
+                                        align: 'start'
                                     }}
                                 >
                                     {voucherQueue?.map((voucher: any, i: number) => (
@@ -141,7 +141,7 @@ export default function MiscCardSourcesDisplay({miscSources, boosterQueue, bossQ
                                                     card: voucher
                                                 }}
                                             >
-                                                <Voucher voucherName={voucher}/>
+                                                <Voucher voucherName={voucher} />
                                             </BuyWrapper>
 
                                         </Carousel.Slide>
@@ -166,18 +166,18 @@ export default function MiscCardSourcesDisplay({miscSources, boosterQueue, bossQ
                                     getEmblaApi={setEmbla}
                                     type={'container'}
                                     slideSize="90px"
-                                    slideGap={{base: 'xs'}}
+                                    slideGap={{ base: 'xs' }}
                                     withControls={false}
                                     height={70}
                                     emblaOptions={{
                                         dragFree: true,
-                                        align:'start'
+                                        align: 'start'
                                     }}
                                 >
                                     {bossQueue?.map((boss: any, i: number) => (
                                         <Carousel.Slide key={i}>
                                             <Center w={'100%'} h={'50'}>
-                                                <Boss bossName={boss}/>
+                                                <Boss bossName={boss} />
                                             </Center>
                                         </Carousel.Slide>
                                     ))}
@@ -201,18 +201,18 @@ export default function MiscCardSourcesDisplay({miscSources, boosterQueue, bossQ
                                     getEmblaApi={setEmbla}
                                     type={'container'}
                                     slideSize="90px"
-                                    slideGap={{base: 'xs'}}
+                                    slideGap={{ base: 'xs' }}
                                     withControls={false}
                                     height={70}
                                     emblaOptions={{
                                         dragFree: true,
-                                        align:'start'
+                                        align: 'start'
                                     }}
                                 >
                                     {tagQueue?.map((tag: any, i: number) => (
                                         <Carousel.Slide key={i}>
                                             <Center w={'100%'} h={'50'}>
-                                                <Tag tagName={tag}/>
+                                                <Tag tagName={tag} />
                                             </Center>
                                         </Carousel.Slide>
                                     ))}
@@ -230,18 +230,18 @@ export default function MiscCardSourcesDisplay({miscSources, boosterQueue, bossQ
                     </Accordion.Control>
                     <Accordion.Panel>
                         {
-                            "WheelOfFortune" === currentSource &&(
+                            "WheelOfFortune" === currentSource && (
                                 <Box>
                                     <Carousel
                                         getEmblaApi={setEmbla}
                                         type={'container'}
                                         slideSize="90px"
-                                        slideGap={{base: 'xs'}}
+                                        slideGap={{ base: 'xs' }}
                                         withControls={false}
                                         height={190}
                                         emblaOptions={{
                                             dragFree: true,
-                                            align:'start'
+                                            align: 'start'
                                         }}
 
                                     >
@@ -253,7 +253,7 @@ export default function MiscCardSourcesDisplay({miscSources, boosterQueue, bossQ
                                                         name: "Joker",
                                                         type: "Joker",
                                                     })
-                                                }/>
+                                                } />
                                             </Carousel.Slide>
                                         ))}
                                     </Carousel>
@@ -271,18 +271,18 @@ export default function MiscCardSourcesDisplay({miscSources, boosterQueue, bossQ
                     </Accordion.Control>
                     <Accordion.Panel>
                         {
-                            "aura" === currentSource &&(
+                            "aura" === currentSource && (
                                 <Box>
                                     <Carousel
                                         getEmblaApi={setEmbla}
                                         type={'container'}
                                         slideSize="90px"
-                                        slideGap={{base: 'xs'}}
+                                        slideGap={{ base: 'xs' }}
                                         withControls={false}
                                         height={190}
                                         emblaOptions={{
                                             dragFree: true,
-                                            align:'start'
+                                            align: 'start'
                                         }}
 
                                     >
@@ -293,7 +293,7 @@ export default function MiscCardSourcesDisplay({miscSources, boosterQueue, bossQ
                                                         ...card,
                                                         type: "Standard",
                                                     })
-                                                }/>
+                                                } />
                                             </Carousel.Slide>
                                         ))}
                                     </Carousel>
@@ -317,15 +317,15 @@ export default function MiscCardSourcesDisplay({miscSources, boosterQueue, bossQ
                                     getEmblaApi={setEmbla}
                                     type={'container'}
                                     slideSize="90px"
-                                    slideGap={{base: 'xs'}}
+                                    slideGap={{ base: 'xs' }}
                                     withControls={false}
                                     height={190}
                                     emblaOptions={{
                                         dragFree: true,
-                                        align:'start'
+                                        align: 'start'
                                     }}
                                 >
-                                    {boosterQueue?.map((packname:string, i: number) => (
+                                    {boosterQueue?.map((packname: string, i: number) => (
                                         <Carousel.Slide key={i}>
                                             <BuyWrapper
                                                 metaData={{
@@ -339,7 +339,7 @@ export default function MiscCardSourcesDisplay({miscSources, boosterQueue, bossQ
                                                     link: `https://balatrowiki.org/w/${packname}`,
                                                 }}
                                             >
-                                                <BoosterPack packName={packname}/>
+                                                <BoosterPack packName={packname} />
                                             </BuyWrapper>
                                         </Carousel.Slide>
                                     ))}
@@ -348,60 +348,59 @@ export default function MiscCardSourcesDisplay({miscSources, boosterQueue, bossQ
                         }
                     </Accordion.Panel>
                 </Accordion.Item>
-                {/* Draws Sections */ }
                 {
-                    draws && Object.entries(draws).map(([k,v]) => {
+                    draws && Object.entries(draws).map(([k, v]) => {
                         return (
-                        <Accordion.Item key={String(k)} value={String(k)}>
-                            <Accordion.Control>
-                                <Group>
-                                    <Text fw={500}>{toHeaderCase(String(k))}</Text>
-                                </Group>
-                            </Accordion.Control>
-                            <Accordion.Panel>
-                                {
-                                    String(k) === currentSource &&
-                                    <Box>
-                                        <Carousel
-                                            getEmblaApi={setEmbla}
-                                            type={'container'}
-                                            slideSize="90px"
-                                            slideGap={{base: 'xs'}}
-                                            withControls={false}
-                                            height={190}
-                                            emblaOptions={{
-                                                dragFree: true,
-                                                align:'start'
-                                            }}
+                            <Accordion.Item key={String(k)} value={String(k)}>
+                                <Accordion.Control>
+                                    <Group>
+                                        <Text fw={500}>{toHeaderCase(String(k))} Deck Order</Text>
+                                    </Group>
+                                </Accordion.Control>
+                                <Accordion.Panel>
+                                    {
+                                        String(k) === currentSource &&
+                                        <Box>
+                                            <Carousel
+                                                getEmblaApi={setEmbla}
+                                                type={'container'}
+                                                slideSize="90px"
+                                                slideGap={{ base: 'xs' }}
+                                                withControls={false}
+                                                height={190}
+                                                emblaOptions={{
+                                                    dragFree: true,
+                                                    align: 'start'
+                                                }}
 
-                                        >
-                                            {v?.map((card: any, i: number) => (
-                                                <Carousel.Slide key={i}>
-                                                    <BuyWrapper
-                                                        metaData={{
-                                                            location: '',
-                                                            blind:'smallBlind',
-                                                            transactionType: "buy",
-                                                            locationType: LOCATIONS.MISC,
-                                                            index: i,
-                                                            ante: String(currentAnte),
-                                                            name: card?.name,
-                                                            card: card
-                                                        }}
-                                                    >
-                                                        <GameCard card={
-                                                            card
-                                                        }/>
-                                                    </BuyWrapper>
+                                            >
+                                                {v?.map((card: any, i: number) => (
+                                                    <Carousel.Slide key={i}>
+                                                        <BuyWrapper
+                                                            metaData={{
+                                                                location: '',
+                                                                blind: 'smallBlind',
+                                                                transactionType: "buy",
+                                                                locationType: LOCATIONS.MISC,
+                                                                index: i,
+                                                                ante: String(currentAnte),
+                                                                name: card?.name,
+                                                                card: card
+                                                            }}
+                                                        >
+                                                            <GameCard card={
+                                                                card
+                                                            } />
+                                                        </BuyWrapper>
 
-                                                </Carousel.Slide>
-                                            ))}
-                                        </Carousel>
-                                    </Box>
-                                }
-                            </Accordion.Panel>
-                        </Accordion.Item>
-                    )
+                                                    </Carousel.Slide>
+                                                ))}
+                                            </Carousel>
+                                        </Box>
+                                    }
+                                </Accordion.Panel>
+                            </Accordion.Item>
+                        )
                     })
                 }
 

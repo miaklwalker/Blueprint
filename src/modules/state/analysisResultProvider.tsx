@@ -1,8 +1,8 @@
-import React, {createContext, useContext, useMemo} from "react";
-import {analyzeSeed} from "../ImmolateWrapper";
-import {useCardStore} from "./store.ts";
-import {useSeedOptionsContainer} from "./optionsProvider.tsx";
-import type {SeedResultsContainer} from "../ImmolateWrapper/CardEngines/Cards.ts";
+import React, { createContext, useContext, useMemo } from "react";
+import { analyzeSeed } from "../ImmolateWrapper";
+import { useCardStore } from "./store.ts";
+import { useSeedOptionsContainer } from "./optionsProvider.tsx";
+import type { SeedResultsContainer } from "../ImmolateWrapper/CardEngines/Cards.ts";
 
 
 export const SeedResultContext = createContext<SeedResultsContainer | null | undefined>(null);
@@ -15,17 +15,21 @@ export function useSeedResultsContainer() {
     return context;
 }
 
-export function SeedResultProvider({children}: {children: React.ReactNode}) {
+export function SeedResultProvider({ children }: { children: React.ReactNode }) {
     const start = useCardStore(state => state.applicationState.start);
-    const analyzeState = useCardStore(state =>state.immolateState);
+    const analyzeState = useCardStore(state => state.immolateState);
+    const deckState = useCardStore(state => state.deckState);
     const options = useSeedOptionsContainer()
 
-    const seedResult = useMemo(()=> {
+    const seedResult = useMemo(() => {
         if (!start) {
             return null;
         }
-        return analyzeSeed(analyzeState, options)
-    }, [analyzeState, options, start]);
+        return analyzeSeed(analyzeState, {
+            ...options,
+            customDeck: deckState.cards
+        })
+    }, [analyzeState, deckState.cards, options, start]);
 
     return (
         <SeedResultContext.Provider value={seedResult}>

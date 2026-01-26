@@ -520,7 +520,7 @@ export const useCardStore = create<CardStore>()(
                     updateCardInDeck: (cardId: string, updates: Partial<DeckCard>) => set((prev) => {
                         const cardIndex = prev.deckState.cards.findIndex((card: DeckCard) => card.id === cardId);
                         if (cardIndex !== -1) {
-                            prev.deckState.past.push(prev.deckState.cards);
+                            prev.deckState.past.push([...prev.deckState.cards]);
                             prev.deckState.future = [];
                             prev.deckState.cards[cardIndex] = {
                                 ...prev.deckState.cards[cardIndex],
@@ -568,7 +568,8 @@ export const useCardStore = create<CardStore>()(
                         sells: state.shoppingState.sells
                     },
                     applicationState: state.applicationState,
-                    searchState: state.searchState
+                    searchState: state.searchState,
+                    deckState: state.deckState
                 }),
             }
         )

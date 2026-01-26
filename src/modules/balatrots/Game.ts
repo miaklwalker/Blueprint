@@ -1183,7 +1183,11 @@ item wheel_of_fortune_edition(instance* inst) {
         if (this._customDeck) {
             // Clone to be safe, though Game usually handles its own cards
             // We need to ensure we return new instances if we want to avoid side effects on the stored custom deck
-            return this._customDeck.map(c => new Card(c.getName() as PlayingCard, c.getEnhancement(), c.getEdition(), c.getSeal()));
+            return this._customDeck.map(c => {
+                const newCard = new Card(c.getName() as PlayingCard, c.getEnhancement(), c.getEdition(), c.getSeal());
+                if ((c as any).originalId) (newCard as any).originalId = (c as any).originalId;
+                return newCard;
+            });
         }
 
         const deckType = this.params.getDeck().name;

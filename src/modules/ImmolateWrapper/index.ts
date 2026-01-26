@@ -515,12 +515,14 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
                 enhancement = enhancement.replace(" Card", "");
             }
 
-            return new Card(
+            const newCard = new Card(
                 dc.base as PlayingCard,
                 enhancement,
                 new EditionItem(dc.edition as Edition),
                 new SealItem(dc.seal as Seal)
             );
+            (newCard as any).originalId = dc.id;
+            return newCard;
         });
         engine.setCustomDeck(convertedCards);
     }

@@ -33,8 +33,8 @@ function SimCard({ card, selected, onClick, onUpdate }: {
 }) {
     const suitColors: Record<string, string> = {
         Hearts: '#e03131',
-        Diamonds: '#1971c2',
-        Clubs: '#2f9e44',
+        Diamonds: '#e03131',
+        Clubs: '#1c1c1c',
         Spades: '#1c1c1c',
     };
 

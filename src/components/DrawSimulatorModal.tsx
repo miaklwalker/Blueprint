@@ -25,11 +25,12 @@ import { Card, PlayingCard } from '../modules/balatrots/enum/cards/Card.ts';
 import { EditionItem, Edition } from '../modules/balatrots/enum/Edition.ts';
 import { SealItem, Seal } from '../modules/balatrots/enum/Seal.ts';
 
-function SimCard({ card, selected, onClick, onUpdate }: {
+function SimCard({ card, selected, onClick, onUpdate, onRemove }: {
     card: DeckCard,
     selected: boolean,
     onClick: () => void,
-    onUpdate: (id: string, updates: Partial<DeckCard>) => void
+    onUpdate: (id: string, updates: Partial<DeckCard>) => void,
+    onRemove: (id: string) => void
 }) {
     const suitColors: Record<string, string> = {
         Hearts: '#e03131',
@@ -99,6 +100,15 @@ function SimCard({ card, selected, onClick, onUpdate }: {
                     ))}
                 </Menu.Dropdown>
             </Menu>
+
+            <Menu.Divider />
+            <Menu.Item
+                color="red"
+                leftSection={<IconTrash size={14} />}
+                onClick={(e) => { e.stopPropagation(); onClick(); onRemove(card.id); }}
+            >
+                Remove Card
+            </Menu.Item>
         </Menu.Dropdown>
     );
 
@@ -173,6 +183,11 @@ export function DrawSimulatorModal() {
     const opened = useCardStore(state => state.applicationState.drawSimulatorModalOpen);
     const close = useCardStore(state => state.closeDrawSimulatorModal);
     const updateCardInDeck = useCardStore(state => state.updateCardInDeck);
+    const removeCardFromDeck = useCardStore(state => state.removeCardFromDeck);
+
+    // Global App State for defaults
+    const selectedAnte = useCardStore(state => state.applicationState.selectedAnte);
+    const selectedBlind = useCardStore(state => state.applicationState.selectedBlind);
 
     // Game State Inputs
     const seed = useCardStore(state => state.immolateState.seed);
@@ -194,7 +209,7 @@ export function DrawSimulatorModal() {
 
     // Helper to sort cards
     const sortCards = useCallback((cards: DeckCard[], mode: string) => {
-        const suits = ['Spades','Hearts', 'Clubs', 'Diamonds'];
+        const suits = ['Spades', 'Hearts', 'Clubs', 'Diamonds'];
         const rankOrder = ['A', 'K', 'Q', 'J', '10', '9', '8', '7', '6', '5', '4', '3', '2'];
 
         return [...cards].sort((a, b) => {
@@ -217,15 +232,30 @@ export function DrawSimulatorModal() {
         setHand(prev => sortCards(prev, sortMode));
     }, [sortMode, sortCards]);
 
-    // Reset when opened
+    // Sync state and simulate when opening
     useEffect(() => {
         if (opened) {
-            simulate(); // simulate will sort the initial hand
-        }
-    }, [opened]);
+            const blindMap: Record<string, string> = {
+                'smallBlind': '1',
+                'bigBlind': '2',
+                'bossBlind': '3'
+            };
+            const initialAnte = selectedAnte.toString();
+            const initialBlind = blindMap[selectedBlind] || '1';
 
-    const simulate = () => {
+            setAnte(initialAnte);
+            setBlind(initialBlind);
+
+            // Pass values directly because state updates are async
+            simulate(initialAnte, initialBlind);
+        }
+    }, [opened, selectedAnte, selectedBlind]);
+
+    const simulate = (overrideAnte?: string, overrideBlind?: string) => {
         if (!seed) return;
+
+        const currentAnte = overrideAnte || ante;
+        const currentBlind = overrideBlind || blind;
 
         // 1. Instantiate Game
         const d = new Deck(deckMap[deckType] || deckMap['Red Deck']);
@@ -257,8 +287,8 @@ export function DrawSimulatorModal() {
         }
 
         // 3. Shuffle
-        const anteNum = parseInt(ante);
-        const blindNum = parseInt(blind);
+        const anteNum = parseInt(currentAnte);
+        const blindNum = parseInt(currentBlind);
         const shuffled = engine.getShuffledDeck(anteNum, blindNum);
 
         // Convert to DeckCard, restoring original IDs where applicable
@@ -279,6 +309,13 @@ export function DrawSimulatorModal() {
         setSelectedCards([]);
         setDiscardsUsed(0);
     };
+
+    // Auto-simulate when critical params change while modal is open
+    useEffect(() => {
+        if (opened) {
+            simulate();
+        }
+    }, [handSize, customDeck.length]); // Re-simulate if hand size or deck composition (count) changes
 
     const toggleSelection = (id: string) => {
         if (selectedCards.includes(id)) {
@@ -311,6 +348,16 @@ export function DrawSimulatorModal() {
         // 2. Update Local State (hand and fullDeck) so UI reflects changes immediately
         setHand(prev => prev.map(c => c.id === id ? { ...c, ...updates } : c));
         setFullShuffledDeck(prev => prev.map(c => c.id === id ? { ...c, ...updates } : c));
+    };
+
+    const handleCardRemove = (id: string) => {
+        // 1. Update Global Store
+        removeCardFromDeck(id);
+
+        // 2. Update Local State
+        setHand(prev => prev.filter(c => c.id !== id));
+        setFullShuffledDeck(prev => prev.filter(c => c.id !== id));
+        setSelectedCards(prev => prev.filter(cid => cid !== id));
     };
 
     return (
@@ -347,7 +394,7 @@ export function DrawSimulatorModal() {
                         onChange={(val) => val && setHandSize(parseInt(val))}
                         w={80}
                     />
-                    <Button onClick={simulate} leftSection={<IconRefresh size={16} />}>
+                    <Button onClick={() => simulate()} leftSection={<IconRefresh size={16} />}>
                         Simulate / Reset
                     </Button>
                 </Group>
@@ -375,6 +422,7 @@ export function DrawSimulatorModal() {
                                     selected={selectedCards.includes(card.id)}
                                     onClick={() => toggleSelection(card.id)}
                                     onUpdate={handleCardUpdate}
+                                    onRemove={handleCardRemove}
                                 />
                             ))}
                         </SimpleGrid>

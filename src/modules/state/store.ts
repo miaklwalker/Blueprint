@@ -275,7 +275,7 @@ export const useCardStore = create<CardStore>()(
                             Number(prev.immolateState.gameVersion)
                         );
                         const game = new Game(prev.immolateState.seed, params);
-                        const gameCards = game.getShuffledDeck(1);
+                        const gameCards = game.initDeck();
                         prev.deckState.cards = gameCards.map((card, i) => convertGameCardToDeckCard(card, i));
                         prev.deckState.isInitialized = true;
                     }, undefined, 'Global/SetSeed'),
@@ -296,7 +296,7 @@ export const useCardStore = create<CardStore>()(
                             );
                             const game = new Game(prev.immolateState.seed, params);
 
-                            const gameCards = game.getShuffledDeck(1);
+                            const gameCards = game.initDeck();
                             prev.deckState.cards = gameCards.map((card, i) => convertGameCardToDeckCard(card, i));
                         } else {
                             const starterDeck = generateStartingDeck(deck);

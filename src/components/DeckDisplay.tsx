@@ -296,7 +296,6 @@ export function DeckDisplay() {
     const openDrawSimulator = useCardStore(state => state.openDrawSimulatorModal);
 
     const initializeDeck = useCardStore(state => state.initializeDeck);
-    const clearDeck = useCardStore(state => state.clearDeck);
     const undoDeckChange = useCardStore(state => state.undoDeckChange);
     const redoDeckChange = useCardStore(state => state.redoDeckChange);
 

@@ -27,19 +27,20 @@ import {
     IconPlayCard,
     IconSun
 } from "@tabler/icons-react";
-import {useCardStore} from "../../../modules/state/store.ts";
+import { useCardStore } from "../../../modules/state/store.ts";
 import UnlocksModal from "../../unlocksModal.tsx";
 import FeaturesModal from "../../FeaturesModal.tsx";
-import {RerollCalculatorModal} from "../../RerollCalculatorModal.tsx";
-import {GaEvent} from "../../../modules/useGA.ts";
+import { RerollCalculatorModal } from "../../RerollCalculatorModal.tsx";
+import { DrawSimulatorModal } from "../../DrawSimulatorModal.tsx";
+import { GaEvent } from "../../../modules/useGA.ts";
 import SeedInputAutoComplete from "../../SeedInputAutoComplete.tsx";
-import { useBlueprintTheme} from "../../../modules/state/themeProvider.tsx";
-import type {KnownThemes} from "../../../modules/state/themeProvider.tsx";
+import { useBlueprintTheme } from "../../../modules/state/themeProvider.tsx";
+import type { KnownThemes } from "../../../modules/state/themeProvider.tsx";
 
 
 export default function NavBar() {
     const theme = useMantineTheme();
-    const {theme: themeName, setTheme, themes} = useBlueprintTheme()
+    const { theme: themeName, setTheme, themes } = useBlueprintTheme()
     const themeNames = Object.keys(themes);
     const colorScheme = useMantineColorScheme()
     const viewMode = useCardStore(state => state.applicationState.viewMode);
@@ -81,7 +82,9 @@ export default function NavBar() {
     return (
         <AppShell.Navbar p="md">
             <UnlocksModal />
+            <UnlocksModal />
             <FeaturesModal />
+            <DrawSimulatorModal />
             <RerollCalculatorModal
                 opened={rerollCalculatorModalOpen}
                 onClose={closeRerollCalculatorModal}
@@ -130,8 +133,8 @@ export default function NavBar() {
                     <Select
                         label={'Theme'}
                         value={themeName}
-                        onChange={(t)=>{
-                            if(!t)return
+                        onChange={(t) => {
+                            if (!t) return
                             setTheme(t as KnownThemes)
                         }}
                         data={themeNames}

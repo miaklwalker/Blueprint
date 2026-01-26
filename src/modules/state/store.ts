@@ -34,6 +34,7 @@ export interface InitialState {
         rerollCalculatorModalOpen: boolean;
         rerollCalculatorMetadata: any | null;
         snapshotModalOpen: boolean;
+        drawSimulatorModalOpen: boolean;
         showCardSpoilers: boolean;
         useCardPeek: boolean;
         autoBuyPacks: boolean;
@@ -93,6 +94,8 @@ interface StoreActions {
     closeRerollCalculatorModal: () => void;
     openSnapshotModal: () => void;
     closeSnapshotModal: () => void;
+    openDrawSimulatorModal: () => void;
+    closeDrawSimulatorModal: () => void;
     setSelectedAnte: (selectedAnte: number) => void;
     setSelectedBlind: (selectedBlind: Blinds) => void;
     toggleSettings: () => void;
@@ -160,7 +163,8 @@ const initialState: InitialState = {
         hasSettingsChanged: false,
         analyzedResults: null,
         maxMiscCardSource: 15,
-        rerollStartIndex: 0
+        rerollStartIndex: 0,
+        drawSimulatorModalOpen: false
     },
     searchState: {
         searchTerm: '',
@@ -359,6 +363,12 @@ export const useCardStore = create<CardStore>()(
                     closeSnapshotModal: () => set((prev) => {
                         prev.applicationState.snapshotModalOpen = false
                     }, undefined, 'Global/CloseSnapshotModal'),
+                    openDrawSimulatorModal: () => set((prev) => {
+                        prev.applicationState.drawSimulatorModalOpen = true
+                    }, undefined, 'Global/OpenDrawSimulatorModal'),
+                    closeDrawSimulatorModal: () => set((prev) => {
+                        prev.applicationState.drawSimulatorModalOpen = false
+                    }, undefined, 'Global/CloseDrawSimulatorModal'),
                     setSelectedAnte: (selectedAnte) => set((prev) => {
                         prev.applicationState.selectedAnte = selectedAnte
                         prev.applicationState.selectedBlind = prev.applicationState.selectedAnte === 1 ? 'bigBlind' : 'smallBlind'

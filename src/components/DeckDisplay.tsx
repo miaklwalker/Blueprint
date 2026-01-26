@@ -16,7 +16,7 @@ import {
     Title,
     Tooltip,
 } from '@mantine/core';
-import { IconCards, IconTrash, IconRefresh, IconArrowBackUp, IconArrowForwardUp, IconEdit, IconChevronRight } from '@tabler/icons-react';
+import { IconCards, IconTrash, IconRefresh, IconArrowBackUp, IconArrowForwardUp, IconEdit, IconChevronRight, IconPlayerPlay } from '@tabler/icons-react';
 import { useCardStore } from '../modules/state/store.ts';
 import { getDeckStats, type DeckCard } from '../modules/deckUtils.ts';
 
@@ -293,6 +293,7 @@ export function DeckDisplay() {
     const isInitialized = useCardStore(state => state.deckState.isInitialized);
     const past = useCardStore(state => state.deckState.past);
     const future = useCardStore(state => state.deckState.future);
+    const openDrawSimulator = useCardStore(state => state.openDrawSimulatorModal);
 
     const initializeDeck = useCardStore(state => state.initializeDeck);
     const clearDeck = useCardStore(state => state.clearDeck);
@@ -362,6 +363,15 @@ export function DeckDisplay() {
                             }}
                         >
                             <IconRefresh size={18} />
+                        </ActionIcon>
+                    </Tooltip>
+                    <Tooltip label="Test Draw">
+                        <ActionIcon
+                            variant="light"
+                            color="blue"
+                            onClick={openDrawSimulator}
+                        >
+                            <IconPlayerPlay size={18} />
                         </ActionIcon>
                     </Tooltip>
                 </Group>

@@ -471,6 +471,7 @@ export function DeckDisplay() {
                     </Tooltip>
                     <Tooltip label="Test Draw">
                         <Button
+                            id="simulate-draw-button"
                             variant="light"
                             color="blue"
                             onClick={openDrawSimulator}

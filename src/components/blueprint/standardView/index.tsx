@@ -111,7 +111,7 @@ function AntePanel({ ante, tabName, timeTravelVoucherOffset }: {
     const packs = ante.blinds[selectedBlind].packs;
     return (
         <Tabs.Panel w={'100%'} value={tabName}>
-            <Paper withBorder h={'100%'} p={'sm'}>
+            <Paper id="shop-results" withBorder h={'100%'} p={'sm'}>
                 <Group preventGrowOverflow mb={'sm'}>
                     <Fieldset flex={1} legend={'Shop'}>
                         <QueueCarousel queue={queue} tabName={tabName} />
@@ -452,6 +452,7 @@ function SeedExplorer() {
                     }))}
                 />
                 <SegmentedControl
+                    id="blind-navigation"
                     value={selectedBlind}
                     onChange={(v) => setSelectedBlind(v as Blinds)}
                     fullWidth
@@ -498,7 +499,7 @@ function SeedExplorer() {
                     setSelectedAnte(Number(value));
                 }}
             >
-                <Box mah={'65vh'} style={{ display: width > 767 ? 'revert' : 'none' }} mr={'2rem'}>
+                <Box id="ante-navigation" mah={'65vh'} style={{ display: width > 767 ? 'revert' : 'none' }} mr={'2rem'}>
                     <ScrollArea type="scroll" scrollbars={'y'} h={'100%'}>
                         <Tabs.List>
                             {

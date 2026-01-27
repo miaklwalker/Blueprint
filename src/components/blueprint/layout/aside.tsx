@@ -198,12 +198,14 @@ export function Aside() {
                 <Tabs value={tab} onChange={(e) => setTab(`${e}`)}>
                     <Tabs.List grow mb="md">
                         <Tabs.Tab
+                            id="aside-tab-sources"
                             value="sources"
                             leftSection={<IconCards size={16} />}
                         >
                             Card Sources
                         </Tabs.Tab>
                         <Tabs.Tab
+                            id="aside-tab-purchases"
                             value="purchases"
                             leftSection={<IconShoppingCart size={16} />}
                             rightSection={
@@ -215,12 +217,13 @@ export function Aside() {
                             Purchases
                         </Tabs.Tab>
                         <Tabs.Tab
+                            id="aside-tab-deck"
                             value="deck"
                             leftSection={<IconPlayCard size={16} />}
                         >
                             Deck
                         </Tabs.Tab>
-                        <Tabs.Tab value="events">
+                        <Tabs.Tab id="aside-tab-events" value="events">
                             Events
                         </Tabs.Tab>
                     </Tabs.List>

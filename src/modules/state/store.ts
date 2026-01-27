@@ -469,7 +469,6 @@ export const useCardStore = create<CardStore>()(
                     initializeDeck: (deckType?: string, game?: Game) => set((prev) => {
                         let starterDeck: DeckCard[];
 
-
                         if (game) {
                             const gameCards = game.getShuffledDeck(get().applicationState.selectedAnte);
                             starterDeck = gameCards.map((card: any, i: number) => convertGameCardToDeckCard(card, i));
@@ -477,20 +476,19 @@ export const useCardStore = create<CardStore>()(
                             const paramsDeckType = deckType || prev.immolateState.deck;
                             const seed = prev.immolateState.seed;
 
-                            if (seed && paramsDeckType === 'Erratic Deck') {
+                            if (seed) {
                                 try {
-                                    const d = new Deck(deckMap[paramsDeckType]);
-                                    // Default to White Stake/latest version if missing, just for deck generation
-                                    const s = new Stake(stakeMap[prev.immolateState.stake] || stakeMap['White Stake']);
+                                    const d = new Deck(deckMap[paramsDeckType] || deckMap['Red Deck']);
+                                    const s = new Stake(stakeMap[prev.immolateState.stake || 'White Stake']);
                                     const v = Number(prev.immolateState.gameVersion || '10106');
-                                    const p = new InstanceParams(d, s, false, v);
+                                    const p = new InstanceParams(d, s, prev.immolateState.showmanOwned, v);
                                     const tempGame = new Game(seed, p);
 
-                                    // initDeck returns the randomized erratic deck (sorted)
+                                    // Use the game engine to get the correct starting deck order
                                     const gameCards = tempGame.initDeck();
                                     starterDeck = gameCards.map((card: any, i: number) => convertGameCardToDeckCard(card, i));
                                 } catch (e) {
-                                    console.error("Failed to generate erratic deck:", e);
+                                    console.error("Failed to generate engine deck:", e);
                                     starterDeck = generateStartingDeck(paramsDeckType);
                                 }
                             } else {

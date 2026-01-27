@@ -194,6 +194,7 @@ export function DrawSimulatorModal() {
     const deckType = useCardStore(state => state.immolateState.deck);
     const stake = useCardStore(state => state.immolateState.stake);
     const gameVersion = useCardStore(state => state.immolateState.gameVersion);
+    const showmanOwned = useCardStore(state => state.immolateState.showmanOwned);
     const customDeck = useCardStore(state => state.deckState.cards);
 
     // Simulation State
@@ -261,7 +262,7 @@ export function DrawSimulatorModal() {
         const d = new Deck(deckMap[deckType] || deckMap['Red Deck']);
         const s = new Stake(stakeMap[stake || 'White Stake']);
         const v = Number(gameVersion || '10106');
-        const params = new InstanceParams(d, s, false, v);
+        const params = new InstanceParams(d, s, showmanOwned, v);
         const engine = new Game(seed, params);
 
         // 2. Inject Custom Deck
@@ -315,7 +316,7 @@ export function DrawSimulatorModal() {
         if (opened) {
             simulate();
         }
-    }, [handSize, customDeck.length]); // Re-simulate if hand size or deck composition (count) changes
+    }, [handSize, customDeck]); // Re-simulate if hand size or deck composition changes
 
     const toggleSelection = (id: string) => {
         if (selectedCards.includes(id)) {

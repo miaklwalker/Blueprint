@@ -16,15 +16,18 @@ import {
     Title,
     Tooltip,
 } from '@mantine/core';
-import { IconCards, IconTrash, IconRefresh, IconArrowBackUp, IconArrowForwardUp, IconEdit, IconChevronRight, IconPlayerPlay } from '@tabler/icons-react';
+import { IconCards, IconTrash, IconRefresh, IconArrowBackUp, IconArrowForwardUp, IconEdit, IconChevronRight, IconPlayerPlay, IconCopy, IconArrowsLeftRight, IconCircleX } from '@tabler/icons-react';
 import { useCardStore } from '../modules/state/store.ts';
 import { getDeckStats, type DeckCard, SUIT_CODES, RANK_CODES } from '../modules/deckUtils.ts';
 
 // Mini card component for deck display
-function MiniDeckCard({ card, onRemove, onUpdate }: {
+function MiniDeckCard({ card, onRemove, onUpdate, onDuplicate, onStartTransform, isTransformSource }: {
     card: DeckCard;
     onRemove: (id: string) => void;
     onUpdate: (id: string, updates: Partial<DeckCard>) => void;
+    onDuplicate: (id: string) => void;
+    onStartTransform: (id: string) => void;
+    isTransformSource: boolean;
 }) {
     const suitColors: Record<string, string> = {
         Hearts: '#e03131',
@@ -55,7 +58,9 @@ function MiniDeckCard({ card, onRemove, onUpdate }: {
                         cursor: 'pointer',
                         position: 'relative',
                         backgroundColor: hasModifiers ? 'rgba(255, 255, 255)' : undefined,
-                        transition: 'transform 0.1s ease',
+                        border: isTransformSource ? '2px solid var(--mantine-color-blue-filled)' : undefined,
+                        boxShadow: isTransformSource ? '0 0 10px var(--mantine-color-blue-filled)' : undefined,
+                        transition: 'all 0.1s ease',
                     }}
                     onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
                     onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
@@ -107,6 +112,21 @@ function MiniDeckCard({ card, onRemove, onUpdate }: {
             </Menu.Target>
 
             <Menu.Dropdown>
+                <Menu.Label>Deck Management</Menu.Label>
+                <Menu.Item
+                    leftSection={<IconCopy size={14} />}
+                    onClick={() => onDuplicate(card.id)}
+                >
+                    Clone Card
+                </Menu.Item>
+                <Menu.Item
+                    leftSection={<IconArrowsLeftRight size={14} />}
+                    onClick={() => onStartTransform(card.id)}
+                >
+                    Transform into...
+                </Menu.Item>
+
+                <Menu.Divider />
                 <Menu.Label>Modify Card</Menu.Label>
 
                 <Menu shadow="md" width={150} trigger="hover" position="right-start">
@@ -281,9 +301,30 @@ function DeckStats({ cards }: { cards: DeckCard[] }) {
 function DeckBySuit({ cards }: { cards: DeckCard[] }) {
     const removeCard = useCardStore(state => state.removeCardFromDeck);
     const updateCard = useCardStore(state => state.updateCardInDeck);
+    const duplicateCard = useCardStore(state => state.duplicateCard);
+    const setConversionSource = useCardStore(state => state.setConversionSource);
+    const conversionSourceId = useCardStore(state => state.applicationState.conversionSourceId);
 
     const suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades'];
     const rankOrder = ['A', 'K', 'Q', 'J', '10', '9', '8', '7', '6', '5', '4', '3', '2'];
+
+    const handleCardClick = (targetCard: DeckCard) => {
+        if (conversionSourceId && conversionSourceId !== targetCard.id) {
+            const sourceCard = cards.find(c => c.id === conversionSourceId);
+            if (sourceCard) {
+                updateCard(targetCard.id, {
+                    rank: sourceCard.rank,
+                    suit: sourceCard.suit,
+                    base: sourceCard.base,
+                    name: sourceCard.name,
+                    edition: sourceCard.edition,
+                    enhancement: sourceCard.enhancement,
+                    seal: sourceCard.seal
+                });
+            }
+            setConversionSource(null);
+        }
+    };
 
     const cardsBySuit = useMemo(() => {
         const grouped: Record<string, DeckCard[]> = {};
@@ -307,32 +348,48 @@ function DeckBySuit({ cards }: { cards: DeckCard[] }) {
     };
 
     return (
-        <Accordion multiple defaultValue={suits}>
-            {suits.map(suit => (
-                <Accordion.Item key={suit} value={suit}>
-                    <Accordion.Control>
-                        <Group>
-                            <Text fw={700}>
-                                {suitSymbols[suit]} {suit}
-                            </Text>
-                            <Badge size="sm">{cardsBySuit[suit]?.length || 0}</Badge>
-                        </Group>
-                    </Accordion.Control>
-                    <Accordion.Panel>
-                        <SimpleGrid cols={7} spacing={4}>
-                            {cardsBySuit[suit]?.map(card => (
-                                <MiniDeckCard
-                                    key={card.id}
-                                    card={card}
-                                    onRemove={removeCard}
-                                    onUpdate={updateCard}
-                                />
-                            ))}
-                        </SimpleGrid>
-                    </Accordion.Panel>
-                </Accordion.Item>
-            ))}
-        </Accordion>
+        <Stack gap="xs">
+            {conversionSourceId && (
+                <Paper p="xs" bg="blue.1" withBorder shadow="sm">
+                    <Group justify="space-between">
+                        <Text size="sm" fw={600} c="blue.8"> Select a target card to transform it into this card </Text>
+                        <ActionIcon variant="subtle" onClick={() => setConversionSource(null)}>
+                            <IconCircleX size={18} />
+                        </ActionIcon>
+                    </Group>
+                </Paper>
+            )}
+            <Accordion multiple defaultValue={suits}>
+                {suits.map(suit => (
+                    <Accordion.Item key={suit} value={suit}>
+                        <Accordion.Control>
+                            <Group>
+                                <Text fw={700}>
+                                    {suitSymbols[suit]} {suit}
+                                </Text>
+                                <Badge size="sm">{cardsBySuit[suit]?.length || 0}</Badge>
+                            </Group>
+                        </Accordion.Control>
+                        <Accordion.Panel>
+                            <SimpleGrid cols={7} spacing={4}>
+                                {cardsBySuit[suit]?.map(card => (
+                                    <Box key={card.id} onClick={() => handleCardClick(card)}>
+                                        <MiniDeckCard
+                                            card={card}
+                                            onRemove={removeCard}
+                                            onUpdate={updateCard}
+                                            onDuplicate={duplicateCard}
+                                            onStartTransform={setConversionSource}
+                                            isTransformSource={conversionSourceId === card.id}
+                                        />
+                                    </Box>
+                                ))}
+                            </SimpleGrid>
+                        </Accordion.Panel>
+                    </Accordion.Item>
+                ))}
+            </Accordion>
+        </Stack>
     );
 }
 

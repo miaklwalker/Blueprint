@@ -47,6 +47,7 @@ export interface InitialState {
         analyzedResults: SeedResultsContainer | null | undefined;
         maxMiscCardSource: number;
         rerollStartIndex: number;
+        conversionSourceId: string | null;
     };
     searchState: {
         searchTerm: string;
@@ -125,6 +126,8 @@ interface StoreActions {
     addCardToDeck: (card: any, source: DeckCard['source'], sourceDetails?: DeckCard['sourceDetails']) => void;
     removeCardFromDeck: (cardId: string) => void;
     updateCardInDeck: (cardId: string, updates: Partial<DeckCard>) => void;
+    duplicateCard: (cardId: string) => void;
+    setConversionSource: (cardId: string | null) => void;
     undoDeckChange: () => void;
     redoDeckChange: () => void;
     clearDeck: () => void;
@@ -164,7 +167,8 @@ const initialState: InitialState = {
         analyzedResults: null,
         maxMiscCardSource: 15,
         rerollStartIndex: 0,
-        drawSimulatorModalOpen: false
+        drawSimulatorModalOpen: false,
+        conversionSourceId: null
     },
     searchState: {
         searchTerm: '',
@@ -416,11 +420,11 @@ export const useCardStore = create<CardStore>()(
                         prev.applicationState.miscSource = source
                     }, undefined, 'Global/NavigateToMiscSource'),
                     addBuy: (buy) => set((prev) => {
-                        const key = `${buy.ante}-${buy.location}-${buy.index}${buy.locationType === LOCATION_TYPES.PACK ? `-${buy.blind}` : ''}`;
+                        const key = `${buy.ante}-${buy.location}-${buy.index}${buy.packIndex !== undefined ? `-p${buy.packIndex}` : ''}${buy.locationType === LOCATION_TYPES.PACK ? `-${buy.blind}` : ''}`;
                         prev.shoppingState.buys[key] = buy;
                     }, undefined, 'Global/AddBuy'),
                     removeBuy: (buy) => set((prev) => {
-                        const key = `${buy.ante}-${buy.location}-${buy.index}${buy.locationType === LOCATION_TYPES.PACK ? `-${buy.blind}` : ''}`;
+                        const key = `${buy.ante}-${buy.location}-${buy.index}${buy.packIndex !== undefined ? `-p${buy.packIndex}` : ''}${buy.locationType === LOCATION_TYPES.PACK ? `-${buy.blind}` : ''}`;
                         delete prev.shoppingState.buys[key];
                     }, undefined, 'Global/RemoveBuy'),
                     isOwned: (key: string) => {
@@ -528,6 +532,24 @@ export const useCardStore = create<CardStore>()(
                             };
                         }
                     }, undefined, 'Deck/UpdateCardInDeck'),
+
+                    duplicateCard: (cardId: string) => set((prev) => {
+                        const card = prev.deckState.cards.find(c => c.id === cardId);
+                        if (card) {
+                            const newCard = {
+                                ...card,
+                                id: `clone_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
+                                source: 'other' as const
+                            };
+                            prev.deckState.past.push([...prev.deckState.cards]);
+                            prev.deckState.future = [];
+                            prev.deckState.cards.push(newCard);
+                        }
+                    }, undefined, 'Deck/DuplicateCard'),
+
+                    setConversionSource: (cardId) => set((prev) => {
+                        prev.applicationState.conversionSourceId = cardId;
+                    }, undefined, 'Deck/SetConversionSource'),
 
                     undoDeckChange: () => set((prev) => {
                         if (prev.deckState.past.length > 0) {

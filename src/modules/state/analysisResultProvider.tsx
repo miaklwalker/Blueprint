@@ -9,7 +9,8 @@ export const SeedResultContext = createContext<SeedResultsContainer | null | und
 
 export function useSeedResultsContainer() {
     const context = useContext(SeedResultContext);
-    if (context === undefined) {
+    console.log(context)
+    if (context === null) {
         throw new Error("useSeedResultsContainer must be used within a SeedResultProvider");
     }
     return context;
@@ -23,7 +24,7 @@ export function SeedResultProvider({ children }: { children: React.ReactNode }) 
 
     const seedResult = useMemo(() => {
         if (!start) {
-            return null;
+            return undefined;
         }
         return analyzeSeed(analyzeState, {
             ...options,

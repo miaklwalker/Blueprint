@@ -142,8 +142,13 @@ function AntePanel({ ante, tabName, timeTravelVoucherOffset }: {
                     </Fieldset>
                 </Group>
 
-                <Accordion multiple={true} defaultValue={packs?.map((pack: Pack, index: number) => String(pack.name) + String(index)) ?? []} w={'100%'}
-                    variant={'separated'}>
+                <Accordion
+                    key={`${tabName}-${selectedBlind}`}
+                    multiple={true}
+                    defaultValue={packs?.map((pack: Pack, index: number) => String(pack.name) + String(index)) ?? []}
+                    w={'100%'}
+                    variant={'separated'}
+                >
                     {
                         packs.map((pack: Pack, index: number) => {
                             return (
@@ -540,7 +545,7 @@ function Main() {
 // declare window module and saveSeedDebug function
 declare global {
     interface Window {
-        saveSeedDebug: () => void;
+        saveSeedDebug: ReturnType<typeof useDownloadSeedResults>;
     }
 }
 

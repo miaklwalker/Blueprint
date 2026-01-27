@@ -18,7 +18,7 @@ import {
 } from '@mantine/core';
 import { IconCards, IconTrash, IconRefresh, IconArrowBackUp, IconArrowForwardUp, IconEdit, IconChevronRight, IconPlayerPlay } from '@tabler/icons-react';
 import { useCardStore } from '../modules/state/store.ts';
-import { getDeckStats, type DeckCard } from '../modules/deckUtils.ts';
+import { getDeckStats, type DeckCard, SUIT_CODES, RANK_CODES } from '../modules/deckUtils.ts';
 
 // Mini card component for deck display
 function MiniDeckCard({ card, onRemove, onUpdate }: {
@@ -108,6 +108,54 @@ function MiniDeckCard({ card, onRemove, onUpdate }: {
 
             <Menu.Dropdown>
                 <Menu.Label>Modify Card</Menu.Label>
+
+                <Menu shadow="md" width={150} trigger="hover" position="right-start">
+                    <Menu.Target>
+                        <Menu.Item leftSection={<IconEdit size={14} />} rightSection={<IconChevronRight size={14} />}>
+                            Suit
+                        </Menu.Item>
+                    </Menu.Target>
+                    <Menu.Dropdown>
+                        {Object.keys(SUIT_CODES).map(s => (
+                            <Menu.Item key={s} onClick={() => {
+                                const newBase = `${SUIT_CODES[s]}_${RANK_CODES[card.rank]}`;
+                                onUpdate(card.id, {
+                                    suit: s,
+                                    base: newBase,
+                                    name: `${card.rank} of ${s}`
+                                });
+                            }}>
+                                {s}
+                            </Menu.Item>
+                        ))}
+                    </Menu.Dropdown>
+                </Menu>
+
+                <Menu shadow="md" width={150} trigger="hover" position="right-start">
+                    <Menu.Target>
+                        <Menu.Item leftSection={<IconEdit size={14} />} rightSection={<IconChevronRight size={14} />}>
+                            Rank
+                        </Menu.Item>
+                    </Menu.Target>
+                    <Menu.Dropdown>
+                        <ScrollArea.Autosize mah={300}>
+                            {Object.keys(RANK_CODES).map(r => (
+                                <Menu.Item key={r} onClick={() => {
+                                    const newBase = `${SUIT_CODES[card.suit]}_${RANK_CODES[r]}`;
+                                    onUpdate(card.id, {
+                                        rank: r,
+                                        base: newBase,
+                                        name: `${r} of ${card.suit}`
+                                    });
+                                }}>
+                                    {r}
+                                </Menu.Item>
+                            ))}
+                        </ScrollArea.Autosize>
+                    </Menu.Dropdown>
+                </Menu>
+
+                <Menu.Divider />
 
                 <Menu shadow="md" width={200} trigger="hover" position="right-start">
                     <Menu.Target>

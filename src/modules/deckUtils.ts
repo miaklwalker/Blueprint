@@ -6,14 +6,14 @@ const SUITS = ['Hearts', 'Diamonds', 'Clubs', 'Spades'] as const;
 const RANKS = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace'] as const;
 
 // Map for base card format (e.g., "H_2" for 2 of Hearts)
-const SUIT_CODES: Record<string, string> = {
+export const SUIT_CODES: Record<string, string> = {
     'Hearts': 'H',
     'Diamonds': 'D',
     'Clubs': 'C',
     'Spades': 'S'
 };
 
-const RANK_CODES: Record<string, string> = {
+export const RANK_CODES: Record<string, string> = {
     '2': '2',
     '3': '3',
     '4': '4',

@@ -207,11 +207,13 @@ const blueprintStorage: StateStorage = {
 // Helper functions to manage immolateState in URL
 function getImmolateStateFromUrl() {
     const params = new URLSearchParams(window.location.search);
+    const antesParam = params.get('antes');
+    const parsedAntes = antesParam !== null && antesParam !== '' && !Number.isNaN(Number(antesParam)) ? Number(antesParam) : undefined;
     return {
         seed: params.get('seed') || initialState.immolateState.seed,
         deck: params.get('deck') || initialState.immolateState.deck,
         cardsPerAnte: parseInt(params.get('cardsPerAnte') || initialState.immolateState.cardsPerAnte.toString()),
-        antes: parseInt(params.get('antes') || initialState.immolateState.antes.toString()),
+        antes: parsedAntes !== undefined ? parsedAntes : initialState.immolateState.antes,
         stake: params.get('stake') || initialState.immolateState.stake,
         gameVersion: params.get('gameVersion') || initialState.immolateState.gameVersion,
     };

@@ -483,6 +483,9 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
     const seed = settings.seed.toUpperCase().replace(/0/g, 'O').trim();
 
     if (!seed) return;
+    // Sanitize antes coming from settings (could be null/NaN if UI or URL provided empty value)
+    const maxAntes = Number.isFinite(Number(settings.antes)) && Number(settings.antes) >= 0 ? Math.floor(Number(settings.antes)) : 1;
+
     const output = new SeedResultsContainer();
     const deck = new Deck(deckMap[settings.deck])
     const stake = new Stake(settings.stake as StakeType)
@@ -763,7 +766,7 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
     }
 
 
-    for (let ante = 1; ante <= settings.antes; ante++) {
+    for (let ante = 1; ante <= maxAntes; ante++) {
         output.antes[ante] = generateAnte(ante);
     }
     try {

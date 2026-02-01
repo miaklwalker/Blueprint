@@ -1,7 +1,7 @@
+import React from "react";
 import {Autocomplete, Button, Group, NativeSelect, Paper} from "@mantine/core";
 import {popularSeeds, SeedsWithLegendary} from "../modules/const.ts";
 import {useCardStore} from "../modules/state/store.ts";
-
 
 export function QuickAnalyze() {
     const seed = useCardStore(state => state.immolateState.seed);
@@ -45,42 +45,27 @@ export function QuickAnalyze() {
     return (
         <Paper withBorder shadow={'lg'} p={'1rem'} radius={'md'}>
             <Group align={'flex-end'}>
-                <Autocomplete
-                    flex={1}
-                    w={500}
-                    type="text"
-                    placeholder="Enter Seed"
+                <SeedInputAutoComplete
+                    width={500}
                     label="Analyze Seed"
-                    data={[
-                        {
-                            group: 'Popular Seeds',
-                            items: popularSeeds
-                        }, {
-                            group: 'Generated Seeds With Legendary Jokers',
-                            items: SeedsWithLegendary
-
-                        }
-                    ]}
-                    value={seed}
-                    onChange={(e) => setSeed(e)}
-                    rightSection={select}
-                    rightSectionWidth={sectionWidth}
-                />
-                <Button onClick={() => setStart(seed.length >= 5)}> Analyze Seed </Button>
+                    seed={seed}
+                    setSeed={setSeed} />
+                <Button onClick={() => setStart(!!seed)} disabled={!seed}> Analyze Seed </Button>
             </Group>
         </Paper>
     );
 
 }
 
-export default function SeedInputAutoComplete({seed, setSeed}: { seed: string, setSeed: (seed: string) => void }) {
+export default function SeedInputAutoComplete({width, label, seed, setSeed}: { width: number, label: string, seed: string, setSeed: (seed: string) => void }) {
     return (
         <Autocomplete
             flex={1}
-            label={'Seed'}
+            w={width}
+            label={label}
             placeholder={'Enter Seed'}
             value={seed}
-            onChange={(e) => setSeed(e)}
+            onChange={(e) => setSeed(e.replace('0', 'O').trim())}
             data={[
                 {
                     group: 'Popular Seeds',

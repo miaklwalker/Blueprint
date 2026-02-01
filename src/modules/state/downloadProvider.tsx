@@ -23,7 +23,7 @@ export function DownloadSeedResultProvider({children}: { children: React.ReactNo
     const downloadImmolateResults = useCallback(() => {
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(
             JSON.stringify({
-                analyzeState,
+                analyzeState: analyzeState,
                 options,
                 immolateResults: SeedResults
             }, null, 2));

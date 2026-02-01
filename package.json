@@ -1,6 +1,6 @@
 {
   "name": "blueprint",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite dev --host --port 3000",

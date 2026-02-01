@@ -524,17 +524,24 @@ function SeedExplorer() {
 }
 
 function Main() {
-    const SeedResults = useSeedResultsContainer()
+    const SeedResults = useSeedResultsContainer();
     const viewMode = useCardStore(state => state.applicationState.viewMode);
+    // If no seed results or seed is empty, show HomePage only
+    if (!SeedResults || !SeedResults.antes || Object.keys(SeedResults.antes).length === 0) {
+        return (
+            <AppShell.Main>
+                <HomePage />
+            </AppShell.Main>
+        );
+    }
     return (
         <AppShell.Main>
-            {!SeedResults && <HomePage/>}
-            {SeedResults && viewMode === 'blueprint' && <SeedExplorer />}
-            {SeedResults && viewMode === 'text' && <Index />}
-            {SeedResults && viewMode === 'simple' && <Simple />}
-            {SeedResults && <SnapshotModal />}
+            {viewMode === 'blueprint' && <SeedExplorer />}
+            {viewMode === 'text' && <Index />}
+            {viewMode === 'simple' && <Simple />}
+            <SnapshotModal />
         </AppShell.Main>
-    )
+    );
 }
 // declare window module and saveSeedDebug function
 declare global {

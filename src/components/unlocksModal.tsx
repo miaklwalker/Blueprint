@@ -1,6 +1,7 @@
 import { useCardStore } from "../modules/state/store.ts";
 import { Button, Container, Group, Modal, SimpleGrid, Switch } from "@mantine/core";
 import { options } from "../modules/const.ts";
+import React from "react";
 
 export default function UnlocksModal() {
     const selectOptionsModalOpen = useCardStore(state => state.applicationState.selectOptionsModalOpen);

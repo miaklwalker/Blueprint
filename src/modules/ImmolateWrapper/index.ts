@@ -483,8 +483,10 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
     const seed = settings.seed.toUpperCase().replace(/0/g, 'O').trim();
 
     if (!seed) return;
-    // Sanitize antes coming from settings (could be null/NaN if UI or URL provided empty value)
-    const maxAntes = Number.isFinite(Number(settings.antes)) && Number(settings.antes) >= 0 ? Math.floor(Number(settings.antes)) : 1;
+    // Sanitize antes coming from settings (could be null/NaN/0 if UI or URL provided empty value)
+    const parsedAntes = Number(settings.antes);
+    const safeAntes = Number.isFinite(parsedAntes) ? Math.floor(parsedAntes) : 1;
+    const maxAntes = Math.max(1, safeAntes);
 
     const output = new SeedResultsContainer();
     const deck = new Deck(deckMap[settings.deck])
@@ -778,6 +780,8 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
 
     return output;
 }
+
+
 
 
 

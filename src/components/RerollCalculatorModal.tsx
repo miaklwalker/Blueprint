@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { useCardStore } from "../modules/state/store.ts";
 import { Voucher } from "../modules/balatrots/enum/Voucher.ts";
 import { BuyMetaData } from "../modules/classes/BuyMetaData.ts";
+import React from "react";
 
 interface RerollCalculatorModalProps {
     opened: boolean;

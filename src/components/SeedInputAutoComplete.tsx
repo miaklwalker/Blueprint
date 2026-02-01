@@ -57,7 +57,7 @@ export function QuickAnalyze() {
 
 }
 
-export default function SeedInputAutoComplete({width, label, seed, setSeed}: { width: number, label: string, seed: string, setSeed: (seed: string) => void }) {
+export default function SeedInputAutoComplete({width, label, seed, setSeed}: { width?: number, label: string, seed: string, setSeed: (seed: string) => void }) {
     return (
         <Autocomplete
             flex={1}

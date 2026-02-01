@@ -271,7 +271,7 @@ export default function NavBar() {
                 <Stack>
                     <Button
                         onClick={handleAnalyzeClick}
-                        disabled={!hasSettingsChanged}
+                        disabled={!hasSettingsChanged || !seed}
                         color={hasSettingsChanged ? "green" : "gray"}
 
                     >

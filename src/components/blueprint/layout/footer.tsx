@@ -33,7 +33,7 @@ export default function Footer() {
     return (
         <AppShell.Footer p={'xs'}>
             <Center w={'100%'}>
-                <Flex align={'center'} direction={{base: "column", sm: "row"}} gap={'sm'}>
+                <Flex align={'center'} direction={{base: "row", sm: "row"}} gap={'sm'}>
                     <Text ta={'center'} fz={'xs'}>
                         Made by Michael Walker with {' '}
                         <Anchor fz={'xs'} href={"https://mantine.dev/"} target={"_blank"}> Mantine </Anchor>,
@@ -48,6 +48,7 @@ export default function Footer() {
                         size={'compact-sm'}
                         color={'yellow'}
                         leftSection={<IconCoffee/>}
+                        style={{ flexShrink: 0 }}
                     >
                         Buy me a coffee
                     </Button>

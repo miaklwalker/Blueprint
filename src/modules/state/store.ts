@@ -130,7 +130,7 @@ const initialState: InitialState = {
         rerollCalculatorMetadata: null,
         snapshotModalOpen: false,
         showCardSpoilers: false,
-        useCardPeek: true,
+        useCardPeek: false,
         autoBuyPacks: true,
         autoBuyVouchers: true,
         miscSource: 'riffRaff',

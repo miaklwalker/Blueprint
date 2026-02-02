@@ -39,7 +39,6 @@ export default function App() {
         <BlueprintThemeProvider>
             <ProviderContainer>
                 <Blueprint/>
-                <Space my={'xl'}/>
             </ProviderContainer>
         </BlueprintThemeProvider>
     );

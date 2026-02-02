@@ -110,10 +110,11 @@ interface SimpleRenderProps {
 
 
 
-export function SimpleRenderCanvas({ layers, invert = false }: SimpleRenderProps) {
-    const canvasRef = useRef<HTMLCanvasElement>(null);
-    const [ratio, setRatio] = useState(3 / 4);
-    const forceUpdate = useForceUpdate();
+export const SimpleRenderCanvas = React.forwardRef<HTMLDivElement, SimpleRenderProps>(
+    ({ layers, invert = false }, ref) => {
+        const canvasRef = useRef<HTMLCanvasElement>(null);
+        const [ratio, setRatio] = useState(3 / 4);
+        const forceUpdate = useForceUpdate();
     useEffect(() => {
         if (!canvasRef.current || !layers || layers.length === 0) return;
         const canvas = canvasRef.current;
@@ -152,7 +153,7 @@ export function SimpleRenderCanvas({ layers, invert = false }: SimpleRenderProps
     }, [layers, invert]);
 
     return (
-        <AspectRatio ratio={ratio} w="100%">
+        <AspectRatio ratio={ratio} w="100%" ref={ref}>
             <canvas
                 ref={canvasRef}
                 style={{
@@ -162,7 +163,9 @@ export function SimpleRenderCanvas({ layers, invert = false }: SimpleRenderProps
             />
         </AspectRatio>
     );
-}
+});
+
+SimpleRenderCanvas.displayName = 'SimpleRenderCanvas';
 
 
 // Advanced card rendering with canvas

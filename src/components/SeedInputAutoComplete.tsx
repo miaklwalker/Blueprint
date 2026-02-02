@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {Autocomplete, Button, Group, NativeSelect, Paper} from "@mantine/core";
 import {popularSeeds, SeedsWithLegendary} from "../modules/const.ts";
 import {useCardStore} from "../modules/state/store.ts";
@@ -50,7 +50,7 @@ export function QuickAnalyze() {
                     label="Analyze Seed"
                     seed={seed}
                     setSeed={setSeed} />
-                <Button onClick={() => setStart(!!seed)} disabled={!seed}> Analyze Seed </Button>
+                <Button onClick={() => setStart(true)} disabled={!seed}> Analyze Seed </Button>
             </Group>
         </Paper>
     );
@@ -58,14 +58,24 @@ export function QuickAnalyze() {
 }
 
 export default function SeedInputAutoComplete({width, label, seed, setSeed}: { width?: number, label: string, seed: string, setSeed: (seed: string) => void }) {
+    const [localValue, setLocalValue] = useState(seed);
+
+    // Sync local value when external seed changes (e.g., from reset)
+    React.useEffect(() => {
+        setLocalValue(seed);
+    }, [seed]);
+
     return (
         <Autocomplete
             flex={1}
             w={width}
             label={label}
             placeholder={'Enter Seed'}
-            value={seed}
-            onChange={(e) => setSeed(e.replace('0', 'O').trim())}
+            value={localValue}
+            onChange={setLocalValue}
+            onBlur={() => {
+                setSeed(localValue);
+            }}
             data={[
                 {
                     group: 'Popular Seeds',

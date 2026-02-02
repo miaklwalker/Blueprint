@@ -26,7 +26,7 @@ import {BuyWrapper} from "../../buyerWrapper.tsx";
 import {LOCATIONS, LOCATION_TYPES, blinds, tagDescriptions} from "../../../modules/const.ts";
 import { useCardStore} from "../../../modules/state/store.ts";
 import {GameCard} from "../../Rendering/cards.tsx";
-import Header from "../layout/header.tsx";
+import Header, {HEADER_HEIGHT} from "../layout/header.tsx";
 import NavBar from "../layout/navbar.tsx";
 import {Aside} from "../layout/aside.tsx";
 import Footer from "../layout/footer.tsx";
@@ -69,7 +69,7 @@ function QueueCarousel({ queue, tabName }: { queue: Array<any>, tabName: string 
                 slideGap={{ base: 'sm' }}
                 slideSize={{ base: 90 }}
                 withControls={false}
-                height={190}
+                height={140}
                 emblaOptions={{ dragFree: true, containScroll: "keepSnaps" }}
                 type={'container'}
             >
@@ -110,14 +110,13 @@ function AntePanel({ ante, tabName, timeTravelVoucherOffset }: {
     const selectedBlind = useCardStore(state => state.applicationState.selectedBlind);
     const packs = ante.blinds[selectedBlind].packs;
     return (
-        <Tabs.Panel w={'100%'} value={tabName}>
-            <Paper withBorder h={'100%'} p={'sm'}>
-                <Group preventGrowOverflow mb={'sm'}>
+        <Tabs.Panel value={tabName}>
+                <Group preventGrowOverflow>
                     <Fieldset flex={1} legend={'Shop'}>
                         <QueueCarousel queue={queue} tabName={tabName} />
                     </Fieldset>
                     <Fieldset legend={'Voucher'}>
-                        <Flex h={192} direction={'column'} align={'space-between'}>
+                        <Flex h={140} direction={'column'} align={'space-between'}>
                             <Text ta={'center'} c={'dimmed'} fz={'md'}> Voucher </Text>
                             <BuyWrapper
                                 bottomOffset={40}
@@ -143,7 +142,11 @@ function AntePanel({ ante, tabName, timeTravelVoucherOffset }: {
                 </Group>
 
                 <Accordion multiple={true} value={packs?.map(({ name }: { name: string }) => name) ?? []} w={'100%'}
-                    variant={'separated'}>
+                    variant={'separated'} styles={{
+                        item: { marginBottom: '0.5rem' },
+                        control: { padding: '0.75rem' },
+                        content: { padding: '0.5rem' }
+                    }}>
                     {
                         packs.map((pack: Pack, index: number) => {
                             return (
@@ -159,14 +162,14 @@ function AntePanel({ ante, tabName, timeTravelVoucherOffset }: {
                                             </Badge>
                                         </Group>
                                     </Accordion.Control>
-                                    <Accordion.Panel>
+                                    <Accordion.Panel p={0}>
                                         <Box w={'100%'} key={index}>
                                             <Carousel
                                                 type={'container'}
-                                                slideSize="90px"
-                                                slideGap={{ base: 'xs' }}
-                                                withControls={true}
-                                                height={190}
+                                                slideSize={{base: "56px", sm: "71px"}}
+                                                slideGap={0}
+                                                withControls={false}
+                                                height={140}
                                                 emblaOptions={{
                                                     dragFree: true,
                                                     containScroll: "keepSnaps",
@@ -205,7 +208,6 @@ function AntePanel({ ante, tabName, timeTravelVoucherOffset }: {
                         })
                     }
                 </Accordion>
-            </Paper>
         </Tabs.Panel>
     )
 }
@@ -430,13 +432,27 @@ function SeedExplorer() {
 
 
     const pool = SeedResults.antes
+    const anteKeys = useMemo(() => Object.keys(pool), [pool])
+    useEffect(() => {
+        if (!anteKeys.length) {
+            return
+        }
+        if (!anteKeys.includes(String(selectedAnte))) {
+            setSelectedAnte(Number(anteKeys[0]))
+        }
+    }, [anteKeys, selectedAnte, setSelectedAnte])
+
+    if (anteKeys.length === 0) {
+        return null
+    }
+
+    const resolvedAnte = pool[Number(anteKeys[0])]
     const itemPool = selectedAnte
 
     return (
         <>
             <Box>
                 <NativeSelect
-                    mb={'sm'}
                     hiddenFrom="sm"
                     value={selectedAnte}
                     onChange={(e) => setSelectedAnte(Number(e.currentTarget.value))}
@@ -450,14 +466,13 @@ function SeedExplorer() {
                     onChange={(v)=>setSelectedBlind(v as Blinds)}
                     fullWidth
                     radius="xl"
-                    size="md"
-                    mb={'sm'}
+                    size="xs"
                     data={blinds.map((blind: string, i: number) => ({
                         value: ['smallBlind', 'bigBlind', 'bossBlind'][i],
-                        label: <Group justify={'center'}>
-                            {blind}
-                            {i < 2 && (
-                                <TagDisplay tag={pool[itemPool].tags[i] as Tag} ante={pool[itemPool]} />
+                        label: <Group justify={'center'} gap={4} wrap="nowrap">
+                            <Text fz={{base: '10px', sm: 'xs'}} fw={500}>{blind}</Text>
+                            {i < 2 && resolvedAnte && (
+                                <TagDisplay tag={resolvedAnte.tags[i] as Tag} ante={resolvedAnte} />
                             )
                             }
                             {
@@ -465,12 +480,12 @@ function SeedExplorer() {
                                 <Popover>
                                     <Popover.Target>
                                         <Box>
-                                            <Boss bossName={pool[itemPool].boss ?? ''} />
+                                            <Boss bossName={resolvedAnte?.boss ?? ''} />
                                         </Box>
                                     </Popover.Target>
                                     <Popover.Dropdown>
                                         <Box>
-                                            <Text>{pool[itemPool].boss}</Text>
+                                            <Text>{resolvedAnte?.boss}</Text>
                                         </Box>
                                     </Popover.Dropdown>
                                 </Popover>
@@ -563,7 +578,7 @@ export function Blueprint() {
 
     return (
         <AppShell
-            header={{ height: { base: 60, md: 70, lg: 80 } }}
+            header={{ height: HEADER_HEIGHT }}
             aside={{
                 width: { base: '100%', md: 400, lg: 550 },
                 breakpoint: 'md',

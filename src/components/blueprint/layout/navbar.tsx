@@ -149,6 +149,7 @@ export default function NavBar() {
             </AppShell.Section>
             <AppShell.Section pr={'xs'} grow my="md" component={ScrollArea} scrollbars={'y'}>
                 <SeedInputAutoComplete
+                    label="Seed"
                     seed={seed}
                     setSeed={setSeed}
                 />

@@ -2,6 +2,7 @@ import {Layer} from "../../modules/classes/Layer.ts";
 import {useEffect, useRef, useState} from "react";
 import {useForceUpdate, useHover, useMergedRef, useMouse, useResizeObserver} from "@mantine/hooks";
 import {AspectRatio} from "@mantine/core";
+import React from "react";
 
 const globalImageCache = new Map<string, HTMLImageElement>();
 interface RenderCanvasProps {
@@ -62,7 +63,7 @@ export function renderImage(
         canvas.style.height = `${cardHeight}px`;
     }
 
-    canvas.style.imageRendering = 'pixelated';
+    canvas.style.imageRendering = 'high';
     context.imageSmoothingEnabled = true;
 
     // Save context state before modifying

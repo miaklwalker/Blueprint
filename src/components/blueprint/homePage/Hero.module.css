@@ -1,12 +1,7 @@
 .wrapper {
     position: relative;
-    /*padding-top: 120px;*/
-    padding-bottom: 80px;
 
-    @media (max-width: $mantine-breakpoint-sm) {
-        /*padding-top: 80px;*/
-        padding-bottom: 60px;
-    }
+
 }
 
 .inner {
@@ -18,7 +13,7 @@
     position: absolute;
     color: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-5));
 
-    @media (max-width: $mantine-breakpoint-sm) {
+    @media (max-width: var(--mantine-breakpoint-sm)) {
         display: none;
     }
 }
@@ -39,7 +34,7 @@
             Greycliff CF,
             var(--mantine-font-family);
 
-    @media (max-width: $mantine-breakpoint-xs) {
+    @media (max-width: var(--mantine-breakpoint-xs)) {
         font-size: 28px;
         text-align: left;
     }
@@ -52,7 +47,7 @@
 .description {
     text-align: center;
 
-    @media (max-width: $mantine-breakpoint-xs) {
+    @media (max-width: var(--mantine-breakpoint-xs)) {
         text-align: left;
         font-size: var(--mantine-font-size-md);
     }
@@ -63,7 +58,7 @@
     display: flex;
     justify-content: center;
 
-    @media (max-width: $mantine-breakpoint-xs) {
+    @media (max-width: var(--mantine-breakpoint-xs)) {
         flex-direction: column;
     }
 }
@@ -73,7 +68,7 @@
         margin-left: var(--mantine-spacing-md);
     }
 
-    @media (max-width: $mantine-breakpoint-xs) {
+    @media (max-width: var(--mantine-breakpoint-xs)) {
         height: 42px;
         font-size: var(--mantine-font-size-md);
 

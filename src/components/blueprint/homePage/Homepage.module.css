@@ -1,17 +1,16 @@
 .wrapper {
-    padding-top: calc(var(--mantine-spacing-xl) * 4);
-    padding-bottom: calc(var(--mantine-spacing-xl) * 4);
+    padding-top: calc(var(--mantine-spacing-xl) * 0);
+    padding-bottom: calc(var(--mantine-spacing-xl) * 0);
 }
 
 .title {
-    font-family:
-            Greycliff CF,
-            var(--mantine-font-family);
+    font-family: "Greycliff CF", var(--mantine-font-family);
     font-weight: 900;
     margin-bottom: var(--mantine-spacing-md);
     text-align: center;
 
-    @media (max-width: $mantine-breakpoint-sm) {
+    /* Correcting media query syntax */
+    @media screen and (max-width: var(--mantine-breakpoint-sm)) {
         font-size: 28px;
         text-align: left;
     }
@@ -20,7 +19,8 @@
 .description {
     text-align: center;
 
-    @media (max-width: $mantine-breakpoint-sm) {
+    /* Correcting media query syntax */
+    @media screen and (max-width: var(--mantine-breakpoint-sm)) {
         text-align: left;
     }
 }

@@ -299,7 +299,7 @@ function SimpleBoss({bossName}: { bossName: string }) {
 
 function AnteSkeletonLoader() {
     return (
-        <Paper w={'100%'} withBorder shadow={'xl'} mb={'xl'} p={'md'}>
+        <Box w={'100%'} mb={'xs'}>
             <Skeleton height={28} width="120px" mb="lg"/>
 
             {/* Shop section */}
@@ -341,7 +341,7 @@ function AnteSkeletonLoader() {
                     </Stack>
                 </Group>
             </Group>
-        </Paper>
+        </Box>
     );
 }
 
@@ -392,7 +392,7 @@ function Simple() {
     };
 
     return (
-        <Container fluid ref={containerRef}>
+        <Container fluid p={0} ref={containerRef}>
             {hasLockedCards && (
                 <Affix position={{bottom: 40, right: 40}}>
                     <Group justify="flex-end" mb="md">
@@ -426,8 +426,8 @@ function Simple() {
                 const blinds = value.blinds;
 
                 return (
-                    <Paper w={'100%'} withBorder shadow={'xl'} mb={'xl'} p={'md'} key={key}>
-                        <Title order={2} mb={'1rem'}>Ante {key}</Title>
+                    <Box w={'100%'} mb={'xs'} key={key}>
+                        <Title order={2} mb={'0.5rem'}>Ante {key}</Title>
                         <Group align={'flex-start'} justify={'space-between'} mb={'xs'}>
                             <Group align={'flex-start'}>
                                 <SimpleVoucher voucherName={value.voucher}/>
@@ -444,7 +444,7 @@ function Simple() {
                         {/* Shop section */}
                         <Title order={4} mb={'1rem'}>Shop</Title>
                         <DragScroll>
-                            <Group wrap={'nowrap'}>
+                            <Group wrap={'nowrap'} gap={0}>
                                 {value.queue.map((card, index) => (
                                     <SimpleBuyerWrapper
                                         key={index}
@@ -475,7 +475,7 @@ function Simple() {
                                                 pick{' '}{pack.choices}
                                             </Text>
                                             <DragScroll>
-                                                <Group wrap={'nowrap'}>
+                                                <Group wrap={'nowrap'} gap={0}>
                                                     {pack.cards.map((card, cardIndex) => (
                                                         <SimpleBuyerWrapper
                                                             key={cardIndex}
@@ -501,7 +501,7 @@ function Simple() {
 
                         {/* Observer at the bottom of each rendered ante to detect when it's visible */}
                         <AnteObserver anteNumber={anteNumber}/>
-                    </Paper>
+                    </Box>
                 );
             })}
 

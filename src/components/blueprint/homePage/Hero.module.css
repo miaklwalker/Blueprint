@@ -60,6 +60,9 @@
 
     @media (max-width: var(--mantine-breakpoint-xs)) {
         flex-direction: column;
+        max-width: 340px;
+        margin-left: auto;
+        margin-right: auto;
     }
 }
 

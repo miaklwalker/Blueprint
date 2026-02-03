@@ -578,7 +578,7 @@ export function Blueprint() {
 
     return (
         <AppShell
-            header={{ height: HEADER_HEIGHT }}
+            header={{ height: { base: 60, md: 70, lg: 80 } }}
             aside={{
                 width: { base: '100%', md: 400, lg: 550 },
                 breakpoint: 'md',

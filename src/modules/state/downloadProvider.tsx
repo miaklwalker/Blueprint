@@ -21,6 +21,9 @@ export function DownloadSeedResultProvider({children}: { children: React.ReactNo
     const SeedResults = useSeedResultsContainer()
 
     const downloadImmolateResults = useCallback(() => {
+        if (!SeedResults) {
+            return;
+        }
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(
             JSON.stringify({
                 analyzeState: analyzeState,

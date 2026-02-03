@@ -108,7 +108,8 @@ export function BuyWrapper({ children, bottomOffset, metaData, horizontal = fals
                             boxShadow: isSelected ? '0 0 12px 12px rgba(255,255,255,0.3)' : 'none',
                             transform: hasUserAttention ? 'scale(1.15)' : 'none',
                             transition: 'transform 0.4s ease',
-                            zIndex: hasUserAttention ? 20 : 0
+                            zIndex: hasUserAttention ? 100 : 0,
+                            position: 'relative'
                         }}
                     >
                         <Card.Section>
@@ -149,7 +150,7 @@ export function BuyWrapper({ children, bottomOffset, metaData, horizontal = fals
                             wrap="nowrap"
                             gap={0}
                             pos={'absolute'}
-                            style={{ ...styles, zIndex: 1 }}
+                            style={{ ...styles, zIndex: 101 }}
                             left={horizontal ? "200px" : 'unset'}
                             top={horizontal ? 'unset' : bottomOffset ? `calc(80% + ${bottomOffset}px)` : '80%'}
                         >

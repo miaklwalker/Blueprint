@@ -9,9 +9,6 @@ export const SeedResultContext = createContext<SeedResultsContainer | null | und
 
 export function useSeedResultsContainer() {
     const context = useContext(SeedResultContext);
-    if (context === undefined) {
-        throw new Error("useSeedResultsContainer must be used within a SeedResultProvider");
-    }
     return context;
 }
 

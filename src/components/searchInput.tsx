@@ -76,9 +76,9 @@ export default function SearchSeedInput() {
 
 
     const searchResults = useMemo(() => {
-        if (searchString === '' || !searchActive) return [];
+        if (!searchActive || !SeedResults || searchString === '') return [];
         const cards: Array<BuyMetaData> = [];
-        const antes: Array<Ante> = Object.values(SeedResults?.antes ?? {});
+        const antes: Array<Ante> = Object.values(SeedResults.antes);
         antes.forEach((ante: Ante) => {
             ante.queue.forEach((card, index) => {
                 const cardString = `${(card.edition && card.edition !== 'No Edition') ? card.edition : ''} ${card.name}`.trim();
@@ -158,7 +158,7 @@ export default function SearchSeedInput() {
             }
             return false;
         })
-    }, [searchString, searchActive, SeedResults?.antes, sourceFilterConfig.shop.enabled, sourceFilterConfig.packs.enabled, sourceFilterConfig.misc])
+    }, [searchString, searchActive, SeedResults, sourceFilterConfig.shop.enabled, sourceFilterConfig.packs.enabled, sourceFilterConfig.misc])
     return (
         <>
             <Spotlight

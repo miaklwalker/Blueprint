@@ -73,6 +73,10 @@ export default function SeedInputAutoComplete({width, label, seed, setSeed}: { w
             placeholder={'Enter Seed'}
             value={localValue}
             onChange={setLocalValue}
+            onOptionSubmit={(val) => {
+                setSeed(val);
+                setLocalValue(val);
+            }}
             onBlur={() => {
                 setSeed(localValue);
             }}

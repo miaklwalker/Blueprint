@@ -4,7 +4,7 @@ import '@mantine/carousel/styles.css';
 import '@mantine/spotlight/styles.css';
 
 
-import { MantineProvider, Space, Stack, Text } from "@mantine/core";
+import { MantineProvider, Paper, Space, Stack, Text, Title } from "@mantine/core";
 import { Blueprint } from "./components/blueprint/standardView";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
@@ -12,7 +12,7 @@ import { SeedResultProvider } from "./modules/state/analysisResultProvider.tsx";
 import { SeedOptionsProvider } from "./modules/state/optionsProvider.tsx";
 import { DownloadSeedResultProvider } from "./modules/state/downloadProvider.tsx";
 import { BlueprintThemeProvider, useBlueprintTheme } from "./modules/state/themeProvider.tsx";
-import { NextStepProvider, NextStepReact, type Tour } from 'nextstepjs';
+import { NextStepProvider, NextStepReact, type Tour, type Step } from 'nextstepjs';
 import { useCardStore } from "./modules/state/store.ts";
 const queryClient = new QueryClient()
 
@@ -21,11 +21,16 @@ const steps: Array<Tour> = [
         tour: 'onboarding-tour',
         steps: [
             {
-                title: "Welcome to Blueprint! 👋",
-                icon: "🚀",
+                title: "Welcome to Blueprint!",
+                icon: "",
                 content: (
                     <Stack gap="xs">
-                        <Text>The ultimate Balatro seed analyzer. Let's take a quick tour to get you started!</Text>
+                        <Text>
+                            more features for more savvy Balatro scientists - Balatro University
+                        </Text>
+                        <Text>
+                            - Balatro University
+                        </Text>
                     </Stack>
                 ),
                 showControls: true,
@@ -35,23 +40,27 @@ const steps: Array<Tour> = [
             {
                 selector: '#view-mode',
                 title: "View Modes",
-                icon: "�️",
+                icon: "",
                 content: (
                     <Stack gap="xs">
-                        <Text>Switch between <b>Blueprint</b> (visual), <b>Efficiency</b> (compact), and <b>Text</b> modes to see your data however you prefer.</Text>
+                        <Text>
+                            Allow you to switch between the appearance of the app.
+                        </Text>
                     </Stack>
                 ),
                 showControls: true,
                 showSkip: true,
-                side: 'right'
+                side: 'bottom'
             },
             {
                 selector: '#seed-config',
                 title: "Seed Configuration",
-                icon: "⚙️",
+                icon: "",
                 content: (
                     <Stack gap="xs">
-                        <Text>Enter your seed and select your starting Deck, Stake, and Game Version here.</Text>
+                        <Text>
+                            Enter your seed and select your starting Deck, Stake, and Game Version here.
+                        </Text>
                     </Stack>
                 ),
                 showControls: true,
@@ -61,10 +70,10 @@ const steps: Array<Tour> = [
             {
                 selector: '#setting-max-ante',
                 title: "Granular Control",
-                icon: "🎚️",
+                icon: "",
                 content: (
                     <Stack gap="xs">
-                        <Text>You can fine-tune exactly how many Antes and cards per source you want to analyze.</Text>
+                        <Text>This controls how many antes you want Blueprint to analyze for your seed.</Text>
                     </Stack>
                 ),
                 showControls: true,
@@ -74,10 +83,10 @@ const steps: Array<Tour> = [
             {
                 selector: '#analyze-button',
                 title: "Run Analysis",
-                icon: "🧪",
+                icon: "",
                 content: (
                     <Stack gap="xs">
-                        <Text>Click here to process the seed. Blueprint will calculate every possible outcome for your configuration!</Text>
+                        <Text>Start the analysis!</Text>
                     </Stack>
                 ),
                 showControls: true,
@@ -87,23 +96,23 @@ const steps: Array<Tour> = [
             {
                 selector: '#ante-navigation',
                 title: "Navigate Antes",
-                icon: "🔢",
+                icon: "",
                 content: (
                     <Stack gap="xs">
-                        <Text>Browse through each Ante. Blueprint shows you the progression of your run step-by-step.</Text>
+                        <Text>Browse through each Ante.</Text>
                     </Stack>
                 ),
                 showControls: true,
                 showSkip: true,
-                side: 'bottom'
+                side: 'right'
             },
             {
                 selector: '#blind-navigation',
                 title: "Blind Selection",
-                icon: "🃏",
+                icon: "",
                 content: (
                     <Stack gap="xs">
-                        <Text>Switch between Small, Big, and Boss blinds to see what's waiting for you in each battle.</Text>
+                        <Text>Switch between Small, Big, and Boss blinds to see what is in the shop.</Text>
                     </Stack>
                 ),
                 showControls: true,
@@ -113,7 +122,7 @@ const steps: Array<Tour> = [
             {
                 selector: '#shop-results',
                 title: "Shop & Packs",
-                icon: "🛍️",
+                icon: "",
                 content: (
                     <Stack gap="xs">
                         <Text>See exactly what Jokers, Tarot cards, and Planet cards will appear in your shops and booster packs.</Text>
@@ -126,7 +135,7 @@ const steps: Array<Tour> = [
             {
                 selector: '#aside-tab-sources',
                 title: "Card Sources",
-                icon: "🗂️",
+                icon: "",
                 content: (
                     <Stack gap="xs">
                         <Text>The <b>Sources</b> tab shows a detailed breakdown of <i>every</i> card source: Vouchers, Tags, Bosses, and even Wheel of Fortune outcomes!</Text>
@@ -139,10 +148,10 @@ const steps: Array<Tour> = [
             {
                 selector: '#aside-tab-purchases',
                 title: "Purchase History",
-                icon: "�",
+                icon: "",
                 content: (
                     <Stack gap="xs">
-                        <Text>Keep track of every card you've "purchased" during your analysis to see your build's evolution.</Text>
+                        <Text>Keep track of every card you've "purchased" during your analysis, use it to map out runs.</Text>
                     </Stack>
                 ),
                 showControls: true,
@@ -152,7 +161,7 @@ const steps: Array<Tour> = [
             {
                 selector: '#aside-tab-deck',
                 title: "Your Deck",
-                icon: "🎴",
+                icon: "",
                 content: (
                     <Stack gap="xs">
                         <Text>View your current deck state. You can even manually modify cards or clone them to simulate specific scenarios!</Text>
@@ -165,10 +174,12 @@ const steps: Array<Tour> = [
             {
                 selector: '#simulate-draw-button',
                 title: "Hand Simulator",
-                icon: "🎲",
+                icon: "",
                 content: (
                     <Stack gap="xs">
-                        <Text>Ever wonder what your starting hands look like? Use the <b>Simulate Draw</b> tool to test your deck's consistency.</Text>
+                        <Text>
+                            If you buy standard cards, remove cards from your deck, blueprint tracks it all and can show you your draw.
+                        </Text>
                     </Stack>
                 ),
                 showControls: true,
@@ -178,10 +189,10 @@ const steps: Array<Tour> = [
             {
                 selector: '#aside-tab-events',
                 title: "Event Tracking",
-                icon: "📅",
+                icon: "",
                 content: (
                     <Stack gap="xs">
-                        <Text>Track specific unlock conditions or milestones across multiple Antes.</Text>
+                        <Text>Unlock Event Driven Jokers, so they can appear in the shop properly.</Text>
                     </Stack>
                 ),
                 showControls: true,
@@ -191,10 +202,10 @@ const steps: Array<Tour> = [
             {
                 selector: '#features-button',
                 title: "Visual Features",
-                icon: "✨",
+                icon: "",
                 content: (
                     <Stack gap="xs">
-                        <Text>Check out <b>Features</b> to see a visual gallery of all cards and their properties found in this seed.</Text>
+                        <Text>Highlights a few features of the app. </Text>
                     </Stack>
                 ),
                 showControls: true,
@@ -202,24 +213,24 @@ const steps: Array<Tour> = [
                 side: 'right'
             },
             {
-                selector: '#snapshot-button',
+                selector: '[data-tour-id="features-modal"]',
                 title: "Seed Summary",
-                icon: "📊",
+                icon: "",
                 content: (
                     <Stack gap="xs">
-                        <Text>Get a bird's-eye view of your entire run with the <b>Seed Summary</b> snapshot.</Text>
+                        <Text>A quick summary of the seed, and the cards you can find</Text>
                     </Stack>
                 ),
                 showControls: true,
                 showSkip: true,
-                side: 'top-right'
+                side: 'left-top'
             },
             {
                 title: "Reroll Calculator",
-                icon: "🔄",
+                icon: "",
                 content: (
                     <Stack gap="xs">
-                        <Text>Blueprint includes a powerful reroll calculator. You can find it by clicking the dropdown arrow on any shop card to see if that elusive Joker is just one reroll away!</Text>
+                        <Text>Lets you calculate how much it will cost to get to a certain card in the shop.</Text>
                     </Stack>
                 ),
                 showControls: true,
@@ -227,11 +238,11 @@ const steps: Array<Tour> = [
                 side: 'right'
             },
             {
-                title: "Ready to go? 🃏",
-                icon: "🏁",
+                title: "Quick Re roll",
+                icon: "",
                 content: (
                     <Stack gap="xs">
-                        <Text>You're all set! Blueprint is a deep tool, so don't be afraid to click around. Good luck on your run!</Text>
+                        <Text>Lets you quickly reroll the shop, and see what you get. Simply press and hold on a card.</Text>
                     </Stack>
                 ),
                 showControls: true,
@@ -241,6 +252,9 @@ const steps: Array<Tour> = [
         ]
     }
 ]
+
+
+
 function ProviderContainer({ children }: { children: React.ReactNode }) {
     const { theme, themes } = useBlueprintTheme()
     const settingsOpen = useCardStore(state => state.applicationState.settingsOpen);
@@ -250,6 +264,8 @@ function ProviderContainer({ children }: { children: React.ReactNode }) {
     const setAsideTab = useCardStore(state => state.setAsideTab);
     const openSnapshotModal = useCardStore(state => state.openSnapshotModal);
     const closeSnapshotModal = useCardStore(state => state.closeSnapshotModal);
+    const openRerollModal = useCardStore(state => state.openRerollCalculatorModal);
+    const closeRerollModal = useCardStore(state => state.closeRerollCalculatorModal);
 
     const handleStepChange = (step: number) => {
         // Steps 1-4: Settings (Navbar) open
@@ -286,6 +302,15 @@ function ProviderContainer({ children }: { children: React.ReactNode }) {
         if (step === 14) {
             openSnapshotModal();
         }
+        if (step === 15) {
+            closeSnapshotModal();
+        }
+        if (step === 16) {
+            openRerollModal({});
+        }
+        if (step === 17) {
+            closeRerollModal();
+        }
     }
 
     return (
@@ -296,7 +321,9 @@ function ProviderContainer({ children }: { children: React.ReactNode }) {
                     <SeedResultProvider>
                         <DownloadSeedResultProvider>
                             <NextStepProvider>
-                                <NextStepReact steps={steps} onStepChange={handleStepChange}>
+                                <NextStepReact
+                                    steps={steps}
+                                    onStepChange={handleStepChange}>
                                     {children}
                                 </NextStepReact>
                             </NextStepProvider>

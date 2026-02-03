@@ -156,7 +156,16 @@ export default function NavBar() {
                     label={'Max Ante'}
                     defaultValue={8}
                     value={antes}
-                    onChange={(val) => setAntes(Number(val))}
+                    onChange={(val) => {
+                        // Guard against null/NaN from the NumberInput
+                        if (val === null || Number.isNaN(Number(val))) {
+                            // keep previous value (do not set) or fallback to 1 to be defensive
+                            // Here we fallback to 1 to avoid passing invalid values into the engine
+                            setAntes(1);
+                        } else {
+                            setAntes(Math.floor(Number(val)));
+                        }
+                    }}
                 />
                 <NativeSelect
                     label={'Choose Deck'}

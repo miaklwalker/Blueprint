@@ -1,20 +1,20 @@
-import React, {createContext, useCallback, useContext} from "react";
-import {useCardStore} from "./store.ts";
-import {useSeedOptionsContainer} from "./optionsProvider.tsx";
-import {useSeedResultsContainer} from "./analysisResultProvider.tsx";
+import React, { createContext, useCallback, useContext } from "react";
+import { useCardStore } from "./store.ts";
+import { useSeedOptionsContainer } from "./optionsProvider.tsx";
+import { useSeedResultsContainer } from "./analysisResultProvider.tsx";
 
 export type DownloadSeedResultFunction = () => void;
 export const DownloadSeedResultContext = createContext<DownloadSeedResultFunction | undefined>(undefined);
 
 export function useDownloadSeedResults() {
     const context = useContext(DownloadSeedResultContext);
-    if (!context) {
+    if (context === null) {
         throw new Error("useDownloadSeedResults must be used within a SeedResultProvider");
     }
     return context;
 }
 
-export function DownloadSeedResultProvider({children}: { children: React.ReactNode }) {
+export function DownloadSeedResultProvider({ children }: { children: React.ReactNode }) {
 
     const analyzeState = useCardStore(state => state.immolateState);
     const options = useSeedOptionsContainer()

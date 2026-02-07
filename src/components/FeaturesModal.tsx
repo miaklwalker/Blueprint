@@ -1,3 +1,4 @@
+import React from "react";
 import { useCardStore } from "../modules/state/store.ts";
 import { Accordion, Container, Modal, Text, Stack, List } from "@mantine/core";
 import { IconCalculator, IconCards, IconLock, IconCamera, IconRefresh, IconEye } from "@tabler/icons-react";
@@ -15,7 +16,7 @@ export default function FeaturesModal() {
             opened={featuresModalOpen}
             onClose={() => closeFeaturesModal()}
         >
-            <Container fluid>
+            <Container fluid data-tour-id="features-modal">
                 <Accordion variant="separated" defaultValue={null}>
                     <Accordion.Item value="reroll-calculator">
                         <Accordion.Control icon={<IconCalculator size={20} />}>

@@ -27,19 +27,20 @@ import {
     IconPlayCard,
     IconSun
 } from "@tabler/icons-react";
-import {useCardStore} from "../../../modules/state/store.ts";
+import { useCardStore } from "../../../modules/state/store.ts";
 import UnlocksModal from "../../unlocksModal.tsx";
 import FeaturesModal from "../../FeaturesModal.tsx";
-import {RerollCalculatorModal} from "../../RerollCalculatorModal.tsx";
-import {GaEvent} from "../../../modules/useGA.ts";
+import { RerollCalculatorModal } from "../../RerollCalculatorModal.tsx";
+import { DrawSimulatorModal } from "../../DrawSimulatorModal.tsx";
+import { GaEvent } from "../../../modules/useGA.ts";
 import SeedInputAutoComplete from "../../SeedInputAutoComplete.tsx";
-import { useBlueprintTheme} from "../../../modules/state/themeProvider.tsx";
-import type {KnownThemes} from "../../../modules/state/themeProvider.tsx";
+import { useBlueprintTheme } from "../../../modules/state/themeProvider.tsx";
+import type { KnownThemes } from "../../../modules/state/themeProvider.tsx";
 
 
 export default function NavBar() {
     const theme = useMantineTheme();
-    const {theme: themeName, setTheme, themes} = useBlueprintTheme()
+    const { theme: themeName, setTheme, themes } = useBlueprintTheme()
     const themeNames = Object.keys(themes);
     const colorScheme = useMantineColorScheme()
     const viewMode = useCardStore(state => state.applicationState.viewMode);
@@ -81,7 +82,9 @@ export default function NavBar() {
     return (
         <AppShell.Navbar p="md">
             <UnlocksModal />
+            <UnlocksModal />
             <FeaturesModal />
+            <DrawSimulatorModal />
             <RerollCalculatorModal
                 opened={rerollCalculatorModalOpen}
                 onClose={closeRerollCalculatorModal}
@@ -90,6 +93,7 @@ export default function NavBar() {
             />
             <AppShell.Section>
                 <SegmentedControl
+                    id="view-mode"
                     fullWidth
                     value={viewMode}
                     onChange={(value: string) => setViewMode(value)}
@@ -130,8 +134,8 @@ export default function NavBar() {
                     <Select
                         label={'Theme'}
                         value={themeName}
-                        onChange={(t)=>{
-                            if(!t)return
+                        onChange={(t) => {
+                            if (!t) return
                             setTheme(t as KnownThemes)
                         }}
                         data={themeNames}
@@ -147,12 +151,13 @@ export default function NavBar() {
 
 
             </AppShell.Section>
-            <AppShell.Section pr={'xs'} grow my="md" component={ScrollArea} scrollbars={'y'}>
+            <AppShell.Section id="seed-config" pr={'xs'} grow my="md" component={ScrollArea} scrollbars={'y'}>
                 <SeedInputAutoComplete
                     seed={seed}
                     setSeed={setSeed}
                 />
                 <NumberInput
+                    id="setting-max-ante"
                     label={'Max Ante'}
                     defaultValue={8}
                     value={antes}
@@ -168,6 +173,7 @@ export default function NavBar() {
                     }}
                 />
                 <NativeSelect
+                    id="setting-deck"
                     label={'Choose Deck'}
                     value={deck}
                     onChange={(e) => setDeck(e.currentTarget.value)}
@@ -189,6 +195,7 @@ export default function NavBar() {
                     <option value="Erratic Deck">Erratic Deck</option>
                 </NativeSelect>
                 <NativeSelect
+                    id="setting-stake"
                     label={'Choose Stake'}
                     value={stake}
                     onChange={(e) => setStake(e.currentTarget.value)}
@@ -203,6 +210,7 @@ export default function NavBar() {
                     <option value="Gold Stake">Gold Stake</option>
                 </NativeSelect>
                 <NativeSelect
+                    id="setting-version"
                     label={'Choose Version'}
                     value={version}
                     onChange={(e) => setVersion(e.currentTarget.value)}
@@ -216,32 +224,36 @@ export default function NavBar() {
                 <Text fz={'xs'} c={'dimmed'}>
                     It is recommended to keep this number under 200.
                 </Text>
-                <Button.Group w={'100%'} mb={'lg'}>
-                    <Button variant="default" c={'blue'} onClick={() => setCardsPerAnte(50)}>50</Button>
-                    <Button variant="default" c={'red'} onClick={() => setCardsPerAnte(Math.max(cardsPerAnte - 50, 0))}>-50</Button>
-                    <Button.GroupSection flex={1} variant="default" bg="var(--mantine-color-body)" miw={80}>
-                        {cardsPerAnte}
-                    </Button.GroupSection>
-                    <Button variant="default" c={'green'}
-                        onClick={() => setCardsPerAnte(Math.min(cardsPerAnte + 50, 1000))}>+50</Button>
-                    <Button variant="default" c={'blue'} onClick={() => setCardsPerAnte(1000)}>1000</Button>
-                </Button.Group>
+                <Box id="setting-cards-per-ante" mb={'lg'}>
+                    <Button.Group w={'100%'}>
+                        <Button variant="default" c={'blue'} onClick={() => setCardsPerAnte(50)}>50</Button>
+                        <Button variant="default" c={'red'} onClick={() => setCardsPerAnte(Math.max(cardsPerAnte - 50, 0))}>-50</Button>
+                        <Button.GroupSection flex={1} variant="default" bg="var(--mantine-color-body)" miw={80}>
+                            {cardsPerAnte}
+                        </Button.GroupSection>
+                        <Button variant="default" c={'green'}
+                            onClick={() => setCardsPerAnte(Math.min(cardsPerAnte + 50, 1000))}>+50</Button>
+                        <Button variant="default" c={'blue'} onClick={() => setCardsPerAnte(1000)}>1000</Button>
+                    </Button.Group>
+                </Box>
                 <InputLabel> Cards per Misc source</InputLabel>
                 <Text fz={'xs'} c={'dimmed'}>
                     It is recommended to keep this number under 50.
                 </Text>
-                <Button.Group w={'100%'} mb={'lg'}>
-                    <Button variant="default" c={'blue'} onClick={() => setMiscMaxSource(15)}>15</Button>
-                    <Button variant="default" c={'red'} onClick={() => setMiscMaxSource(Math.max(maxMiscCardSource - 5, 0))}>-5</Button>
-                    <Button.GroupSection flex={1} variant="default" bg="var(--mantine-color-body)" miw={80}>
-                        {maxMiscCardSource}
-                    </Button.GroupSection>
-                    <Button variant="default" c={'green'}
-                        onClick={() => setMiscMaxSource(Math.min(maxMiscCardSource + 5, 100))}>+5</Button>
-                    <Button variant="default" c={'blue'} onClick={() => setMiscMaxSource(100)}>100</Button>
-                </Button.Group>
+                <Box id="setting-misc-source" mb={'lg'}>
+                    <Button.Group w={'100%'}>
+                        <Button variant="default" c={'blue'} onClick={() => setMiscMaxSource(15)}>15</Button>
+                        <Button variant="default" c={'red'} onClick={() => setMiscMaxSource(Math.max(maxMiscCardSource - 5, 0))}>-5</Button>
+                        <Button.GroupSection flex={1} variant="default" bg="var(--mantine-color-body)" miw={80}>
+                            {maxMiscCardSource}
+                        </Button.GroupSection>
+                        <Button variant="default" c={'green'}
+                            onClick={() => setMiscMaxSource(Math.min(maxMiscCardSource + 5, 100))}>+5</Button>
+                        <Button variant="default" c={'blue'} onClick={() => setMiscMaxSource(100)}>100</Button>
+                    </Button.Group>
+                </Box>
                 <Group justify={'space-between'}>
-                    <Box>
+                    <Box id="setting-spoilers">
                         <Text mb={0} fz={'xs'}>Show Joker Spoilers</Text>
                         <Tooltip label="Cards that give jokers, are replaced with the joker the card would give."
                             refProp="rootRef">
@@ -254,7 +266,7 @@ export default function NavBar() {
                             />
                         </Tooltip>
                     </Box>
-                    <Box>
+                    <Box id="setting-quick-reroll">
                         <Text mb={0} fz={'xs'}>Quick Reroll</Text>
                         <Tooltip label="Long pressing a card in the shop queue, will reroll that card."
                             refProp="rootRef">
@@ -267,9 +279,10 @@ export default function NavBar() {
                     </Box>
                 </Group>
             </AppShell.Section>
-            <AppShell.Section my="md">
+            <AppShell.Section id="tool-buttons" my="md">
                 <Stack>
                     <Button
+                        id="analyze-button"
                         onClick={handleAnalyzeClick}
                         disabled={!hasSettingsChanged}
                         color={hasSettingsChanged ? "green" : "gray"}
@@ -278,6 +291,7 @@ export default function NavBar() {
                         Analyze Seed
                     </Button>
                     <Button
+                        id="features-button"
                         color={theme.colors.grape[9]}
                         onClick={() => {
                             GaEvent('view_features');
@@ -286,11 +300,12 @@ export default function NavBar() {
                     >
                         Features
                     </Button>
-                    <Button color={theme.colors.blue[9]} onClick={() => openSelectOptionModal()}>
+                    <Button id="unlocks-button" color={theme.colors.blue[9]} onClick={() => openSelectOptionModal()}>
                         Modify Unlocks
                     </Button>
                     <Group grow>
                         <Button
+                            id="snapshot-button"
                             color={theme.colors.cyan[9]}
                             onClick={() => {
                                 openSnapshotModal();

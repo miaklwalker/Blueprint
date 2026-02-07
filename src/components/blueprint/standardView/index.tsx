@@ -1,5 +1,5 @@
-import React, {useEffect, useMemo, useState} from "react";
-import {Carousel} from "@mantine/carousel";
+import React, { useEffect, useMemo, useState } from "react";
+import { Carousel } from "@mantine/carousel";
 import {
     Accordion,
     AppShell,
@@ -18,28 +18,28 @@ import {
     Tabs,
     Text
 } from "@mantine/core";
-import {toHeaderCase} from "js-convert-case";
-import {useDisclosure, useViewportSize} from "@mantine/hooks";
-import {Boss, Tag as RenderTag, Voucher} from "../../Rendering/gameElements.tsx";
-import {BuyMetaData} from "../../../modules/classes/BuyMetaData.ts";
-import {BuyWrapper} from "../../buyerWrapper.tsx";
-import {LOCATIONS, LOCATION_TYPES, blinds, tagDescriptions} from "../../../modules/const.ts";
-import { useCardStore} from "../../../modules/state/store.ts";
-import {GameCard} from "../../Rendering/cards.tsx";
+import { toHeaderCase } from "js-convert-case";
+import { useDisclosure, useViewportSize } from "@mantine/hooks";
+import { Boss, Tag as RenderTag, Voucher } from "../../Rendering/gameElements.tsx";
+import { BuyMetaData } from "../../../modules/classes/BuyMetaData.ts";
+import { BuyWrapper } from "../../buyerWrapper.tsx";
+import { LOCATIONS, LOCATION_TYPES, blinds, tagDescriptions } from "../../../modules/const.ts";
+import { useCardStore } from "../../../modules/state/store.ts";
+import { GameCard } from "../../Rendering/cards.tsx";
 import Header from "../layout/header.tsx";
 import NavBar from "../layout/navbar.tsx";
-import {Aside} from "../layout/aside.tsx";
+import { Aside } from "../layout/aside.tsx";
 import Footer from "../layout/footer.tsx";
 import HomePage from "../homePage/homepage.tsx";
 import Index from "../textView";
 import Simple from "../simpleView/simple.tsx";
 import SnapshotModal from "../snapshotView/SnapshotView.tsx";
-import {useSeedResultsContainer} from "../../../modules/state/analysisResultProvider.tsx";
-import {useDownloadSeedResults} from "../../../modules/state/downloadProvider.tsx";
-import type {Blinds} from "../../../modules/state/store.ts";
-import type {Tag} from "../../../modules/balatrots/enum/Tag.ts";
-import type {Ante, Pack} from "../../../modules/ImmolateWrapper/CardEngines/Cards.ts";
-import type {EmblaCarouselType} from 'embla-carousel';
+import { useSeedResultsContainer } from "../../../modules/state/analysisResultProvider.tsx";
+import { useDownloadSeedResults } from "../../../modules/state/downloadProvider.tsx";
+import type { Blinds } from "../../../modules/state/store.ts";
+import type { Tag } from "../../../modules/balatrots/enum/Tag.ts";
+import type { Ante, Pack } from "../../../modules/ImmolateWrapper/CardEngines/Cards.ts";
+import type { EmblaCarouselType } from 'embla-carousel';
 
 function QueueCarousel({ queue, tabName }: { queue: Array<any>, tabName: string }) {
     const selectedBlind = useCardStore(state => state.applicationState.selectedBlind);
@@ -111,7 +111,7 @@ function AntePanel({ ante, tabName, timeTravelVoucherOffset }: {
     const packs = ante.blinds[selectedBlind].packs;
     return (
         <Tabs.Panel w={'100%'} value={tabName}>
-            <Paper withBorder h={'100%'} p={'sm'}>
+            <Paper id="shop-results" withBorder h={'100%'} p={'sm'}>
                 <Group preventGrowOverflow mb={'sm'}>
                     <Fieldset flex={1} legend={'Shop'}>
                         <QueueCarousel queue={queue} tabName={tabName} />
@@ -142,12 +142,17 @@ function AntePanel({ ante, tabName, timeTravelVoucherOffset }: {
                     </Fieldset>
                 </Group>
 
-                <Accordion multiple={true} value={packs?.map(({ name }: { name: string }) => name) ?? []} w={'100%'}
-                    variant={'separated'}>
+                <Accordion
+                    key={`${tabName}-${selectedBlind}`}
+                    multiple={true}
+                    defaultValue={packs?.map((pack: Pack, index: number) => String(pack.name) + String(index)) ?? []}
+                    w={'100%'}
+                    variant={'separated'}
+                >
                     {
                         packs.map((pack: Pack, index: number) => {
                             return (
-                                <Accordion.Item key={String(pack.name) + String(index)} value={String(pack.name)}>
+                                <Accordion.Item key={String(pack.name) + String(index)} value={String(pack.name) + String(index)}>
                                     <Accordion.Control w={'100%'}>
                                         <Group justify={'space-between'} pr={'1rem'}>
                                             <Group>
@@ -184,6 +189,7 @@ function AntePanel({ ante, tabName, timeTravelVoucherOffset }: {
                                                                     location: pack.name,
                                                                     locationType: LOCATION_TYPES.PACK,
                                                                     index: cardIndex,
+                                                                    packIndex: index,
                                                                     ante: tabName,
                                                                     blind: selectedBlind,
                                                                     itemType: 'card',
@@ -210,7 +216,7 @@ function AntePanel({ ante, tabName, timeTravelVoucherOffset }: {
     )
 }
 type CustomDetailsType = {
-    [K in Tag]?: { renderer: (ante: Ante, navigateToMiscSource: (source: string)=>void) => React.ReactNode  };
+    [K in Tag]?: { renderer: (ante: Ante, navigateToMiscSource: (source: string) => void) => React.ReactNode };
 };
 const CustomDetails: CustomDetailsType = {
     "Uncommon Tag": {
@@ -424,7 +430,7 @@ function SeedExplorer() {
         return 0
     }, []);
 
-    if(!SeedResults){
+    if (!SeedResults) {
         return null;
     }
 
@@ -446,8 +452,9 @@ function SeedExplorer() {
                     }))}
                 />
                 <SegmentedControl
+                    id="blind-navigation"
                     value={selectedBlind}
-                    onChange={(v)=>setSelectedBlind(v as Blinds)}
+                    onChange={(v) => setSelectedBlind(v as Blinds)}
                     fullWidth
                     radius="xl"
                     size="md"
@@ -492,7 +499,7 @@ function SeedExplorer() {
                     setSelectedAnte(Number(value));
                 }}
             >
-                <Box mah={'65vh'} style={{ display: width > 767 ? 'revert' : 'none' }} mr={'2rem'}>
+                <Box id="ante-navigation" mah={'65vh'} style={{ display: width > 767 ? 'revert' : 'none' }} mr={'2rem'}>
                     <ScrollArea type="scroll" scrollbars={'y'} h={'100%'}>
                         <Tabs.List>
                             {
@@ -528,7 +535,7 @@ function Main() {
     const viewMode = useCardStore(state => state.applicationState.viewMode);
     return (
         <AppShell.Main>
-            {!SeedResults && <HomePage/>}
+            {!SeedResults && <HomePage />}
             {SeedResults && viewMode === 'blueprint' && <SeedExplorer />}
             {SeedResults && viewMode === 'text' && <Index />}
             {SeedResults && viewMode === 'simple' && <Simple />}
@@ -539,7 +546,7 @@ function Main() {
 // declare window module and saveSeedDebug function
 declare global {
     interface Window {
-        saveSeedDebug: () => void;
+        saveSeedDebug: ReturnType<typeof useDownloadSeedResults>;
     }
 }
 
@@ -549,7 +556,7 @@ export function Blueprint() {
     const outputOpened = useCardStore(state => state.applicationState.asideOpen);
     const download = useDownloadSeedResults()
     useEffect(() => {
-        if(typeof window !== 'undefined') {
+        if (typeof window !== 'undefined') {
             window.saveSeedDebug = download
         }
     }, [download]);
@@ -576,7 +583,7 @@ export function Blueprint() {
             padding="md"
         >
             <Header />
-            <NavBar/>
+            <NavBar />
             <Main />
             <Aside />
             <Footer />

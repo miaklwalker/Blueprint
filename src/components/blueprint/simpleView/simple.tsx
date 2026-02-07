@@ -13,7 +13,7 @@ import {
     Tooltip
 } from "@mantine/core";
 import React, {useEffect, useRef, useState} from "react";
-import {useDebouncedCallback, useIntersection} from "@mantine/hooks";
+import {useIntersection} from "@mantine/hooks";
 import {IconLockOpen} from "@tabler/icons-react";
 import {
     bosses,
@@ -348,11 +348,8 @@ function AnteSkeletonLoader() {
 function Simple() {
     const SeedResults = useSeedResultsContainer()
     const containerRef = useRef<HTMLDivElement>(null);
-    const [visibleAntes, setVisibleAntes] = useState<Array<number>>([1]); // Start with first ante visible
-    const [loadingNextAnte, setLoadingNextAnte] = useState<number | null>(2); // Track which ante is loading
-    const selectedAnte = useCardStore(state => state.applicationState.selectedAnte);
-    const setSelectedAnte = useCardStore(state => state.setSelectedAnte);
-    const debouncedSetSelectedAnte = useDebouncedCallback(setSelectedAnte, 500)
+    const [visibleAntes, setVisibleAntes] = useState<Array<number>>([1]);
+    const [loadingNextAnte, setLoadingNextAnte] = useState<number | null>(2);
     const lockedCards = useCardStore(state => state.lockState.lockedCards);
     const clearLockedCards = useCardStore(state => state.clearLockedCards);
     const hasLockedCards = Object.keys(lockedCards).length > 0;
@@ -373,12 +370,6 @@ function Simple() {
 
         useEffect(() => {
             if (entry?.isIntersecting) {
-                // When this ante is visible, make the next one available
-                const currentAnte = anteNumber;
-                if (currentAnte !== selectedAnte) {
-                    debouncedSetSelectedAnte(currentAnte);
-                }
-                // Set the current ante as selected
                 const nextAnte = anteNumber + 1;
 
                 if (nextAnte <= anteEntries.length && !visibleAntes.includes(nextAnte)) {

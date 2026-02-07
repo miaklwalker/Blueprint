@@ -549,7 +549,7 @@ export function Blueprint() {
     const outputOpened = useCardStore(state => state.applicationState.asideOpen);
     const download = useDownloadSeedResults()
     useEffect(() => {
-        if(typeof window !== 'undefined') {
+        if(typeof window !== 'undefined' && !!download) {
             window.saveSeedDebug = download
         }
     }, [download]);

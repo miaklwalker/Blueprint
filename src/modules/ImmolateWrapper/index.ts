@@ -28,6 +28,7 @@ import {
 import type {Voucher} from "../balatrots/enum/Voucher.ts";
 import {Edition, EditionItem} from "../balatrots/enum/Edition.ts";
 import {Seal, SealItem} from "../balatrots/enum/Seal.ts";
+import {sanitizeSeed} from "../utils.ts";
 
 export type SpoilableItems = "The Soul" | "Judgement" | "Wraith";
 export interface MiscCardSource {
@@ -480,7 +481,7 @@ export const getMiscCardSources: (maxCards: number) => Array<MiscCardSource> = (
 
 export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOptions) {
 
-    const seed = settings.seed.toUpperCase().replace(/0/g, 'O').trim();
+    const seed = sanitizeSeed(settings.seed);
 
     if (!seed) return;
     // Sanitize antes coming from settings (could be null/NaN/0 if UI or URL provided empty value)
@@ -489,6 +490,7 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
     const maxAntes = Math.max(1, safeAntes);
 
     const output = new SeedResultsContainer();
+    // isLoading starts true in constructor, analysis populates antes, provider sets false after
     const deck = new Deck(deckMap[settings.deck])
     const stake = new Stake(settings.stake as StakeType)
     const version = Number(settings.gameVersion)

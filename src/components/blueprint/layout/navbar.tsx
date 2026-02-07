@@ -17,7 +17,7 @@ import {
     useMantineColorScheme,
     useMantineTheme
 } from "@mantine/core";
-import React from "react";
+import React, {useState, useEffect} from "react";
 import {
     IconFileText,
     IconJoker,
@@ -32,6 +32,7 @@ import UnlocksModal from "../../unlocksModal.tsx";
 import FeaturesModal from "../../FeaturesModal.tsx";
 import {RerollCalculatorModal} from "../../RerollCalculatorModal.tsx";
 import {GaEvent} from "../../../modules/useGA.ts";
+import { useDebouncedCallback } from "@mantine/hooks";
 import SeedInputAutoComplete from "../../SeedInputAutoComplete.tsx";
 import { useBlueprintTheme} from "../../../modules/state/themeProvider.tsx";
 import type {KnownThemes} from "../../../modules/state/themeProvider.tsx";
@@ -71,12 +72,15 @@ export default function NavBar() {
     const reset = useCardStore(state => state.reset);
     const hasSettingsChanged = useCardStore((state) => state.applicationState.hasSettingsChanged);
 
+    const [localAntes, setLocalAntes] = useState<number | string>(antes);
+    useEffect(() => { setLocalAntes(antes); }, [antes]);
+    const debouncedSetAntes = useDebouncedCallback((val: number) => {
+        if (val !== antes) setAntes(val);
+    }, 200);
+
     const handleAnalyzeClick = () => {
         setStart(true);
     }
-
-
-
 
     return (
         <AppShell.Navbar p="md">
@@ -155,16 +159,11 @@ export default function NavBar() {
                 <NumberInput
                     label={'Max Ante'}
                     defaultValue={8}
-                    value={antes}
-                    onChange={(val) => {
-                        // Guard against null/NaN from the NumberInput
-                        if (val === null || Number.isNaN(Number(val))) {
-                            // keep previous value (do not set) or fallback to 1 to be defensive
-                            // Here we fallback to 1 to avoid passing invalid values into the engine
-                            setAntes(1);
-                        } else {
-                            setAntes(Math.floor(Number(val)));
-                        }
+                    value={localAntes}
+                    onChange={(val: number | string) => {
+                        const num = typeof val === 'string' ? parseInt(val) || 8 : val;
+                        setLocalAntes(num);
+                        debouncedSetAntes(num);
                     }}
                 />
                 <NativeSelect

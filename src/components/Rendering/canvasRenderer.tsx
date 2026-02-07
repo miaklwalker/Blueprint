@@ -2,6 +2,7 @@ import {Layer} from "../../modules/classes/Layer.ts";
 import {useEffect, useRef, useState} from "react";
 import {useForceUpdate, useHover, useMergedRef, useMouse, useResizeObserver} from "@mantine/hooks";
 import {AspectRatio} from "@mantine/core";
+import React from "react";
 
 const globalImageCache = new Map<string, HTMLImageElement>();
 interface RenderCanvasProps {
@@ -109,59 +110,64 @@ interface SimpleRenderProps {
 
 
 
-export function SimpleRenderCanvas({ layers, invert = false }: SimpleRenderProps) {
-    const canvasRef = useRef<HTMLCanvasElement>(null);
-    const [ratio, setRatio] = useState(3 / 4);
-    const forceUpdate = useForceUpdate();
-    useEffect(() => {
-        if (!canvasRef.current || !layers || layers.length === 0) return;
-        const canvas = canvasRef.current;
-        const context = canvas.getContext('2d');
-        if (!context) return;
+export const SimpleRenderCanvas = React.forwardRef<HTMLCanvasElement, SimpleRenderProps>(
+    ({ layers, invert = false }, ref) => {
+        const canvasRef = useRef<HTMLCanvasElement>(null);
+        const [ratio, setRatio] = useState(3 / 4);
+        const forceUpdate = useForceUpdate();
+        useEffect(() => {
+            const actualRef = (ref && 'current' in ref) ? ref : canvasRef;
+            if (!actualRef.current || !layers || layers.length === 0) return;
+            const canvas = actualRef.current;
+            const context = canvas.getContext('2d');
+            if (!context) return;
 
         context.clearRect(0, 0, canvas.width, canvas.height);
+            context.clearRect(0, 0, canvas.width, canvas.height);
 
-        layers
-            .sort((a, b) => a.order - b.order)
-            .forEach(layer => {
-                if (globalImageCache.has(layer.source)) {
-                    const image = globalImageCache.get(layer.source) as HTMLImageElement;
-                    const imageRatio = renderImage(canvas, context, image, layer);
-                    if (layer.order === 0) {
-                        setRatio(imageRatio);
-                    }
-                    return;
-                }
-                loadImage(layer.source)
-                    .then((img: HTMLImageElement) => {
-                        const imageRatio = renderImage(canvas, context, img, layer);
-                        globalImageCache.set(layer.source, img);
+            layers
+                .sort((a, b) => a.order - b.order)
+                .forEach(layer => {
+                    if (globalImageCache.has(layer.source)) {
+                        const image = globalImageCache.get(layer.source) as HTMLImageElement;
+                        const imageRatio = renderImage(canvas, context, image, layer);
                         if (layer.order === 0) {
                             setRatio(imageRatio);
                         }
-                        forceUpdate()
-                    })
-            });
+                        return;
+                    }
+                    loadImage(layer.source)
+                        .then((img: HTMLImageElement) => {
+                            const imageRatio = renderImage(canvas, context, img, layer);
+                            globalImageCache.set(layer.source, img);
+                            if (layer.order === 0) {
+                                setRatio(imageRatio);
+                            }
+                            forceUpdate()
+                        })
+                });
 
-        if (invert) {
-            canvas.style.filter = 'invert(0.8)';
-        } else {
-            canvas.style.filter = 'none';
-        }
-    }, [layers, invert]);
+            if (invert) {
+                canvas.style.filter = 'invert(0.8)';
+            } else {
+                canvas.style.filter = 'none';
+            }
+        }, [layers, invert]);
 
-    return (
-        <AspectRatio ratio={ratio} w="100%">
-            <canvas
-                ref={canvasRef}
-                style={{
-                    borderRadius: '6px',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
-                }}
-            />
-        </AspectRatio>
-    );
-}
+        return (
+            <AspectRatio ratio={ratio} w="100%">
+                <canvas
+                    ref={ref ? ref : canvasRef}
+                    style={{
+                        borderRadius: '6px',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+                    }}
+                />
+            </AspectRatio>
+        );
+    }
+);
+
 
 
 // Advanced card rendering with canvas

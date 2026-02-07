@@ -1,16 +1,44 @@
-import {Autocomplete, Button, Group, NativeSelect, Paper} from "@mantine/core";
+import React, {useState, useRef} from "react";
+import { Autocomplete, Button, Group, NativeSelect, Paper } from "@mantine/core";
+import { useDebouncedCallback } from "@mantine/hooks";
 import {popularSeeds, SeedsWithLegendary} from "../modules/const.ts";
 import {useCardStore} from "../modules/state/store.ts";
+import {sanitizeSeed} from "../modules/utils.ts";
 
+const seedAutoCompleteData = [
+    {
+        group: 'Popular Seeds',
+        items: popularSeeds
+    }, {
+        group: 'Generated Seeds With Legendary Jokers',
+        items: SeedsWithLegendary
+    }
+];
 
-export function QuickAnalyze() {
-    const seed = useCardStore(state => state.immolateState.seed);
-    const setSeed = useCardStore(state => state.setSeed);
+const allSuggestions = [...popularSeeds, ...SeedsWithLegendary];
+
+interface SeedInputProps {
+    seed: string;
+    setSeed: (seed: string) => void;
+    w?: number | string;
+    showDeckSelect?: boolean;
+    label?: string;
+    placeholder?: string;
+}
+
+function SeedInputAutoComplete({ seed, setSeed, w, showDeckSelect, label = 'Seed', placeholder = 'Enter Seed' }: SeedInputProps) {
+    const [localSeed, setLocalSeed] = useState(seed);
+
+    const debouncedSetSeed = useDebouncedCallback((value: string) => {
+        setLocalSeed(sanitizeSeed(value));
+        if (value) setSeed(value);
+    }, 200);
+
     const deck = useCardStore(state => state.immolateState.deck);
     const setDeck = useCardStore(state => state.setDeck);
-    const setStart = useCardStore(state => state.setStart);
+
     const sectionWidth = 130;
-    const select = (
+    const deckSelect = showDeckSelect ? (
         <NativeSelect
             rightSectionWidth={28}
             styles={{
@@ -41,56 +69,52 @@ export function QuickAnalyze() {
             <option value="Plasma Deck">Plasma Deck</option>
             <option value="Erratic Deck">Erratic Deck</option>
         </NativeSelect>
-    );
-    return (
-        <Paper withBorder shadow={'lg'} p={'1rem'} radius={'md'}>
-            <Group align={'flex-end'}>
-                <Autocomplete
-                    flex={1}
-                    w={500}
-                    type="text"
-                    placeholder="Enter Seed"
-                    label="Analyze Seed"
-                    data={[
-                        {
-                            group: 'Popular Seeds',
-                            items: popularSeeds
-                        }, {
-                            group: 'Generated Seeds With Legendary Jokers',
-                            items: SeedsWithLegendary
+    ) : undefined;
 
-                        }
-                    ]}
-                    value={seed}
-                    onChange={(e) => setSeed(e)}
-                    rightSection={select}
-                    rightSectionWidth={sectionWidth}
-                />
-                <Button onClick={() => setStart(seed.length >= 5)}> Analyze Seed </Button>
-            </Group>
-        </Paper>
-    );
-
-}
-
-export default function SeedInputAutoComplete({seed, setSeed}: { seed: string, setSeed: (seed: string) => void }) {
     return (
         <Autocomplete
             flex={1}
-            label={'Seed'}
-            placeholder={'Enter Seed'}
-            value={seed}
-            onChange={(e) => setSeed(e)}
-            data={[
-                {
-                    group: 'Popular Seeds',
-                    items: popularSeeds
-                }, {
-                    group: 'Generated Seeds With Legendary Jokers',
-                    items: SeedsWithLegendary
-
+            w={w}
+            type="text"
+            label={label}
+            placeholder={placeholder}
+            data={seedAutoCompleteData}
+            value={localSeed}
+            onChange={(value) => {
+                setLocalSeed(value);
+                if (allSuggestions.includes(value)) {
+                    setSeed(value);
+                } else {
+                    debouncedSetSeed(value);
                 }
-            ]}
+            }}
+            rightSection={deckSelect}
+            rightSectionWidth={showDeckSelect ? sectionWidth : undefined}
         />
     );
 }
+
+export function QuickAnalyze() {
+    const seed = useCardStore(state => state.immolateState.seed);
+    const setSeed = useCardStore(state => state.setSeed);
+    const setStart = useCardStore(state => state.setStart);
+
+    return (
+        <Paper withBorder shadow={'lg'} p={'1rem'} radius={'md'}>
+            <Group align={'flex-end'}>
+                <SeedInputAutoComplete
+                    seed={seed}
+                    setSeed={setSeed}
+                    w={500}
+                    showDeckSelect
+                    label="Analyze Seed"
+                />
+                <Button onClick={() => {
+                    setStart(seed.length >= 5);
+                }}> Analyze Seed </Button>
+            </Group>
+        </Paper>
+    );
+}
+
+export default SeedInputAutoComplete;

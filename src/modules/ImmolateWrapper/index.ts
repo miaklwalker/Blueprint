@@ -1,20 +1,20 @@
-import {EVENT_UNLOCKS, LOCATIONS, options} from "../const.ts";
-import {RandomQueueNames, RNGSource} from "../balatrots/enum/QueueName.ts";
-import {Deck, deckMap} from "../balatrots/enum/Deck.ts";
-import type {StakeType} from "../balatrots/enum/Stake.ts";
-import {Stake} from "../balatrots/enum/Stake.ts";
-import {Game} from "../balatrots/Game.ts";
-import {InstanceParams} from "../balatrots/struct/InstanceParams.ts";
-import {JokerData} from "../balatrots/struct/JokerData.ts";
-import {Type} from "../balatrots/enum/cards/CardType.ts";
-import {Card} from "../balatrots/enum/cards/Card.ts";
-import {PlanetItem} from "../balatrots/enum/cards/Planet.ts";
-import {Tarot} from "../balatrots/enum/cards/Tarot.ts";
-import {SpectralItem} from "../balatrots/enum/packs/Spectral.ts";
-import {SpecialsItem} from "../balatrots/enum/cards/Specials.ts";
-import {BalatroAnalyzer} from "../balatrots/BalatroAnalyzer.ts";
-import {Lock} from "../balatrots/Lock.ts"
-import type {BoosterPack, Card_Final, Consumables_Final, NextShopItem, PackCard} from "./CardEngines/Cards.ts";
+import { EVENT_UNLOCKS, LOCATIONS, options } from "../const.ts";
+import { RandomQueueNames, RNGSource } from "../balatrots/enum/QueueName.ts";
+import { Deck, deckMap } from "../balatrots/enum/Deck.ts";
+import type { StakeType } from "../balatrots/enum/Stake.ts";
+import { Stake } from "../balatrots/enum/Stake.ts";
+import { Game } from "../balatrots/Game.ts";
+import { InstanceParams } from "../balatrots/struct/InstanceParams.ts";
+import { JokerData } from "../balatrots/struct/JokerData.ts";
+import { Type } from "../balatrots/enum/cards/CardType.ts";
+import { Card, PlayingCard } from "../balatrots/enum/cards/Card.ts";
+import { PlanetItem } from "../balatrots/enum/cards/Planet.ts";
+import { Tarot } from "../balatrots/enum/cards/Tarot.ts";
+import { SpectralItem } from "../balatrots/enum/packs/Spectral.ts";
+import { SpecialsItem } from "../balatrots/enum/cards/Specials.ts";
+import { BalatroAnalyzer } from "../balatrots/BalatroAnalyzer.ts";
+import { Lock } from "../balatrots/Lock.ts"
+import type { BoosterPack, Card_Final, Consumables_Final, NextShopItem, PackCard } from "./CardEngines/Cards.ts";
 import {
     Ante,
     Joker_Final,
@@ -25,10 +25,12 @@ import {
     StandardCard_Final,
     Tarot_Final
 } from "./CardEngines/Cards.ts";
-import type {Voucher} from "../balatrots/enum/Voucher.ts";
-import {Edition, EditionItem} from "../balatrots/enum/Edition.ts";
-import {Seal, SealItem} from "../balatrots/enum/Seal.ts";
-import {sanitizeSeed} from "../utils.ts";
+
+import type { Voucher } from "../balatrots/enum/Voucher.ts";
+import { Edition, EditionItem } from "../balatrots/enum/Edition.ts";
+import { Seal, SealItem } from "../balatrots/enum/Seal.ts";
+import type { DeckCard } from "../deckUtils.ts";
+
 
 export type SpoilableItems = "The Soul" | "Judgement" | "Wraith";
 export interface MiscCardSource {
@@ -164,15 +166,22 @@ export class CardEngineWrapper implements EngineWrapper {
                     type: 'Spectral',
                 } as Card_Final)
             case instanceofStandard:
+                const cardName = typeof card.name === 'string' ? card.name : (card.getName ? card.getName() : '');
+                if (typeof cardName !== 'string' || !cardName.includes('_')) {
+                    // Fallback for cards that don't match the expected S_A format
+                    return new StandardCard_Final({
+                        name: card.name || 'Unknown Card',
+                        type: 'Standard',
+                        seal: card._seal?.name || "No Seal",
+                        edition: card._edition?.name || "No Edition",
+                        enhancements: card._enhancement || "No Enhancement",
+                    } as any)
+                }
                 return new StandardCard_Final({
-                    base: [
-                        card.name.split('_')[0],
-                        "_",
-                        card.name.split('_')[1]
-                    ],
-                    seal: card._seal?.name,
-                    edition: card._edition?.name,
-                    enhancements: card._enhancement,
+                    base: cardName,
+                    seal: card._seal?.name || "No Seal",
+                    edition: card._edition?.name || "No Edition",
+                    enhancements: card._enhancement || "No Enhancement",
                     type: 'Standard',
                 } as unknown as Card_Final)
             default:
@@ -313,6 +322,7 @@ export interface AnalyzeOptions {
     updates?: Array<any>,
     maxMiscCardSource?: number
     lockedCards?: any
+    customDeck?: Array<DeckCard>
 }
 export const getMiscCardSources: (maxCards: number) => Array<MiscCardSource> = (maxCards: number) => {
     const state: { [key: string]: boolean } = {};
@@ -511,6 +521,27 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
             engine.lock(item.name)
         })
 
+    if (analyzeOptions.customDeck && analyzeOptions.customDeck.length > 0) {
+        // Convert DeckCards to Game Cards
+        const convertedCards = analyzeOptions.customDeck.map((dc) => {
+            // Fix enhancement name mismatch (UI uses "Steel Card", Game uses "Steel")
+            let enhancement = dc.enhancement;
+            if (enhancement && enhancement.endsWith(" Card")) {
+                enhancement = enhancement.replace(" Card", "");
+            }
+
+            const newCard = new Card(
+                dc.base as PlayingCard,
+                enhancement,
+                new EditionItem(dc.edition as Edition),
+                new SealItem(dc.seal as Seal)
+            );
+            (newCard as any).originalId = dc.id;
+            return newCard;
+        });
+        engine.setCustomDeck(convertedCards);
+    }
+
     function updateShowmanOwned(showman: boolean) {
         engine.updateShowman(showman)
     }
@@ -693,12 +724,12 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
             }
         }
 
-        result.blinds.smallBlind.deck = engine.getDeckDraw(ante,1,52)
-            .map(item=>engineWrapper.makeGameCard(new Card(item.name, 'No Enhancement', new EditionItem(Edition.NO_EDITION),new SealItem(Seal.NO_SEAL))))
-        result.blinds.bigBlind.deck = engine.getDeckDraw(ante,2,52)
-            .map(item=>engineWrapper.makeGameCard(new Card(item.name, 'No Enhancement', new EditionItem(Edition.NO_EDITION),new SealItem(Seal.NO_SEAL))))
-        result.blinds.bossBlind.deck = engine.getDeckDraw(ante,3,52)
-            .map(item=>engineWrapper.makeGameCard(new Card(item.name, 'No Enhancement', new EditionItem(Edition.NO_EDITION),new SealItem(Seal.NO_SEAL))))
+        result.blinds.smallBlind.deck = engine.getDeckDraw(ante, 1, 52)
+            .map(item => engineWrapper.makeGameCard(item))
+        result.blinds.bigBlind.deck = engine.getDeckDraw(ante, 2, 52)
+            .map(item => engineWrapper.makeGameCard(item))
+        result.blinds.bossBlind.deck = engine.getDeckDraw(ante, 3, 52)
+            .map(item => engineWrapper.makeGameCard(item))
         // voucher queue
         const queueDepth = 20
 

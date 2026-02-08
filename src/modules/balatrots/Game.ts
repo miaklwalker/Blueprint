@@ -7,7 +7,7 @@ import { LegendaryJoker, LegendaryJokerItem } from "./enum/cards/LegendaryJoker"
 import { UncommonJoker, UncommonJokerItem } from "./enum/cards/UncommonJoker";
 import { UncommonJoker101CItem, UncommonJoker_101C } from "./enum/cards/UncommonJoker_101C";
 import { UncommonJoker100Item, UncommonJoker_100 } from "./enum/cards/UncommonJoker_100";
-import {Card, PlayingCard} from "./enum/cards/Card";
+import { Card, PlayingCard } from "./enum/cards/Card";
 import { Enhancement, EnhancementItem } from "./enum/Enhancement";
 import { Voucher, VoucherItem } from "./enum/Voucher";
 import { Tag, TagItem } from "./enum/Tag";
@@ -34,11 +34,11 @@ import { PackInfo } from "./struct/PackInfo";
 import { Seal, SealItem } from "./enum/Seal";
 import { RNGSource, RandomQueueNames } from "./enum/QueueName.ts";
 import { PackKind } from "./enum/packs/PackKind.ts";
-import {ShopInstance} from "./struct/ShopInstance.ts";
-import type { QueueNames} from "./enum/QueueName.ts";
-import type { Deck} from "./enum/Deck";
+import { ShopInstance } from "./struct/ShopInstance.ts";
+import type { QueueNames } from "./enum/QueueName.ts";
+import type { Deck } from "./enum/Deck";
 import type { JokerImpl } from "./interface/Joker";
-import type { Stake} from "./enum/Stake";
+import type { Stake } from "./enum/Stake";
 import type { ItemImpl } from "./interface/Item";
 import type { InstanceParams } from "./struct/InstanceParams";
 
@@ -331,6 +331,7 @@ export class Game extends Lock {
     public hashedSeed: number;
     public hasSpoilersMap: Record<string, RNGSource>;
     public hasSpoilers: boolean;
+    private _customDeck: Array<Card> | null = null;
 
     constructor(seed: string, params: InstanceParams) {
         super();
@@ -1169,44 +1170,75 @@ item wheel_of_fortune_edition(instance* inst) {
     /**
      * Returns a fully shuffled deck for the given ante and round index (1, 2, or 3).
      */
-    private getShuffledDeck(ante: number, round: number = 1): Array<Card> {
+    setCustomDeck(cards: Array<Card>): void {
+        this._customDeck = cards;
+    }
+
+    /**
+     * Returns an unshuffled deck based on deck type.
+     * For most decks, this does NOT consume RNG.
+     * For Erratic Deck, this uses RNG to randomize the cards.
+     */
+    initDeck(): Array<Card> {
+        if (this._customDeck) {
+            // Clone to be safe, though Game usually handles its own cards
+            // We need to ensure we return new instances if we want to avoid side effects on the stored custom deck
+            return this._customDeck.map(c => {
+                const newCard = new Card(c.getName() as PlayingCard, c.getEnhancement(), c.getEdition(), c.getSeal());
+                if ((c as any).originalId) (newCard as any).originalId = (c as any).originalId;
+                return newCard;
+            });
+        }
+
         const deckType = this.params.getDeck().name;
-        let cards: Card[];
 
         switch (deckType) {
             case deckNames[DeckType.ABANDONED_DECK]:
-                cards = Game.CARDS_ABANDONED;
-                break;
+                return Game.CARDS_ABANDONED;
             case deckNames[DeckType.CHECKERED_DECK]:
-                cards = Game.CARDS_CHECKERED;
-                break;
+                return Game.CARDS_CHECKERED;
             case deckNames[DeckType.ERRATIC_DECK]: {
                 const randomizedCards: Array<Card> = [];
-                for(let i = 0; i < 52; i++){
+                for (let i = 0; i < 52; i++) {
                     const card = this.randchoice_simple(RandomQueueNames.R_Erratic, Game.CARDS);
                     randomizedCards.push(new Card(card.getName() as PlayingCard));
                 }
-                cards = randomizedCards.sort((a, b) => a.getName().localeCompare(b.getName()));
-                break;
+                return randomizedCards.sort((a, b) => a.getName().localeCompare(b.getName()));
             }
             default:
-                cards = Game.CARDS.map(c => new Card(c.getName() as PlayingCard));
-                break;
+                return Game.CARDS.map(c => new Card(c.getName() as PlayingCard));
         }
+    }
 
+    /**
+     * Shuffles a deck of cards using the game's RNG for the given ante and round.
+     * @param cards The deck of cards to shuffle
+     * @param ante The ante number
+     * @param round The round index within the ante (1, 2, or 3) (default 1)
+     * @returns A new shuffled array (does not mutate input)
+     */
+    shuffleDeck(cards: Array<Card>, ante: number, round: number = 1): Array<Card> {
+        const result = [...cards]; // Clone to avoid mutation
         const rng = new LuaRandom(this.getNodeAt(`${RandomQueueNames.R_Shuffle_New_Round}${ante}`, round));
 
-        for (let i = cards.length - 1; i >= 1; i--) {
-            const j = rng.randint(1, i + 1) -1;
-            let temp = cards[i];
-            cards[i] = cards[j];
-            cards[j] = temp;
-
+        for (let i = result.length - 1; i >= 1; i--) {
+            const j = rng.randint(1, i + 1) - 1;
+            let temp = result[i];
+            result[i] = result[j];
+            result[j] = temp;
         }
 
         // Balatro draws from the end (FILO).
         // Return reversed so index 0 is the first card drawn.
-        return cards.reverse();
+        return result.reverse();
+    }
+
+    /**
+     * Returns a fully shuffled deck for the given ante and round index (1, 2, or 3).
+     */
+    getShuffledDeck(ante: number, round: number = 1): Array<Card> {
+        const deck = this.initDeck();
+        return this.shuffleDeck(deck, ante, round);
     }
 
     /**
@@ -1220,7 +1252,7 @@ item wheel_of_fortune_edition(instance* inst) {
         return deck.slice(0, count);
     }
 
-    getStartingDeckDraw(count = 8, sort : 'rank' | 'suit' = 'rank'): Array<Card> {
+    getStartingDeckDraw(count = 8, sort: 'rank' | 'suit' = 'rank'): Array<Card> {
         // pifreak loves you!
         const hand = this.getDeckDraw(1, 1, count);
         const suitOrder = { 'C': 0, 'D': 1, 'H': 2, 'S': 3 } as {

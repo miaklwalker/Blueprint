@@ -119,7 +119,7 @@ export function QuickAnalyze() {
                     label="Analyze Seed"
                 />
                 <Button onClick={() => {
-                    setStart(seed.length >= 5);
+                    setStart(seed.length > 0);
                 }}> Analyze Seed </Button>
             </Group>
         </Paper>

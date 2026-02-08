@@ -31,6 +31,7 @@ import { Edition, EditionItem } from "../balatrots/enum/Edition.ts";
 import { Seal, SealItem } from "../balatrots/enum/Seal.ts";
 import type { DeckCard } from "../deckUtils.ts";
 
+import {sanitizeSeed} from "../utils.ts";
 
 export type SpoilableItems = "The Soul" | "Judgement" | "Wraith";
 export interface MiscCardSource {

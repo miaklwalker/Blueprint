@@ -28,11 +28,18 @@ interface SeedInputProps {
 
 function SeedInputAutoComplete({ seed, setSeed, w, showDeckSelect, label = 'Seed', placeholder = 'Enter Seed' }: SeedInputProps) {
     const [localSeed, setLocalSeed] = useState(seed);
+    const isDirty = useRef(false);
+
+    // Sync from store when not actively editing
+    if (!isDirty.current && localSeed !== seed) {
+        setLocalSeed(seed);
+    }
 
     const debouncedSetSeed = useDebouncedCallback((value: string) => {
         setLocalSeed(sanitizeSeed(value));
         if (value) setSeed(value);
-    }, 200);
+        isDirty.current = false;
+    }, 160);
 
     const deck = useCardStore(state => state.immolateState.deck);
     const setDeck = useCardStore(state => state.setDeck);
@@ -81,9 +88,11 @@ function SeedInputAutoComplete({ seed, setSeed, w, showDeckSelect, label = 'Seed
             data={seedAutoCompleteData}
             value={localSeed}
             onChange={(value) => {
+                isDirty.current = true;
                 setLocalSeed(value);
                 if (allSuggestions.includes(value)) {
                     setSeed(value);
+                    isDirty.current = false;
                 } else {
                     debouncedSetSeed(value);
                 }

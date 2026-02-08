@@ -271,7 +271,8 @@ export const useCardStore = create<CardStore>()(
                         prev.applicationState.viewMode = viewMode;
                     }, undefined, 'Global/SetViewMode'),
                     setSeed: (seed) => set((prev) => {
-                        prev.immolateState.seed = seed.toUpperCase();
+                        const sanitized = sanitizeSeed(seed);
+                        prev.immolateState.seed = sanitized;
                         prev.shoppingState = initialState.shoppingState
                         prev.searchState = initialState.searchState;
                         prev.applicationState.hasSettingsChanged = true;

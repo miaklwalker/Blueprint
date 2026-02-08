@@ -6,11 +6,9 @@ import type { SeedResultsContainer } from "../ImmolateWrapper/CardEngines/Cards.
 
 
 export const SeedResultContext = createContext<SeedResultsContainer | null | undefined>(null);
-export const SeedResultLoadingContext = createContext<boolean>(false);
 
 export function useSeedResultsContainer() {
     const context = useContext(SeedResultContext);
-    console.log(context)
     if (context === null) {
         throw new Error("useSeedResultsContainer must be used within a SeedResultProvider");
     }
@@ -30,16 +28,13 @@ export function SeedResultProvider({ children }: { children: React.ReactNode }) 
         return analyzeSeed(analyzeState, {
             ...options,
             customDeck: deckState.cards
-        })
+        });
     }, [analyzeState, deckState.cards, options, start]);
+
 
     return (
         <SeedResultContext.Provider value={seedResult}>
-            <SeedResultLoadingContext.Provider value={isPending || false}>
                 {children}
-            </SeedResultLoadingContext.Provider>
         </SeedResultContext.Provider>
     )
-
-
 }

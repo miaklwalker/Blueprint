@@ -2,6 +2,7 @@ import { create } from "zustand/index";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import { LOCATIONS, LOCATION_TYPES, options } from "../const.ts";
+import { sanitizeSeed } from "../utils.ts";
 import { convertToDeckCard, generateStartingDeck, convertGameCardToDeckCard } from "../deckUtils.ts";
 import type { DeckCard } from "../deckUtils.ts";
 import { Game } from "../balatrots/Game.ts";
@@ -201,7 +202,7 @@ const blueprintStorage: StateStorage = {
     getItem: (): string => {
         const immolateState = getImmolateStateFromUrl();
 
-
+        const hasSeed = !!immolateState.seed;
         const results = {
             state: {
                 immolateState: {
@@ -210,7 +211,8 @@ const blueprintStorage: StateStorage = {
                 },
                 applicationState: {
                     ...initialState.applicationState,
-                    start: !!immolateState.seed
+                    start: hasSeed,
+                    settingsOpen: !hasSeed,
                 },
                 shoppingState: {
                     ...initialState.shoppingState,
@@ -243,8 +245,10 @@ function getImmolateStateFromUrl() {
     const params = new URLSearchParams(window.location.search);
     const antesParam = params.get('antes');
     const parsedAntes = antesParam !== null && antesParam !== '' && !Number.isNaN(Number(antesParam)) ? Number(antesParam) : undefined;
+    const seedParam = params.get('seed');
+    const parsedSeed = seedParam ? sanitizeSeed(seedParam) : initialState.immolateState.seed;
     return {
-        seed: params.get('seed') || initialState.immolateState.seed,
+        seed: parsedSeed,
         deck: params.get('deck') || initialState.immolateState.deck,
         cardsPerAnte: parseInt(params.get('cardsPerAnte') || initialState.immolateState.cardsPerAnte.toString()),
         antes: parsedAntes !== undefined ? parsedAntes : initialState.immolateState.antes,
@@ -267,7 +271,8 @@ export const useCardStore = create<CardStore>()(
                         prev.applicationState.viewMode = viewMode;
                     }, undefined, 'Global/SetViewMode'),
                     setSeed: (seed) => set((prev) => {
-                        prev.immolateState.seed = seed.toUpperCase();
+                        const sanitized = sanitizeSeed(seed);
+                        prev.immolateState.seed = sanitized;
                         prev.shoppingState = initialState.shoppingState
                         prev.searchState = initialState.searchState;
                         prev.applicationState.hasSettingsChanged = true;

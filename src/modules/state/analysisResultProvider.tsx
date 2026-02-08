@@ -9,7 +9,6 @@ export const SeedResultContext = createContext<SeedResultsContainer | null | und
 
 export function useSeedResultsContainer() {
     const context = useContext(SeedResultContext);
-    console.log(context)
     if (context === null) {
         throw new Error("useSeedResultsContainer must be used within a SeedResultProvider");
     }
@@ -29,14 +28,13 @@ export function SeedResultProvider({ children }: { children: React.ReactNode }) 
         return analyzeSeed(analyzeState, {
             ...options,
             customDeck: deckState.cards
-        })
+        });
     }, [analyzeState, deckState.cards, options, start]);
+
 
     return (
         <SeedResultContext.Provider value={seedResult}>
-            {children}
+                {children}
         </SeedResultContext.Provider>
     )
-
-
 }

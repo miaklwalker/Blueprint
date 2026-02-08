@@ -164,6 +164,7 @@ export function SimpleRenderCanvas({ layers, invert = false }: SimpleRenderProps
 }
 
 
+
 // Advanced card rendering with canvas
 export function RenderImagesWithCanvas({layers, invert = false, spacing = false}: RenderCanvasProps) {
     const canvasRef = useRef(null);

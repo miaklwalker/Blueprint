@@ -17,7 +17,7 @@ import {GaEvent} from "../../../modules/useGA.ts";
 
 
 export default function Footer() {
-    const {data: supporters, isPending} = useQuery<Array<{ name: string, subscription: boolean }>>({
+    const {data: supporters, isPending: isPending} = useQuery<Array<{ name: string, subscription: boolean }>>({
         queryKey: ['supporters'],
         queryFn: async () => {
             const response = await fetch('https://ttyyetpmvt.a.pinggy.link/supporters', {

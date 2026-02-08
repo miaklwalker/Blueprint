@@ -1,3 +1,14 @@
+/**
+ * Sanitize a Balatro seed: uppercase, replace 0→O, strip invalid chars, max 8 chars.
+ */
+export function sanitizeSeed(seed: string): string {
+    return seed
+        .toUpperCase()
+        .replace(/0/g, 'O')
+        .replace(/[^A-Z1-9]/g, '')
+        .slice(0, 8);
+}
+
 export function getStandardCardPosition(rank: string, suit: string) {
     const rankMap:{ [key:string] : number } = {
         '2': 0, '3': 1, '4': 2, '5': 3, '6': 4, '7': 5, '8': 6, '9': 7, '10': 8, 'Jack': 9, 'Queen': 10, 'King': 11, 'Ace': 12

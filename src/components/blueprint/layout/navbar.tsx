@@ -150,7 +150,7 @@ export default function NavBar() {
 
 
             </AppShell.Section>
-            <AppShell.Section pr={'xs'} grow my="md" component={ScrollArea} scrollbars={'y'}>
+            <AppShell.Section pr={'xs'} grow component={ScrollArea} scrollbars={'y'}>
                 <SeedInputAutoComplete
                     seed={seed}
                     setSeed={setSeed}
@@ -261,7 +261,7 @@ export default function NavBar() {
                     </Box>
                 </Group>
             </AppShell.Section>
-            <AppShell.Section my="md">
+            <AppShell.Section>
                 <Stack>
                     <Button
                         onClick={handleAnalyzeClick}

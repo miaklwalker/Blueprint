@@ -133,7 +133,6 @@ export default function NavBar() {
                     mb="sm"
                 />
                 <Divider mb='md' />
-
                 <Group align={'flex-end'}>
                     <Select
                         label={'Theme'}
@@ -152,10 +151,8 @@ export default function NavBar() {
                         onChange={colorScheme.toggleColorScheme}
                     />
                 </Group>
-
-
             </AppShell.Section>
-            <AppShell.Section id="seed-config" pr={'xs'} grow my="md" component={ScrollArea} scrollbars={'y'}>
+            <AppShell.Section id="seed-config" pr={'xs'} grow mb="md" component={ScrollArea} scrollbars={'y'}>
                 <SeedInputAutoComplete
                     seed={seed}
                     setSeed={setSeed}
@@ -278,7 +275,7 @@ export default function NavBar() {
                     </Box>
                 </Group>
             </AppShell.Section>
-            <AppShell.Section id="tool-buttons" my="md">
+            <AppShell.Section id="tool-buttons" mb="md" h={'fit-content'}>
                 <Stack>
                     <Button
                         id="analyze-button"
@@ -289,16 +286,16 @@ export default function NavBar() {
                     >
                         Analyze Seed
                     </Button>
-                    <Button
-                        id="features-button"
-                        color={theme.colors.grape[9]}
-                        onClick={() => {
-                            GaEvent('view_features');
-                            openFeaturesModal()
-                        }}
-                    >
-                        Features
-                    </Button>
+                    {/*<Button*/}
+                    {/*    id="features-button"*/}
+                    {/*    color={theme.colors.grape[9]}*/}
+                    {/*    onClick={() => {*/}
+                    {/*        GaEvent('view_features');*/}
+                    {/*        openFeaturesModal()*/}
+                    {/*    }}*/}
+                    {/*>*/}
+                    {/*    Features*/}
+                    {/*</Button>*/}
                     <Button id="unlocks-button" color={theme.colors.blue[9]} onClick={() => openSelectOptionModal()}>
                         Modify Unlocks
                     </Button>

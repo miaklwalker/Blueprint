@@ -1,11 +1,9 @@
 import React from "react";
-import { useViewportSize } from "@mantine/hooks";
-import { AppShell, ActionIcon, Box, Burger, Button, Center, Container, CopyButton, Group, Title } from "@mantine/core";
-import { useCardStore } from "../../../modules/state/store.ts";
+import {useViewportSize} from "@mantine/hooks";
+import {AppShell, Box, Burger, Button, Center, Container, CopyButton, Group, Title} from "@mantine/core";
+import {useCardStore} from "../../../modules/state/store.ts";
 import SearchSeedInput from "../../searchInput.tsx";
-import { GaEvent } from "../../../modules/useGA.ts";
-import { IconInfoCircle } from "@tabler/icons-react";
-import { useNextStep } from "nextstepjs";
+import {GaEvent} from "../../../modules/useGA.ts";
 
 export default function Header() {
     const { width } = useViewportSize();
@@ -15,7 +13,7 @@ export default function Header() {
 
     const outputOpened = useCardStore(state => state.applicationState.asideOpen);
     const toggleOutput = useCardStore(state => state.toggleOutput);
-    const { startNextStep, closeNextStep } = useNextStep();
+    // const { startNextStep, closeNextStep } = useNextStep();
     return (
         <AppShell.Header>
             <Container fluid h={'100%'}>
@@ -32,9 +30,9 @@ export default function Header() {
                     </Group>
 
                     <Group align={'center'}>
-                        <ActionIcon onClick={() => startNextStep('onboarding-tour')}>
-                            <IconInfoCircle />
-                        </ActionIcon>
+                        {/*<ActionIcon onClick={() => startNextStep('onboarding-tour')}>*/}
+                        {/*    <IconInfoCircle />*/}
+                        {/*</ActionIcon>*/}
                         {width > 600 && start && <Box id="search-input-header"><SearchSeedInput /></Box>}
                         {width > 700 && start && (
                             <CopyButton value={new URL(window.location.href).toString()}>

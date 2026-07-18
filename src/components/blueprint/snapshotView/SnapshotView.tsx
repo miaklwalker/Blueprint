@@ -168,9 +168,9 @@ export default function SnapshotModal() {
             const jokerB = b.joker as Joker_Final;
 
             // Rarity check
-            const aRarity = RARITY_ORDER[jokerA.rarity || 0] || 4;
+            const aRarity = RARITY_ORDER[jokerA.rarity ?? 0] ?? 4;
 
-            const bRarity = RARITY_ORDER[jokerB.rarity || 0] || 4;
+            const bRarity = RARITY_ORDER[jokerB.rarity ?? 0] ?? 4;
 
             if (aRarity !== bRarity) return aRarity - bRarity;
 
@@ -179,8 +179,6 @@ export default function SnapshotModal() {
             const bWeight = JOKER_WEIGHTS[jokerB.name] || 0;
 
             if (aWeight !== bWeight) return bWeight - aWeight;
-            if (aWeight && !bWeight) return -1;
-            if (!aWeight && bWeight) return 1;
 
 
 

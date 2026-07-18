@@ -105,7 +105,7 @@ export default function SearchSeedInput() {
                     // @ts-ignore I didn't do a great job typing cards throughout the project
                     pack.cards.forEach((card, index) => {
                         if(!card) return;
-                        const cardString = `${card?.edition ?? ''} ${card.name}`.trim();
+                        const cardString = `${(card.edition && card.edition !== 'No Edition') ? card.edition : ''} ${card.name}`.trim();
                         if (cardString.toLowerCase().includes(searchString.toLowerCase())) {
                             cards.push({
                                 transactionType: "buy",
@@ -123,7 +123,7 @@ export default function SearchSeedInput() {
             })
             Object.values(ante.miscCardSources).forEach((source) => {
                 source.cards.forEach((card, index) => {
-                    const cardString = `${card.edition} ${card.name}`.trim();
+                    const cardString = `${(card.edition && card.edition !== 'No Edition') ? card.edition : ''} ${card.name}`.trim();
                     if (cardString.toLowerCase().includes(searchString.toLowerCase())) {
                         cards.push({
                             transactionType: "buy",
@@ -173,8 +173,7 @@ export default function SearchSeedInput() {
                     searchResults
                         .map((result: any, index) => {
                             const name = result.name;
-                            const edition = result?.['edition'];
-                            const label = edition && edition !== 'No Edition' ? `${edition} ${name}` : name;
+                            const label = name;
 
                             const locationType = result?.locationType;
 

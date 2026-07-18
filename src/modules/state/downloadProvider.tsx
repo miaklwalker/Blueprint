@@ -9,7 +9,7 @@ export const DownloadSeedResultContext = createContext<DownloadSeedResultFunctio
 
 export function useDownloadSeedResults() {
     const context = useContext(DownloadSeedResultContext);
-    if (context === null) {
+    if (!context) {
         throw new Error("useDownloadSeedResults must be used within a SeedResultProvider");
     }
     return context;

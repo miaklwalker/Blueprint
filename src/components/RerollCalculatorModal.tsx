@@ -1,8 +1,9 @@
-import { Modal, NumberInput, Text, Group, Stack, Table, Divider, TextInput, InputLabel, SimpleGrid } from "@mantine/core";
-import { useMemo, useState } from "react";
+import { Divider, Group, InputLabel, Modal, NumberInput, SimpleGrid, Stack, Table, Text, TextInput } from "@mantine/core";
+import React,{ useMemo, useState } from "react";
 import { useCardStore } from "../modules/state/store.ts";
 import { Voucher } from "../modules/balatrots/enum/Voucher.ts";
-import { BuyMetaData } from "../modules/classes/BuyMetaData.ts";
+import { useSeedResultsContainer } from "../modules/state/analysisResultProvider.tsx";
+import type { BuyMetaData } from "../modules/classes/BuyMetaData.ts";
 
 interface RerollCalculatorModalProps {
     opened: boolean;
@@ -15,18 +16,12 @@ export function RerollCalculatorModal({ opened, onClose, targetIndex, metaData }
     const globalStartIndex = useCardStore(state => state.applicationState.rerollStartIndex);
     const [startIndex, setStartIndex] = useState<number>(globalStartIndex);
     const buys = useCardStore(state => state.shoppingState.buys);
-    const seedResults = useCardStore(state => state.applicationState.analyzedResults);
+    const seedResults = useSeedResultsContainer();
     const selectedAnte = useCardStore(state => state.applicationState.selectedAnte);
     const shopQueue = useMemo(() => seedResults?.antes?.[selectedAnte]?.queue, [seedResults, selectedAnte]);
-    // Sync local state with global state when modal opens or global state changes
-    useMemo(() => {
-        if (opened) {
-            setStartIndex(globalStartIndex);
-        }
-    }, [opened, globalStartIndex]);
 
     const ownedVouchers = useMemo(() => {
-        const vouchers: string[] = [];
+        const vouchers: Array<string> = [];
         Object.values(buys).forEach((buy) => {
             if (buy.locationType === 'VOUCHER' || buy.locationType === 'voucher') {
                 if (buy.name) vouchers.push(buy.name);
@@ -50,7 +45,7 @@ export function RerollCalculatorModal({ opened, onClose, targetIndex, metaData }
     }, [ownedVouchers]);
 
     const calculation = useMemo(() => {
-        const calculatesRollsPerVisit = (sSize: number, visits: number, tIndex: number, sIndex: number): number[] => {
+        const calculatesRollsPerVisit = (sSize: number, visits: number, tIndex: number, sIndex: number): Array<number> => {
             const cardsToSee = tIndex - sIndex + 1;
             const totalFreeCards = visits * sSize;
             const rollsPerVisit = Array(visits).fill(0);
@@ -71,7 +66,7 @@ export function RerollCalculatorModal({ opened, onClose, targetIndex, metaData }
                 // Each visit starts at $5 for the first reroll (after seeing free cards)
                 let currentCost = 5;
                 for (let k = 0; k < r; k++) {
-                    let cost = Math.max(0, currentCost - discount);
+                    const cost = Math.max(0, currentCost - discount);
                     totalCost += cost;
                     currentCost += 1;
                 }
@@ -83,7 +78,7 @@ export function RerollCalculatorModal({ opened, onClose, targetIndex, metaData }
         const baseSingleVisitCost = calculateCostForParams(2, 0, targetIndex, startIndex, 1);
         const singleVisitCost = calculateCostForParams(shopSize, rerollDiscount, targetIndex, startIndex, 1);
         // Calculate savings for each voucher
-        const voucherSavingsList: { name: string, savings: number }[] = [];
+        const voucherSavingsList: Array<{ name: string, savings: number }> = [];
         ownedVouchers.forEach(v => {
             let tempSize = shopSize;
             let tempDiscount = rerollDiscount;

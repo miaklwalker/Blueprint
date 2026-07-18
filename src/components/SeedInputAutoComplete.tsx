@@ -1,7 +1,7 @@
-import React, {useState, useRef} from "react";
+import React, {useRef, useState} from "react";
 import { Autocomplete, Button, Group, NativeSelect, Paper } from "@mantine/core";
 import { useDebouncedCallback } from "@mantine/hooks";
-import {popularSeeds, SeedsWithLegendary} from "../modules/const.ts";
+import {SeedsWithLegendary, popularSeeds} from "../modules/const.ts";
 import {useCardStore} from "../modules/state/store.ts";
 import {sanitizeSeed} from "../modules/utils.ts";
 
@@ -37,8 +37,10 @@ function SeedInputAutoComplete({ seed, setSeed, w, showDeckSelect, label = 'Seed
 
     const debouncedSetSeed = useDebouncedCallback((value: string) => {
         setLocalSeed(sanitizeSeed(value));
-        if (value) setSeed(value);
-        isDirty.current = false;
+        if (value) {
+            setSeed(value);
+            isDirty.current = false;
+        }
     }, 160);
 
     const deck = useCardStore(state => state.immolateState.deck);
@@ -91,6 +93,7 @@ function SeedInputAutoComplete({ seed, setSeed, w, showDeckSelect, label = 'Seed
                 isDirty.current = true;
                 setLocalSeed(value);
                 if (allSuggestions.includes(value)) {
+                    debouncedSetSeed.cancel();
                     setSeed(value);
                     isDirty.current = false;
                 } else {

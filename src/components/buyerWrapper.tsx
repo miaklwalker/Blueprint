@@ -49,9 +49,8 @@ export function BuyWrapper({ children, bottomOffset, metaData, horizontal = fals
     const [menuOpen, setMenuOpen] = useState(false);
     const addBuy = useCardStore(state => state.addBuy);
     const removeBuy = useCardStore(state => state.removeBuy);
-    const owned = useCardStore(state => state.isOwned);
     const key = `${metaData?.ante}-${metaData?.location}-${metaData?.index}${metaData?.packIndex !== undefined ? `-p${metaData.packIndex}` : ''}${metaData?.locationType === LOCATION_TYPES.PACK ? `-${metaData?.blind}` : ''}`;
-    const cardIsOwned = owned(key);
+    const cardIsOwned = useCardStore(state => key in state.shoppingState.buys);
     const openRerollCalculatorModal = useCardStore(state => state.openRerollCalculatorModal);
     const hasUserAttention = hovered || menuOpen;
     const theme = useMantineTheme()

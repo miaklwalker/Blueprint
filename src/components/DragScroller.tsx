@@ -1,5 +1,6 @@
-import React, {ReactNode, useEffect, useRef, useState} from "react";
+import React, { useEffect, useRef, useState} from "react";
 import {Box} from "@mantine/core";
+import type {ReactNode} from "react";
 
 interface DragScrollProps {
     children: ReactNode;
@@ -10,77 +11,85 @@ interface DragScrollProps {
 export function DragScroll({children, className, friction = 0.95, style}: DragScrollProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const [isDragging, setIsDragging] = useState(false);
-    const [startX, setStartX] = useState(0);
-    const [scrollLeft, setScrollLeft] = useState(0);
+    const isDraggingRef = useRef(false);
+    const startXRef = useRef(0);
+    const scrollLeftRef = useRef(0);
     const [momentum, setMomentum] = useState(0);
-    const [lastX, setLastX] = useState(0);
-    const [lastTimestamp, setLastTimestamp] = useState(0);
+    const lastXRef = useRef(0);
+    const lastTimestampRef = useRef(0);
+    const momentumRef = useRef(0);
 
     const handleMouseDown = (e: React.MouseEvent) => {
         if (!containerRef.current) return;
 
+        isDraggingRef.current = true;
         setIsDragging(true);
-        setStartX(e.pageX - containerRef.current.offsetLeft);
-        setScrollLeft(containerRef.current.scrollLeft);
-        setLastX(e.pageX);
-        setLastTimestamp(Date.now());
-        setMomentum(0);
+        startXRef.current = e.pageX - containerRef.current.offsetLeft;
+        scrollLeftRef.current = containerRef.current.scrollLeft;
+        lastXRef.current = e.pageX;
+        lastTimestampRef.current = Date.now();
+        momentumRef.current = 0;
     };
 
     const handleTouchStart = (e: React.TouchEvent) => {
         if (!containerRef.current) return;
 
+        isDraggingRef.current = true;
         setIsDragging(true);
-        setStartX(e.touches[0].pageX - containerRef.current.offsetLeft);
-        setScrollLeft(containerRef.current.scrollLeft);
-        setLastX(e.touches[0].pageX);
-        setLastTimestamp(Date.now());
-        setMomentum(0);
+        startXRef.current = e.touches[0].pageX - containerRef.current.offsetLeft;
+        scrollLeftRef.current = containerRef.current.scrollLeft;
+        lastXRef.current = e.touches[0].pageX;
+        lastTimestampRef.current = Date.now();
+        momentumRef.current = 0;
     };
 
     const handleMouseMove = (e: MouseEvent) => {
-        if (!isDragging || !containerRef.current) return;
+        if (!isDraggingRef.current || !containerRef.current) return;
 
         e.preventDefault();
         const x = e.pageX - containerRef.current.offsetLeft;
-        const delta = x - startX;
-        containerRef.current.scrollLeft = scrollLeft - delta;
+        const delta = x - startXRef.current;
+        containerRef.current.scrollLeft = scrollLeftRef.current - delta;
 
         // Calculate momentum
         const now = Date.now();
-        const elapsed = now - lastTimestamp;
+        const elapsed = now - lastTimestampRef.current;
         if (elapsed > 0) {
-            const velocity = (lastX - e.pageX) / elapsed;
-            setMomentum(velocity * 15);
-            setLastX(e.pageX);
-            setLastTimestamp(now);
+            const velocity = (lastXRef.current - e.pageX) / elapsed;
+            momentumRef.current = velocity * 15;
+            lastXRef.current = e.pageX;
+            lastTimestampRef.current = now;
         }
     };
 
     const handleTouchMove = (e: TouchEvent) => {
-        if (!isDragging || !containerRef.current) return;
+        if (!isDraggingRef.current || !containerRef.current) return;
 
         const x = e.touches[0].pageX - containerRef.current.offsetLeft;
-        const delta = x - startX;
-        containerRef.current.scrollLeft = scrollLeft - delta;
+        const delta = x - startXRef.current;
+        containerRef.current.scrollLeft = scrollLeftRef.current - delta;
 
         // Calculate momentum
         const now = Date.now();
-        const elapsed = now - lastTimestamp;
+        const elapsed = now - lastTimestampRef.current;
         if (elapsed > 0) {
-            const velocity = (lastX - e.touches[0].pageX) / elapsed;
-            setMomentum(velocity * 15);
-            setLastX(e.touches[0].pageX);
-            setLastTimestamp(now);
+            const velocity = (lastXRef.current - e.touches[0].pageX) / elapsed;
+            momentumRef.current = velocity * 15;
+            lastXRef.current = e.touches[0].pageX;
+            lastTimestampRef.current = now;
         }
     };
 
     const handleMouseUp = () => {
+        isDraggingRef.current = false;
         setIsDragging(false);
+        setMomentum(momentumRef.current);
     };
 
     const handleTouchEnd = () => {
+        isDraggingRef.current = false;
         setIsDragging(false);
+        setMomentum(momentumRef.current);
     };
 
     // Apply momentum scrolling
@@ -107,27 +116,22 @@ export function DragScroll({children, className, friction = 0.95, style}: DragSc
         return () => cancelAnimationFrame(animationId);
     }, [isDragging, momentum, friction]);
 
-    // Add and remove event listeners
+    // Add and remove event listeners once. Drag state is read from refs inside the
+    // handlers, so the listeners never need to be torn down and reattached mid-drag,
+    // and tracking correctly continues even when the cursor leaves the container.
     useEffect(() => {
-        const container = containerRef.current;
-        if (!container) return;
-
-        const handleMouseLeave = () => setIsDragging(false);
-
         document.addEventListener('mousemove', handleMouseMove);
         document.addEventListener('mouseup', handleMouseUp);
         document.addEventListener('touchmove', handleTouchMove, {passive: false});
         document.addEventListener('touchend', handleTouchEnd);
-        container.addEventListener('mouseleave', handleMouseLeave);
 
         return () => {
             document.removeEventListener('mousemove', handleMouseMove);
             document.removeEventListener('mouseup', handleMouseUp);
             document.removeEventListener('touchmove', handleTouchMove);
             document.removeEventListener('touchend', handleTouchEnd);
-            container?.removeEventListener('mouseleave', handleMouseLeave);
         };
-    }, [isDragging, scrollLeft, startX, lastX, lastTimestamp]);
+    }, []);
 
     return (
         <Box

@@ -1,36 +1,26 @@
-import React from 'react';
-import { MiscCardSource } from "../modules/ImmolateWrapper";
+import React, { useEffect, useState } from 'react';
 import { Accordion, Box, Center, Group, Paper, Text, Title } from "@mantine/core";
-import { useCardStore } from "../modules/state/store.ts";
-import { useEffect, useState } from "react";
-import { EmblaCarouselType } from 'embla-carousel';
 import { Carousel } from "@mantine/carousel";
-import { LOCATIONS } from "../modules/const.ts";
 import { toHeaderCase } from "js-convert-case";
+import { LOCATIONS } from "../modules/const.ts";
+import { useCardStore } from "../modules/state/store.ts";
+import { Joker_Final, StandardCard_Final } from "../modules/ImmolateWrapper/CardEngines/Cards.ts";
 import { BuyWrapper } from "./buyerWrapper.tsx";
 import { GameCard } from "./Rendering/cards.tsx";
-import { BoosterPack, Voucher } from "./Rendering/gameElements.tsx";
-import { Boss } from "./Rendering/gameElements.tsx";
-import { Tag } from "./Rendering/gameElements.tsx";
-import { Joker_Final, StandardCard_Final } from "../modules/ImmolateWrapper/CardEngines/Cards.ts";
+import { BoosterPack, Boss, Tag , Voucher  } from "./Rendering/gameElements.tsx";
+import type { MiscCardSource } from "../modules/ImmolateWrapper";
+import type { EmblaCarouselType } from 'embla-carousel';
 
 export default function MiscCardSourcesDisplay({ miscSources, boosterQueue, bossQueue, tagQueue, voucherQueue, wheelQueue, auraQueue, draws }: {
-    miscSources?: MiscCardSource[],
-    bossQueue?: any[],
-    boosterQueue?: any[],
-    tagQueue?: any[],
-    voucherQueue?: any[]
-    wheelQueue?: any[]
-    auraQueue?: any[]
-    draws?: Record<string, any[]>
+    miscSources?: Array<MiscCardSource>,
+    bossQueue?: Array<any>,
+    boosterQueue?: Array<any>,
+    tagQueue?: Array<any>,
+    voucherQueue?: Array<any>
+    wheelQueue?: Array<any>
+    auraQueue?: Array<any>
+    draws?: Record<string, Array<any>>
 }) {
-    if (!miscSources || Object.keys(miscSources).length === 0) {
-        return (
-            <Paper p="md" withBorder mb="md">
-                <Text c="dimmed" size="sm" ta="center">No miscellaneous card sources available for this ante</Text>
-            </Paper>
-        );
-    }
     const selectedResult = useCardStore(state => state.searchState.selectedSearchResult);
     const currentSource = useCardStore(state => state.applicationState.miscSource);
     const setCurrentSource = useCardStore(state => state.setMiscSource);
@@ -43,11 +33,18 @@ export default function MiscCardSourcesDisplay({ miscSources, boosterQueue, boss
     useEffect(() => {
         if (!selectedResult || !embla) return;
         if (selectedResult?.locationType === LOCATIONS.MISC) {
-            if (selectedResult?.index) {
+            if (selectedResult.index !== undefined) {
                 embla.scrollTo(selectedResult.index)
             }
         }
-    }, [currentSource, selectedResult, currentSource])
+    }, [embla, selectedResult, currentSource])
+    if (!miscSources || Object.keys(miscSources).length === 0) {
+        return (
+            <Paper p="md" withBorder mb="md">
+                <Text c="dimmed" size="sm" ta="center">No miscellaneous card sources available for this ante</Text>
+            </Paper>
+        );
+    }
     return (
         <Paper p="md" withBorder mb="md">
             <Title order={3} mb="xs">Card Sources</Title>

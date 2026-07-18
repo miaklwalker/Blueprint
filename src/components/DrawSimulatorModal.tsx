@@ -1,29 +1,33 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
-    Modal,
-    Group,
-    Select,
-    Button,
-    SimpleGrid,
-    Text,
-    Stack,
     Box,
-    Paper,
-    Tooltip,
+    Button,
     Flex,
+    Group,
     Menu,
-    SegmentedControl
+    Modal,
+    Paper,
+    SegmentedControl,
+    Select,
+    SimpleGrid,
+    Stack,
+    Text,
+    Tooltip
 } from '@mantine/core';
-import { IconTrash, IconRefresh, IconEdit, IconChevronRight } from '@tabler/icons-react';
+import { IconChevronRight, IconEdit, IconRefresh, IconTrash } from '@tabler/icons-react';
 import { useCardStore } from '../modules/state/store.ts';
 import { Game } from '../modules/balatrots/Game.ts';
 import { Deck, deckMap } from '../modules/balatrots/enum/Deck.ts';
 import { Stake, stakeMap } from '../modules/balatrots/enum/Stake.ts';
 import { InstanceParams } from '../modules/balatrots/struct/InstanceParams.ts';
-import { convertGameCardToDeckCard, type DeckCard } from '../modules/deckUtils.ts';
-import { Card, PlayingCard } from '../modules/balatrots/enum/cards/Card.ts';
-import { EditionItem, Edition } from '../modules/balatrots/enum/Edition.ts';
-import { SealItem, Seal } from '../modules/balatrots/enum/Seal.ts';
+import {  convertGameCardToDeckCard } from '../modules/deckUtils.ts';
+import { Card } from '../modules/balatrots/enum/cards/Card.ts';
+import { EditionItem } from '../modules/balatrots/enum/Edition.ts';
+import { SealItem } from '../modules/balatrots/enum/Seal.ts';
+import type {DeckCard} from '../modules/deckUtils.ts';
+import type { PlayingCard } from '../modules/balatrots/enum/cards/Card.ts';
+import type { Edition } from '../modules/balatrots/enum/Edition.ts';
+import type { Seal } from '../modules/balatrots/enum/Seal.ts';
 
 function SimCard({ card, selected, onClick, onUpdate, onRemove }: {
     card: DeckCard,
@@ -200,16 +204,22 @@ export function DrawSimulatorModal() {
     // Simulation State
     const [ante, setAnte] = useState<string>('1');
     const [blind, setBlind] = useState<string>('1'); // 1=Small, 2=Big, 3=Boss
-    const [fullShuffledDeck, setFullShuffledDeck] = useState<DeckCard[]>([]);
-    const [hand, setHand] = useState<DeckCard[]>([]);
+    const [fullShuffledDeck, setFullShuffledDeck] = useState<Array<DeckCard>>([]);
+    const [hand, setHand] = useState<Array<DeckCard>>([]);
     const [deckPointer, setDeckPointer] = useState<number>(0);
-    const [selectedCards, setSelectedCards] = useState<string[]>([]);
+    const [selectedCards, setSelectedCards] = useState<Array<string>>([]);
     const [handSize, setHandSize] = useState<number>(8);
     const [discardsUsed, setDiscardsUsed] = useState<number>(0);
     const [sortMode, setSortMode] = useState<string>('rank');
 
+    // When handleCardUpdate/handleCardRemove mutate the store themselves, they already
+    // sync local state (hand/fullShuffledDeck) directly. Set this before those store calls
+    // so the customDeck-watching effect below skips the resulting re-simulation instead of
+    // clobbering the in-progress draw (deckPointer/discardsUsed/selectedCards).
+    const skipNextDeckSyncRef = useRef(false);
+
     // Helper to sort cards
-    const sortCards = useCallback((cards: DeckCard[], mode: string) => {
+    const sortCards = useCallback((cards: Array<DeckCard>, mode: string) => {
         const suits = ['Spades', 'Hearts', 'Clubs', 'Diamonds'];
         const rankOrder = ['A', 'K', 'Q', 'J', '10', '9', '8', '7', '6', '5', '4', '3', '2'];
 
@@ -227,32 +237,7 @@ export function DrawSimulatorModal() {
             }
         });
     }, []);
-
-    // Re-sort hand when sortMode changes
-    useEffect(() => {
-        setHand(prev => sortCards(prev, sortMode));
-    }, [sortMode, sortCards]);
-
-    // Sync state and simulate when opening
-    useEffect(() => {
-        if (opened) {
-            const blindMap: Record<string, string> = {
-                'smallBlind': '1',
-                'bigBlind': '2',
-                'bossBlind': '3'
-            };
-            const initialAnte = selectedAnte.toString();
-            const initialBlind = blindMap[selectedBlind] || '1';
-
-            setAnte(initialAnte);
-            setBlind(initialBlind);
-
-            // Pass values directly because state updates are async
-            simulate(initialAnte, initialBlind);
-        }
-    }, [opened, selectedAnte, selectedBlind]);
-
-    const simulate = (overrideAnte?: string, overrideBlind?: string) => {
+    const simulate = useCallback((overrideAnte?: string, overrideBlind?: string) => {
         if (!seed) return;
 
         const currentAnte = overrideAnte || ante;
@@ -309,14 +294,47 @@ export function DrawSimulatorModal() {
         setDeckPointer(handSize);
         setSelectedCards([]);
         setDiscardsUsed(0);
-    };
+    },[ante, blind, customDeck, deckType, gameVersion, handSize, seed, showmanOwned, sortCards, sortMode, stake]);
 
-    // Auto-simulate when critical params change while modal is open
+    // Re-sort hand when sortMode changes
+    useEffect(() => {
+        setHand(prev => sortCards(prev, sortMode));
+    }, [sortMode, sortCards]);
+
+    // Sync state and simulate when opening
+    useEffect(() => {
+        if (opened) {
+            const blindMap: Record<string, string> = {
+                'smallBlind': '1',
+                'bigBlind': '2',
+                'bossBlind': '3'
+            };
+            const initialAnte = selectedAnte.toString();
+            const initialBlind = blindMap[selectedBlind] || '1';
+
+            setAnte(initialAnte);
+            setBlind(initialBlind);
+
+            // Pass values directly because state updates are async
+            simulate(initialAnte, initialBlind);
+        }
+    }, [opened, selectedAnte, selectedBlind, simulate]);
+
     useEffect(() => {
         if (opened) {
             simulate();
         }
-    }, [handSize, customDeck]); // Re-simulate if hand size or deck composition changes
+    }, [handSize, opened, simulate]);
+
+    useEffect(() => {
+        if (!opened) return;
+        if (skipNextDeckSyncRef.current) {
+            skipNextDeckSyncRef.current = false;
+            return;
+        }
+        simulate();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [customDeck]);
 
     const toggleSelection = (id: string) => {
         if (selectedCards.includes(id)) {
@@ -343,6 +361,9 @@ export function DrawSimulatorModal() {
     };
 
     const handleCardUpdate = (id: string, updates: Partial<DeckCard>) => {
+
+        skipNextDeckSyncRef.current = true;
+
         // 1. Update Global Store (persists to deck)
         updateCardInDeck(id, updates);
 
@@ -352,6 +373,10 @@ export function DrawSimulatorModal() {
     };
 
     const handleCardRemove = (id: string) => {
+        // Skip the customDeck-watching effect's re-simulation for this store update;
+        // local state is spliced directly below, preserving deckPointer/discardsUsed.
+        skipNextDeckSyncRef.current = true;
+
         // 1. Update Global Store
         removeCardFromDeck(id);
 

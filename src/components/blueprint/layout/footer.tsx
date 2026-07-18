@@ -74,7 +74,7 @@ export default function Footer() {
                             }
                             {
                                 supporters?.length ?
-                                    supporters
+                                    [...supporters]
                                         .sort((a, b) => {
                                             if (a.subscription && !b.subscription) return -1;
                                             if (!a.subscription && b.subscription) return 1;

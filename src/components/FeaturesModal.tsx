@@ -1,13 +1,11 @@
 import React from "react";
+import { Accordion, Container, List, Modal, Stack, Text } from "@mantine/core";
+import { IconCalculator, IconCamera, IconCards, IconEye, IconLock, IconRefresh } from "@tabler/icons-react";
 import { useCardStore } from "../modules/state/store.ts";
-import { Accordion, Container, Modal, Text, Stack, List } from "@mantine/core";
-import { IconCalculator, IconCards, IconLock, IconCamera, IconRefresh, IconEye } from "@tabler/icons-react";
 
 export default function FeaturesModal() {
     const featuresModalOpen = useCardStore(state => state.applicationState.featuresModalOpen);
     const closeFeaturesModal = useCardStore(state => state.closeFeaturesModal);
-
-    if (!featuresModalOpen) return null;
 
     return (
         <Modal
@@ -35,8 +33,8 @@ export default function FeaturesModal() {
                                 <div>
                                     <Text fw={500} size="sm" mb={4}>How to find/use it:</Text>
                                     <List size="sm" withPadding>
-                                        <List.Item>In the shop queue, hover a card and a button that says "Buy" will appear </List.Item>
-                                        <List.Item>Click the dropdown arrow and select "Reroll Calculator"</List.Item>
+                                        <List.Item>In the shop queue, hover a card and a button that says &#34;Buy&#34; will appear </List.Item>
+                                        <List.Item>Click the dropdown arrow and select &#34;Reroll Calculator&#34;</List.Item>
                                         <List.Item>
                                             if you have already played some of the round and re rolled some cards,
                                             below the re roll calculator button there is a mark as starting point button.
@@ -59,14 +57,14 @@ export default function FeaturesModal() {
                                     <Text size="sm" c="dimmed">
                                         Displays the queue of cards from miscellaneous sources like Arcana Packs,
                                         Celestial Packs, Standard Packs, and other booster packs. See what cards
-                                        you'll get before opening them.
+                                        you&#39;ll get before opening them.
                                     </Text>
                                 </div>
                                 <div>
                                     <Text fw={500} size="sm" mb={4}>How to find/use it:</Text>
                                     <List size="sm" withPadding>
                                         <List.Item>click the burger menu (☰) to open the side panel</List.Item>
-                                        <List.Item>Navigate to the "Card Sources" tab</List.Item>
+                                        <List.Item>Navigate to the &#34;Card Sources&#34; tab</List.Item>
                                         <List.Item>From there simply click on a queue you want to see</List.Item>
                                     </List>
                                 </div>
@@ -91,7 +89,7 @@ export default function FeaturesModal() {
                                     <Text fw={500} size="sm" mb={4}>How to find/use it:</Text>
                                     <List size="sm" withPadding>
                                         <List.Item>click the burger menu (☰) to open the side panel</List.Item>
-                                        <List.Item>Navigate to the "Events" tab</List.Item>
+                                        <List.Item>Navigate to the &#34;Events&#34; tab</List.Item>
                                         <List.Item>Indicate which events you have completed and when you completed them.</List.Item>
                                     </List>
                                 </div>
@@ -117,7 +115,7 @@ export default function FeaturesModal() {
                                 <div>
                                     <Text fw={500} size="sm" mb={4}>How to find/use it:</Text>
                                     <List size="sm" withPadding>
-                                        <List.Item>Click "Snapshot" button in settings navbar</List.Item>
+                                        <List.Item>Click &#34;Snapshot&#34; button in settings navbar</List.Item>
                                         <List.Item>A modal will display the on your screen.</List.Item>
                                     </List>
                                 </div>
@@ -136,13 +134,13 @@ export default function FeaturesModal() {
                                     <Text size="sm" c="dimmed">
                                         Enables a quick interaction to reroll individual cards in the shop queue.
                                         Long-press any card to instantly reroll it and see what comes next,
-                                        so you don't have to find that card in a previous ante and buy it.
+                                        so you don&#39;t have to find that card in a previous ante and buy it.
                                     </Text>
                                 </div>
                                 <div>
                                     <Text fw={500} size="sm" mb={4}>How to find/use it:</Text>
                                     <List size="sm" withPadding>
-                                        <List.Item>Enable "Quick Reroll" toggle in the settings navbar</List.Item>
+                                        <List.Item>Enable &#34;Quick Reroll&#34; toggle in the settings navbar</List.Item>
                                         <List.Item>Navigate to any shop queue in the blueprint view</List.Item>
                                         <List.Item>Long-press (click and hold) on any card</List.Item>
                                         <List.Item>The card will reroll and show the next option</List.Item>
@@ -167,7 +165,7 @@ export default function FeaturesModal() {
                                 <div>
                                     <Text fw={500} size="sm" mb={4}>How to find/use it:</Text>
                                     <List size="sm" withPadding>
-                                        <List.Item>Toggle "Show Joker Spoilers" switch in settings navbar</List.Item>
+                                        <List.Item>Toggle &#34;Show Joker Spoilers&#34; switch in settings navbar</List.Item>
                                         <List.Item>Cards in shops and packs will show the actual joker</List.Item>
                                         <List.Item>Toggle off to see the original card ( What you would see in game )</List.Item>
                                     </List>

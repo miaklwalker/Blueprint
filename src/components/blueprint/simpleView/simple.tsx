@@ -345,6 +345,35 @@ function AnteSkeletonLoader() {
     );
 }
 
+interface AnteObserverProps {
+    anteNumber: number;
+    totalAntes: number;
+    visibleAntes: Array<number>;
+    onIntersect: (nextAnte: number) => void;
+}
+
+// Sentinel that reports when the last-loaded ante scrolls into view, so the
+// next ante can be lazily loaded. Declared at module scope (not inside
+// Simple's render) so its identity is stable across renders and only a
+// single instance is ever mounted at a time.
+function AnteObserver({anteNumber, totalAntes, visibleAntes, onIntersect}: AnteObserverProps) {
+    const {ref, entry} = useIntersection({
+        threshold: 0.3, // Start loading next ante when 30% of current is visible
+    });
+
+    useEffect(() => {
+        if (entry?.isIntersecting) {
+            const nextAnte = anteNumber + 1;
+
+            if (nextAnte <= totalAntes && !visibleAntes.includes(nextAnte)) {
+                onIntersect(nextAnte);
+            }
+        }
+    }, [entry?.isIntersecting, anteNumber, totalAntes, visibleAntes, onIntersect]);
+
+    return <div ref={ref}/>;
+}
+
 function Simple() {
     const SeedResults = useSeedResultsContainer()
     const containerRef = useRef<HTMLDivElement>(null);
@@ -362,25 +391,13 @@ function Simple() {
         return visibleAntes.includes(anteNumber);
     };
 
-    // Intersection observer for each ante
-    const AnteObserver = ({anteNumber}: { anteNumber: number }) => {
-        const {ref, entry} = useIntersection({
-            threshold: 0.3, // Start loading next ante when 30% of current is visible
-        });
-
-        useEffect(() => {
-            if (entry?.isIntersecting) {
-                const nextAnte = anteNumber + 1;
-
-                if (nextAnte <= anteEntries.length && !visibleAntes.includes(nextAnte)) {
-                    setVisibleAntes(prev => [...prev, nextAnte]);
-                    setLoadingNextAnte(nextAnte + 1);
-                }
-            }
-        }, [entry?.isIntersecting, anteNumber]);
-
-        return <div ref={ref}/>;
+    // Called when the sentinel observer for the last loaded ante intersects the viewport
+    const handleAnteIntersect = (nextAnte: number) => {
+        setVisibleAntes(prev => prev.includes(nextAnte) ? prev : [...prev, nextAnte]);
+        setLoadingNextAnte(nextAnte + 1);
     };
+
+    const lastVisibleAnte = visibleAntes.length > 0 ? Math.max(...visibleAntes) : null;
 
     return (
         <Container fluid ref={containerRef}>
@@ -410,8 +427,9 @@ function Simple() {
                     if (loadingNextAnte === anteNumber) {
                         return <AnteSkeletonLoader key={key}/>;
                     }
-                    // Otherwise just render the observer for previous ante
-                    return <AnteObserver key={key} anteNumber={anteNumber - 1}/>;
+                    // Nothing to render yet for antes further ahead; the single
+                    // sentinel after the last visible ante drives loading.
+                    return null;
                 }
 
                 const blinds = value.blinds;
@@ -490,8 +508,15 @@ function Simple() {
                         ))}
 
 
-                        {/* Observer at the bottom of each rendered ante to detect when it's visible */}
-                        <AnteObserver anteNumber={anteNumber}/>
+                        {/* Sentinel only after the last visible ante to detect when it's scrolled into view */}
+                        {anteNumber === lastVisibleAnte && (
+                            <AnteObserver
+                                anteNumber={anteNumber}
+                                totalAntes={anteEntries.length}
+                                visibleAntes={visibleAntes}
+                                onIntersect={handleAnteIntersect}
+                            />
+                        )}
                     </Paper>
                 );
             })}

@@ -51,8 +51,8 @@ function QueueCarousel({ queue, tabName }: { queue: Array<any>, tabName: string 
 
 
         if (embla && selectedSearchResult) {
-            if (selectedSearchResult?.location === LOCATIONS.SHOP && selectedSearchResult?.index) {
-                embla.scrollTo(selectedSearchResult.index - 1)
+            if (selectedSearchResult?.location === LOCATIONS.SHOP && selectedSearchResult?.index != null) {
+                embla.scrollTo(selectedSearchResult.index)
             }
         }
 
@@ -430,13 +430,22 @@ function SeedExplorer() {
         return 0
     }, []);
 
+    useEffect(() => {
+        if (!SeedResults) return;
+        const anteKeys = Object.keys(SeedResults.antes).map(Number);
+        if (anteKeys.length > 0 && !SeedResults.antes[selectedAnte]) {
+            setSelectedAnte(anteKeys[0]);
+        }
+    }, [SeedResults, selectedAnte, setSelectedAnte]);
+
     if (!SeedResults) {
         return null;
     }
 
 
     const pool = SeedResults.antes
-    const itemPool = selectedAnte
+    const anteKeys = Object.keys(pool).map(Number)
+    const itemPool = pool[selectedAnte] ? selectedAnte : anteKeys[0]
 
     return (
         <>

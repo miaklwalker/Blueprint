@@ -1,37 +1,39 @@
 import { EVENT_UNLOCKS, LOCATIONS, options } from "../const.ts";
-import { RandomQueueNames, RNGSource } from "../balatrots/enum/QueueName.ts";
+import { RNGSource, RandomQueueNames } from "../balatrots/enum/QueueName.ts";
 import { Deck, deckMap } from "../balatrots/enum/Deck.ts";
-import type { StakeType } from "../balatrots/enum/Stake.ts";
 import { Stake } from "../balatrots/enum/Stake.ts";
 import { Game } from "../balatrots/Game.ts";
 import { InstanceParams } from "../balatrots/struct/InstanceParams.ts";
 import { JokerData } from "../balatrots/struct/JokerData.ts";
 import { Type } from "../balatrots/enum/cards/CardType.ts";
-import { Card, PlayingCard } from "../balatrots/enum/cards/Card.ts";
+import { Card } from "../balatrots/enum/cards/Card.ts";
 import { PlanetItem } from "../balatrots/enum/cards/Planet.ts";
 import { Tarot } from "../balatrots/enum/cards/Tarot.ts";
 import { SpectralItem } from "../balatrots/enum/packs/Spectral.ts";
 import { SpecialsItem } from "../balatrots/enum/cards/Specials.ts";
 import { BalatroAnalyzer } from "../balatrots/BalatroAnalyzer.ts";
 import { Lock } from "../balatrots/Lock.ts"
-import type { BoosterPack, Card_Final, Consumables_Final, NextShopItem, PackCard } from "./CardEngines/Cards.ts";
+import { EditionItem } from "../balatrots/enum/Edition.ts";
+import { SealItem } from "../balatrots/enum/Seal.ts";
+import {sanitizeSeed} from "../utils.ts";
 import {
     Ante,
     Joker_Final,
-    Pack,
     Planet_Final,
     SeedResultsContainer,
     Spectral_Final,
     StandardCard_Final,
     Tarot_Final
 } from "./CardEngines/Cards.ts";
+import type { BoosterPack, Card_Final, Consumables_Final, NextShopItem, PackCard } from "./CardEngines/Cards.ts";
 
 import type { Voucher } from "../balatrots/enum/Voucher.ts";
-import { Edition, EditionItem } from "../balatrots/enum/Edition.ts";
-import { Seal, SealItem } from "../balatrots/enum/Seal.ts";
+import type { Edition} from "../balatrots/enum/Edition.ts";
+import type { Seal} from "../balatrots/enum/Seal.ts";
 import type { DeckCard } from "../deckUtils.ts";
 
-import {sanitizeSeed} from "../utils.ts";
+import type { PlayingCard } from "../balatrots/enum/cards/Card.ts";
+import type { StakeType } from "../balatrots/enum/Stake.ts";
 
 export type SpoilableItems = "The Soul" | "Judgement" | "Wraith";
 export interface MiscCardSource {
@@ -166,7 +168,7 @@ export class CardEngineWrapper implements EngineWrapper {
                     name: card.name,
                     type: 'Spectral',
                 } as Card_Final)
-            case instanceofStandard:
+            case instanceofStandard: {
                 const cardName = typeof card.name === 'string' ? card.name : (card.getName ? card.getName() : '');
                 if (typeof cardName !== 'string' || !cardName.includes('_')) {
                     // Fallback for cards that don't match the expected S_A format
@@ -185,6 +187,7 @@ export class CardEngineWrapper implements EngineWrapper {
                     enhancements: card._enhancement || "No Enhancement",
                     type: 'Standard',
                 } as unknown as Card_Final)
+            }
             default:
                 throw new Error("Unknown card type");
         }
@@ -550,8 +553,6 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
 
     const engineWrapper = new CardEngineWrapper(engine);
 
-    const itemsWithSpoilers: Array<SpoilableItems> = ["The Soul", "Judgement", "Wraith"];
-    const spoilerSources = [RNGSource.S_Soul, RNGSource.S_Judgement, RNGSource.S_Wraith];
     const lockedCards = analyzeOptions.lockedCards || {};
 
     const staticAnteQueues = {};
@@ -563,7 +564,10 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
             params
         );
         burnerInstance.initLocks(1, true, true);
-        burnerInstance.initUnlocks(ante, false)
+        burnerInstance.handleSelectedUnlocks(analyzeOptions.unlocks);
+        for (let i = 1; i <= ante; i++) {
+            burnerInstance.initUnlocks(i, false);
+        }
         const burnerWrapper = new CardEngineWrapper(burnerInstance);
         const result = new Ante(ante);
         const showmanIsPurchased = engine.isPurchased('Showman');
@@ -595,12 +599,6 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
                 result.queue.push(
                     engineWrapper.makeGameCard(shopItem.item)
                 )
-            }
-            if (analyzeOptions && analyzeOptions?.showCardSpoilers) {
-                if (itemsWithSpoilers.includes(result.queue[i].name as SpoilableItems)) {
-                    // @ts-expect-error reports types dont match.
-                    result.queue[i] = Pack.PackCardToCard(engine.peekJoker(spoilerSources[itemsWithSpoilers.indexOf(result.queue[i].name)], ante, false), 'Joker')
-                }
             }
             if (analyzeOptions && analyzeOptions.buys[key]) {
                 engineWrapper.handleBuy(result.queue[i].name, "Card", updateShowmanOwned, analyzeOptions)
@@ -736,7 +734,7 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
 
         result.voucherQueue = Array(queueDepth).fill(null).map(() => burnerInstance.nextVoucherSimple().name)
         for (let i = 1; i <= ante; i++) {
-            burnerInstance.nextBoss(ante)
+            burnerInstance.nextBoss(i)
         }
         result.bossQueue = Array(queueDepth).fill(null).map(() => burnerInstance.nextBoss(ante).name)
         burnerInstance.nextTag(ante)

@@ -3,15 +3,14 @@ import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import { LOCATIONS, LOCATION_TYPES, options } from "../const.ts";
 import { sanitizeSeed } from "../utils.ts";
-import { convertToDeckCard, generateStartingDeck, convertGameCardToDeckCard } from "../deckUtils.ts";
-import type { DeckCard } from "../deckUtils.ts";
+import { convertGameCardToDeckCard, convertToDeckCard, generateStartingDeck } from "../deckUtils.ts";
 import { Game } from "../balatrots/Game.ts";
 import { InstanceParams } from "../balatrots/struct/InstanceParams.ts";
 import { Deck, deckMap } from "../balatrots/enum/Deck.ts";
 import { Stake, stakeMap } from "../balatrots/enum/Stake.ts";
+import type { DeckCard } from "../deckUtils.ts";
 import type { StateStorage } from "zustand/middleware";
 import type { BuyMetaData } from "../classes/BuyMetaData.ts";
-import type { SeedResultsContainer } from "../ImmolateWrapper/CardEngines/Cards.ts";
 
 export type Blinds = 'smallBlind' | 'bigBlind' | 'bossBlind';
 export interface InitialState {
@@ -45,7 +44,6 @@ export interface InitialState {
         selectedAnte: number;
         selectedBlind: Blinds;
         hasSettingsChanged: boolean;
-        analyzedResults: SeedResultsContainer | null | undefined;
         maxMiscCardSource: number;
         rerollStartIndex: number;
         conversionSourceId: string | null;
@@ -165,7 +163,6 @@ const initialState: InitialState = {
         selectedAnte: 1,
         selectedBlind: 'bigBlind',
         hasSettingsChanged: false,
-        analyzedResults: null,
         maxMiscCardSource: 15,
         rerollStartIndex: 0,
         drawSimulatorModalOpen: false,
@@ -195,6 +192,9 @@ const initialState: InitialState = {
 
 }
 
+
+let urlUpdateTimeout: ReturnType<typeof setTimeout> | null = null;
+let pendingUrlUpdate: string | null = null;
 
 // @ts-ignore
 const blueprintStorage: StateStorage = {
@@ -233,9 +233,30 @@ const blueprintStorage: StateStorage = {
             }
         });
 
-        // Update URL without reloading the page
+        // Compose the new URL and compare against the current one. Most store
+        // actions (buys, search, ante/blind selection, etc.) never touch
+        // immolateState, so this is almost always a no-op skip.
         const newUrl = `${window.location.pathname}?${params.toString()}${window.location.hash}`;
-        window.history.replaceState({}, '', newUrl);
+        const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+        if (newUrl === currentUrl) {
+            return;
+        }
+
+        // Debounce the actual history write: Safari throttles
+        // history.replaceState to ~100 calls per 30s and throws a
+        // SecurityError past that limit. Coalesce rapid successive
+        // immolateState changes into a single URL update.
+        pendingUrlUpdate = newUrl;
+        if (urlUpdateTimeout !== null) {
+            clearTimeout(urlUpdateTimeout);
+        }
+        urlUpdateTimeout = setTimeout(() => {
+            if (pendingUrlUpdate !== null) {
+                window.history.replaceState({}, '', pendingUrlUpdate);
+                pendingUrlUpdate = null;
+            }
+            urlUpdateTimeout = null;
+        }, 300);
         // updateBuysInHash(parsedValue.state.shoppingState.buys);
     },
 };
@@ -275,6 +296,8 @@ export const useCardStore = create<CardStore>()(
                         prev.immolateState.seed = sanitized;
                         prev.shoppingState = initialState.shoppingState
                         prev.searchState = initialState.searchState;
+                        prev.lockState = initialState.lockState;
+                        prev.eventState = initialState.eventState;
                         prev.applicationState.hasSettingsChanged = true;
 
                         const deckType = deckMap[prev.immolateState.deck];
@@ -289,6 +312,8 @@ export const useCardStore = create<CardStore>()(
                         const gameCards = game.initDeck();
                         prev.deckState.cards = gameCards.map((card, i) => convertGameCardToDeckCard(card, i));
                         prev.deckState.isInitialized = true;
+                        prev.deckState.past = [];
+                        prev.deckState.future = [];
                     }, undefined, 'Global/SetSeed'),
                     setDeck: (deck: string) => set((prev) => {
                         prev.immolateState.deck = deck
@@ -315,6 +340,8 @@ export const useCardStore = create<CardStore>()(
                         }
 
                         prev.deckState.isInitialized = true;
+                        prev.deckState.past = [];
+                        prev.deckState.future = [];
                     }, undefined, 'Global/SetDeck'),
                     setUseCardPeek: (useCardPeek) => set((prev) => {
                         prev.applicationState.useCardPeek = useCardPeek
@@ -474,7 +501,7 @@ export const useCardStore = create<CardStore>()(
                     }, undefined, 'Cards/ClearLockedCards'),
 
                     initializeDeck: (deckType?: string, game?: Game) => set((prev) => {
-                        let starterDeck: DeckCard[];
+                        let starterDeck: Array<DeckCard>;
 
                         if (game) {
                             const gameCards = game.getShuffledDeck(get().applicationState.selectedAnte);

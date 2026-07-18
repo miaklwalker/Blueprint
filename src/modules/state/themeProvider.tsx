@@ -16,11 +16,7 @@ const themes = {
     Sylveon: SylveonThemeFile,
 };
 export const themeNames = Object.keys(themes) as Array<KnownThemes>;
-export const BlueprintThemeContext = createContext<{theme: KnownThemes, themes: Record<KnownThemes,MantineThemeOverride>, setTheme: (theme: KnownThemes)=>void} | undefined>({
-    theme: "Mantine",
-    themes,
-    setTheme: () => {},
-});
+export const BlueprintThemeContext = createContext<{theme: KnownThemes, themes: Record<KnownThemes,MantineThemeOverride>, setTheme: (theme: KnownThemes)=>void} | undefined>(undefined);
 
 export function useBlueprintTheme() {
     const context = useContext(BlueprintThemeContext);

@@ -17,7 +17,7 @@ import {
     useMantineColorScheme,
     useMantineTheme
 } from "@mantine/core";
-import React, {useState, useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {
     IconFileText,
     IconJoker,
@@ -27,12 +27,12 @@ import {
     IconPlayCard,
     IconSun
 } from "@tabler/icons-react";
+import { useDebouncedCallback } from "@mantine/hooks";
 import { useCardStore } from "../../../modules/state/store.ts";
 import UnlocksModal from "../../unlocksModal.tsx";
 import FeaturesModal from "../../FeaturesModal.tsx";
 import {RerollCalculatorModal} from "../../RerollCalculatorModal.tsx";
 import {GaEvent} from "../../../modules/useGA.ts";
-import { useDebouncedCallback } from "@mantine/hooks";
 import { DrawSimulatorModal } from "../../DrawSimulatorModal.tsx";
 import SeedInputAutoComplete from "../../SeedInputAutoComplete.tsx";
 import { useBlueprintTheme } from "../../../modules/state/themeProvider.tsx";
@@ -65,7 +65,6 @@ export default function NavBar() {
     const setShowCardSpoilers = useCardStore(state => state.setShowCardSpoilers);
     const setStart = useCardStore(state => state.setStart);
     const openSelectOptionModal = useCardStore(state => state.openSelectOptionModal);
-    const openFeaturesModal = useCardStore(state => state.openFeaturesModal);
     const openSnapshotModal = useCardStore(state => state.openSnapshotModal);
     const rerollCalculatorModalOpen = useCardStore(state => state.applicationState.rerollCalculatorModalOpen);
     const rerollCalculatorMetadata = useCardStore(state => state.applicationState.rerollCalculatorMetadata);
@@ -85,7 +84,6 @@ export default function NavBar() {
 
     return (
         <AppShell.Navbar p="md">
-            <UnlocksModal />
             <UnlocksModal />
             <FeaturesModal />
             <DrawSimulatorModal />
@@ -163,9 +161,15 @@ export default function NavBar() {
                     defaultValue={8}
                     value={localAntes}
                     onChange={(val: number | string) => {
-                        const num = typeof val === 'string' ? parseInt(val) || 8 : val;
-                        setLocalAntes(num);
+                        setLocalAntes(val);
+                        if (val === '') return;
+                        const num = typeof val === 'string' ? parseInt(val) : val;
+                        if (Number.isNaN(num)) return;
                         debouncedSetAntes(num);
+                    }}
+                    onBlur={() => {
+                        const num = typeof localAntes === 'string' ? parseInt(localAntes) : localAntes;
+                        if (localAntes === '' || Number.isNaN(num)) setLocalAntes(antes);
                     }}
                 />
                 <NativeSelect
@@ -286,16 +290,16 @@ export default function NavBar() {
                     >
                         Analyze Seed
                     </Button>
-                    {/*<Button*/}
+                    {/* <Button*/}
                     {/*    id="features-button"*/}
                     {/*    color={theme.colors.grape[9]}*/}
                     {/*    onClick={() => {*/}
                     {/*        GaEvent('view_features');*/}
                     {/*        openFeaturesModal()*/}
                     {/*    }}*/}
-                    {/*>*/}
+                    {/* >*/}
                     {/*    Features*/}
-                    {/*</Button>*/}
+                    {/* </Button>*/}
                     <Button id="unlocks-button" color={theme.colors.blue[9]} onClick={() => openSelectOptionModal()}>
                         Modify Unlocks
                     </Button>

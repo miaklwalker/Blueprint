@@ -234,7 +234,7 @@ export class Pack {
         this.cards = []
     }
 
-    static PackCardToCard(data: string | PackCard, cardType: string, spoilers? :boolean) {
+    static PackCardToCard(data: string | PackCard, cardType: string) {
         if (typeof data === 'string') {
             if (cardType === 'Planet') {
                 return new Planet_Final({
@@ -249,12 +249,10 @@ export class Pack {
                         type: cardType
                     } as Card_Final);
                 }else{
-                    if(!spoilers) {
-                        return new Spectral_Final({
-                            name: data,
-                            type: cardType
-                        } as Card_Final);
-                    }
+                    return new Spectral_Final({
+                        name: data,
+                        type: 'Spectral'
+                    } as Card_Final);
                 }
             }
             if (cardType === 'Spectral') {

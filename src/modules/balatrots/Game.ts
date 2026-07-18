@@ -332,6 +332,7 @@ export class Game extends Lock {
     public hasSpoilersMap: Record<string, RNGSource>;
     public hasSpoilers: boolean;
     private _customDeck: Array<Card> | null = null;
+    private _erraticDeck: Array<Card> | null = null;
 
     constructor(seed: string, params: InstanceParams) {
         super();
@@ -730,6 +731,8 @@ export class Game extends Lock {
                 return new ShopItem(type, this.nextPlanet(RNGSource.S_Shop, ante, false));
             case Type.SPECTRAL:
                 return new ShopItem(type, this.nextSpectral(RNGSource.S_Shop, ante, false));
+            case Type.PLAYING_CARD:
+                return new ShopItem(type, this.nextStandardCard(ante, RNGSource.S_Shop));
             default:
                 return new ShopItem();
         }
@@ -872,10 +875,15 @@ export class Game extends Lock {
             return this.nextCertificateStandardCard()
         }
 
+        // Shop-generated standard cards (e.g. via the Magic Trick voucher) key their RNG
+        // streams with "sho" instead of "sta", matching Balatro's own key-append convention.
+        // Every other caller (standard packs, misc-source predictions) keeps using "sta".
+        const keyAppend = source === RNGSource.S_Shop ? RNGSource.S_Shop : RNGSource.S_Standard;
+
         if (this.random(`${RandomQueueNames.R_Standard_Has_Enhancement}${ante}`) <= 0.6) {
             enhancement = "No Enhancement";
         } else {
-            enhancement = this.randchoice(`${RandomQueueNames.R_Enhancement}${RNGSource.S_Standard}${ante}`, Game.ENHANCEMENTS).getName();
+            enhancement = this.randchoice(`${RandomQueueNames.R_Enhancement}${keyAppend}${ante}`, Game.ENHANCEMENTS).getName();
         }
 
         let edition = Edition.NO_EDITION;
@@ -907,7 +915,7 @@ export class Game extends Lock {
             }
         }
 
-        const base = this.randchoice(`${RandomQueueNames.R_Card}${RNGSource.S_Standard}${ante}`, Game.CARDS);
+        const base = this.randchoice(`${RandomQueueNames.R_Card}${keyAppend}${ante}`, Game.CARDS);
 
         return new Card(base.getName() as PlayingCard, enhancement, new EditionItem(edition), new SealItem(seal));
     }
@@ -1198,12 +1206,20 @@ item wheel_of_fortune_edition(instance* inst) {
             case deckNames[DeckType.CHECKERED_DECK]:
                 return Game.CARDS_CHECKERED;
             case deckNames[DeckType.ERRATIC_DECK]: {
-                const randomizedCards: Array<Card> = [];
-                for (let i = 0; i < 52; i++) {
-                    const card = this.randchoice_simple(RandomQueueNames.R_Erratic, Game.CARDS);
-                    randomizedCards.push(new Card(card.getName() as PlayingCard));
+                // The Erratic deck composition is generated once at run start and
+                // stays fixed for the whole run. Cache it on the instance (like
+                // _customDeck) so repeated initDeck calls (small/big/boss blind,
+                // every ante) reuse the same 52-card set instead of advancing the
+                // 'erratic' RNG stream and drifting on each call.
+                if (!this._erraticDeck) {
+                    const randomizedCards: Array<Card> = [];
+                    for (let i = 0; i < 52; i++) {
+                        const card = this.randchoice_simple(RandomQueueNames.R_Erratic, Game.CARDS);
+                        randomizedCards.push(new Card(card.getName() as PlayingCard));
+                    }
+                    this._erraticDeck = randomizedCards.sort((a, b) => a.getName().localeCompare(b.getName()));
                 }
-                return randomizedCards.sort((a, b) => a.getName().localeCompare(b.getName()));
+                return this._erraticDeck.map(c => new Card(c.getName() as PlayingCard));
             }
             default:
                 return Game.CARDS.map(c => new Card(c.getName() as PlayingCard));
@@ -1258,11 +1274,17 @@ item wheel_of_fortune_edition(instance* inst) {
         const suitOrder = { 'C': 0, 'D': 1, 'H': 2, 'S': 3 } as {
             [key: string]: number
         }
+        const rankOrder = {
+            '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9,
+            'T': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14
+        } as {
+            [key: string]: number
+        }
         switch (sort) {
             case 'rank':
                 return hand.sort((a, b) => {
-                    const rankA = parseInt(a.getName().split('_')[1]);
-                    const rankB = parseInt(b.getName().split('_')[1]);
+                    const rankA = rankOrder[a.getName().split('_')[1]];
+                    const rankB = rankOrder[b.getName().split('_')[1]];
                     return rankA - rankB;
                 });
             case 'suit':
@@ -1271,10 +1293,8 @@ item wheel_of_fortune_edition(instance* inst) {
                     const suitB = b.getName().split('_')[0];
                     return suitOrder[suitA] - suitOrder[suitB];
                 });
+            default:
+                return hand;
         }
-
-
-
-
     }
 }

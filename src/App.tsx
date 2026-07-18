@@ -4,7 +4,7 @@ import '@mantine/carousel/styles.css';
 import '@mantine/spotlight/styles.css';
 
 
-import { MantineProvider, Paper, Space, Stack, Text, Title } from "@mantine/core";
+import { MantineProvider, Space, Stack, Text } from "@mantine/core";
 import { Blueprint } from "./components/blueprint/standardView";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
@@ -12,7 +12,7 @@ import { SeedResultProvider } from "./modules/state/analysisResultProvider.tsx";
 import { SeedOptionsProvider } from "./modules/state/optionsProvider.tsx";
 import { DownloadSeedResultProvider } from "./modules/state/downloadProvider.tsx";
 import { BlueprintThemeProvider, useBlueprintTheme } from "./modules/state/themeProvider.tsx";
-import { NextStepProvider, NextStepReact, type Tour, type Step } from 'nextstepjs';
+import { NextStepProvider, NextStepReact, type Tour } from 'nextstepjs';
 import { useCardStore } from "./modules/state/store.ts";
 const queryClient = new QueryClient()
 
@@ -286,8 +286,8 @@ function ProviderContainer({ children }: { children: React.ReactNode }) {
             if (settingsOpen) toggleSettings();
         }
 
-        // Steps 13-15: Extra Tools (Navbar)
-        if (step >= 13 && step <= 15) {
+        // Steps 13-16: Extra Tools (Navbar)
+        if (step >= 13 && step <= 16) {
             if (!settingsOpen) toggleSettings();
             if (asideOpen) toggleOutput();
         }
@@ -304,13 +304,15 @@ function ProviderContainer({ children }: { children: React.ReactNode }) {
         }
         if (step === 15) {
             closeSnapshotModal();
-        }
-        if (step === 16) {
             openRerollModal({});
         }
-        if (step === 17) {
+        if (step === 16) {
             closeRerollModal();
         }
+    }
+
+    const handleTourEnd = () => {
+        closeRerollModal();
     }
 
     return (
@@ -323,7 +325,9 @@ function ProviderContainer({ children }: { children: React.ReactNode }) {
                             <NextStepProvider>
                                 <NextStepReact
                                     steps={steps}
-                                    onStepChange={handleStepChange}>
+                                    onStepChange={handleStepChange}
+                                    onComplete={handleTourEnd}
+                                    onSkip={handleTourEnd}>
                                     {children}
                                 </NextStepReact>
                             </NextStepProvider>

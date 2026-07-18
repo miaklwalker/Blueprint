@@ -1,5 +1,6 @@
-import { useCardStore } from "../modules/state/store.ts";
 import { Button, Container, Group, Modal, SimpleGrid, Switch } from "@mantine/core";
+import React from "react";
+import { useCardStore } from "../modules/state/store.ts";
 import { options } from "../modules/const.ts";
 
 export default function UnlocksModal() {
@@ -7,12 +8,10 @@ export default function UnlocksModal() {
     const closeSelectOptionModal = useCardStore(state => state.closeSelectOptionModal);
     const selectedOptions = useCardStore(state => state.immolateState.selectedOptions);
     const setSelectedOptions = useCardStore(state => state.setSelectedOptions);
-    if (!selectOptionsModalOpen) return null;
     return (
         <Modal size="auto" title={'Unlocks'} opened={selectOptionsModalOpen} onClose={() => closeSelectOptionModal()}>
             <Container fluid>
                 <Switch.Group
-                    defaultValue={options}
                     label="Unlocked Items "
                     description="Items that you have unlocked by playing the game"
                     withAsterisk

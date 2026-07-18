@@ -1,31 +1,51 @@
-import {Layer} from "../../modules/classes/Layer.ts";
-import {useEffect, useRef, useState} from "react";
-import {useForceUpdate, useHover, useMergedRef, useMouse, useResizeObserver} from "@mantine/hooks";
+import React, {useEffect, useMemo, useRef, useState} from "react";
+import {useHover, useMergedRef, useMouse, useResizeObserver} from "@mantine/hooks";
 import {AspectRatio} from "@mantine/core";
+import type {Layer} from "../../modules/classes/Layer.ts";
 
 const globalImageCache = new Map<string, HTMLImageElement>();
+// De-dupe concurrent loads: cache the in-flight promise (not just the resolved
+// image) so repeated renders of the same uncached source share one fetch.
+const inFlightImageLoads = new Map<string, Promise<HTMLImageElement>>();
+
 interface RenderCanvasProps {
-    layers: any[],
+    layers: Array<any>,
     invert?: boolean,
     spacing?: boolean,
     animated?: boolean
 }
 
 
-function loadImage(url:string): Promise<HTMLImageElement> {
-    return new Promise(resolve=>{
+function loadImage(url: string): Promise<HTMLImageElement> {
+    const cached = globalImageCache.get(url);
+    if (cached) return Promise.resolve(cached);
+    const inFlight = inFlightImageLoads.get(url);
+    if (inFlight) return inFlight;
+
+    const promise = new Promise<HTMLImageElement>((resolve, reject) => {
         const image = new Image();
-        image.addEventListener('load',()=>{
+        image.addEventListener('load', () => {
+            globalImageCache.set(url, image);
+            inFlightImageLoads.delete(url);
             resolve(image);
         });
-        image.src=url;
-    })
+        image.addEventListener('error', () => {
+            // Reject (and drop the in-flight entry) so callers can .catch and a
+            // later render may retry, instead of hanging forever on a dead promise.
+            inFlightImageLoads.delete(url);
+            reject(new Error(`Failed to load image: ${url}`));
+        });
+        image.src = url;
+    });
+    inFlightImageLoads.set(url, promise);
+    return promise;
 }
 
-async function loadAllImagesIntoCache(){
+async function loadAllImagesIntoCache() {
     const urls = [
         "images/8BitDeck.png",
         "images/BlindChips.png",
+        "images/Boosters.png",
         "images/Editions.png",
         "images/Enhancers.png",
         "images/Jokers.png",
@@ -34,16 +54,15 @@ async function loadAllImagesIntoCache(){
         "images/Tarots.png",
         "images/Vouchers.png",
     ];
-    const promises = urls.map(url => loadImage(url));
-    const images = await Promise.all(promises);
-    images.forEach((image, index) => {
-        globalImageCache.set(urls[index], image);
-    });
-
+    // Per-url catch so a single failed asset doesn't reject the whole preload.
+    await Promise.all(urls.map(url => loadImage(url).catch(err => console.log(err))));
 }
 
 loadAllImagesIntoCache()
-    .catch(err=>{console.log(err)});
+    .catch(err => {
+        console.log(err)
+    });
+
 export function renderImage(
     canvas: HTMLCanvasElement,
     context: CanvasRenderingContext2D,
@@ -103,52 +122,49 @@ export function renderImage(
 }
 
 interface SimpleRenderProps {
-    layers: Layer[],
+    layers: Array<Layer>,
     invert?: boolean,
 }
 
 
-
-export function SimpleRenderCanvas({ layers, invert = false }: SimpleRenderProps) {
+export function SimpleRenderCanvas({layers, invert = false}: SimpleRenderProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [ratio, setRatio] = useState(3 / 4);
-    const forceUpdate = useForceUpdate();
+
     useEffect(() => {
         if (!canvasRef.current || !layers || layers.length === 0) return;
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
         if (!context) return;
 
-        context.clearRect(0, 0, canvas.width, canvas.height);
-
-        layers
-            .sort((a, b) => a.order - b.order)
-            .forEach(layer => {
-                if (globalImageCache.has(layer.source)) {
-                    const image = globalImageCache.get(layer.source) as HTMLImageElement;
+        let cancelled = false;
+        // Load every layer's image first, then draw the sorted set in one pass so
+        // z-order is deterministic and a late base (order 0) layer can't wipe
+        // already-drawn overlays.
+        const sorted = [...layers].sort((a, b) => a.order - b.order);
+        Promise.all(sorted.map(layer => loadImage(layer.source).then(image => ({layer, image}))))
+            .then(loaded => {
+                if (cancelled) return;
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                loaded.forEach(({layer, image}) => {
                     const imageRatio = renderImage(canvas, context, image, layer);
-                    if (layer.order === 0) {
+                    if (layer.order === 0 && imageRatio) {
                         setRatio(imageRatio);
                     }
-                    return;
-                }
-                loadImage(layer.source)
-                    .then((img: HTMLImageElement) => {
-                        const imageRatio = renderImage(canvas, context, img, layer);
-                        globalImageCache.set(layer.source, img);
-                        if (layer.order === 0) {
-                            setRatio(imageRatio);
-                        }
-                        forceUpdate()
-                    })
-            });
+                });
+            })
+            .catch(err => console.log(err));
 
-        if (invert) {
-            canvas.style.filter = 'invert(0.8)';
-        } else {
-            canvas.style.filter = 'none';
-        }
-    }, [layers, invert]);
+        return () => {
+            cancelled = true;
+        };
+    }, [layers]);
+
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        canvas.style.filter = invert ? 'invert(0.8)' : 'none';
+    }, [invert]);
 
     return (
         <AspectRatio ratio={ratio} w="100%">
@@ -164,20 +180,59 @@ export function SimpleRenderCanvas({ layers, invert = false }: SimpleRenderProps
 }
 
 
-
 // Advanced card rendering with canvas
 export function RenderImagesWithCanvas({layers, invert = false, spacing = false}: RenderCanvasProps) {
-    const canvasRef = useRef(null);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
     const containerRef = useRef(null);
     const [ratio, setRatio] = useState(3 / 4);
-    const [transform, setTransform] = useState('');
     const animationFrameRef = useRef<number | null>(null);
-    const [elapsed, setElapsed] = useState(0);
-    const forceUpdate = useForceUpdate();
+    // Images loaded for the current layers, in z-order, ready to draw imperatively.
+    const loadedLayersRef = useRef<Array<{ layer: Layer; image: HTMLImageElement }>>([]);
 
     const hasAnimatedLayer = layers?.some(layer => layer.animated);
 
-    // Animation loop for animated layers
+    // Draw the already-loaded layers in z-order in a single pass. Called both for
+    // the initial static draw and (imperatively) from the animation loop.
+    const draw = (timestamp?: number) => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const context = canvas.getContext('2d');
+        if (!context) return;
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        loadedLayersRef.current.forEach(({layer, image}) => {
+            const imageRatio = renderImage(canvas, context, image, layer, timestamp);
+            if (layer.order === 0 && imageRatio) {
+                setRatio(imageRatio);
+            }
+        });
+    };
+
+    // Load all layer images, then draw them once in the correct z-order.
+    useEffect(() => {
+        if (!canvasRef.current || !layers || layers.length === 0) return;
+        let cancelled = false;
+        const sorted = [...layers].sort((a, b) => a.order - b.order);
+        Promise.all(sorted.map(layer => loadImage(layer.source).then(image => ({layer, image}))))
+            .then(loaded => {
+                if (cancelled) return;
+                loadedLayersRef.current = loaded;
+                draw();
+            })
+            .catch(err => console.log(err));
+        return () => {
+            cancelled = true;
+        };
+    }, [layers]);
+
+    // Apply / reset the invert filter reactively.
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        canvas.style.filter = invert ? 'invert(0.8)' : 'none';
+    }, [invert]);
+
+    // Animation loop: keep the timestamp in the rAF callback and redraw the canvas
+    // imperatively each frame, instead of driving a React re-render per frame.
     useEffect(() => {
         if (!hasAnimatedLayer) return;
 
@@ -185,7 +240,7 @@ export function RenderImagesWithCanvas({layers, invert = false, spacing = false}
 
         const animate = (timestamp: number) => {
             if (!startTime) startTime = timestamp;
-            setElapsed(timestamp - startTime);
+            draw(timestamp - startTime);
             animationFrameRef.current = requestAnimationFrame(animate);
         };
 
@@ -198,69 +253,32 @@ export function RenderImagesWithCanvas({layers, invert = false, spacing = false}
         };
     }, [hasAnimatedLayer]);
 
-    useEffect(() => {
-        if (!canvasRef.current) return;
-        if (!layers) return;
-        const canvas: HTMLCanvasElement = canvasRef.current;
-        const context: CanvasRenderingContext2D | null = canvas.getContext('2d');
-        if (!context) return;
-
-        context.clearRect(0, 0, canvas.width, canvas.height);
-
-        layers
-            .sort((a, b) => a.order - b.order)
-            .forEach((layer => {
-                if (globalImageCache.has(layer.source)) {
-                    let image = globalImageCache.get(layer.source) as HTMLImageElement;
-                    const imageRatio = renderImage(canvas, context, image, layer, hasAnimatedLayer ? elapsed : undefined);
-                    if (layer.order === 0) {
-                        setRatio(imageRatio);
-                    }
-                    return;
-                }
-                loadImage(layer.source)
-                    .then((img: HTMLImageElement) => {
-                        const imageRatio = renderImage(canvas, context, img, layer, hasAnimatedLayer ? elapsed : undefined);
-                        globalImageCache.set(layer.source, img);
-                        if (layer.order === 0) {
-                            setRatio(imageRatio);
-                        }
-                        forceUpdate();
-                    })
-            }))
-
-        if (invert) {
-            canvas.style.filter = 'invert(0.8)';
-        }
-    }, [layers, elapsed, forceUpdate]);
-
     const {hovered, ref: hoverRef} = useHover();
     const {ref: mouseRef, x: mouseX, y: mouseY} = useMouse();
     const [rectRef, rect] = useResizeObserver();
     const mergedRef = useMergedRef(mouseRef, hoverRef, containerRef, rectRef);
 
     // Handle card tilt effect
-    useEffect(() => {
+    const transform = useMemo(() => {
         const SCALE_X = 6;
         const SCALE_Y = 8;
         const x = mouseX - rect.x;
         const y = mouseY - rect.y;
-        let mousePosition = {
+        const mousePosition = {
             x,
             y
         }
-        let cardSize = {
+        const cardSize = {
             width: rect.width,
             height: rect.height
         }
-        setTransform(
-            `perspective(1000px) rotateX(${
-                (mousePosition.y / cardSize.height) * -(SCALE_Y * 2) + SCALE_Y
-            }deg) rotateY(${
-                (mousePosition.x / cardSize.width) * (SCALE_X * 2) - SCALE_X
-            }deg) translateZ(10px)`
-        )
-    }, [mouseX, mouseY, hovered]);
+        return `perspective(1000px) rotateX(${
+            (mousePosition.y / cardSize.height) * -(SCALE_Y * 2) + SCALE_Y
+        }deg) rotateY(${
+            (mousePosition.x / cardSize.width) * (SCALE_X * 2) - SCALE_X
+        }deg) translateZ(10px)`
+
+    }, [mouseX, mouseY, rect.x, rect.y, rect.width, rect.height]);
 
     return (
         <AspectRatio

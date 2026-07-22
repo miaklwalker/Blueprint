@@ -35,7 +35,7 @@ import type { DeckCard } from "../deckUtils.ts";
 import type { PlayingCard } from "../balatrots/enum/cards/Card.ts";
 import type { StakeType } from "../balatrots/enum/Stake.ts";
 
-export const MAX_SHOP_QUEUE_DEPTH = 25000;
+export const MAX_SHOP_QUEUE_DEPTH = 50000;
 
 export type SpoilableItems = "The Soul" | "Judgement" | "Wraith";
 export interface MiscCardSource {
@@ -665,7 +665,10 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
                 // @ts-ignore
                 result.blinds[blind].packs.push(pack)
                 for (let k = 0; k < pack.size; k++) {
-                    const key = `${ante}-${packInfo.getKind()}-${k}-${blind}`;
+                    // Must match the key the store builds in addBuy/removeBuy,
+                    // including the `-p<packIndex>` segment - two packs of the same
+                    // kind can share a blind, so the index is what disambiguates them.
+                    const key = `${ante}-${packInfo.getKind()}-${k}-p${j}-${blind}`;
                     if (analyzeOptions && analyzeOptions.buys[key]) {
                         engineWrapper.handleBuy(pack.cards[k].name, "Card", updateShowmanOwned, analyzeOptions)
                     }

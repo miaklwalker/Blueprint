@@ -9,7 +9,7 @@ import { GameCard } from "./Rendering/cards.tsx";
 
 // Generating far into a queue is a synchronous engine run, so keep a hard lid on
 // it. The warning threshold is where a run starts being noticeable.
-const MAX_DEPTH = 2500;
+const MAX_DEPTH = 10000;
 
 export default function MiscDeepDiveModal({ opened, onClose, sourceName }: {
     opened: boolean,

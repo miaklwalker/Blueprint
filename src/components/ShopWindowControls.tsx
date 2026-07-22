@@ -147,10 +147,7 @@ export default function ShopWindowControls() {
                             Generating cards {windowOffset + 1}&ndash;{windowOffset + windowSize}&hellip;
                         </Text>
                     </Group>
-                ) : total === 0 ? (
-                    // No analysis yet (no seed) - there is nothing to report.
-                    null
-                ) : isEmpty ? (
+                ) : total === 0 ? null : isEmpty ? (
                     <Group gap={'xs'}>
                         <Text fz={'xs'} c={'orange'}>
                             Could not generate past card {total}.

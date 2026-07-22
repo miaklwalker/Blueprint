@@ -267,7 +267,7 @@ export class CardEngineWrapper implements EngineWrapper {
                 }
             }
         } else {
-            allVouchers = Game.VOUCHERS;
+            // allVouchers = Game.VOUCHERS;
             for (let i = 0; i < Game.VOUCHERS.length; i += 2) {
                 if (Game.VOUCHERS[i].getName() === key) {
                     return Game.VOUCHERS[i + 1].getName()
@@ -681,7 +681,7 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
         const updates = analyzeOptions?.updates;
         if (updates) {
             for (const update of updates) {
-                const source = miscCardSources.find((source) => source.name === update.source);
+                const source = miscCardSources.find((s) => s.name === update.source);
                 if (source) {
                     source.cardsToGenerate = update.count;
                     if (update.type) {
@@ -700,7 +700,7 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
             // @ts-expect-error reports types dont match.
             "Spectral": (...args: any) => engine.nextSpectral(...args),
             // @ts-expect-error reports types dont match.
-            "Standard": (source, ante) => engine.nextStandardCard(ante, source),
+            "Standard": (source, a) => engine.nextStandardCard(a, source),
         }
         for (const source of miscCardSources) {
             if (source.usesAnte === false && ante !== 1) {

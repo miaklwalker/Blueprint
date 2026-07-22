@@ -11,6 +11,7 @@ import React from "react";
 import { SeedResultProvider } from "./modules/state/analysisResultProvider.tsx";
 import { SeedOptionsProvider } from "./modules/state/optionsProvider.tsx";
 import { DownloadSeedResultProvider } from "./modules/state/downloadProvider.tsx";
+import { ShopQueueProvider } from "./modules/state/shopQueueProvider.tsx";
 import { BlueprintThemeProvider, useBlueprintTheme } from "./modules/state/themeProvider.tsx";
 import { NextStepProvider, NextStepReact, type Tour } from 'nextstepjs';
 import { useCardStore } from "./modules/state/store.ts";
@@ -321,17 +322,19 @@ function ProviderContainer({ children }: { children: React.ReactNode }) {
             <QueryClientProvider client={queryClient}>
                 <SeedOptionsProvider>
                     <SeedResultProvider>
-                        <DownloadSeedResultProvider>
-                            <NextStepProvider>
-                                <NextStepReact
-                                    steps={steps}
-                                    onStepChange={handleStepChange}
-                                    onComplete={handleTourEnd}
-                                    onSkip={handleTourEnd}>
-                                    {children}
-                                </NextStepReact>
-                            </NextStepProvider>
-                        </DownloadSeedResultProvider>
+                        <ShopQueueProvider>
+                            <DownloadSeedResultProvider>
+                                <NextStepProvider>
+                                    <NextStepReact
+                                        steps={steps}
+                                        onStepChange={handleStepChange}
+                                        onComplete={handleTourEnd}
+                                        onSkip={handleTourEnd}>
+                                        {children}
+                                    </NextStepReact>
+                                </NextStepProvider>
+                            </DownloadSeedResultProvider>
+                        </ShopQueueProvider>
                     </SeedResultProvider>
                 </SeedOptionsProvider>
             </QueryClientProvider>

@@ -1,6 +1,7 @@
 import React,{createContext, useContext, useMemo} from "react";
 import { useCardStore} from "./store.ts";
 import type {InitialState} from "./store.ts";
+import type {MiscSourceUpdate} from "../ImmolateWrapper";
 
 type immolateState = InitialState['immolateState'];
 type shoppingState = InitialState['shoppingState'];
@@ -11,7 +12,7 @@ export interface OptionsProviderProps {
     showCardSpoilers: applicationState['showCardSpoilers'];
     unlocks: immolateState['selectedOptions'];
     events: eventState;
-    updates: Array<never>
+    updates: Array<MiscSourceUpdate>
     buys: shoppingState['buys'];
     sells: shoppingState['sells'];
     lockedCards: InitialState['lockState']['lockedCards'];

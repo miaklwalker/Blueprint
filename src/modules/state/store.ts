@@ -8,11 +8,22 @@ import { Game } from "../balatrots/Game.ts";
 import { InstanceParams } from "../balatrots/struct/InstanceParams.ts";
 import { Deck, deckMap } from "../balatrots/enum/Deck.ts";
 import { Stake, stakeMap } from "../balatrots/enum/Stake.ts";
+import { MAX_SHOP_QUEUE_DEPTH } from "../ImmolateWrapper";
 import type { DeckCard } from "../deckUtils.ts";
 import type { StateStorage } from "zustand/middleware";
 import type { BuyMetaData } from "../classes/BuyMetaData.ts";
 
 export type Blinds = 'smallBlind' | 'bigBlind' | 'bossBlind';
+
+/** Which slice of an ante's shop queue is rendered. */
+export interface ShopWindow {
+    offset: number;
+    size: number;
+}
+
+/** Applied to any ante the user has not adjusted the window for yet. */
+export const DEFAULT_SHOP_WINDOW: ShopWindow = { offset: 0, size: 50 };
+
 export interface InitialState {
     immolateState: {
         seed: string;
@@ -47,6 +58,10 @@ export interface InitialState {
         maxMiscCardSource: number;
         rerollStartIndex: number;
         conversionSourceId: string | null;
+        // Shop queue viewing window, kept per ante so moving deep into one ante
+        // does not drag every other ante along with it. Antes with no entry fall
+        // back to DEFAULT_SHOP_WINDOW.
+        shopWindows: Record<number, ShopWindow>;
     };
     searchState: {
         searchTerm: string;
@@ -104,6 +119,8 @@ interface StoreActions {
     setAsideTab: (tab: string) => void;
     setSearchString: (searchString: string) => void;
     setMiscMaxSource: (maxSource: number) => void;
+    setShopWindowOffset: (offset: number) => void;
+    setShopWindowSize: (size: number) => void;
     setRerollStartIndex: (index: number) => void;
     setSelectedSearchResult: (result: BuyMetaData) => void;
     navigateToMiscSource: (source: string) => void;
@@ -166,7 +183,8 @@ const initialState: InitialState = {
         maxMiscCardSource: 15,
         rerollStartIndex: 0,
         drawSimulatorModalOpen: false,
-        conversionSourceId: null
+        conversionSourceId: null,
+        shopWindows: {}
     },
     searchState: {
         searchTerm: '',
@@ -299,6 +317,10 @@ export const useCardStore = create<CardStore>()(
                         prev.lockState = initialState.lockState;
                         prev.eventState = initialState.eventState;
                         prev.applicationState.hasSettingsChanged = true;
+                        // A new seed means a whole new set of queues, so a window
+                        // left deep into the old one would kick off a pointless
+                        // on-demand regeneration the moment the ante rendered.
+                        prev.applicationState.shopWindows = {};
 
                         const deckType = deckMap[prev.immolateState.deck];
                         const stakeType = stakeMap[prev.immolateState.stake];
@@ -433,6 +455,26 @@ export const useCardStore = create<CardStore>()(
                     setMiscMaxSource: (maxSource) => set((prev) => {
                         prev.applicationState.maxMiscCardSource = maxSource
                     }, undefined, 'Global/SetMiscMaxSource'),
+                    // Window changes are display-only, so they deliberately do not
+                    // set hasSettingsChanged - no re-analysis is needed. Both setters
+                    // apply to whichever ante is currently selected.
+                    setShopWindowOffset: (offset) => set((prev) => {
+                        const ante = prev.applicationState.selectedAnte;
+                        const current = prev.applicationState.shopWindows[ante] ?? DEFAULT_SHOP_WINDOW;
+                        const max = Math.max(0, MAX_SHOP_QUEUE_DEPTH - current.size);
+                        prev.applicationState.shopWindows[ante] = {
+                            ...current,
+                            offset: Math.min(Math.max(0, Math.floor(offset) || 0), max)
+                        }
+                    }, undefined, 'Global/SetShopWindowOffset'),
+                    setShopWindowSize: (size) => set((prev) => {
+                        const ante = prev.applicationState.selectedAnte;
+                        const current = prev.applicationState.shopWindows[ante] ?? DEFAULT_SHOP_WINDOW;
+                        prev.applicationState.shopWindows[ante] = {
+                            ...current,
+                            size: Math.min(Math.max(1, Math.floor(size) || 1), 1000)
+                        }
+                    }, undefined, 'Global/SetShopWindowSize'),
                     setRerollStartIndex: (index) => set((prev) => {
                         prev.applicationState.rerollStartIndex = index
                     }, undefined, 'Global/SetRerollStartIndex'),
@@ -629,3 +671,14 @@ export const useCardStore = create<CardStore>()(
         )
     )
 )
+
+/**
+ * The shop window for the ante currently on screen. Antes the user has not
+ * touched fall back to DEFAULT_SHOP_WINDOW, so switching to a fresh ante starts
+ * at the top of its queue while previously adjusted antes keep their position.
+ */
+export function useShopWindow(): ShopWindow {
+    const selectedAnte = useCardStore(state => state.applicationState.selectedAnte);
+    const stored = useCardStore(state => state.applicationState.shopWindows[selectedAnte]);
+    return stored ?? DEFAULT_SHOP_WINDOW;
+}

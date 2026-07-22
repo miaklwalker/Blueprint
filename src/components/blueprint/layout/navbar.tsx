@@ -9,12 +9,10 @@ import {
     NumberInput,
     ScrollArea,
     SegmentedControl,
-    Select,
     Stack,
     Switch,
     Text,
     Tooltip,
-    useMantineColorScheme,
     useMantineTheme
 } from "@mantine/core";
 import React, {useEffect, useState} from "react";
@@ -23,9 +21,7 @@ import {
     IconJoker,
     IconLayout,
     IconListSearch,
-    IconMoon,
     IconPlayCard,
-    IconSun
 } from "@tabler/icons-react";
 import { useDebouncedCallback } from "@mantine/hooks";
 import { useCardStore } from "../../../modules/state/store.ts";
@@ -35,15 +31,11 @@ import {RerollCalculatorModal} from "../../RerollCalculatorModal.tsx";
 import {GaEvent} from "../../../modules/useGA.ts";
 import { DrawSimulatorModal } from "../../DrawSimulatorModal.tsx";
 import SeedInputAutoComplete from "../../SeedInputAutoComplete.tsx";
-import { useBlueprintTheme } from "../../../modules/state/themeProvider.tsx";
-import type { KnownThemes } from "../../../modules/state/themeProvider.tsx";
+import ShopWindowControls from "../../ShopWindowControls.tsx";
 
 
 export default function NavBar() {
     const theme = useMantineTheme();
-    const { theme: themeName, setTheme, themes } = useBlueprintTheme()
-    const themeNames = Object.keys(themes);
-    const colorScheme = useMantineColorScheme()
     const viewMode = useCardStore(state => state.applicationState.viewMode);
     const setViewMode = useCardStore(state => state.setViewMode);
 
@@ -131,24 +123,15 @@ export default function NavBar() {
                     mb="sm"
                 />
                 <Divider mb='md' />
-                <Group align={'flex-end'}>
-                    <Select
-                        label={'Theme'}
-                        value={themeName}
-                        onChange={(t) => {
-                            if (!t) return
-                            setTheme(t as KnownThemes)
-                        }}
-                        data={themeNames}
-                        flex={1}
-                    />
-                    <Switch
-                        size={'xl'}
-                        checked={colorScheme.colorScheme === 'dark'}
-                        thumbIcon={colorScheme.colorScheme === 'dark' ? (<IconSun size={16} color={'var(--mantine-color-teal-6)'} />) : (<IconMoon size={16} />)}
-                        onChange={colorScheme.toggleColorScheme}
-                    />
-                </Group>
+                {/* <Group justify={'flex-end'} mb={'sm'}>*/}
+                {/*    <Switch*/}
+                {/*        size={'xl'}*/}
+                {/*        checked={colorScheme.colorScheme === 'dark'}*/}
+                {/*        thumbIcon={colorScheme.colorScheme === 'dark' ? (<IconSun size={16} color={'var(--mantine-color-teal-6)'} />) : (<IconMoon size={16} />)}*/}
+                {/*        onChange={colorScheme.toggleColorScheme}*/}
+                {/*    />*/}
+                {/* </Group>*/}
+                <ShopWindowControls />
             </AppShell.Section>
             <AppShell.Section id="seed-config" pr={'xs'} grow mb="md" component={ScrollArea} scrollbars={'y'}>
                 <SeedInputAutoComplete
@@ -220,9 +203,10 @@ export default function NavBar() {
                     <option value="10103">1.0.1c</option>
                     <option value="10014">1.0.0n</option>
                 </NativeSelect>
-                <InputLabel> Cards per Ante</InputLabel>
+                <InputLabel> Search Depth</InputLabel>
                 <Text fz={'xs'} c={'dimmed'}>
-                    It is recommended to keep this number under 200.
+                    How many shop cards are generated per ante. Use the window controls above the
+                    shop to pick which slice of them is shown.
                 </Text>
                 <Box id="setting-cards-per-ante" mb={'lg'}>
                     <Button.Group w={'100%'}>

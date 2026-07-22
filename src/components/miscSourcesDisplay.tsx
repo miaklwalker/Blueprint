@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Accordion, Box, Center, Group, Paper, Text, Title } from "@mantine/core";
+import { Accordion, Box, Button, Center, Group, Paper, Text, Title } from "@mantine/core";
 import { Carousel } from "@mantine/carousel";
 import { toHeaderCase } from "js-convert-case";
 import { LOCATIONS } from "../modules/const.ts";
@@ -7,6 +7,7 @@ import { useCardStore } from "../modules/state/store.ts";
 import { Joker_Final, StandardCard_Final } from "../modules/ImmolateWrapper/CardEngines/Cards.ts";
 import { BuyWrapper } from "./buyerWrapper.tsx";
 import { GameCard } from "./Rendering/cards.tsx";
+import MiscDeepDiveModal from "./MiscDeepDiveModal.tsx";
 import { BoosterPack, Boss, Tag , Voucher  } from "./Rendering/gameElements.tsx";
 import type { MiscCardSource } from "../modules/ImmolateWrapper";
 import type { EmblaCarouselType } from 'embla-carousel';
@@ -26,6 +27,7 @@ export default function MiscCardSourcesDisplay({ miscSources, boosterQueue, boss
     const setCurrentSource = useCardStore(state => state.setMiscSource);
     const currentAnte = useCardStore(state => state.applicationState.selectedAnte);
     const [embla, setEmbla] = useState<EmblaCarouselType | null>(null);
+    const [deepDiveSource, setDeepDiveSource] = useState<string | null>(null);
     useEffect(() => {
         if (!embla) return;
         embla.reInit()
@@ -47,15 +49,33 @@ export default function MiscCardSourcesDisplay({ miscSources, boosterQueue, boss
     }
     return (
         <Paper p="md" withBorder mb="md">
+            <MiscDeepDiveModal
+                opened={deepDiveSource !== null}
+                onClose={() => setDeepDiveSource(null)}
+                sourceName={deepDiveSource}
+            />
             <Title order={3} mb="xs">Card Sources</Title>
             <Accordion onChange={e => setCurrentSource(`${e}`)} variant={'separated'} value={currentSource}>
                 {miscSources.map(({ name, cards }: { name: string, cards: any }) => (
                     <Accordion.Item key={String(name)} value={String(name)}>
-                        <Accordion.Control>
-                            <Group>
-                                <Text fw={500}>{toHeaderCase(String(name))}</Text>
-                            </Group>
-                        </Accordion.Control>
+                        {/* Control and button are siblings: Accordion.Control renders a
+                            button, so the action cannot be nested inside it. */}
+                        <Center>
+                            <Accordion.Control>
+                                <Group>
+                                    <Text fw={500}>{toHeaderCase(String(name))}</Text>
+                                </Group>
+                            </Accordion.Control>
+                            <Button
+                                size={'compact-xs'}
+                                variant={'subtle'}
+                                mr={'xs'}
+                                style={{ flexShrink: 0 }}
+                                onClick={() => setDeepDiveSource(String(name))}
+                            >
+                                See more
+                            </Button>
+                        </Center>
                         <Accordion.Panel>
                             {
                                 name === currentSource &&

@@ -24,7 +24,7 @@ import { Boss, Tag as RenderTag, Voucher } from "../../Rendering/gameElements.ts
 import { BuyMetaData } from "../../../modules/classes/BuyMetaData.ts";
 import { BuyWrapper } from "../../buyerWrapper.tsx";
 import { LOCATIONS, LOCATION_TYPES, blinds, tagDescriptions } from "../../../modules/const.ts";
-import { useCardStore } from "../../../modules/state/store.ts";
+import { useCardStore, useShopWindow } from "../../../modules/state/store.ts";
 import { GameCard } from "../../Rendering/cards.tsx";
 import Header from "../layout/header.tsx";
 import NavBar from "../layout/navbar.tsx";
@@ -36,31 +36,47 @@ import Simple from "../simpleView/simple.tsx";
 import SnapshotModal from "../snapshotView/SnapshotView.tsx";
 import { useSeedResultsContainer } from "../../../modules/state/analysisResultProvider.tsx";
 import { useDownloadSeedResults } from "../../../modules/state/downloadProvider.tsx";
+import { useShopQueue } from "../../../modules/state/shopQueueProvider.tsx";
 import type { Blinds } from "../../../modules/state/store.ts";
 import type { Tag } from "../../../modules/balatrots/enum/Tag.ts";
 import type { Ante, Pack } from "../../../modules/ImmolateWrapper/CardEngines/Cards.ts";
 import type { EmblaCarouselType } from 'embla-carousel';
 
-function QueueCarousel({ queue, tabName }: { queue: Array<any>, tabName: string }) {
+function QueueCarousel({ tabName }: { tabName: string }) {
+    // The queue comes from the provider rather than the ante prop so it picks up
+    // depth generated on demand by the window controls in the settings panel.
+    const { queue } = useShopQueue();
     const selectedBlind = useCardStore(state => state.applicationState.selectedBlind);
     const selectedSearchResult = useCardStore(state => state.searchState.selectedSearchResult);
+    const { offset: windowOffset, size: windowSize } = useShopWindow();
+    const setShopWindowOffset = useCardStore(state => state.setShopWindowOffset);
     const [embla, setEmbla] = useState<EmblaCarouselType | null>(null);
+
+    // Only the window is rendered; `windowOffset + index` recovers the absolute
+    // queue position that buys, locks and search results are all keyed on.
+    const visibleQueue = useMemo(
+        () => queue.slice(windowOffset, windowOffset + windowSize),
+        [queue, windowOffset, windowSize]
+    );
 
     useEffect(() => {
         if (!embla) return;
+        embla.reInit();
+    }, [embla, visibleQueue])
 
+    useEffect(() => {
+        if (!embla || !selectedSearchResult) return;
+        if (selectedSearchResult?.location !== LOCATIONS.SHOP || selectedSearchResult?.index == null) return;
 
-        if (embla && selectedSearchResult) {
-            if (selectedSearchResult?.location === LOCATIONS.SHOP && selectedSearchResult?.index != null) {
-                embla.scrollTo(selectedSearchResult.index)
-            }
+        const target = selectedSearchResult.index;
+        if (target < windowOffset || target >= windowOffset + windowSize) {
+            // Pull the window onto the result, snapped to a window boundary. The
+            // effect re-runs once the new offset lands and does the scroll.
+            setShopWindowOffset(Math.floor(target / windowSize) * windowSize);
+            return;
         }
-
-        return () => {
-
-        }
-
-    }, [embla, selectedSearchResult])
+        embla.scrollTo(target - windowOffset)
+    }, [embla, selectedSearchResult, windowOffset, windowSize, setShopWindowOffset])
 
     return (
         <Paper>
@@ -74,14 +90,15 @@ function QueueCarousel({ queue, tabName }: { queue: Array<any>, tabName: string 
                 type={'container'}
             >
                 {
-                    queue.map((card: any, index: number) => {
+                    visibleQueue.map((card: any, index: number) => {
+                        const absoluteIndex = windowOffset + index;
                         return (
-                            <Carousel.Slide h={190} key={index}>
+                            <Carousel.Slide h={190} key={absoluteIndex}>
                                 <BuyWrapper
                                     metaData={new BuyMetaData({
                                         location: LOCATIONS.SHOP,
                                         locationType: LOCATION_TYPES.SHOP,
-                                        index: index,
+                                        index: absoluteIndex,
                                         ante: tabName,
                                         blind: selectedBlind,
                                         link: `https://balatrowiki.org/w/${card.name}`,
@@ -106,7 +123,6 @@ function AntePanel({ ante, tabName, timeTravelVoucherOffset }: {
     tabName: string,
     timeTravelVoucherOffset: number
 }) {
-    const queue = ante.queue;
     const selectedBlind = useCardStore(state => state.applicationState.selectedBlind);
     const packs = ante.blinds[selectedBlind].packs;
     return (
@@ -114,7 +130,7 @@ function AntePanel({ ante, tabName, timeTravelVoucherOffset }: {
             <Paper id="shop-results" withBorder h={'100%'} p={'sm'}>
                 <Group preventGrowOverflow mb={'sm'}>
                     <Fieldset flex={1} legend={'Shop'}>
-                        <QueueCarousel queue={queue} tabName={tabName} />
+                        <QueueCarousel tabName={tabName} />
                     </Fieldset>
                     <Fieldset legend={'Voucher'}>
                         <Flex h={192} direction={'column'} align={'space-between'}>

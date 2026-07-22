@@ -35,6 +35,8 @@ import type { DeckCard } from "../deckUtils.ts";
 import type { PlayingCard } from "../balatrots/enum/cards/Card.ts";
 import type { StakeType } from "../balatrots/enum/Stake.ts";
 
+export const MAX_SHOP_QUEUE_DEPTH = 25000;
+
 export type SpoilableItems = "The Soul" | "Judgement" | "Wraith";
 export interface MiscCardSource {
     name: SpoilableItems | string;
@@ -317,13 +319,23 @@ export interface AnalyzeSettings {
     cardsPerAnte: number;
 }
 
+/**
+ * Overrides how many cards a single misc source generates, on top of the global
+ * `maxMiscCardSource`. Used to dig arbitrarily deep into one queue.
+ */
+export interface MiscSourceUpdate {
+    source: string;
+    count: number;
+    type?: string;
+}
+
 export interface AnalyzeOptions {
     buys: { [key: string]: any };
     sells: { [key: string]: any };
     showCardSpoilers: boolean;
     unlocks: Array<string>;
     events: Array<Event>;
-    updates?: Array<any>,
+    updates?: Array<MiscSourceUpdate>,
     maxMiscCardSource?: number
     lockedCards?: any
     customDeck?: Array<DeckCard>
@@ -578,7 +590,8 @@ export function analyzeSeed(settings: AnalyzeSettings, analyzeOptions: AnalyzeOp
         result.tags.push(engine.nextTag(ante).name);
         updateShowmanOwned(showmanIsPurchased);
 
-        for (let i = 0; i < Math.min(settings.cardsPerAnte, 1000); i++) {
+        const shopDepth = Math.min(Math.max(0, Math.floor(settings.cardsPerAnte) || 0), MAX_SHOP_QUEUE_DEPTH);
+        for (let i = 0; i < shopDepth; i++) {
             const key: `${number}-${LOCATIONS.SHOP}-${number}` = `${ante}-${LOCATIONS.SHOP}-${i}`;
             const lockCardId = `ante_${ante}_shop_${i}`;
             if (lockedCards[lockCardId]) {
